@@ -1,6 +1,7 @@
 package ast
 
 trait VocabMaker {
+  val arity: Int
   def apply(children: List[ASTNode]): ASTNode
 }
 
@@ -16,6 +17,7 @@ object VocabMaker {
             assert(children.isEmpty)
             new Literal(line(2))
           }
+          override val arity: Int = 0
         }
       }
       case "Variable" => {
@@ -25,6 +27,7 @@ object VocabMaker {
             assert(children.isEmpty)
             new Variable(line(2))
           }
+          override val arity: Int = 0
         }
       }
       case "BinOperator" => {
@@ -34,6 +37,7 @@ object VocabMaker {
             assert(children.length == 2)
             new BinOperator(line(2),children(0),children(1))
           }
+          override val arity: Int = 2
         }
       }
       case "FunctionCall" => new VocabMaker {
@@ -48,7 +52,7 @@ object VocabMaker {
 }
 
 class VocabFactory(vocabString: String) {
-  val makers = vocabString.lines.map(l => VocabMaker(l)).toList
+  val leavesMakers = vocabString.lines.map(l => VocabMaker(l)).filter(m => m.arity == 0).toList
 
-  def leaves(): Iterator[VocabMaker] = makers.iterator
+  def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
 }

@@ -7,6 +7,7 @@ class VocabTests  extends JUnitSuite{
   @Test def literalMaker(): Unit = {
     val vocabLine = "Literal|0|1"
     val maker: VocabMaker = VocabMaker(vocabLine)
+    assertEquals(0,maker.arity)
     val node = maker(Nil)
     assertTrue(node.isInstanceOf[Literal])
     assertEquals("1", node.name)
@@ -18,6 +19,7 @@ class VocabTests  extends JUnitSuite{
         #Literal|0|True""".stripMargin('#')
     val vocab = new VocabFactory(vocabString)
     for(term <- vocab.leaves) {
+      assertEquals(0,term.arity)
       val l = term(Nil)
       assertTrue(l.isInstanceOf[Literal])
     }
@@ -26,6 +28,7 @@ class VocabTests  extends JUnitSuite{
   @Test def variableMaker(): Unit = {
     val vocabLine = "Variable|0|x"
     val maker: VocabMaker = VocabMaker(vocabLine)
+    assertEquals(0,maker.arity)
     val node = maker(Nil)
     assertTrue(node.isInstanceOf[Variable])
     assertEquals("x",node.name)
@@ -54,6 +57,7 @@ class VocabTests  extends JUnitSuite{
   @Test def binopMaker(): Unit = {
     val vocabLine = "BinOperator|2|and"
     val maker = VocabMaker(vocabLine)
+    assertEquals(2,maker.arity)
     val node = maker(List(new Variable("x"), new Literal("1")))
     assertTrue(node.isInstanceOf[BinOperator])
     assertEquals("and",node.name)
@@ -63,6 +67,7 @@ class VocabTests  extends JUnitSuite{
   @Test def funcCallMaker(): Unit = {
     val vocabLine = "FunctionCall|0|foo"
     val maker = VocabMaker(vocabLine)
+    assertEquals(0,maker.arity)
     val node = maker(Nil)
     assertTrue(node.isInstanceOf[FunctionCall])
     assertEquals(0, node.arity)
@@ -70,6 +75,7 @@ class VocabTests  extends JUnitSuite{
 
     val vocabLine2 = "FunctionCall|3|ite"
     val maker2 = VocabMaker(vocabLine2)
+    assertEquals(3,maker2.arity)
     val node2 = maker2(List(new Literal("True"), new Variable("x"), new Variable("y")))
     assertTrue(node2.isInstanceOf[FunctionCall])
     assertEquals(3,node2.arity)
@@ -86,5 +92,10 @@ class VocabTests  extends JUnitSuite{
 
     val vocab = new VocabFactory(vocabString)
     val leavesIter = vocab.leaves
+    val l1 = leavesIter.next()(Nil)
+    assertEquals("bar", l1.name)
+    val l2 = leavesIter.next()(Nil)
+    assertEquals("input", l2.name)
+    assertFalse(leavesIter.hasNext)
   }
 }
