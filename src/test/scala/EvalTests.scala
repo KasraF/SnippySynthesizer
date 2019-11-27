@@ -41,4 +41,9 @@ class EvalTests  extends JUnitSuite {
     pyInterp.cleanup()
     pyInterp.close()
   }
+
+  @Test def evalObject(): Unit = {
+    assertEquals(61, Eval("123/2", Map.empty).asInt)
+    assertEquals(5, Eval("x + 1", Map("x" -> 4.asInstanceOf[AnyRef])).asInt)
+  }
 }
