@@ -97,5 +97,12 @@ class VocabTests  extends JUnitSuite{
     val l2 = leavesIter.next()(Nil)
     assertEquals("input", l2.name)
     assertFalse(leavesIter.hasNext)
+
+    val nodesIter = vocab.nonLeaves
+    val n1 = nodesIter.next()(List(new Literal("1"), new Literal("2")))
+    assertEquals("foo(1,2)", n1.code)
+    val n2 = nodesIter.next()(List(new Literal("5"), new Literal("10")))
+    assertEquals("5 / 10", n2.code)
+    assertFalse(nodesIter.hasNext)
   }
 }

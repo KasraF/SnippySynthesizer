@@ -52,7 +52,8 @@ object VocabMaker {
 }
 
 class VocabFactory(vocabString: String) {
-  val leavesMakers = vocabString.lines.map(l => VocabMaker(l)).filter(m => m.arity == 0).toList
+  val (leavesMakers, nodeMakers) = vocabString.lines.map(l => VocabMaker(l)).toList.partition(m => m.arity == 0)
 
   def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
+  def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator
 }
