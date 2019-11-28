@@ -9,32 +9,38 @@ class ASTTests extends JUnitSuite{
     val literalNode: ASTNode = new Literal("1")
     assertEquals("1",literalNode.name)
     assertEquals("1", literalNode.code)
+    assertEquals(0, literalNode.height)
   }
 
   @Test def variableNode(): Unit = {
     val varNode: ASTNode = new Variable("x")
     assertEquals("x",varNode.name)
     assertEquals("x", varNode.code)
+    assertEquals(0, varNode.height)
   }
 
   @Test def binaryOpNode(): Unit = {
     val binOpNode: ASTNode = new BinOperator("+", new Literal("1"), new Literal("'b'"))
     assertEquals("+",binOpNode.name)
     assertEquals("1 + 'b'", binOpNode.code)
+    assertEquals(1, binOpNode.height)
 
     val binOpNode2 = new BinOperator("*", new Literal("2"), binOpNode)
     assertEquals("*",binOpNode2.name)
     assertEquals("2 * (1 + 'b')", binOpNode2.code)
+    assertEquals(2, binOpNode2.height)
   }
 
   @Test def funcCallNode(): Unit = {
     val funcNode: ASTNode = new FunctionCall("foo",0, List())
     assertEquals("foo",funcNode.name)
     assertEquals("foo()", funcNode.code)
+    assertEquals(0,funcNode.height)
 
     val funcNode2 = new FunctionCall("bar",2,List(new Literal("1"),new Variable("x")))
     assertEquals("bar", funcNode2.name)
     assertEquals("bar(1,x)",funcNode2.code)
+    assertEquals(1, funcNode2.height)
   }
 
   @Test def lambdaNode(): Unit = {

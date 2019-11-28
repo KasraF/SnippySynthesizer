@@ -3,6 +3,7 @@ package ast
 trait ASTNode {
   val name: String
   val arity: Int
+  val height: Int
   def code = {
     val sb = new StringBuilder()
     toCodeInner(sb)

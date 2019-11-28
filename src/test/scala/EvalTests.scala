@@ -45,5 +45,17 @@ class EvalTests  extends JUnitSuite {
   @Test def evalObject(): Unit = {
     assertEquals(61, Eval("123/2", Map.empty).asInt)
     assertEquals(5, Eval("x + 1", Map("x" -> 4.asInstanceOf[AnyRef])).asInt)
+
+  }
+  @Test def timeEvalObj: Unit = {
+    val before = Calendar.getInstance().getTimeInMillis
+    for (i <- 0 until 10000) {
+      val obj = Eval("'Hello Python ' + str(i) + ' World!'", Map("i" -> i.asInstanceOf[AnyRef]))
+      //println(obj)
+    }
+
+    val after = Calendar.getInstance().getTimeInMillis
+    println("total time: " + (after - before))
+    println((after - before).toDouble / 10000)
   }
 }
