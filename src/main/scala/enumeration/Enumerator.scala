@@ -2,11 +2,14 @@ package enumeration
 
 import ast.{ASTNode, VocabFactory, VocabMaker}
 
+import scala.collection.mutable
+
 class Enumerator(val vocab: VocabFactory) extends Iterator[ASTNode]{
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
-  override def hasNext: Boolean = {
+  override def hasNext: Boolean = if (!nextProgram.isEmpty) true
+  else {
     nextProgram = getNextProgram()
     !nextProgram.isEmpty
   }
@@ -15,36 +18,47 @@ class Enumerator(val vocab: VocabFactory) extends Iterator[ASTNode]{
     if (nextProgram.isEmpty) {
       nextProgram = getNextProgram()
     }
-    nextProgram.get
+    val res = nextProgram.get
+    nextProgram = None
+    res
   }
 
   var currIter = vocab.leaves
   var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
   var rootMaker: VocabMaker = currIter.next()
+  var prevLevelProgs: mutable.MutableList[ASTNode] = mutable.MutableList()
+  var currLevelProgs: mutable.MutableList[ASTNode] = mutable.MutableList()
   def advanceRoot(): Boolean = {
     if (!currIter.hasNext) return false
     rootMaker = currIter.next()
     childrenIterator = if (rootMaker.arity == 0)
       Iterator.single(Nil)
-    else ???
+    else new ChildrenIterator(prevLevelProgs.toList,rootMaker.arity,height)
     true
   }
+  var height = 0
   def changeLevel():Unit = {
     currIter = vocab.nonLeaves
+    height += 1
+    prevLevelProgs ++= currLevelProgs
+    currLevelProgs.clear()
     advanceRoot()
   }
   def getNextProgram(): Option[ASTNode] = {
-    if(childrenIterator.hasNext) {
-      Some(rootMaker(childrenIterator.next()))
+    var res : Option[ASTNode] = None
+    while(res.isEmpty) {
+      if (childrenIterator.hasNext) {
+        res = Some(rootMaker(childrenIterator.next()))
+      }
+      else if (currIter.hasNext) {
+        if (!advanceRoot())
+          return None
+      }
+      else {
+        changeLevel()
+      }
     }
-    else if (currIter.hasNext) {
-      if (advanceRoot())
-        getNextProgram()
-      else None
-    }
-    else {
-      changeLevel()
-      getNextProgram()
-    }
+    currLevelProgs += res.get
+    res
   }
 }

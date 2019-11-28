@@ -25,5 +25,10 @@ class EnumeratorTests  extends JUnitSuite{
     assertTrue(enumerator.hasNext)
     assertEquals("1",enumerator.next().code)
     assertTrue(enumerator.hasNext)
+    assertEquals("input + input",enumerator.next().code)
+    assertEquals("input + False",enumerator.next().code)
+    assertEquals("input + 0",enumerator.next().code)
+    assertEquals("input + 1",enumerator.next().code)
+    assertTrue(enumerator.hasNext)
   }
 }
