@@ -4,7 +4,7 @@ import ast.{ASTNode, VocabFactory, VocabMaker}
 
 import scala.collection.mutable
 
-class Enumerator(val vocab: VocabFactory) extends Iterator[ASTNode]{
+class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extends Iterator[ASTNode]{
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
@@ -48,7 +48,8 @@ class Enumerator(val vocab: VocabFactory) extends Iterator[ASTNode]{
     var res : Option[ASTNode] = None
     while(res.isEmpty) {
       if (childrenIterator.hasNext) {
-        res = Some(rootMaker(childrenIterator.next()))
+        val prog = rootMaker(childrenIterator.next())
+        if (oeManager.isRepresentative(prog)) res = Some(prog)
       }
       else if (currIter.hasNext) {
         if (!advanceRoot())

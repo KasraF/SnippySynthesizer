@@ -4,6 +4,7 @@ import org.junit.Test
 import org.scalatest.junit.JUnitSuite
 import org.python.util.PythonInterpreter
 import org.junit.Assert._
+import execution.Eval
 
 class EvalTests  extends JUnitSuite {
 
