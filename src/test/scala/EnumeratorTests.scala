@@ -122,5 +122,14 @@ class EnumeratorTests  extends JUnitSuite{
     assertTrue(enumerator.hasNext)
   }
 
-  @Test def runOutOfEnumeration: Unit = ???
+  @Test def runOutOfEnumeration: Unit = {
+    val vocab = new ast.VocabFactory(
+      """Literal|0|0
+        #BinOperator|2|+""".stripMargin('#')
+    )
+    val enumerator = new Enumerator(vocab, new InputsValuesManager(Map[String,AnyRef]() :: Nil))
+    assertTrue(enumerator.hasNext)
+    assertEquals("0", enumerator.next.code)
+    assertFalse(enumerator.hasNext)
+  }
 }

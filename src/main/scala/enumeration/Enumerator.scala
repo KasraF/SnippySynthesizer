@@ -37,7 +37,9 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extend
     true
   }
   var height = 0
-  def changeLevel():Unit = {
+  def changeLevel(): Boolean = {
+    if (currLevelProgs.isEmpty) return false
+
     currIter = vocab.nonLeaves
     height += 1
     prevLevelProgs ++= currLevelProgs
@@ -56,7 +58,8 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extend
           return None
       }
       else {
-        changeLevel()
+        if (!changeLevel())
+          return None
       }
     }
     currLevelProgs += res.get
