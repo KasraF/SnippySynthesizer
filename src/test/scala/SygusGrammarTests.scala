@@ -133,7 +133,10 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals(SortTypes.String,task.functionReturnType)
     assertEquals(List("name" -> SortTypes.String), task.functionParameters)
     assertTrue(task.isPBE)
+    assertEquals(4,task.examples.length)
     assertEquals(Example(Map("name" -> new PyString("Nancy FreeHafer")),new PyString("N.F.")),task.examples.head)
     assertEquals(Example(Map("name" -> new PyString("Jan Kotas")), new PyString("J.K.")),task.examples(2))
+    assertEquals(7, task.vocab.leaves.length)
+    assertEquals(10, task.vocab.nonLeaves.length)
   }
 }

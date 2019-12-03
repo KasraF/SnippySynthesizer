@@ -6,7 +6,7 @@ import org.junit.Assert._
 
 class EnumeratorTests  extends JUnitSuite{
   @Test def enumerateVocabNoOE: Unit = {
-    val vocab = new ast.VocabFactory(
+    val vocab = ast.VocabFactory(
       """Variable|0|input
         #Literal|0|False
         #Literal|0|0
@@ -78,7 +78,7 @@ class EnumeratorTests  extends JUnitSuite{
   }
 
   @Test def enumerateVocabWithOE: Unit = {
-    val vocab = new ast.VocabFactory(
+    val vocab = ast.VocabFactory(
       """Variable|0|x
         #Literal|0|False
         #Literal|0|0
@@ -99,7 +99,7 @@ class EnumeratorTests  extends JUnitSuite{
   }
 
   @Test def enumerateOEWithTwoValues: Unit = {
-    val vocab = new ast.VocabFactory(
+    val vocab = ast.VocabFactory(
       """Variable|0|x
         #Literal|0|False
         #Literal|0|0
@@ -123,7 +123,7 @@ class EnumeratorTests  extends JUnitSuite{
   }
 
   @Test def runOutOfEnumeration: Unit = {
-    val vocab = new ast.VocabFactory(
+    val vocab = ast.VocabFactory(
       """Literal|0|0
         #BinOperator|2|+""".stripMargin('#')
     )

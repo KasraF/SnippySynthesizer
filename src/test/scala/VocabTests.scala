@@ -17,7 +17,7 @@ class VocabTests  extends JUnitSuite{
       """Literal|0|0
         #Literal|0|'a'
         #Literal|0|True""".stripMargin('#')
-    val vocab = new VocabFactory(vocabString)
+    val vocab = VocabFactory(vocabString)
     for(term <- vocab.leaves) {
       assertEquals(0,term.arity)
       val l = term(Nil)
@@ -39,7 +39,7 @@ class VocabTests  extends JUnitSuite{
       """Variable|0|input
         #Literal|0|False
         #Variable|0|x""".stripMargin('#')
-    val vocab = new VocabFactory(vocabString)
+    val vocab = VocabFactory(vocabString)
     val vocabIterator = vocab.leaves
     assertTrue(vocabIterator.hasNext)
     val t1 = vocabIterator.next()(Nil)
@@ -90,7 +90,7 @@ class VocabTests  extends JUnitSuite{
         #Variable|0|input
         #BinOperator|2|/""".stripMargin('#')
 
-    val vocab = new VocabFactory(vocabString)
+    val vocab = VocabFactory(vocabString)
     val leavesIter = vocab.leaves
     val l1 = leavesIter.next()(Nil)
     assertEquals("bar", l1.name)
