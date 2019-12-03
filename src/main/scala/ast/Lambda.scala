@@ -1,6 +1,8 @@
 package ast
 
-class Lambda(val vars: List[Variable], val expr: ASTNode) extends ASTNode{
+import execution.Types.{Any, Types}
+
+class Lambda(val vars: List[Variable], val expr: ASTNode, val nodeType: Types = Any) extends ASTNode{
   override val name: String = vars.map(_.name).mkString("(",",",")")
   override val arity: Int = 1
   override val height: Int = -1

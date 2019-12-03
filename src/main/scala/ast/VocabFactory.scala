@@ -1,14 +1,17 @@
 package ast
 
+import execution.Types.{Types,Any}
+
 trait VocabMaker {
   val arity: Int
+  val childTypes: List[Types]
   def apply(children: List[ASTNode]): ASTNode
 }
 
 object VocabMaker {
   def apply(termDesc: String): VocabMaker = {
     val line = termDesc.trim.split('|')
-    assert(line.length == 3)
+    assert(line.length >= 3)
     line(0) match {
       case "Literal" => {
         assert(line(1) == "0")
@@ -18,6 +21,7 @@ object VocabMaker {
             new Literal(line(2))
           }
           override val arity: Int = 0
+          override val childTypes: List[Types] = Nil
         }
       }
       case "Variable" => {
@@ -28,6 +32,7 @@ object VocabMaker {
             new Variable(line(2))
           }
           override val arity: Int = 0
+          override val childTypes: List[Types] = Nil
         }
       }
       case "BinOperator" => {
@@ -38,6 +43,7 @@ object VocabMaker {
             new BinOperator(line(2),children(0),children(1))
           }
           override val arity: Int = 2
+          override val childTypes: List[Types] = List(Any,Any)
         }
       }
       case "FunctionCall" => new VocabMaker {
@@ -46,6 +52,7 @@ object VocabMaker {
           assert(arity == children.length)
           new FunctionCall(line(2), arity,children)
         }
+        override val childTypes: List[Types] = List.fill(arity)(Any)
       }
     }
   }

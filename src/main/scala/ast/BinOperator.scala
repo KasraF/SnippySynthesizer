@@ -1,6 +1,8 @@
 package ast
 
-class BinOperator(val name: String, val left: ASTNode, val right: ASTNode) extends ASTNode {
+import execution.Types.{Any, Types}
+
+class BinOperator(val name: String, val left: ASTNode, val right: ASTNode, val nodeType: Types = Any) extends ASTNode {
   override val arity: Int = 2
   override val height: Int = Math.max(left.height, right.height) + 1
 

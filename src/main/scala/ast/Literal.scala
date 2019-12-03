@@ -1,6 +1,8 @@
 package ast
 
-class Literal(val name: String) extends ASTNode{
+import execution.Types.{Types,Any}
+
+class Literal(val name: String, val nodeType: Types = Any) extends ASTNode{
   override val arity: Int = 0
   override val height: Int = 0
 
