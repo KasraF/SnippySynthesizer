@@ -8,10 +8,21 @@ class VocabTests  extends JUnitSuite{
     val vocabLine = "Literal|0|1"
     val maker: VocabMaker = VocabMaker(vocabLine)
     assertEquals(0,maker.arity)
+    assertTrue(maker.canMake(Nil))
     val node = maker(Nil)
     assertTrue(node.isInstanceOf[Literal])
     assertEquals("1", node.name)
   }
+  @Test def literalMakerWithType(): Unit = {
+    val vocabLine = "Literal|0|False|Bool"
+    val maker: VocabMaker = VocabMaker(vocabLine)
+    assertEquals(0,maker.arity)
+    val node = maker(Nil)
+    assertTrue(node.isInstanceOf[Literal])
+    assertEquals("False", node.name)
+    assertEquals(execution.Types.Bool,node.nodeType)
+  }
+
   @Test def vocabLiterals(): Unit = {
     val vocabString =
       """Literal|0|0
@@ -29,9 +40,21 @@ class VocabTests  extends JUnitSuite{
     val vocabLine = "Variable|0|x"
     val maker: VocabMaker = VocabMaker(vocabLine)
     assertEquals(0,maker.arity)
+    assertTrue(maker.canMake(Nil))
     val node = maker(Nil)
     assertTrue(node.isInstanceOf[Variable])
     assertEquals("x",node.name)
+    assertEquals(execution.Types.Any,node.nodeType)
+  }
+
+  @Test def variableMakerWithType(): Unit = {
+    val vocabLine = "Variable|0|x|Int"
+    val maker: VocabMaker = VocabMaker(vocabLine)
+    assertEquals(0,maker.arity)
+    val node = maker(Nil)
+    assertTrue(node.isInstanceOf[Variable])
+    assertEquals("x",node.name)
+    assertEquals(execution.Types.Int,node.nodeType)
   }
 
   @Test def vocabLeafTerms(): Unit = {
@@ -58,16 +81,49 @@ class VocabTests  extends JUnitSuite{
     val vocabLine = "BinOperator|2|and"
     val maker = VocabMaker(vocabLine)
     assertEquals(2,maker.arity)
+    assertTrue(maker.canMake(List(new Variable("x"), new Literal("1"))))
     val node = maker(List(new Variable("x"), new Literal("1")))
     assertTrue(node.isInstanceOf[BinOperator])
     assertEquals("and",node.name)
     assertEquals("x and 1", node.code)
   }
 
+  @Test def binopMakerWithType(): Unit = {
+    val vocabLine = "BinOperator|2|and|Bool|Bool|Bool"
+    val maker = VocabMaker(vocabLine)
+    assertEquals(2,maker.arity)
+    assertTrue(maker.canMake(List(new Variable("x", execution.Types.Bool), new Literal("False", execution.Types.Bool))))
+    val node = maker(List(new Variable("x", execution.Types.Bool), new Literal("False", execution.Types.Bool)))
+    assertTrue(node.isInstanceOf[BinOperator])
+    assertEquals("and",node.name)
+    assertEquals("x and False", node.code)
+    assertEquals(execution.Types.Bool,node.nodeType)
+  }
+
+  @Test def binopMakerWithBadChildTypes(): Unit = {
+    val vocabLine = "BinOperator|2|and|Bool|Bool|Bool"
+    val maker = VocabMaker(vocabLine)
+    assertEquals(2,maker.arity)
+    assertFalse(maker.canMake(List(new Variable("x",execution.Types.Bool), new Literal("1",execution.Types.Int))))
+
+  }
+
+  @Test def binopMakerWithAnyhildTypes(): Unit = {
+    val vocabLine = "BinOperator|2|and|Bool"
+    val maker = VocabMaker(vocabLine)
+    assertEquals(2,maker.arity)
+    val node = maker(List(new Variable("x"), new Literal("1")))
+    assertTrue(node.isInstanceOf[BinOperator])
+    assertEquals("and",node.name)
+    assertEquals("x and 1", node.code)
+    assertEquals(execution.Types.Bool,node.nodeType)
+  }
+
   @Test def funcCallMaker(): Unit = {
     val vocabLine = "FunctionCall|0|foo"
     val maker = VocabMaker(vocabLine)
     assertEquals(0,maker.arity)
+    assertTrue(maker.canMake(Nil))
     val node = maker(Nil)
     assertTrue(node.isInstanceOf[FunctionCall])
     assertEquals(0, node.arity)
