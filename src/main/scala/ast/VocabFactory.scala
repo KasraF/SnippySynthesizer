@@ -71,8 +71,9 @@ class VocabFactory(val leavesMakers: List[VocabMaker], val nodeMakers: List[Voca
 }
 
 object VocabFactory{
-  def apply(vocabString: String): VocabFactory = {
-    val (leavesMakers, nodeMakers) = vocabString.lines.map(l => VocabMaker(l)).toList.partition(m => m.arity == 0)
+  def apply(vocabString: String): VocabFactory = this(vocabString.lines.map(l => VocabMaker(l)).toList)
+  def apply(vocabMakers: Seq[VocabMaker]): VocabFactory = {
+    val (leavesMakers, nodeMakers) = vocabMakers.toList.partition(m => m.arity == 0)
     new VocabFactory(leavesMakers,nodeMakers)
   }
 }

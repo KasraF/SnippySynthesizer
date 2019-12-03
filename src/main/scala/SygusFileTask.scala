@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import collection.JavaConverters._
 import Logic.Logic
 import SyGuSParser.TermContext
-import ast.VocabFactory
+import ast.{VocabFactory, VocabMaker}
 import execution.{Eval, Example}
 import org.python.core.{PyInteger, PyObject, PyString, PyType}
 
@@ -42,7 +42,38 @@ class SygusFileTask(content: String) {
     constraints.map(constraint => SygusFileTask.exampleFromConstraint(constraint,functionName,functionReturnType,functionParameters)).toList
   }
 
-  lazy val vocab: VocabFactory = ???
+  lazy val vocab: VocabFactory = {
+    val nonTerminals = synthFun.grammarDef().groupedRuleList().asScala.map{nonTerminal =>
+      nonTerminal.Symbol().getSymbol.getText -> nonTerminal.sort().identifier().getText
+    }.toMap
+    val makers = synthFun.grammarDef().groupedRuleList().asScala.flatMap{ nonTerminal =>
+      nonTerminal.gTerm().asScala.filter(vocabElem =>
+        !vocabElem.bfTerm().bfTerm().isEmpty ||
+        vocabElem.bfTerm().identifier() == null ||
+        !nonTerminals.contains(vocabElem.bfTerm().identifier().Symbol().getText)
+      ).map { vocabElem =>
+        if (!vocabElem.bfTerm().bfTerm().isEmpty) //operator or func name
+          if (vocabElem.bfTerm().identifier().Symbol().getText.exists(c => c.isLetter)) //func name
+            VocabMaker((List("FunctionCall",
+                            vocabElem.bfTerm().bfTerm().size(),
+                            SygusFileTask.funcNameToPython(vocabElem.bfTerm().identifier().Symbol().getText,logic),
+                            nonTerminal.sort().identifier().getText) ++
+                            vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))).mkString("|"))
+          else if (vocabElem.bfTerm().bfTerm().size() == 2) //binary operator
+            VocabMaker((List("BinOperator",
+              2,
+              SygusFileTask.opNameToPython(vocabElem.bfTerm().identifier().Symbol().getText,logic),
+              nonTerminal.sort().identifier().getText) ++
+              vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))).mkString("|"))
+          else ???
+        else if (vocabElem.bfTerm().literal() != null)
+          VocabMaker("Literal|0|" + vocabElem.bfTerm().literal().getText + "|" + nonTerminal.sort().identifier().getText)
+        else //variable
+          VocabMaker("Variable|0|" + vocabElem.bfTerm().identifier().Symbol().getText + "|" + nonTerminal.sort().identifier().getText)
+      }
+    }
+    VocabFactory(makers)
+  }
 }
 
 object SygusFileTask{
@@ -70,4 +101,6 @@ object SygusFileTask{
       (isFuncApp(lhs,functionName) && rhs.literal() != null) || (lhs.literal != null && isFuncApp(rhs,functionName))
     }
   }
+  def funcNameToPython(funcName: String, logic: Logic): String = funcName
+  def opNameToPython(funcName: String, logic: Logic): String = funcName
 }
