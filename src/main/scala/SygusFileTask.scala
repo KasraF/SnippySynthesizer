@@ -53,19 +53,12 @@ class SygusFileTask(content: String) {
         !nonTerminals.contains(vocabElem.bfTerm().identifier().Symbol().getText)
       ).map { vocabElem =>
         if (!vocabElem.bfTerm().bfTerm().isEmpty) //operator or func name
-          if (vocabElem.bfTerm().identifier().Symbol().getText.exists(c => c.isLetter)) //func name
-            VocabMaker((List("FunctionCall",
-                            vocabElem.bfTerm().bfTerm().size(),
-                            SygusFileTask.funcNameToPython(vocabElem.bfTerm().identifier().Symbol().getText,logic),
-                            nonTerminal.sort().identifier().getText) ++
-                            vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))).mkString("|"))
-          else if (vocabElem.bfTerm().bfTerm().size() == 2) //binary operator
-            VocabMaker((List("BinOperator",
-              2,
-              SygusFileTask.opNameToPython(vocabElem.bfTerm().identifier().Symbol().getText,logic),
-              nonTerminal.sort().identifier().getText) ++
+            VocabMaker(
+              (SygusFileTask.funcNameToPythonDesc(
+                  vocabElem.bfTerm().identifier().Symbol().getText,
+                  vocabElem.bfTerm().bfTerm().size(),
+                  nonTerminal.sort().identifier().getText) ++
               vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))).mkString("|"))
-          else ???
         else if (vocabElem.bfTerm().literal() != null)
           VocabMaker("Literal|0|" + vocabElem.bfTerm().literal().getText + "|" + nonTerminal.sort().identifier().getText)
         else //variable
@@ -101,6 +94,65 @@ object SygusFileTask{
       (isFuncApp(lhs,functionName) && rhs.literal() != null) || (lhs.literal != null && isFuncApp(rhs,functionName))
     }
   }
-  def funcNameToPython(funcName: String, logic: Logic): String = funcName
+
+  def funcNameToPythonDesc(funcName: String, arity: Int, sort: String): List[Any] =
+    //translation table based on the semantics in http://cvc4.cs.stanford.edu/wiki/Strings
+    //and src/theory/evaluator.cpp in CVC4
+    funcName match {
+      case "str.++" => { //theoretically this can be of arity > 2?
+        assert(arity == 2 && sort == "String")
+        List("BinOperator",arity,"+",sort)
+      }
+      case "str.len" => {
+        assert(arity == 1 && sort == "Int")
+        List("FunctionCall", arity, "len", sort)
+      }
+      case "str.contains" => {
+        assert(arity == 2 && sort == "Bool")
+        List("BinOperator", arity, "in", sort)
+      }
+      case "str.indexof" => {
+        assert(arity == 3 && sort == "Int")
+        List("MethodCall", arity, "find",sort)
+      }
+      case "str.replace" => {
+        //according to src/util/regexp.cpp#L434, this is replace first
+        assert(arity == 3 && sort == "String")
+        //?.replace(?,?,1) where 1 == first
+        ???
+      }
+      case "str.replaceall" => {
+        //?.replace(?,?)
+        assert(arity == 3 && sort == "String")
+        List("MethodCall", arity, "replaceall",sort)
+      }
+      case "str.substr" => {
+        //?[?:?]
+        assert(arity == 3 && sort == "String")
+        List("Slicing", arity, " ", sort)
+      }
+      case "str.prefixof" => {
+        assert(arity == 2 && sort == "Bool")
+        List("MethodCall",2,"startswith",sort)
+      }
+      case "str.suffixof" => {
+        assert(arity == 2 && sort == "Bool")
+        List("MethodCall",2,"endswith",sort)
+      }
+      case "str.to.int" => {
+        assert(arity == 1 && sort == "Int")
+        List("FunctionCall",arity,"int",sort)
+      }
+      case "int.to.str" => {
+        assert(arity == 1 && sort == "String")
+        List("FunctionCall",arity,"str",sort)
+      }
+      case "str.at" => {
+        assert(arity == 2 && sort == "String")
+        List("RandomAccess",arity," ",sort) //actually wants the behavior of x[y:y+1]?
+      }
+      case _ => List("FunctionCall",arity,funcName,sort)
+    }
+
   def opNameToPython(funcName: String, logic: Logic): String = funcName
 }
