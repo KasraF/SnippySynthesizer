@@ -54,4 +54,16 @@ class ASTTests extends JUnitSuite{
     assertEquals("(x,y)",lambdaNode2.name)
     assertEquals("lambda x,y: x + y", lambdaNode2.code)
   }
+
+  @Test def methodNode(): Unit = {
+    val methodNode: ASTNode = new MethodCall("foo", 1, new Variable("x"),Nil)
+    assertEquals("foo",methodNode.name)
+    assertEquals(1,methodNode.height)
+    assertEquals("x.foo()",methodNode.code)
+
+    val methodNode2 = new MethodCall("bar",3,methodNode,List(new Variable("y"),methodNode))
+    assertEquals("bar",methodNode2.name)
+    assertEquals(2,methodNode2.height)
+    assertEquals("x.foo().bar(y,x.foo())",methodNode2.code)
+  }
 }

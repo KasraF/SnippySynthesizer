@@ -16,7 +16,7 @@ trait ASTNode {
   def toCodeInner(stringBuilder: StringBuilder)
 
   def wrapIfNeeded(stringBuilder: StringBuilder) = this match {
-    case _ : Literal | _ : Variable => {
+    case _ : Literal | _ : Variable | _ : FunctionCall | _ : MethodCall => {
       this.toCodeInner(stringBuilder)
     }
     case _ => {
