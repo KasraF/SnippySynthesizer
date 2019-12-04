@@ -66,4 +66,18 @@ class ASTTests extends JUnitSuite{
     assertEquals(2,methodNode2.height)
     assertEquals("x.foo().bar(y,x.foo())",methodNode2.code)
   }
+
+  @Test def slicingNode(): Unit = {
+    val slicingNode: ASTNode = new Slicing(new Variable("s"),new Literal("0"), new Literal("-1"))
+    assertEquals(3,slicingNode.arity)
+    assertEquals(1, slicingNode.height)
+    assertEquals("s[0:-1]",slicingNode.code)
+  }
+
+  @Test def raccessNode(): Unit = {
+    val raccessNode: ASTNode = new RandomAccess(new Variable("s"),new Literal("0"))
+    assertEquals(2,raccessNode.arity)
+    assertEquals(1,raccessNode.height)
+    assertEquals("s[0]",raccessNode.code)
+  }
 }

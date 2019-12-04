@@ -139,6 +139,25 @@ class VocabTests  extends JUnitSuite{
     assertEquals("ite(True,x,y)", node2.code)
   }
 
+  @Test def funcCallMakerTypes(): Unit = {
+    val vocabLine = "FunctionCall|3|ite|Any|Bool|Any|Any"
+    val maker = VocabMaker(vocabLine)
+    assertEquals(execution.Types.Any, maker.returnType)
+    assertTrue(maker.canMake(List(new Variable("x",execution.Types.Bool),new Literal("1",execution.Types.Int), new Literal("2"))))
+    assertFalse(maker.canMake(List(new Variable("x",execution.Types.Any),new Literal("1"), new Literal("2"))))
+    assertFalse(maker.canMake(List(new Variable("x",execution.Types.Int),new Literal("1"), new Literal("2"))))
+
+    val node = maker(List(new Variable("x",execution.Types.Bool),new Literal("1",execution.Types.Int), new Literal("2")))
+    assertTrue(node.isInstanceOf[FunctionCall])
+    assertEquals(execution.Types.Any,node.nodeType)
+    assertEquals("ite(x,1,2)",node.code)
+
+    val maker2 = VocabMaker("FunctionCall|0|foo|Int")
+    assertTrue(maker2.canMake(Nil))
+    assertEquals(execution.Types.Int,maker2.returnType)
+    assertEquals(execution.Types.Int,maker2(Nil).nodeType)
+  }
+
   @Test def vocabMixedArities(): Unit = {
     val vocabString =
       """FunctionCall|2|foo
@@ -160,5 +179,57 @@ class VocabTests  extends JUnitSuite{
     val n2 = nodesIter.next()(List(new Literal("5"), new Literal("10")))
     assertEquals("5 / 10", n2.code)
     assertFalse(nodesIter.hasNext)
+  }
+
+  @Test def methodCallMaker(): Unit = {
+    val vocabLine = "MethodCall|1|capitalize|String|String"
+    val maker = VocabMaker(vocabLine)
+    assertEquals(1, maker.arity)
+    assertEquals(execution.Types.String,maker.returnType)
+    assertTrue(maker.canMake(List(new Variable("x", execution.Types.String))))
+    assertFalse(maker.canMake(List(new Variable("x", execution.Types.Int))))
+    val node = maker(List(new Variable("x", execution.Types.String)))
+    assertEquals(execution.Types.String,node.nodeType)
+    assertEquals("x.capitalize()",node.code)
+
+    val vocabLine2 = "MethodCall|2|startswith|Bool|String|String"
+    val maker2 = VocabMaker(vocabLine2)
+    assertEquals(2,maker2.arity)
+    assertEquals(execution.Types.Bool,maker2.returnType)
+    val node2 = maker2(List(new Literal("''",execution.Types.String),new Literal("''",execution.Types.String)))
+    assertEquals(execution.Types.Bool,node2.nodeType)
+  }
+
+  @Test def randomAccessMaker(): Unit = {
+    val vocabLine = "RandomAccess|2| "
+    val maker = VocabMaker(vocabLine)
+    assertEquals(2, maker.arity)
+    assertTrue(maker.canMake(List(new Variable("x"),new Variable("y"))))
+    val node = maker(List(new Variable("x"),new Variable("y")))
+    assertEquals("x[y]",node.code)
+
+    val vocabLine2 = "RandomAccess|2| |String|String|Int"
+    val maker2 = VocabMaker(vocabLine2)
+    assertFalse(maker2.canMake(List(new Variable("x"),new Variable("y"))))
+    assertTrue(maker2.canMake(List(new Variable("x",execution.Types.String),new Variable("y",execution.Types.Int))))
+    val node2 = maker2(List(new Variable("x",execution.Types.String),new Variable("y",execution.Types.Int)))
+    assertEquals(execution.Types.String,node2.nodeType)
+  }
+
+  @Test def slicingMaker(): Unit = {
+    val vocabLine = "Slicing|3| "
+    val maker = VocabMaker(vocabLine)
+    assertEquals(3, maker.arity)
+    assertTrue(maker.canMake(List(new Variable("x"),new Variable("y"),new Literal("4"))))
+    val node = maker(List(new Variable("x"),new Variable("y"),new Literal("4")))
+    assertEquals("x[y:4]",node.code)
+
+    val vocabLine2 = "Slicing|3| |String|String|Int|Int"
+    val maker2 = VocabMaker(vocabLine2)
+    assertEquals(3,maker2.arity)
+    assertFalse(maker2.canMake(List(new Variable("x"),new Variable("y"),new Literal("4"))))
+    assertTrue(maker2.canMake(List(new Variable("x",execution.Types.String),new Variable("y",execution.Types.Int),new Literal("4",execution.Types.Int))))
+    val node2 = maker2(List(new Variable("x",execution.Types.String),new Variable("y",execution.Types.Int),new Literal("4",execution.Types.Int)))
+    assertEquals(execution.Types.String,node2.nodeType)
   }
 }
