@@ -96,6 +96,21 @@ object VocabMaker {
           new Slicing(children(0),children(1),children(2),returnType)
         }
       }
+      case "Macro" => {
+        new VocabMaker {
+          val macroPieces = line(2).split("\\?\\?")
+          assert(_arity == macroPieces.length - 1)
+          override val arity: Int = _arity
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+
+          override def apply(children: List[ASTNode]): ASTNode = {
+            assert(canMake(children))
+            new Macro(macroPieces,children,returnType)
+          }
+        }
+
+      }
     }
   }
 }

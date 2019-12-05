@@ -232,4 +232,23 @@ class VocabTests  extends JUnitSuite{
     val node2 = maker2(List(new Variable("x",execution.Types.String),new Variable("y",execution.Types.Int),new Literal("4",execution.Types.Int)))
     assertEquals(execution.Types.String,node2.nodeType)
   }
+
+  @Test def macroMaker(): Unit = {
+    val vocabLine = "Macro|3|??.replace(??,??,1)"
+    val maker = VocabMaker(vocabLine)
+    assertEquals(3, maker.arity)
+    assertTrue(maker.canMake(List(new Variable("x"), new Variable("y"), new Variable("z"))))
+    val node = maker(List(new Variable("x"), new Variable("y"), new Variable("z")))
+    assertEquals("x.replace(y,z,1)",node.code)
+
+    val vocabLine2 = "Macro|1|?? + 22|Int|Int"
+    val maker2 = VocabMaker(vocabLine2)
+    assertEquals(1,maker2.arity)
+    val child = new BinOperator("*",new Variable("x"),new Literal("2"),execution.Types.Int)
+    assertFalse(maker2.canMake(List(new Literal("3"))))
+    assertTrue(maker2.canMake(List(child)))
+    val node2 = maker2(List(child))
+    assertEquals(execution.Types.Int,node2.nodeType)
+    assertEquals("(x * 2) + 22", node2.code)
+  }
 }

@@ -80,4 +80,10 @@ class ASTTests extends JUnitSuite{
     assertEquals(1,raccessNode.height)
     assertEquals("s[0]",raccessNode.code)
   }
+  @Test def macroNode(): Unit = {
+    val macroNode: ASTNode = new Macro("??.replace(??,??,1)".split("\\?\\?"),List(new Variable("s"),new Literal("'a'"),new Literal("'b'")))
+    assertEquals(3, macroNode.arity)
+    assertEquals(1, macroNode.height)
+    assertEquals("s.replace('a','b',1)", macroNode.code)
+  }
 }

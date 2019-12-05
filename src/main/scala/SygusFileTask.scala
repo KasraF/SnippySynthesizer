@@ -118,8 +118,8 @@ object SygusFileTask{
       case "str.replace" => {
         //according to src/util/regexp.cpp#L434, this is replace first
         assert(arity == 3 && sort == "String")
-        //?.replace(?,?,1) where 1 == first
-        ???
+        //?.replace(?,?,1) where 1 == only first
+        List("Macro", arity, "??.replace(??,??,1)", sort)
       }
       case "str.replaceall" => {
         //?.replace(?,?)
