@@ -151,7 +151,7 @@ object SygusFileTask{
         assert(arity == 2 && sort == "String")
         List("RandomAccess",arity," ",sort) //actually wants the behavior of x[y:y+1]?
       }
-      case _ => List("FunctionCall",arity,funcName,sort)
+      case _ => List(if (funcName.exists(c => c.isLetter)) ???/*"FunctionCall"*/ else "BinOperator",arity,funcName,sort)
     }
 
   def opNameToPython(funcName: String, logic: Logic): String = funcName
