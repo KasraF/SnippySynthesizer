@@ -86,4 +86,10 @@ class ASTTests extends JUnitSuite{
     assertEquals(1, macroNode.height)
     assertEquals("s.replace('a','b',1)", macroNode.code)
   }
+  @Test def unaryOpPrefixNode(): Unit = {
+    val unOpNode: ASTNode = new PrefixUnOperator("not", new Variable("x"))
+    assertEquals(1, unOpNode.arity)
+    assertEquals(1, unOpNode.height)
+    assertEquals("not x", unOpNode.code)
+  }
 }

@@ -160,9 +160,13 @@ object SygusFileTask{
         assert(arity == 2)
         List("BinOperator", arity, funcName, sort) ++ childSorts
       }
+      case "not" => {
+        assert(arity == 1)
+        List("PrefixUnOperator", arity, "not", sort) ++ childSorts
+      }
       case _ => {
-        assert(!funcName.exists(c => c.isLetter), funcName)
-        List(if (funcName.exists(c => c.isLetter)) ???/*"FunctionCall"*/ else "BinOperator",arity,funcName,sort)
+        assert(!funcName.exists(c => c.isLetter) && arity == 2, funcName)
+        List("BinOperator",arity,funcName,sort)
       }
     }
 

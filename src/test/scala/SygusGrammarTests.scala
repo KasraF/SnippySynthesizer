@@ -13,13 +13,19 @@ import collection.JavaConverters._
 
 class SygusGrammarTests extends JUnitSuite{
 //  @Test def runDir: Unit = {
-//    val dir = new File("C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track")
-//    val files = dir.listFiles(new FilenameFilter {
+//    val dirs = List("C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track",
+//                      "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony",
+//                      "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\from_2018").map(new File(_))
+//    val files = dirs.flatMap(d => d.listFiles(new FilenameFilter {
 //      override def accept(dir: File, name: String): Boolean = name.endsWith(".sl")
-//    })
+//    }))
+//    //val files = List(new File("C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\30732554.sl"))
 //    files.foreach{f =>
-//      val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromFileName(f.getAbsolutePath))))
-//      println(parser.syGuS().cmd().asScala.map(c => c.getText).mkString(","))
+//      //val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromFileName(f.getAbsolutePath))))
+//      println(f.getAbsoluteFile)
+//      val task = new SygusFileTask(scala.io.Source.fromFile(f).mkString)
+//      println(task.vocab.leavesMakers.length)
+//      println(task.vocab.nodeMakers.length)
 //    }
 //
 //  }

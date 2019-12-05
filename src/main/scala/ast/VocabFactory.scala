@@ -111,6 +111,17 @@ object VocabMaker {
         }
 
       }
+      case "PrefixUnOperator" => new VocabMaker {
+        assert(_arity == 1)
+        override val arity: Int = 1
+        override val childTypes: List[Types] = childrenTypes
+        override val returnType: Types = retType
+
+        override def apply(children: List[ASTNode]): ASTNode = {
+          assert(canMake(children))
+          new PrefixUnOperator(line(2),children(0),returnType)
+        }
+      }
     }
   }
 }

@@ -251,4 +251,23 @@ class VocabTests  extends JUnitSuite{
     assertEquals(execution.Types.Int,node2.nodeType)
     assertEquals("(x * 2) + 22", node2.code)
   }
+
+  @Test def unaryOpMaker(): Unit = {
+    val vocabLine = "PrefixUnOperator|1|not"
+    val maker = VocabMaker(vocabLine)
+    assertEquals(1, maker.arity)
+    assertTrue(maker.canMake(new Variable("x") :: Nil))
+    val node = maker(List(new Variable("x")))
+    assertEquals("not x", node.code)
+
+    val vocabLine2 = "PrefixUnOperator|1|not|Bool|Bool"
+    val maker2 = VocabMaker(vocabLine2)
+    assertEquals(execution.Types.Bool,maker2.returnType)
+    assertFalse(maker2.canMake(new Variable("x") :: Nil))
+    assertTrue(maker2.canMake(new PrefixUnOperator("not", node, execution.Types.Bool) :: Nil))
+    val node2 = maker2(new PrefixUnOperator("not", node, execution.Types.Bool) :: Nil)
+    assertEquals(execution.Types.Bool,node2.nodeType)
+    assertEquals(3, node2.height)
+    assertEquals("not (not (not x))", node2.code)
+  }
 }
