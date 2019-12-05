@@ -54,11 +54,12 @@ class SygusFileTask(content: String) {
       ).map { vocabElem =>
         if (!vocabElem.bfTerm().bfTerm().isEmpty) //operator or func name
             VocabMaker(
-              (SygusFileTask.funcNameToPythonDesc(
+              SygusFileTask.funcNameToPythonDesc(
                   vocabElem.bfTerm().identifier().Symbol().getText,
                   vocabElem.bfTerm().bfTerm().size(),
-                  nonTerminal.sort().identifier().getText) ++
-              vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))).mkString("|"))
+                  nonTerminal.sort().identifier().getText,
+                  vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))
+              ).mkString("|"))
         else if (vocabElem.bfTerm().literal() != null)
           VocabMaker("Literal|0|" + vocabElem.bfTerm().literal().getText + "|" + nonTerminal.sort().identifier().getText)
         else //variable
@@ -95,63 +96,74 @@ object SygusFileTask{
     }
   }
 
-  def funcNameToPythonDesc(funcName: String, arity: Int, sort: String): List[Any] =
+  def funcNameToPythonDesc(funcName: String, arity: Int, sort: String, childSorts: Seq[String]): List[Any] =
     //translation table based on the semantics in http://cvc4.cs.stanford.edu/wiki/Strings
     //and src/theory/evaluator.cpp in CVC4
     funcName match {
       case "str.++" => { //theoretically this can be of arity > 2?
         assert(arity == 2 && sort == "String")
-        List("BinOperator",arity,"+",sort)
+        List("BinOperator",arity,"+",sort) ++ childSorts
       }
       case "str.len" => {
         assert(arity == 1 && sort == "Int")
-        List("FunctionCall", arity, "len", sort)
+        List("FunctionCall", arity, "len", sort) ++ childSorts
       }
       case "str.contains" => {
         assert(arity == 2 && sort == "Bool")
-        List("BinOperator", arity, "in", sort)
+        List("BinOperator", arity, "in", sort) ++ childSorts
       }
       case "str.indexof" => {
         assert(arity == 3 && sort == "Int")
-        List("MethodCall", arity, "find",sort)
+        List("MethodCall", arity, "find",sort) ++ childSorts
       }
       case "str.replace" => {
         //according to src/util/regexp.cpp#L434, this is replace first
         assert(arity == 3 && sort == "String")
         //?.replace(?,?,1) where 1 == only first
-        List("Macro", arity, "??.replace(??,??,1)", sort)
+        List("Macro", arity, "??.replace(??,??,1)", sort) ++ childSorts
       }
       case "str.replaceall" => {
         //?.replace(?,?)
         assert(arity == 3 && sort == "String")
-        List("MethodCall", arity, "replaceall",sort)
+        List("MethodCall", arity, "replaceall",sort) ++ childSorts
       }
       case "str.substr" => {
         //?[?:?]
         assert(arity == 3 && sort == "String")
-        List("Slicing", arity, " ", sort)
+        List("Slicing", arity, " ", sort) ++ childSorts
       }
       case "str.prefixof" => {
         assert(arity == 2 && sort == "Bool")
-        List("MethodCall",2,"startswith",sort)
+        List("MethodCall",2,"startswith",sort) ++ childSorts
       }
       case "str.suffixof" => {
         assert(arity == 2 && sort == "Bool")
-        List("MethodCall",2,"endswith",sort)
+        List("MethodCall",2,"endswith",sort) ++ childSorts
       }
       case "str.to.int" => {
         assert(arity == 1 && sort == "Int")
-        List("FunctionCall",arity,"int",sort)
+        List("FunctionCall",arity,"int",sort) ++ childSorts
       }
       case "int.to.str" => {
         assert(arity == 1 && sort == "String")
-        List("FunctionCall",arity,"str",sort)
+        List("FunctionCall",arity,"str",sort) ++ childSorts
       }
       case "str.at" => {
         assert(arity == 2 && sort == "String")
-        List("RandomAccess",arity," ",sort) //actually wants the behavior of x[y:y+1]?
+        List("RandomAccess",arity," ",sort)  ++ childSorts//actually wants the behavior of x[y:y+1]?
       }
-      case _ => List(if (funcName.exists(c => c.isLetter)) ???/*"FunctionCall"*/ else "BinOperator",arity,funcName,sort)
+      case "ite" => {
+        assert(arity == 3)
+        List("Macro",arity,"?? if ?? else ??",sort, childSorts(1), childSorts(0), childSorts(2)) //child1 if child0 else child2
+      }
+      case "and" | "or" => {
+        assert(arity == 2)
+        List("BinOperator", arity, funcName, sort) ++ childSorts
+      }
+      case _ => {
+        assert(!funcName.exists(c => c.isLetter), funcName)
+        List(if (funcName.exists(c => c.isLetter)) ???/*"FunctionCall"*/ else "BinOperator",arity,funcName,sort)
+      }
     }
 
   def opNameToPython(funcName: String, logic: Logic): String = funcName

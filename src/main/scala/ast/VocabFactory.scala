@@ -12,7 +12,7 @@ trait VocabMaker {
 
 object VocabMaker {
   def apply(termDesc: String): VocabMaker = {
-    val line = termDesc.split('|').map(_.trim)
+    val line = termDesc.split("\\|(?=([^\\\"]*\\\"[^\\\"]*\\\")*[^\\\"]*$)",-1).map(_.trim)
     assert(line.length >= 3)
     val retType = if (line.length > 3) execution.Types.withName(line(3)) else Any
     val _arity = line(1).toInt
@@ -98,7 +98,7 @@ object VocabMaker {
       }
       case "Macro" => {
         new VocabMaker {
-          val macroPieces = line(2).split("\\?\\?")
+          val macroPieces = line(2).split("\\?\\?", -1)
           assert(_arity == macroPieces.length - 1)
           override val arity: Int = _arity
           override val childTypes: List[Types] = childrenTypes
