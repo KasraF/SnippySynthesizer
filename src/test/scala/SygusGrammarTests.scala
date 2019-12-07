@@ -3,7 +3,7 @@ import org.scalatest.junit.JUnitSuite
 import org.junit.Assert._
 import java.io.{File, FilenameFilter}
 
-import execution.Example
+import execution.{Eval, Example}
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import org.python.core.PyString
 
@@ -145,5 +145,47 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals(8, task.vocab.leaves.length)
     assertEquals(10, task.vocab.nonLeaves.length)
     assertEquals(List("name","\" \"","\".\"","0","1","2","True","False"),task.vocab.leaves.map(_.apply(Nil).code).toList)
+  }
+
+  @Test def equalityTest = {
+    val slFileContent = """(set-logic SLIA)
+                          |(synth-fun f ((col1 String) (col2 String)) String
+                          |    ((Start String (ntString))
+                          |     (ntString String (col1 col2 " " "," "USA" "PA" "CT" "CA" "MD" "NY"
+                          |                       (str.++ ntString ntString)
+                          |                       (str.replace ntString ntString ntString)
+                          |                       (str.at ntString ntInt)
+                          |                       (ite ntBool ntString ntString)
+                          |                       (str.substr ntString ntInt ntInt)))
+                          |      (ntInt Int (0 1 2
+                          |                  (+ ntInt ntInt)
+                          |                  (- ntInt ntInt)
+                          |                  (str.len ntString)
+                          |                  (str.indexof ntString ntString ntInt)))
+                          |      (ntBool Bool (true false
+                          |                    (str.prefixof ntString ntString)
+                          |                    (str.suffixof ntString ntString)))))
+                          |
+                          |
+                          |(declare-var col1 String)
+                          |(declare-var col2 String)
+                          |
+                          |(constraint (= (f "University of Pennsylvania" "Phialdelphia, PA, USA")
+                          |                  "University of Pennsylvania, Phialdelphia, PA, USA"))
+                          |(constraint (= (f "Cornell University" "Ithaca, New York, USA")
+                          |                  "Cornell University, Ithaca, New York, USA"))
+                          |(constraint (= (f "Penn" "Philadelphia, PA, USA")
+                          |                  "Penn, Philadelphia, PA, USA"))
+                          |(constraint (= (f "University of Michigan" "Ann Arbor, MI, USA")
+                          |                  "University of Michigan, Ann Arbor, MI, USA"))
+                          |
+                          |(check-synth)""".stripMargin
+    val task = new SygusFileTask(slFileContent)
+    assertEquals(Map("col1" -> new PyString("University of Pennsylvania"),"col2" -> new PyString("Phialdelphia, PA, USA")),task.examples.head.input)
+    assertEquals(new PyString("University of Pennsylvania, Phialdelphia, PA, USA"),task.examples.head.output)
+
+    val code = "(col1 + \",\") + (\" \" + col2)"
+    for(ex <- task.examples)
+      assertEquals(ex.output, Eval(code,ex.input))
   }
 }
