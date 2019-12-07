@@ -50,8 +50,11 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extend
     var res : Option[ASTNode] = None
     while(res.isEmpty) {
       if (childrenIterator.hasNext) {
-        val prog = rootMaker(childrenIterator.next())
-        if (oeManager.isRepresentative(prog)) res = Some(prog)
+        val children = childrenIterator.next()
+        if (rootMaker.canMake(children)) {
+          val prog = rootMaker(children)
+          if (oeManager.isRepresentative(prog)) res = Some(prog)
+        }
       }
       else if (currIter.hasNext) {
         if (!advanceRoot())

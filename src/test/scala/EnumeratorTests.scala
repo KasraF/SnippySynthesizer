@@ -132,4 +132,33 @@ class EnumeratorTests  extends JUnitSuite{
     assertEquals("0", enumerator.next.code)
     assertFalse(enumerator.hasNext)
   }
+
+  @Test def enumerationWithTypes: Unit = {
+    val vocab = ast.VocabFactory(
+      """Literal|0|0|Int
+        #Literal|0|1|Int
+        #Literal|0|False|Bool
+        #Literal|0|True|Bool
+        #BinOperator|2|and|Bool|Bool|Bool
+        #BinOperator|2|<=|Bool|Int|Int
+        #BinOperator|2|==|Bool|Int|Int
+        #BinOperator|2|+|Int|Int|Int""".stripMargin('#')
+    )
+    val enumerator = new Enumerator(vocab, new OEValuesManager {
+      override def isRepresentative(program: ASTNode): Boolean = true
+    })
+    assertEquals("0",enumerator.next().code)
+    assertEquals("1",enumerator.next().code)
+    assertEquals("False",enumerator.next().code)
+    assertEquals("True",enumerator.next().code)
+    assertEquals("False and False", enumerator.next.code)
+    assertEquals("False and True", enumerator.next.code)
+    assertEquals("True and False", enumerator.next.code)
+    assertEquals("True and True", enumerator.next.code)
+    assertEquals("0 <= 0", enumerator.next.code)
+    assertEquals("0 <= 1", enumerator.next.code)
+    assertEquals("1 <= 0", enumerator.next.code)
+    assertEquals("1 <= 1", enumerator.next.code)
+    assertEquals("0 == 0", enumerator.next.code)
+  }
 }
