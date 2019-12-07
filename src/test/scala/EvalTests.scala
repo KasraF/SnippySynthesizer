@@ -5,6 +5,7 @@ import org.scalatest.junit.JUnitSuite
 import org.python.util.PythonInterpreter
 import org.junit.Assert._
 import execution.Eval
+import org.python.core.{PyBaseException, PyType}
 
 class EvalTests  extends JUnitSuite {
 
@@ -58,5 +59,19 @@ class EvalTests  extends JUnitSuite {
     val after = Calendar.getInstance().getTimeInMillis
     println("total time: " + (after - before))
     println((after - before).toDouble / 10000)
+  }
+
+  @Test def evalAnException: Unit = {
+    val code = "' '[1]"
+    val res = Eval(code,Map.empty)
+    assertTrue("didn't throw",true)
+    assertTrue(res.asInstanceOf[PyType].isSubType(PyBaseException.TYPE))
+    assertEquals("IndexError",res.asInstanceOf[PyType].getName)
+
+    val res2 = Eval("'   '[8]",Map.empty)
+    assertTrue(res == res2)
+
+    val res3 = Eval("foo",Map.empty)
+    assertFalse(res2 == res3)
   }
 }
