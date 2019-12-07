@@ -61,7 +61,9 @@ class SygusFileTask(content: String) {
                   vocabElem.bfTerm().bfTerm().asScala.map(child => nonTerminals(child.identifier().Symbol().getText))
               ).mkString("|"))
         else if (vocabElem.bfTerm().literal() != null)
-          VocabMaker("Literal|0|" + vocabElem.bfTerm().literal().getText + "|" + nonTerminal.sort().identifier().getText)
+          if (vocabElem.bfTerm().literal().getText == "true" || vocabElem.bfTerm().literal().getText == "false")
+            VocabMaker("Literal|0|" + vocabElem.bfTerm().literal().getText.capitalize + "|" + nonTerminal.sort().identifier().getText)
+          else VocabMaker("Literal|0|" + vocabElem.bfTerm().literal().getText + "|" + nonTerminal.sort().identifier().getText)
         else //variable
           VocabMaker("Variable|0|" + vocabElem.bfTerm().identifier().Symbol().getText + "|" + nonTerminal.sort().identifier().getText)
       }
