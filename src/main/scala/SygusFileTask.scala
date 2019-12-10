@@ -168,7 +168,7 @@ object SygusFileTask{
       }
       case _ => {
         assert(!funcName.exists(c => c.isLetter) && arity == 2, funcName)
-        List("BinOperator",arity,funcName,sort)
+        List("BinOperator",arity,funcName,sort) ++ childSorts
       }
     }
 

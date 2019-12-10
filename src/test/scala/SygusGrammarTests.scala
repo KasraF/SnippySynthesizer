@@ -3,7 +3,8 @@ import org.scalatest.junit.JUnitSuite
 import org.junit.Assert._
 import java.io.{File, FilenameFilter}
 
-import execution.{Eval, Example}
+import ast.Literal
+import execution.{Eval, Example, Types}
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import org.python.core.PyString
 
@@ -188,4 +189,19 @@ class SygusGrammarTests extends JUnitSuite{
     for(ex <- task.examples)
       assertEquals(ex.output, Eval(code,ex.input))
   }
+
+  @Test def intsInVocab(): Unit = {
+    val vocabFileContent = """(set-logic SLIA)
+                             |(synth-fun f ((col1 String) (col2 String)) String
+                             |    ((Start String (ntString))
+                             |     (ntString String (col1 col2))
+                             |      (ntInt Int ((+ ntInt ntInt)
+                             |                  (- ntInt ntInt)))))""".stripMargin
+    val task = new SygusFileTask(vocabFileContent)
+    val children = task.vocab.leaves().map(l => l(Nil)).toList
+    assertEquals(2,children.length)
+    assertTrue(children.forall(c => c.nodeType == Types.String))
+    assertTrue(task.vocab.nonLeaves().forall(m => !m.canMake(children)))
+  }
+
 }
