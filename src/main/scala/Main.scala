@@ -2,7 +2,9 @@ import enumeration.InputsValuesManager
 import execution.Eval
 
 object Main extends App {
-  val filename = "C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"//"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\from_2018\\bikes_small.sl"//args(0)
+  val filename = "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\convert-text-to-numbers.sl"
+    //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
+    // "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\from_2018\\bikes_small.sl"//args(0)
   val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
   assert(task.isPBE)
   val oeManager = new InputsValuesManager(task.examples.map(_.input))

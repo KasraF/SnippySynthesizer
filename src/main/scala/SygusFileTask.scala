@@ -75,6 +75,8 @@ class SygusFileTask(content: String) {
 object SygusFileTask{
   def toPyType(literal: SyGuSParser.LiteralContext, returnType: SortTypes.SortTypes): PyObject = returnType match {
     case SortTypes.String => Eval(literal.StringConst().toString,Map.empty)
+    case SortTypes.Int => Eval(literal.Numeral().toString,Map.empty)
+    case SortTypes.Bool => Eval(literal.BoolConst().toString.capitalize,Map.empty)
   }
 
   def exampleFromConstraint(constraint: TermContext, functionName: String, retType: SortTypes.SortTypes, parameters: Seq[(String,SortTypes.SortTypes)]): Example = {
@@ -165,6 +167,10 @@ object SygusFileTask{
       case "not" => {
         assert(arity == 1)
         List("PrefixUnOperator", arity, "not", sort) ++ childSorts
+      }
+      case "=" => {
+        assert(arity == 2 && sort == "Bool")
+        List("BinOperator", arity,"==",sort) ++ childSorts
       }
       case _ => {
         assert(!funcName.exists(c => c.isLetter) && arity == 2, funcName)
