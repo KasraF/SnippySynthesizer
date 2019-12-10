@@ -9,4 +9,8 @@ class Literal(val name: String, val nodeType: Types = Any) extends ASTNode{
   override def toCodeInner(stringBuilder: StringBuilder): Unit = {
     stringBuilder.append(name)
   }
+
+  override def equals(obj: scala.Any): Boolean = if (obj.isInstanceOf[Literal])
+    obj.asInstanceOf[Literal].name == this.name && obj.asInstanceOf[Literal].nodeType == this.nodeType
+  else false
 }

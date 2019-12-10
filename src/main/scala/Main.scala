@@ -14,7 +14,7 @@ object Main extends App {
       sys.exit(0)
     }
 
-    if (i % 100 == 0) {
+    if (i % 1000 == 0) {
       println(i + ": " + code)
     }
   }

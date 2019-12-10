@@ -9,4 +9,8 @@ class Variable(val name: String, val nodeType: Types = Any) extends ASTNode {
   override def toCodeInner(stringBuilder: StringBuilder): Unit = {
     stringBuilder.append(name)
   }
+
+  override def equals(obj: scala.Any): Boolean = if (obj.isInstanceOf[Variable])
+    obj.asInstanceOf[Variable].name == this.name && obj.asInstanceOf[Variable].nodeType == this.nodeType
+  else false
 }

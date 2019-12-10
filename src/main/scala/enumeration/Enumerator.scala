@@ -38,6 +38,7 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extend
   }
   var height = 0
   def changeLevel(): Boolean = {
+    println(currLevelProgs.length)
     if (currLevelProgs.isEmpty) return false
 
     currIter = vocab.nonLeaves
@@ -53,7 +54,8 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extend
         val children = childrenIterator.next()
         if (rootMaker.canMake(children)) {
           val prog = rootMaker(children)
-          if (oeManager.isRepresentative(prog)) res = Some(prog)
+          if (EnumerationHeuristics.keep(prog) && oeManager.isRepresentative(prog))
+            res = Some(prog)
         }
       }
       else if (currIter.hasNext) {
