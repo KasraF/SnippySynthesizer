@@ -124,12 +124,14 @@ object SygusFileTask{
         //according to src/util/regexp.cpp#L434, this is replace first
         assert(arity == 3 && sort == "String")
         //?.replace(?,?,1) where 1 == only first
-        List("Macro", arity, "??.replace(??,??,1)", sort) ++ childSorts
+        //List("Macro", arity, "??.replace(??,??,1)", sort) ++ childSorts
+        List("MethodCall", arity, "replace",sort) ++ childSorts
       }
       case "str.replaceall" => {
         //?.replace(?,?)
         assert(arity == 3 && sort == "String")
-        List("MethodCall", arity, "replaceall",sort) ++ childSorts
+        //List("MethodCall", arity, "replace",sort) ++ childSorts
+        ???
       }
       case "str.substr" => {
         //?[?:?]
