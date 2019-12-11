@@ -1,23 +1,23 @@
 import ast.ASTNode
 import enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 import org.junit.Test
 import org.junit.Assert._
 
 class EnumeratorTests  extends JUnitSuite{
   @Test def enumerateVocabNoOE: Unit = {
-    val vocab = ast.VocabFactory(
-      """Variable|0|input
-        #Literal|0|False
-        #Literal|0|0
-        #Literal|0|1
-        #BinOperator|2|+
-        #BinOperator|2|<=
-        #FunctionCall|1|str""".stripMargin('#')
+    val vocab = ast.VocabFactory(???
+//      """Variable|0|input
+//        #Literal|0|False
+//        #Literal|0|0
+//        #Literal|0|1
+//        #BinOperator|2|+
+//        #BinOperator|2|<=
+//        #FunctionCall|1|str""".stripMargin('#')
     )
     val enumerator = new Enumerator(vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
-    })
+    },Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("input",enumerator.next().code)
     assertTrue(enumerator.hasNext)
@@ -78,17 +78,17 @@ class EnumeratorTests  extends JUnitSuite{
   }
 
   @Test def enumerateVocabWithOE: Unit = {
-    val vocab = ast.VocabFactory(
-      """Variable|0|x
-        #Literal|0|False
-        #Literal|0|0
-        #Literal|0|1
-        #BinOperator|2|+
-        #BinOperator|2|<=
-        #FunctionCall|1|str""".stripMargin('#')
+    val vocab = ast.VocabFactory(???
+//      """Variable|0|x
+//        #Literal|0|False
+//        #Literal|0|0
+//        #Literal|0|1
+//        #BinOperator|2|+
+//        #BinOperator|2|<=
+//        #FunctionCall|1|str""".stripMargin('#')
     )
     val inputValues: Map[String,AnyRef] = Map("x" -> 1.asInstanceOf[AnyRef])
-    val enumerator = new Enumerator(vocab, new InputsValuesManager(inputValues :: Nil))
+    val enumerator = new Enumerator(vocab, new InputsValuesManager,inputValues :: Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("x",enumerator.next().code)
     assertEquals("False",enumerator.next().code)
@@ -99,17 +99,17 @@ class EnumeratorTests  extends JUnitSuite{
   }
 
   @Test def enumerateOEWithTwoValues: Unit = {
-    val vocab = ast.VocabFactory(
-      """Variable|0|x
-        #Literal|0|False
-        #Literal|0|0
-        #Literal|0|1
-        #BinOperator|2|+
-        #BinOperator|2|<=
-        #FunctionCall|1|str""".stripMargin('#')
+    val vocab = ast.VocabFactory(???
+//      """Variable|0|x
+//        #Literal|0|False
+//        #Literal|0|0
+//        #Literal|0|1
+//        #BinOperator|2|+
+//        #BinOperator|2|<=
+//        #FunctionCall|1|str""".stripMargin('#')
     )
     val inputValues: List[Map[String,AnyRef]] = List(Map("x" -> 1.asInstanceOf[AnyRef]), Map("x" -> 0.asInstanceOf[AnyRef]))
-    val enumerator = new Enumerator(vocab, new InputsValuesManager(inputValues))
+    val enumerator = new Enumerator(vocab, new InputsValuesManager,inputValues)
     assertTrue(enumerator.hasNext)
     assertEquals("x",enumerator.next().code)
     assertEquals("False",enumerator.next().code)
@@ -123,30 +123,30 @@ class EnumeratorTests  extends JUnitSuite{
   }
 
   @Test def runOutOfEnumeration: Unit = {
-    val vocab = ast.VocabFactory(
-      """Literal|0|0
-        #BinOperator|2|+""".stripMargin('#')
+    val vocab = ast.VocabFactory( ???
+//      """Literal|0|0
+//        #BinOperator|2|+""".stripMargin('#')
     )
-    val enumerator = new Enumerator(vocab, new InputsValuesManager(Map[String,AnyRef]() :: Nil))
+    val enumerator = new Enumerator(vocab, new InputsValuesManager, Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("0", enumerator.next.code)
     assertFalse(enumerator.hasNext)
   }
 
   @Test def enumerationWithTypes: Unit = {
-    val vocab = ast.VocabFactory(
-      """Literal|0|0|Int
-        #Literal|0|1|Int
-        #Literal|0|False|Bool
-        #Literal|0|True|Bool
-        #BinOperator|2|and|Bool|Bool|Bool
-        #BinOperator|2|<=|Bool|Int|Int
-        #BinOperator|2|==|Bool|Int|Int
-        #BinOperator|2|+|Int|Int|Int""".stripMargin('#')
+    val vocab = ast.VocabFactory(???
+//      """Literal|0|0|Int
+//        #Literal|0|1|Int
+//        #Literal|0|False|Bool
+//        #Literal|0|True|Bool
+//        #BinOperator|2|and|Bool|Bool|Bool
+//        #BinOperator|2|<=|Bool|Int|Int
+//        #BinOperator|2|==|Bool|Int|Int
+//        #BinOperator|2|+|Int|Int|Int""".stripMargin('#')
     )
     val enumerator = new Enumerator(vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
-    })
+    },Nil)
     assertEquals("0",enumerator.next().code)
     assertEquals("1",enumerator.next().code)
     assertEquals("False",enumerator.next().code)

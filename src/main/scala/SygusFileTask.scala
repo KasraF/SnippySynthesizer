@@ -71,7 +71,7 @@ object SygusFileTask{
           new VocabMaker {
             override val arity: Int = 0
             override val childTypes: List[Types] = Nil
-            override val returnType: Types = returnType
+            override val returnType: Types = retType
 
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new IntLiteral(lit, contexts.length)
           }
@@ -81,7 +81,7 @@ object SygusFileTask{
           new VocabMaker {
             override val arity: Int = 0
             override val childTypes: List[Types] = Nil
-            override val returnType: Types = returnType
+            override val returnType: Types = retType
 
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new StringLiteral(lit, contexts.length)
           }
@@ -91,7 +91,7 @@ object SygusFileTask{
           new VocabMaker {
             override val arity: Int = 0
             override val childTypes: List[Types] = Nil
-            override val returnType: Types = returnType
+            override val returnType: Types = retType
 
             override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new BoolLiteral(lit, contexts.length)
           }
@@ -103,7 +103,7 @@ object SygusFileTask{
         new VocabMaker {
           override val arity: Int = 0
           override val childTypes: List[Types] = Nil
-          override val returnType: Types = returnType
+          override val returnType: Types = retType
 
           override def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = new IntLiteral(lit, contexts.length)
         }
@@ -114,21 +114,21 @@ object SygusFileTask{
         case Types.Int => new VocabMaker {
           override val arity: Int = 0
           override val childTypes: List[Types] = Nil
-          override val returnType: Types = returnType
+          override val returnType: Types = retType
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new IntVariable(varname,contexts)
         }
         case Types.String => new VocabMaker {
           override val arity: Int = 0
           override val childTypes: List[Types] = Nil
-          override val returnType: Types = returnType
+          override val returnType: Types = retType
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new StringVariable(varname,contexts)
         }
         case Types.Bool => new VocabMaker {
           override val arity: Int = 0
           override val childTypes: List[Types] = Nil
-          override val returnType: Types = returnType
+          override val returnType: Types = retType
 
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolVariable(varname,contexts)
         }

@@ -1,10 +1,5 @@
 package ast
 
-object Types extends Enumeration {
-  type Types = Value
-  val String,Int,Bool = Value
-}
-
 trait ASTNode {
   val nodeType: Types.Types
   val values: List[Any]

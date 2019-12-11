@@ -1,12 +1,11 @@
 package enumeration
+import ast.ASTNode
 
-import ast.{ASTNode, BinOperator, Literal}
-import execution.Types
 
 import scala.collection.mutable.ListBuffer
 
 object EnumerationHeuristics {
-  def keep(program: ASTNode): Boolean = program match {
+  def keep(program: ASTNode): Boolean = ??? /*program match {
     case binNode: BinOperator => if (binNode.name == "+" && binNode.nodeType == Types.String) {
       val literals = ListBuffer[Option[Literal]]()
       collectAddedLiterals(binNode,literals)
@@ -29,6 +28,6 @@ object EnumerationHeuristics {
     else if (right.isInstanceOf[BinOperator] && right.nodeType == Types.String && right.name == "+")
       collectAddedLiterals(right.asInstanceOf[BinOperator],acc)
     else acc += None
-  }
+  }*/
 
 }

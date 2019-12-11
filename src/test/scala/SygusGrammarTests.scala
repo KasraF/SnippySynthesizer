@@ -1,12 +1,10 @@
 import org.junit.Test
-import org.scalatest.junit.JUnitSuite
+import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._
 import java.io.{File, FilenameFilter}
 
-import ast.Literal
-import execution.{Eval, Example, Types}
+import ast.Types
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
-import org.python.core.PyString
 
 import collection.JavaConverters._
 
@@ -100,8 +98,8 @@ class SygusGrammarTests extends JUnitSuite{
     val task = new SygusFileTask(slFileContent)
     assertEquals(Logic.LIA,task.logic)
     assertEquals("comm",task.functionName)
-    assertEquals(SortTypes.Int,task.functionReturnType)
-    assertEquals(List("x" -> SortTypes.Int,"y" -> SortTypes.Int),task.functionParameters)
+    assertEquals(Types.Int,task.functionReturnType)
+    assertEquals(List("x" -> Types.Int,"y" -> Types.Int),task.functionParameters)
     assertFalse(task.isPBE)
   }
 
@@ -137,15 +135,15 @@ class SygusGrammarTests extends JUnitSuite{
     val task = new SygusFileTask(slFileContent)
     assertEquals(Logic.SLIA,task.logic)
     assertEquals("f",task.functionName)
-    assertEquals(SortTypes.String,task.functionReturnType)
-    assertEquals(List("name" -> SortTypes.String), task.functionParameters)
+    assertEquals(Types.String,task.functionReturnType)
+    assertEquals(List("name" -> Types.String), task.functionParameters)
     assertTrue(task.isPBE)
     assertEquals(4,task.examples.length)
-    assertEquals(Example(Map("name" -> new PyString("Nancy FreeHafer")),new PyString("N.F.")),task.examples.head)
-    assertEquals(Example(Map("name" -> new PyString("Jan Kotas")), new PyString("J.K.")),task.examples(2))
+    assertEquals(Example(Map("name" -> "Nancy FreeHafer"),"N.F."),task.examples.head)
+    assertEquals(Example(Map("name" -> "Jan Kotas"), "J.K."),task.examples(2))
     assertEquals(8, task.vocab.leaves.length)
     assertEquals(10, task.vocab.nonLeaves.length)
-    assertEquals(List("name","\" \"","\".\"","0","1","2","True","False"),task.vocab.leaves.map(_.apply(Nil).code).toList)
+    assertEquals(List("name","\" \"","\".\"","0","1","2","true","false"),task.vocab.leaves.map(_.apply(Nil,task.examples.map(_.input)).code).toList)
   }
 
   @Test def equalityTest = {
@@ -182,12 +180,11 @@ class SygusGrammarTests extends JUnitSuite{
                           |
                           |(check-synth)""".stripMargin
     val task = new SygusFileTask(slFileContent)
-    assertEquals(Map("col1" -> new PyString("University of Pennsylvania"),"col2" -> new PyString("Phialdelphia, PA, USA")),task.examples.head.input)
-    assertEquals(new PyString("University of Pennsylvania, Phialdelphia, PA, USA"),task.examples.head.output)
+    assertEquals(Map("col1" -> "University of Pennsylvania","col2" -> "Phialdelphia, PA, USA"),task.examples.head.input)
+    assertEquals("University of Pennsylvania, Phialdelphia, PA, USA",task.examples.head.output)
 
     val code = "(col1 + \",\") + (\" \" + col2)"
-    for(ex <- task.examples)
-      assertEquals(ex.output, Eval(code,ex.input))
+
   }
 
   @Test def intsInVocab(): Unit = {
@@ -198,7 +195,7 @@ class SygusGrammarTests extends JUnitSuite{
                              |      (ntInt Int ((+ ntInt ntInt)
                              |                  (- ntInt ntInt)))))""".stripMargin
     val task = new SygusFileTask(vocabFileContent)
-    val children = task.vocab.leaves().map(l => l(Nil)).toList
+    val children = task.vocab.leaves().map(l => l(Nil,Nil)).toList
     assertEquals(2,children.length)
     assertTrue(children.forall(c => c.nodeType == Types.String))
     assertTrue(task.vocab.nonLeaves().forall(m => !m.canMake(children)))
