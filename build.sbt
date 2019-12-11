@@ -1,15 +1,19 @@
-name := "partialCorrectness"
+name := "partialcorrectness_sem"
 
 version := "0.1"
 
-scalaVersion := "2.11.12"
+scalaVersion := "2.13.1"
 
-// https://mvnrepository.com/artifact/org.python/jython-standalone
-libraryDependencies += "org.python" % "jython-standalone" % "2.7.2b2"
+libraryDependencies +=
+  "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
+
 // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
 libraryDependencies += "org.antlr" % "antlr4-runtime" % "4.7.2"
 
 // https://mvnrepository.com/artifact/junit/junit
 libraryDependencies += "junit" % "junit" % "4.13-rc-1" % Test
 // https://mvnrepository.com/artifact/org.scalatest/scalatest
-libraryDependencies += "org.scalatest" % "scalatest_2.11" % "3.2.0-SNAP7" % Test
+//libraryDependencies += "org.scalactic" %% "scalactic" % "3.1.0"
+libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
+// https://mvnrepository.com/artifact/org.scalatestplus/scalatestplus-junit
+libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9"
