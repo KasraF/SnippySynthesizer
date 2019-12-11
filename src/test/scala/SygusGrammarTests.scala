@@ -204,4 +204,24 @@ class SygusGrammarTests extends JUnitSuite{
     assertTrue(task.vocab.nonLeaves().forall(m => !m.canMake(children)))
   }
 
+  @Test def sortVocabByReturnType(): Unit = {
+    val vocabFileContent1 = """(set-logic SLIA)
+                             |(synth-fun f ((col1 String) (col2 String)) String
+                             |    ((Start String (ntString))
+                             |     (ntString String (col1 col2 (str.++ ntString ntString)))
+                             |      (ntInt Int ((+ ntInt ntInt)
+                             |                  (- ntInt ntInt)))))""".stripMargin
+    val task1 = new SygusFileTask(vocabFileContent1)
+    assertEquals(List(Types.String, Types.Int, Types.Int),task1.vocab.nonLeaves().map(_.returnType).toList)
+
+    val vocabFileContent2 = """(set-logic SLIA)
+                              |(synth-fun f ((col1 String) (col2 String)) Int
+                              |    ((Start Int (ntInt))
+                              |     (ntString String (col1 col2 (str.++ ntString ntString)))
+                              |      (ntInt Int ((+ ntInt ntInt)
+                              |                  (- ntInt ntInt)))))""".stripMargin
+    val task2 = new SygusFileTask(vocabFileContent2)
+    assertEquals(List(Types.Int,Types.Int,Types.String),task2.vocab.nonLeaves().map(_.returnType).toList)
+  }
+
 }

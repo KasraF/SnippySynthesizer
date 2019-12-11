@@ -67,7 +67,7 @@ class SygusFileTask(content: String) {
         else //variable
           VocabMaker("Variable|0|" + vocabElem.bfTerm().identifier().Symbol().getText + "|" + nonTerminal.sort().identifier().getText)
       }
-    }
+    }.sortBy(maker => if (maker.arity > 0 && maker.returnType.toString == functionReturnType.toString) -1 else 0)
     VocabFactory(makers)
   }
 }
