@@ -85,12 +85,67 @@ class VocabTests  extends JUnitSuite{
     assertEquals(Types.String,node.nodeType)
   }
 
-  @Test def intToStringMaker: Unit = ???
-  @Test def stringToIntMaker: Unit = ???
-  @Test def stringLenMaker: Unit = ???
+  @Test def intToStringMaker: Unit = {
+    val vocabLine = "(ntString String ((int.to.str ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(1,maker.arity)
+    assertEquals(Types.String,maker.returnType)
+    assertEquals(Types.Int,maker.childTypes(0))
+    val node = maker(List(new IntLiteral(100,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[IntToString])
+    assertEquals(List("100"),node.values)
+    assertEquals(Types.String,node.nodeType)
+  }
+  @Test def stringToIntMaker: Unit = {
+    val vocabLine = "(ntInt Int ((str.to.int ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(1,maker.arity)
+    assertEquals(Types.Int,maker.returnType)
+    assertEquals(List(Types.String),maker.childTypes)
+    val node = maker(List(new StringLiteral("-12",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[StringToInt])
+    assertEquals(List(-12),node.values)
+    assertEquals(Types.Int,node.nodeType)
+  }
+  @Test def stringLenMaker: Unit = {
+    val vocabLine = "(ntInt Int ((str.len ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(1,maker.arity)
+    assertEquals(Types.Int,maker.returnType)
+    assertEquals(List(Types.String),maker.childTypes)
+    val node = maker(List(new StringLiteral("-12",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[StringLength])
+    assertEquals(List(3),node.values)
+    assertEquals(Types.Int,node.nodeType)
+  }
 
-  @Test def strConcatMaker: Unit = ???
-  @Test def strAtMaker: Unit = ???
+  @Test def strConcatMaker: Unit = {
+    val vocabLine = "(ntString String ((str.++ ntString ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.String,maker.returnType)
+    assertEquals(List(Types.String,Types.String),maker.childTypes)
+    val node = maker(List(new StringLiteral("a",1),new StringLiteral("b",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[StringConcat])
+    assertEquals(List("ab"),node.values)
+    assertEquals(Types.String,node.nodeType)
+  }
+  @Test def strAtMaker: Unit = {
+    val vocabLine = "(ntString String ((str.at ntString ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.String,maker.returnType)
+    assertEquals(List(Types.String,Types.Int),maker.childTypes)
+    val node = maker(List(new StringLiteral("abc",1),new IntLiteral(0,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[StringAt])
+    assertEquals(List("a"),node.values)
+    assertEquals(Types.String,node.nodeType)
+  }
   @Test def intAddMaker:Unit = ???
   @Test def intSubMaker: Unit = ???
 
