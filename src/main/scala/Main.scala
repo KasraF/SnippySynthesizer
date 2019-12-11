@@ -3,7 +3,7 @@ import enumeration.InputsValuesManager
 //import execution.Eval
 
 object Main extends App {
-  val filename = "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\count-line-breaks-in-cell.sl"
+  val filename = "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\count-line-breaks-in-cell.sl" //works!
   //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\remove-text-by-matching.sl" //works!
   //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\convert-numbers-to-text.sl" //works!
   //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\convert-text-to-numbers.sl" //works!
@@ -19,7 +19,7 @@ object Main extends App {
       sys.exit(0)
     }
 
-    if (i % 100 == 0) {
+    if (i % 1000 == 0) {
       println(i + ": " + program.code)
     }
   }

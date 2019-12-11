@@ -1,12 +1,27 @@
-import ast.ASTNode
+import ast.{ASTNode, Types}
 import enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
+import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Test
 import org.junit.Assert._
 
+import collection.JavaConverters._
+
 class EnumeratorTests  extends JUnitSuite{
   @Test def enumerateVocabNoOE: Unit = {
-    val vocab = ast.VocabFactory(???
+    val grammar =
+      """((ntInt Int (input))
+        | (ntBool Bool (false))
+        | (ntInt Int (0 1 (+ ntInt ntInt))
+        | (ntBool Bool ((<= ntInt ntInt)))
+        | (ntString String ((int.to.str ntInt))))
+      """.stripMargin
+    val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(grammar))))
+    val grammarDef = parser.grammarDef()
+    val nonTerminals = grammarDef.groupedRuleList().asScala.map{nonTerminal =>
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+    }.toMap
+    val vocab = ast.VocabFactory(
 //      """Variable|0|input
 //        #Literal|0|False
 //        #Literal|0|0
@@ -14,66 +29,53 @@ class EnumeratorTests  extends JUnitSuite{
 //        #BinOperator|2|+
 //        #BinOperator|2|<=
 //        #FunctionCall|1|str""".stripMargin('#')
+      grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
     )
+    assertEquals(4,vocab.leaves.size)
+    assertEquals(3,vocab.nonLeaves().size)
     val enumerator = new Enumerator(vocab, new OEValuesManager {
       override def isRepresentative(program: ASTNode): Boolean = true
-    },Nil)
+    },Map("input"->0) :: Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("input",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("False",enumerator.next().code)
+    assertEquals("false",enumerator.next().code)
     assertTrue(enumerator.hasNext)
     assertEquals("0",enumerator.next().code)
     assertTrue(enumerator.hasNext)
     assertEquals("1",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("input + input",enumerator.next().code)
-    assertEquals("input + False",enumerator.next().code)
-    assertEquals("input + 0",enumerator.next().code)
-    assertEquals("input + 1",enumerator.next().code)
+    assertEquals("(+ input input)",enumerator.next().code)
+    assertEquals("(+ input 0)",enumerator.next().code)
+    assertEquals("(+ input 1)",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("False + input",enumerator.next().code)
-    assertEquals("False + False",enumerator.next().code)
-    assertEquals("False + 0",enumerator.next().code)
-    assertEquals("False + 1",enumerator.next().code)
+    assertEquals("(+ 0 input)",enumerator.next().code)
+    assertEquals("(+ 0 0)",enumerator.next().code)
+    assertEquals("(+ 0 1)",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("0 + input",enumerator.next().code)
-    assertEquals("0 + False",enumerator.next().code)
-    assertEquals("0 + 0",enumerator.next().code)
-    assertEquals("0 + 1",enumerator.next().code)
+    assertEquals("(+ 1 input)",enumerator.next().code)
+    assertEquals("(+ 1 0)",enumerator.next().code)
+    assertEquals("(+ 1 1)",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("1 + input",enumerator.next().code)
-    assertEquals("1 + False",enumerator.next().code)
-    assertEquals("1 + 0",enumerator.next().code)
-    assertEquals("1 + 1",enumerator.next().code)
+    assertEquals("(<= input input)",enumerator.next().code)
+    assertEquals("(<= input 0)",enumerator.next().code)
+    assertEquals("(<= input 1)",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("input <= input",enumerator.next().code)
-    assertEquals("input <= False",enumerator.next().code)
-    assertEquals("input <= 0",enumerator.next().code)
-    assertEquals("input <= 1",enumerator.next().code)
+    assertEquals("(<= 0 input)",enumerator.next().code)
+    assertEquals("(<= 0 0)",enumerator.next().code)
+    assertEquals("(<= 0 1)",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("False <= input",enumerator.next().code)
-    assertEquals("False <= False",enumerator.next().code)
-    assertEquals("False <= 0",enumerator.next().code)
-    assertEquals("False <= 1",enumerator.next().code)
+    assertEquals("(<= 1 input)",enumerator.next().code)
+    assertEquals("(<= 1 0)",enumerator.next().code)
+    assertEquals("(<= 1 1)",enumerator.next().code)
     assertTrue(enumerator.hasNext)
-    assertEquals("0 <= input",enumerator.next().code)
-    assertEquals("0 <= False",enumerator.next().code)
-    assertEquals("0 <= 0",enumerator.next().code)
-    assertEquals("0 <= 1",enumerator.next().code)
-    assertTrue(enumerator.hasNext)
-    assertEquals("1 <= input",enumerator.next().code)
-    assertEquals("1 <= False",enumerator.next().code)
-    assertEquals("1 <= 0",enumerator.next().code)
-    assertEquals("1 <= 1",enumerator.next().code)
-    assertTrue(enumerator.hasNext)
-    assertEquals("str(input)",enumerator.next().code)
-    assertEquals("str(False)",enumerator.next().code)
-    assertEquals("str(0)",enumerator.next().code)
-    assertEquals("str(1)",enumerator.next().code)
+    assertEquals("(int.to.str input)",enumerator.next().code)
+    assertEquals("(int.to.str 0)",enumerator.next().code)
+    assertEquals("(int.to.str 1)",enumerator.next().code)
     assertTrue(enumerator.hasNext)
 
-    assertEquals("input + (input + input)", enumerator.next().code)
+    assertEquals("(+ input (+ input input))", enumerator.next().code)
     assertTrue(enumerator.hasNext)
   }
 
