@@ -1,10 +1,13 @@
 package enumeration
 
 import ast.ASTNode
+import ast.Types.Types
 
-class ChildrenIterator(val childrenCandidates: List[ASTNode], val arity: Int, val currHeight: Int) extends Iterator[List[ASTNode]]{
+import scala.collection.parallel.CollectionConverters._
+
+class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val currHeight: Int) extends Iterator[List[ASTNode]]{
   val candidates = ChildrenIterator.cross(
-    (0 until arity).map(x => childrenCandidates).toList)
+    childTypes.map(t => childrenCandidates.filter(c => c.nodeType == t)))
     .filter(children => children.exists(child => child.height == currHeight - 1))
   val candidatesIter = candidates.iterator
   override def hasNext: Boolean = candidatesIter.hasNext

@@ -4,7 +4,7 @@ import ast.{ASTNode, VocabFactory, VocabMaker}
 
 import scala.collection.mutable
 
-class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extends Iterator[ASTNode]{
+class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val contexts: List[Map[String,Any]]) extends Iterator[ASTNode]{
   override def toString(): String = "enumeration.Enumerator"
 
   var nextProgram: Option[ASTNode] = None
@@ -26,14 +26,14 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extend
   var currIter = vocab.leaves
   var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
   var rootMaker: VocabMaker = currIter.next()
-  var prevLevelProgs: mutable.MutableList[ASTNode] = mutable.MutableList()
-  var currLevelProgs: mutable.MutableList[ASTNode] = mutable.MutableList()
+  var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
+  var currLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
   def advanceRoot(): Boolean = {
     if (!currIter.hasNext) return false
     rootMaker = currIter.next()
     childrenIterator = if (rootMaker.arity == 0)
       Iterator.single(Nil)
-    else new ChildrenIterator(prevLevelProgs.toList,rootMaker.arity,height)
+    else new ChildrenIterator(prevLevelProgs.toList,rootMaker.childTypes,height)
     true
   }
   var height = 0
@@ -53,8 +53,8 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager) extend
       if (childrenIterator.hasNext) {
         val children = childrenIterator.next()
         if (rootMaker.canMake(children)) {
-          val prog = rootMaker(children)
-          if (EnumerationHeuristics.keep(prog) && oeManager.isRepresentative(prog))
+          val prog = rootMaker(children,contexts)
+          if (oeManager.isRepresentative(prog))
             res = Some(prog)
         }
       }
