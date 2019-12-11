@@ -146,12 +146,89 @@ class VocabTests  extends JUnitSuite{
     assertEquals(List("a"),node.values)
     assertEquals(Types.String,node.nodeType)
   }
-  @Test def intAddMaker:Unit = ???
-  @Test def intSubMaker: Unit = ???
+  @Test def intAddMaker:Unit = {
+    val vocabLine = "(ntInt Int ((+ ntInt ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.Int,maker.returnType)
+    assertEquals(List(Types.Int,Types.Int),maker.childTypes)
+    val node = maker(List(new IntLiteral(-12,1), new IntLiteral(3,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[IntAddition])
+    assertEquals(List(-9),node.values)
+    assertEquals(Types.Int,node.nodeType)
+  }
+  @Test def intSubMaker: Unit = {
+    val vocabLine = "(ntInt Int ((- ntInt ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.Int,maker.returnType)
+    assertEquals(List(Types.Int,Types.Int),maker.childTypes)
+    val node = maker(List(new IntLiteral(10,1), new IntLiteral(3,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[IntSubtraction])
+    assertEquals(List(7),node.values)
+    assertEquals(Types.Int,node.nodeType)
+  }
 
-  @Test def strReplaceMaker: Unit = ???
-  @Test def stringITEMaker: Unit = ???
-  @Test def intITEMaker: Unit = ???
-  @Test def substringMaker: Unit = ???
-  @Test def indexOfMaker: Unit = ???
+  @Test def strReplaceMaker: Unit = {
+    val vocabLine = "(ntString String ((str.replace ntString ntString ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(3,maker.arity)
+    assertEquals(Types.String,maker.returnType)
+    assertEquals(List(Types.String,Types.String,Types.String),maker.childTypes)
+    val node = maker(List(new StringLiteral("a",1),new StringLiteral("b",1), new StringLiteral("c",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[StringReplace])
+    assertEquals(List("a"),node.values)
+    assertEquals(Types.String,node.nodeType)
+  }
+  @Test def stringITEMaker: Unit = {
+    val vocabLine = "(ntString String ((ite ntBool ntString ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(3,maker.arity)
+    assertEquals(Types.String,maker.returnType)
+    assertEquals(List(Types.Bool,Types.String,Types.String),maker.childTypes)
+    val node = maker(List(new BoolLiteral(false,1),new StringLiteral("b",1), new StringLiteral("c",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[StringITE])
+    assertEquals(List("c"),node.values)
+    assertEquals(Types.String,node.nodeType)
+  }
+  @Test def intITEMaker: Unit = {
+    val vocabLine = "(ntInt Int ((ite ntBool ntInt ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(3,maker.arity)
+    assertEquals(Types.Int,maker.returnType)
+    assertEquals(List(Types.Bool,Types.Int,Types.Int),maker.childTypes)
+    val node = maker(List(new BoolLiteral(false,1),new IntLiteral(1,1), new IntLiteral(2,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[IntITE])
+    assertEquals(List(2),node.values)
+    assertEquals(Types.Int,node.nodeType)
+  }
+  @Test def substringMaker: Unit = {
+    val vocabLine = "(ntString String ((str.substr ntString ntInt ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(3,maker.arity)
+    assertEquals(Types.String,maker.returnType)
+    assertEquals(List(Types.String,Types.Int,Types.Int),maker.childTypes)
+    val node = maker(List(new StringLiteral("abc",1),new IntLiteral(0,1),new IntLiteral(2,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[Substring])
+    assertEquals(List("ab"),node.values)
+    assertEquals(Types.String,node.nodeType)
+  }
+  @Test def indexOfMaker: Unit = {
+    val vocabLine = "(ntInt Int ((str.indexof ntString ntString ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(3,maker.arity)
+    assertEquals(Types.Int,maker.returnType)
+    assertEquals(List(Types.String,Types.String,Types.Int),maker.childTypes)
+    val node = maker(List(new StringLiteral("abc",1),new StringLiteral("ab",1), new IntLiteral(0,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[IndexOf])
+    assertEquals(List(0),node.values)
+    assertEquals(Types.Int,node.nodeType)
+  }
 }
