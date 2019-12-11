@@ -36,3 +36,9 @@ class IntSubtraction(val lhs: IntNode, val rhs: IntNode)extends BinaryOpNode[Int
 
   override lazy val code: String = "(- " + lhs.code + " " + rhs.code + ")"
 }
+
+class IntLessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[Int] <= r.asInstanceOf[Int]
+
+  override lazy val code: String = "(<= " + lhs.code + " " + rhs.code + ")"
+}

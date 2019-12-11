@@ -183,4 +183,14 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(str.indexof \"abcd\" s 1)",indexOf.code)
     assertEquals(List(-1,2,-1),indexOf.values)
   }
+
+  @Test def lteNode: Unit = {
+    val lhs = new IntLiteral(1,1)
+    val rhs = new IntLiteral(1,1)
+    val lte :BoolNode = new IntLessThanEq(lhs,rhs)
+    assertEquals(Types.Bool, lte.nodeType)
+    assertEquals(1, lte.height)
+    assertEquals("(<= 1 1)", lte.code)
+    assertEquals(List(true), lte.values)
+  }
 }
