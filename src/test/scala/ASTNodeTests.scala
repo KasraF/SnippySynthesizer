@@ -193,4 +193,35 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(<= 1 1)", lte.code)
     assertEquals(List(true), lte.values)
   }
+
+  @Test def eqNode: Unit = {
+    val ctxs = Map("i" -> 5, "j" -> 6) :: Map("i" -> 5, "j" -> 5) :: Nil
+    val lhs = new IntVariable("i",ctxs)
+    val rhs = new IntVariable("j",ctxs)
+    val eq: BoolNode = new IntEquals(lhs,rhs)
+    assertEquals(Types.Bool,eq.nodeType)
+    assertEquals(1,eq.height)
+    assertEquals("(= i j)", eq.code)
+    assertEquals(List(false,true),eq.values)
+  }
+
+  @Test def prefixOfNode: Unit = {
+    val lhs = new StringLiteral("abc",2)
+    val rhs = new StringVariable("x", Map("x" -> "ab"):: Map("x" -> "c") :: Nil)
+    val prefixOf: BoolNode = new PrefixOf(lhs,rhs)
+    assertEquals(Types.Bool,prefixOf.nodeType)
+    assertEquals(1,prefixOf.height)
+    assertEquals("(str.prefixof \"abc\" x)", prefixOf.code)
+    assertEquals(List(true,false),prefixOf.values)
+  }
+
+  @Test def suffixOfNode: Unit = {
+    val lhs = new StringLiteral("abc",2)
+    val rhs = new StringVariable("x", Map("x" -> "ab"):: Map("x" -> "c") :: Nil)
+    val suffixOf: BoolNode = new SuffixOf(lhs,rhs)
+    assertEquals(Types.Bool,suffixOf.nodeType)
+    assertEquals(1,suffixOf.height)
+    assertEquals("(str.suffixof \"abc\" x)", suffixOf.code)
+    assertEquals(List(false,true),suffixOf.values)
+  }
 }

@@ -239,8 +239,47 @@ class VocabTests  extends JUnitSuite{
     assertEquals(Types.Bool,maker.returnType)
     assertEquals(List(Types.Int,Types.Int),maker.childTypes)
     val node = maker(List(new IntLiteral(-12,1), new IntLiteral(3,1)),Map.empty[String,AnyRef] :: Nil)
-    assertTrue(node.isInstanceOf[BoolNode])
+    assertTrue(node.isInstanceOf[IntLessThanEq])
     assertEquals(List(true),node.values)
+    assertEquals(Types.Bool,node.nodeType)
+  }
+
+  @Test def eqMaker: Unit = {
+    val vocabLine = "(ntBool Bool ((= ntInt ntInt)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.Bool,maker.returnType)
+    assertEquals(List(Types.Int,Types.Int),maker.childTypes)
+    val node = maker(List(new IntLiteral(-12,1), new IntLiteral(3,1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[IntEquals])
+    assertEquals(List(false),node.values)
+    assertEquals(Types.Bool,node.nodeType)
+  }
+
+  @Test def prefixOfMaker: Unit = {
+    val vocabLine = "(ntBool Bool ((str.prefixof ntString ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.Bool,maker.returnType)
+    assertEquals(List(Types.String,Types.String),maker.childTypes)
+    val node = maker(List(new StringLiteral("a",1),new StringLiteral("b",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[PrefixOf])
+    assertEquals(List(false),node.values)
+    assertEquals(Types.Bool,node.nodeType)
+  }
+
+  @Test def suffixOfMaker: Unit = {
+    val vocabLine = "(ntBool Bool ((str.suffixof ntString ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.Bool,maker.returnType)
+    assertEquals(List(Types.String,Types.String),maker.childTypes)
+    val node = maker(List(new StringLiteral("a",1),new StringLiteral("b",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[SuffixOf])
+    assertEquals(List(false),node.values)
     assertEquals(Types.Bool,node.nodeType)
   }
 }

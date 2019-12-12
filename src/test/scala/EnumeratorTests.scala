@@ -22,13 +22,6 @@ class EnumeratorTests  extends JUnitSuite{
       nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
     }.toMap
     val vocab = ast.VocabFactory(
-//      """Variable|0|input
-//        #Literal|0|False
-//        #Literal|0|0
-//        #Literal|0|1
-//        #BinOperator|2|+
-//        #BinOperator|2|<=
-//        #FunctionCall|1|str""".stripMargin('#')
       grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
         SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
     )
@@ -80,23 +73,29 @@ class EnumeratorTests  extends JUnitSuite{
   }
 
   @Test def enumerateVocabWithOE: Unit = {
-    val vocab = ast.VocabFactory(???
-//      """Variable|0|x
-//        #Literal|0|False
-//        #Literal|0|0
-//        #Literal|0|1
-//        #BinOperator|2|+
-//        #BinOperator|2|<=
-//        #FunctionCall|1|str""".stripMargin('#')
+    val grammar =
+      """((ntInt Int (x))
+        | (ntBool Bool (false))
+        | (ntInt Int (0 1 (+ ntInt ntInt)))
+        | (ntBool Bool ((<= ntInt ntInt)))
+        | (ntString String ((int.to.str ntInt))))""".stripMargin
+    val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(grammar))))
+    val grammarDef = parser.grammarDef()
+    val nonTerminals = grammarDef.groupedRuleList().asScala.map{nonTerminal =>
+      nonTerminal.Symbol().getSymbol.getText -> Types.withName(nonTerminal.sort().identifier().getText)
+    }.toMap
+    val vocab = ast.VocabFactory(
+      grammarDef.groupedRuleList().asScala.flatMap{nonTerminal => nonTerminal.gTerm().asScala.map(vocabElem =>
+        SygusFileTask.makeVocabMaker(vocabElem, Types.withName(nonTerminal.sort().identifier().getText),nonTerminals))}.toList
     )
     val inputValues: Map[String,AnyRef] = Map("x" -> 1.asInstanceOf[AnyRef])
     val enumerator = new Enumerator(vocab, new InputsValuesManager,inputValues :: Nil)
     assertTrue(enumerator.hasNext)
     assertEquals("x",enumerator.next().code)
-    assertEquals("False",enumerator.next().code)
+    assertEquals("false",enumerator.next().code)
     assertEquals("0",enumerator.next().code)
-    assertEquals("x + x",enumerator.next().code)
-    assertEquals("x <= x",enumerator.next().code)
+    assertEquals("(+ x x)",enumerator.next().code)
+    assertEquals("(<= x x)",enumerator.next().code)
 
   }
 

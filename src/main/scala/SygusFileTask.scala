@@ -236,12 +236,37 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new IndexOf(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode],children(2).asInstanceOf[IntNode])
         }
-        case (_,Types.Bool,_) => new VocabMaker {
+        case ("<=", Types.Bool,2) => new VocabMaker {
           override val arity: Int = 2
           override val childTypes: List[Types] = childrenTypes
           override val returnType: Types = retType
 
-          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode = new BoolLiteral(false,contexts.length)
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new IntLessThanEq(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+        }
+        case ("=",Types.Bool,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new IntEquals(children(0).asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+        }
+        case ("str.prefixof", Types.Bool,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new PrefixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
+        }
+        case ("str.suffixof", Types.Bool,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new SuffixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
         }
       }
     }
