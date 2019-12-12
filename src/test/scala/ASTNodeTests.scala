@@ -224,4 +224,14 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(str.suffixof \"abc\" x)", suffixOf.code)
     assertEquals(List(false,true),suffixOf.values)
   }
+
+  @Test def strContains: Unit = {
+    val lhs = new StringLiteral("abc",2)
+    val rhs = new StringVariable("x", Map("x" -> "d"):: Map("x" -> "c") :: Nil)
+    val contains: BoolNode = new Contains(lhs,rhs)
+    assertEquals(Types.Bool,contains.nodeType)
+    assertEquals(1,contains.height)
+    assertEquals("(str.contains \"abc\" x)", contains.code)
+    assertEquals(List(false,true),contains.values)
+  }
 }

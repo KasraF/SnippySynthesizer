@@ -60,3 +60,9 @@ class SuffixOf(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Bo
 
   override lazy val code: String = "(str.suffixof " + lhs.code + " " + rhs.code + ")"
 }
+
+class Contains(val lhs: StringNode, val rhs: StringNode) extends  BinaryOpNode[Boolean] with BoolNode {
+  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[String].contains(r.asInstanceOf[String])
+
+  override lazy val code: String = "(str.contains " + lhs.code + " " + rhs.code + ")"
+}

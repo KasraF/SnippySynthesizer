@@ -282,4 +282,17 @@ class VocabTests  extends JUnitSuite{
     assertEquals(List(false),node.values)
     assertEquals(Types.Bool,node.nodeType)
   }
+
+  @Test def containsMaker: Unit = {
+    val vocabLine = "(ntBool Bool ((str.contains ntString ntString)))"
+    val parsed = readVocabElem(vocabLine)
+    val maker: VocabMaker = SygusFileTask.makeVocabMaker(parsed._1,Types.withName(parsed._2), nonTerminals)
+    assertEquals(2,maker.arity)
+    assertEquals(Types.Bool,maker.returnType)
+    assertEquals(List(Types.String,Types.String),maker.childTypes)
+    val node = maker(List(new StringLiteral("ab",1),new StringLiteral("b",1)),Map.empty[String,AnyRef] :: Nil)
+    assertTrue(node.isInstanceOf[Contains])
+    assertEquals(List(true),node.values)
+    assertEquals(Types.Bool,node.nodeType)
+  }
 }

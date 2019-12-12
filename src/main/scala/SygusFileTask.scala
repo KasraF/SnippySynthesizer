@@ -268,6 +268,14 @@ object SygusFileTask{
           override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
             new SuffixOf(children(0).asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
         }
+        case ("str.contains", Types.Bool,2) => new VocabMaker {
+          override val arity: Int = 2
+          override val childTypes: List[Types] = childrenTypes
+          override val returnType: Types = retType
+
+          override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+            new Contains(children(0).asInstanceOf[StringNode],children(1).asInstanceOf[StringNode])
+        }
       }
     }
 
