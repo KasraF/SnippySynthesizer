@@ -6,48 +6,43 @@ import ast.Types.Types
 import scala.collection.parallel.CollectionConverters._
 
 class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val currHeight: Int) extends Iterator[List[ASTNode]]{
-  val candidates = ChildrenIterator.cross(
-    childTypes.map(t => childrenCandidates.filter(c => c.nodeType == t)))
-    .filter(children => children.exists(child => child.height == currHeight - 1))
-  val candidatesIter = candidates.iterator
-  override def hasNext: Boolean = candidatesIter.hasNext
-  override def next(): List[ASTNode] = candidatesIter.next
-}
-
-object ChildrenIterator {
-  def cross[T](inputVals: List[List[T]]) = inputVals.length match {
-    case 1 => inputVals.head.map(x => List(x))
-    case _ => cartesianProduct(inputVals:_*)
-  }
-
-  def cartesianProduct[T](lst: List[T]*): List[List[T]] = {
-
-    /**
-      * Prepend single element to all lists of list
-      * @param e single elemetn
-      * @param ll list of list
-      * @param a accumulator for tail recursive implementation
-      * @return list of lists with prepended element e
-      */
-    def pel(e: T,
-            ll: List[List[T]],
-            a: List[List[T]] = Nil): List[List[T]] =
-      ll match {
-        case Nil => a.reverse
-        case x :: xs => pel(e, xs, (e :: x) :: a )
+  val childrenLists =
+    childTypes.map(t => childrenCandidates.filter(c => c.nodeType == t))
+  val candidates = childrenLists.map(l => l.iterator).toArray
+  val allExceptLast = candidates.dropRight(1).map(_.next()).toArray
+  //val candidatesIter = candidates.iterator.filter(children => )
+  var next_child: Option[List[ASTNode]] = None
+  def getNextChild(): Unit = {
+    next_child = None
+    while (next_child.isEmpty) {
+      if (candidates.last.hasNext) {
+        val children = allExceptLast.toList :+ candidates.last.next()
+        if (children.exists(child => child.height == currHeight - 1))
+          next_child = Some(children)
       }
-
-    lst.toList match {
-      case Nil => Nil
-      case x :: Nil => List(x)
-      case x :: _ =>
-        x match {
-          case Nil => Nil
-          case _ =>
-            lst.par.foldRight(List(x))( (l, a) =>
-              l.flatMap(pel(_, a))
-            ).map(_.dropRight(x.size))
+      else { //roll
+        val next = candidates.zipWithIndex.findLast{case (iter,idx) => iter.hasNext}
+        if (next.isEmpty) return
+        else {
+          val (iter,idx) = next.get
+          allExceptLast.update(idx,iter.next)
+          for (i <- idx + 1 until candidates.length - 1) {
+            candidates.update(i,childrenLists(i).iterator)
+            allExceptLast.update(i,candidates(i).next())
+          }
+          candidates.update(candidates.length - 1,childrenLists.last.iterator)
         }
+      }
     }
+  }
+  override def hasNext: Boolean = {
+    if (next_child.isEmpty) getNextChild()
+    !next_child.isEmpty
+  }
+  override def next(): List[ASTNode] = {
+    if (next_child.isEmpty) getNextChild()
+    val res = next_child.get
+    next_child = None
+    res
   }
 }
