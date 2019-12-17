@@ -104,9 +104,9 @@ class VocabTests  extends JUnitSuite{
     assertEquals(1,maker.arity)
     assertEquals(Types.Int,maker.returnType)
     assertEquals(List(Types.String),maker.childTypes)
-    val node = maker(List(new StringLiteral("-12",1)),Map.empty[String,AnyRef] :: Nil)
+    val node = maker(List(new StringLiteral("12",1)),Map.empty[String,AnyRef] :: Nil)
     assertTrue(node.isInstanceOf[StringToInt])
-    assertEquals(List(-12),node.values)
+    assertEquals(List(12),node.values)
     assertEquals(Types.Int,node.nodeType)
   }
   @Test def stringLenMaker: Unit = {

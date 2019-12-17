@@ -20,7 +20,12 @@ class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNod
 }
 
 class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode {
-  override def doOp(l: Any, r: Any): String = l.asInstanceOf[String](r.asInstanceOf[Int]).toString
+  override def doOp(l: Any, r: Any): String = {
+    val str = l.asInstanceOf[String]
+    val idx = r.asInstanceOf[Int]
+    if (idx < 0 || idx >= str.length) ""
+    else str(idx).toString
+  }
 
   override lazy val code: String = "(str.at " + lhs.code + " " + rhs.code + ")"
 }

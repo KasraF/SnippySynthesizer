@@ -1,5 +1,7 @@
 package ast
 
+import org.apache.commons.lang3.StringUtils
+
 trait TernaryOpNode[T] extends ASTNode{
   val arg0: ASTNode
   val arg1: ASTNode
@@ -13,7 +15,7 @@ trait TernaryOpNode[T] extends ASTNode{
 
 class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode {
   override def doOp(a0: Any, a1: Any, a2: Any): String =
-    a0.asInstanceOf[String].replace(a1.asInstanceOf[CharSequence],a2.asInstanceOf[CharSequence])
+    StringUtils.replaceOnce(a0.asInstanceOf[String],a1.asInstanceOf[String],a2.asInstanceOf[String])
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.replace "," ",")")
 }
@@ -31,7 +33,15 @@ class IntITE(val arg0: BoolNode, val arg1: IntNode, val arg2: IntNode) extends T
 }
 
 class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[String] with StringNode {
-  override def doOp(a0: Any, a1: Any, a2: Any): String = a0.asInstanceOf[String].drop(a1.asInstanceOf[Int]).take(a2.asInstanceOf[Int])
+  override def doOp(a0: Any, a1: Any, a2: Any): String = {
+    //a[b:(c+b)] if 0 <= b and len(a) >= (c+b) >= b else ''
+    val a = a0.asInstanceOf[String]
+    val b = a1.asInstanceOf[Int]
+    val c = a2.asInstanceOf[Int]
+    if (0 <= b && a.length >= (c+b) && (c+b) >= b)
+      a.drop(b).take(c)
+    else ""
+  }
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.substr "," ",")")
 }

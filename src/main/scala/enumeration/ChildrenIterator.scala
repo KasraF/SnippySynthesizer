@@ -10,7 +10,6 @@ class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: Li
     childTypes.map(t => childrenCandidates.filter(c => c.nodeType == t))
   val candidates = childrenLists.map(l => l.iterator).toArray
   val allExceptLast = candidates.dropRight(1).map(_.next()).toArray
-  //val candidatesIter = candidates.iterator.filter(children => )
   var next_child: Option[List[ASTNode]] = None
   def getNextChild(): Unit = {
     next_child = None

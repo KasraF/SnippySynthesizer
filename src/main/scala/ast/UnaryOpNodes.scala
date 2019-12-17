@@ -8,13 +8,17 @@ trait UnaryOpNode[T] extends ASTNode{
 }
 
 class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode {
-  override def doOp(x: Any): String = x.asInstanceOf[Int].toString
+  override def doOp(x: Any): String = if (x.asInstanceOf[Int] >= 0) x.asInstanceOf[Int].toString else ""
 
   override lazy val code: String = "(int.to.str " + arg.code + ")"
 }
 
 class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode {
-  override def doOp(x: Any): Int = x.asInstanceOf[String].toInt
+  override def doOp(x: Any): Int = {
+    val str = x.asInstanceOf[String]
+    if (!str.isEmpty && str.forall(c => c.isDigit)) str.toInt
+    else -1
+  }
 
   override lazy val code: String = "(str.to.int " + arg.code + ")"
 }

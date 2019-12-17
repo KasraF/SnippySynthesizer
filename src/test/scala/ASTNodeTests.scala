@@ -71,7 +71,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.String,strReplace.nodeType)
     assertEquals(1,strReplace.height)
     assertEquals("(str.replace x \"12\" \"2\")",strReplace.code)
-    assertEquals(List("232","456"),strReplace.values)
+    assertEquals(List("2312","456"),strReplace.values)
   }
 
   @Test def stringAtNode: Unit = {
@@ -86,7 +86,7 @@ class ASTNodeTests extends JUnitSuite{
     val strAt2 = new StringAt(strAt,rhs)
     assertEquals("(str.at (str.at str 1) 1)",strAt2.code)
     assertEquals(2,strAt2.height)
-    assertThrows[IndexOutOfBoundsException](strAt2.values)
+    assertEquals(List("",""), strAt2.values)
   }
 
   @Test def intToStringNode: Unit = {
@@ -95,7 +95,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.String, intToString.nodeType)
     assertEquals(1, intToString.height)
     assertEquals("(int.to.str i)", intToString.code)
-    assertEquals(List("1", "-1", "0"), intToString.values)
+    assertEquals(List("1", "", "0"), intToString.values)
   }
 
   @Test def stringITENode: Unit = {
@@ -110,15 +110,16 @@ class ASTNodeTests extends JUnitSuite{
   }
 
   @Test def substringNode: Unit = {
-    val str = new StringVariable("str", Map("str" -> "a") :: Map("str" -> "ab") :: Map("str" -> "abc") :: Nil)
-    val from = new IntLiteral(1,3)
-    val to = new IntLiteral(3,3)
+    val str = new StringVariable("str", Map("str" -> "a") :: Map("str" -> "ab") :: Map("str" -> "abc"):: Map("str" -> "abcde") :: Nil)
+    val from = new IntLiteral(1,4)
+    val to = new IntLiteral(3,4)
     val substring : StringNode = new Substring(str,from,to)
 
     assertEquals(Types.String, substring.nodeType)
     assertEquals(1, substring.height)
     assertEquals("(str.substr str 1 3)",substring.code)
-    assertEquals(List("","b","bc"),substring.values)
+    //Desired behavior from euphony/eusolver: a[b:(c+b)] if 0 <= b and len(a) >= (c+b) >= b else ''
+    assertEquals(List("","","","bcd"),substring.values)
 
   }
 
@@ -159,6 +160,14 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(1, strToInt.height)
     assertEquals("(str.to.int \"88\")",strToInt.code)
     assertEquals(List(88), strToInt.values)
+
+    val str2 = new StringLiteral("a",1)
+    val strToInt2: IntNode = new StringToInt(str2)
+
+    assertEquals(Types.Int,strToInt2.nodeType)
+    assertEquals(1, strToInt2.height)
+    assertEquals("(str.to.int \"a\")",strToInt2.code)
+    assertEquals(List(-1), strToInt2.values)
   }
 
   @Test def intITENode: Unit = {
