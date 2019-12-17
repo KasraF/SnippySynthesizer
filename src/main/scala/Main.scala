@@ -10,9 +10,8 @@ import scala.concurrent.duration._
 
 
 object Main extends App {
-  val filename = "src/test/benchmarks/modified_benchmarks/19274448_1.sl"
-  //"src/test/benchmarks/modified_benchmarks/convert-numbers-to-text_1.sl"
-  // "src/test/benchmarks/modified_benchmarks/change-negative-numbers-to-positive_1.sl"
+  val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\name-combine-3-long-repeat.sl"
+   "src/test/benchmarks/modified_benchmarks/bikes_small_1.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
    //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\from_2018\\bikes_small.sl"//args(0)
   val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
