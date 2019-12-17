@@ -221,4 +221,39 @@ class SygusGrammarTests extends JUnitSuite{
     assertEquals(List(Types.Int,Types.Int,Types.String),task2.vocab.nonLeaves().map(_.returnType).toList)
   }
 
+  @Test def filterExampleRepetition: Unit = {
+    val grammarFile = """(set-logic SLIA)
+                        |
+                        |(synth-fun f ((name String)) String
+                        |    ((Start String (ntString))
+                        |     (ntString String (name " "
+                        |                       (str.substr ntString ntInt ntInt)))
+                        |      (ntInt Int (0 1 2 3 4 5
+                        |                  (str.indexof ntString ntString ntInt)))
+                        |      (ntBool Bool (true false
+                        |                    (str.contains ntString ntString)))))
+                        |
+                        |(declare-var name String)
+                        |
+                        |(constraint (= (f "938-242-504") "504"))
+                        |(constraint (= (f "938-242-504") "504"))
+                        |(constraint (= (f "938-242-504") "504"))
+                        |(constraint (= (f "308-916-545") "545"))
+                        |(constraint (= (f "308-916-545") "545"))
+                        |(constraint (= (f "308-916-545") "545"))
+                        |(constraint (= (f "623-599-749") "749"))
+                        |(constraint (= (f "623-599-749") "749"))
+                        |(constraint (= (f "623-599-749") "749"))
+                        |(constraint (= (f "981-424-843") "843"))
+                        |(constraint (= (f "981-424-843") "843"))
+                        |(constraint (= (f "981-424-843") "843"))""".stripMargin
+    val task = new SygusFileTask(grammarFile)
+    assertTrue(task.isPBE)
+    assertEquals(4, task.examples.length)
+    assertEquals(Example(Map("name" -> "938-242-504"),"504"),task.examples(0))
+    assertEquals(Example(Map("name" -> "308-916-545"),"545"),task.examples(1))
+    assertEquals(Example(Map("name" -> "623-599-749"),"749"),task.examples(2))
+    assertEquals(Example(Map("name" -> "981-424-843"),"843"),task.examples(3))
+
+  }
 }
