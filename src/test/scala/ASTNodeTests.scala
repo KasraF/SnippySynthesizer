@@ -11,6 +11,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.String,stringLiteral.nodeType)
     assertEquals("\"abc\"",stringLiteral.code)
     assertEquals(0,stringLiteral.height)
+    assertEquals(1,stringLiteral.terms)
   }
 
   @Test def intLiteralNode(): Unit = {
@@ -19,6 +20,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.Int,intLiteral.nodeType)
     assertEquals("2",intLiteral.code)
     assertEquals(0,intLiteral.height)
+    assertEquals(1,intLiteral.terms)
   }
 
   @Test def boolLiteralNode(): Unit = {
@@ -27,6 +29,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.Bool,boolLiteral.nodeType)
     assertEquals("true",boolLiteral.code)
     assertEquals(0,boolLiteral.height)
+    assertEquals(1,boolLiteral.terms)
   }
 
   @Test def variableNode(): Unit = {
@@ -35,6 +38,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.String,stringVariableNode.nodeType)
     assertEquals("x", stringVariableNode.code)
     assertEquals(0,stringVariableNode.height)
+    assertEquals(1,stringVariableNode.terms)
     assertEquals("abc",stringVariableNode.values(0))
     assertEquals("",stringVariableNode.values(1))
 
@@ -42,6 +46,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(Types.Int,intVariableNode.nodeType)
     assertEquals("y", intVariableNode.code)
     assertEquals(0,intVariableNode.height)
+    assertEquals(1,intVariableNode.terms)
     assertEquals(1,intVariableNode.values.length)
     assertEquals(List(2),intVariableNode.values)
 
@@ -49,6 +54,7 @@ class ASTNodeTests extends JUnitSuite{
     val boolVariableNode: BoolNode = new BoolVariable("z",contexts2)
     assertEquals(Types.Bool,boolVariableNode.nodeType)
     assertEquals(0,boolVariableNode.height)
+    assertEquals(1,boolVariableNode.terms)
     assertEquals(3,boolVariableNode.values.length)
     assertEquals(List(true,false,true),boolVariableNode.values)
   }
@@ -59,6 +65,7 @@ class ASTNodeTests extends JUnitSuite{
     val strConcat: StringNode = new StringConcat(lhs,rhs)
     assertEquals(Types.String, strConcat.nodeType)
     assertEquals(1, strConcat.height)
+    assertEquals(3, strConcat.terms)
     assertEquals("(str.++ \"abc\" x)", strConcat.code)
     assertEquals(List("abc123","abc456"),strConcat.values)
   }
@@ -70,6 +77,7 @@ class ASTNodeTests extends JUnitSuite{
     val strReplace: StringNode = new StringReplace(arg0, arg1, arg2)
     assertEquals(Types.String,strReplace.nodeType)
     assertEquals(1,strReplace.height)
+    assertEquals(4, strReplace.terms)
     assertEquals("(str.replace x \"12\" \"2\")",strReplace.code)
     assertEquals(List("2312","456"),strReplace.values)
   }
@@ -80,12 +88,14 @@ class ASTNodeTests extends JUnitSuite{
     val strAt: StringNode = new StringAt(lhs,rhs)
     assertEquals(Types.String,strAt.nodeType)
     assertEquals(1,strAt.height)
+    assertEquals(3, strAt.terms)
     assertEquals("(str.at str 1)",strAt.code)
     assertEquals(List("b","b"),strAt.values)
 
     val strAt2 = new StringAt(strAt,rhs)
     assertEquals("(str.at (str.at str 1) 1)",strAt2.code)
     assertEquals(2,strAt2.height)
+    assertEquals(5, strAt2.terms)
     assertEquals(List("",""), strAt2.values)
   }
 
@@ -94,6 +104,7 @@ class ASTNodeTests extends JUnitSuite{
     val intToString: StringNode = new IntToString(arg)
     assertEquals(Types.String, intToString.nodeType)
     assertEquals(1, intToString.height)
+    assertEquals(2, intToString.terms)
     assertEquals("(int.to.str i)", intToString.code)
     assertEquals(List("1", "", "0"), intToString.values)
   }
@@ -105,6 +116,7 @@ class ASTNodeTests extends JUnitSuite{
     val ite: StringNode = new StringITE(cond,exp1,exp2)
     assertEquals(Types.String,ite.nodeType)
     assertEquals(1,ite.height)
+    assertEquals(4, ite.terms)
     assertEquals("(ite b \"true\" \"false\")", ite.code)
     assertEquals(List("true","false"),ite.values)
   }
@@ -117,6 +129,7 @@ class ASTNodeTests extends JUnitSuite{
 
     assertEquals(Types.String, substring.nodeType)
     assertEquals(1, substring.height)
+    assertEquals(4, substring.terms)
     assertEquals("(str.substr str 1 3)",substring.code)
     //Desired behavior from euphony/eusolver: a[b:(c+b)] if 0 <= b and len(a) >= (c+b) >= b else ''
     assertEquals(List("","","","bcd"),substring.values)
@@ -129,6 +142,7 @@ class ASTNodeTests extends JUnitSuite{
     val add :IntNode = new IntAddition(lhs,rhs)
     assertEquals(Types.Int, add.nodeType)
     assertEquals(1, add.height)
+    assertEquals(3, add.terms)
     assertEquals("(+ 1 2)", add.code)
     assertEquals(List(3), add.values)
   }
@@ -139,6 +153,7 @@ class ASTNodeTests extends JUnitSuite{
     val sub :IntNode = new IntSubtraction(lhs,rhs)
     assertEquals(Types.Int, sub.nodeType)
     assertEquals(1, sub.height)
+    assertEquals(3, sub.terms)
     assertEquals("(- 1 2)", sub.code)
     assertEquals(List(-1), sub.values)
   }
@@ -148,6 +163,7 @@ class ASTNodeTests extends JUnitSuite{
     val strlen: IntNode = new StringLength(str)
     assertEquals(Types.Int, strlen.nodeType)
     assertEquals(1,strlen.height)
+    assertEquals(2,strlen.terms)
     assertEquals("(str.len s)", strlen.code)
     assertEquals(List(0,1), strlen.values)
   }
@@ -158,6 +174,7 @@ class ASTNodeTests extends JUnitSuite{
 
     assertEquals(Types.Int,strToInt.nodeType)
     assertEquals(1, strToInt.height)
+    assertEquals(2, strToInt.terms)
     assertEquals("(str.to.int \"88\")",strToInt.code)
     assertEquals(List(88), strToInt.values)
 
@@ -166,6 +183,7 @@ class ASTNodeTests extends JUnitSuite{
 
     assertEquals(Types.Int,strToInt2.nodeType)
     assertEquals(1, strToInt2.height)
+    assertEquals(2, strToInt2.terms)
     assertEquals("(str.to.int \"a\")",strToInt2.code)
     assertEquals(List(-1), strToInt2.values)
   }
@@ -177,6 +195,7 @@ class ASTNodeTests extends JUnitSuite{
     val ite: IntNode = new IntITE(cond,exp1,exp2)
     assertEquals(Types.Int,ite.nodeType)
     assertEquals(1,ite.height)
+    assertEquals(4,ite.terms)
     assertEquals("(ite b 5 -10)", ite.code)
     assertEquals(List(5,-10),ite.values)
   }
@@ -189,6 +208,7 @@ class ASTNodeTests extends JUnitSuite{
 
     assertEquals(Types.Int,indexOf.nodeType)
     assertEquals(1,indexOf.height)
+    assertEquals(4, indexOf.terms)
     assertEquals("(str.indexof \"abcd\" s 1)",indexOf.code)
     assertEquals(List(-1,2,-1),indexOf.values)
   }
@@ -199,6 +219,7 @@ class ASTNodeTests extends JUnitSuite{
     val lte :BoolNode = new IntLessThanEq(lhs,rhs)
     assertEquals(Types.Bool, lte.nodeType)
     assertEquals(1, lte.height)
+    assertEquals(3, lte.terms)
     assertEquals("(<= 1 1)", lte.code)
     assertEquals(List(true), lte.values)
   }
@@ -210,6 +231,7 @@ class ASTNodeTests extends JUnitSuite{
     val eq: BoolNode = new IntEquals(lhs,rhs)
     assertEquals(Types.Bool,eq.nodeType)
     assertEquals(1,eq.height)
+    assertEquals(3, eq.terms)
     assertEquals("(= i j)", eq.code)
     assertEquals(List(false,true),eq.values)
   }
@@ -220,6 +242,7 @@ class ASTNodeTests extends JUnitSuite{
     val prefixOf: BoolNode = new PrefixOf(lhs,rhs)
     assertEquals(Types.Bool,prefixOf.nodeType)
     assertEquals(1,prefixOf.height)
+    assertEquals(3, prefixOf.terms)
     assertEquals("(str.prefixof \"abc\" x)", prefixOf.code)
     assertEquals(List(true,false),prefixOf.values)
   }
@@ -230,6 +253,7 @@ class ASTNodeTests extends JUnitSuite{
     val suffixOf: BoolNode = new SuffixOf(lhs,rhs)
     assertEquals(Types.Bool,suffixOf.nodeType)
     assertEquals(1,suffixOf.height)
+    assertEquals(3, suffixOf.terms)
     assertEquals("(str.suffixof \"abc\" x)", suffixOf.code)
     assertEquals(List(false,true),suffixOf.values)
   }
@@ -240,6 +264,7 @@ class ASTNodeTests extends JUnitSuite{
     val contains: BoolNode = new Contains(lhs,rhs)
     assertEquals(Types.Bool,contains.nodeType)
     assertEquals(1,contains.height)
+    assertEquals(3, contains.terms)
     assertEquals("(str.contains \"abc\" x)", contains.code)
     assertEquals(List(false,true),contains.values)
   }
