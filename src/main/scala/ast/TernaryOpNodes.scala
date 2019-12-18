@@ -7,6 +7,7 @@ trait TernaryOpNode[T] extends ASTNode{
   val arg1: ASTNode
   val arg2: ASTNode
   override val height: Int = 1 + Math.max(arg0.height,Math.max(arg1.height,arg2.height))
+  override val terms: Int = 1 + arg0.terms + arg1.terms + arg2.terms
   assert(arg0.values.length == arg1.values.length && arg1.values.length == arg2.values.length)
   def doOp(a0: Any, a1: Any, a2: Any): T
   lazy val values : List[T] =

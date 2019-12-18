@@ -4,6 +4,7 @@ trait BinaryOpNode[T] extends ASTNode{
   val lhs: ASTNode
   val rhs: ASTNode
   override val height: Int = 1 + Math.max(lhs.height,rhs.height)
+  override val terms: Int = 1 + lhs.terms + rhs.terms
   assert(lhs.values.length == rhs.values.length)
   def doOp(l: Any, r: Any): T
   lazy val values : List[T] =

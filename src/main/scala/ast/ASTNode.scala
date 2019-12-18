@@ -5,6 +5,7 @@ trait ASTNode {
   val values: List[Any]
   val code: String
   val height: Int
+  val terms: Int
   def includes(varName: String): Boolean
 }
 

@@ -2,6 +2,7 @@ package ast
 
 abstract class VariableNode[T](contexts: List[Map[String,Any]]) extends ASTNode {
   override val height: Int = 0
+  val terms = 1
   val name: String
   val values: List[T] = contexts.map{ context =>
     context(name).asInstanceOf[T]
