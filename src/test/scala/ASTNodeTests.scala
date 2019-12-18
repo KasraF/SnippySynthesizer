@@ -243,4 +243,28 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(str.contains \"abc\" x)", contains.code)
     assertEquals(List(false,true),contains.values)
   }
+
+  @Test def includesVarWithName: Unit = {
+    val variable = new IntVariable("x",Map("x" -> 2) :: Nil)
+    assertTrue(variable.includes("x"))
+    assertFalse(variable.includes("y"))
+
+    val expr = new IntAddition(new IntLiteral(2,2), new IntLiteral(4,2))
+    assertFalse(expr.includes("x"))
+    assertFalse(expr.includes("y"))
+
+    assertTrue(new IntSubtraction(new IntLiteral(1,1),variable).includes("x"))
+    assertFalse(new IntSubtraction(new IntLiteral(1,1),variable).includes("y"))
+    assertTrue(new IntSubtraction(variable,new IntLiteral(1,1)).includes("x"))
+    assertFalse(new IntSubtraction(variable,new IntLiteral(1,1)).includes("z"))
+    assertFalse(new StringReplace(new StringLiteral("a",1),new StringLiteral("a",1),new StringLiteral("a",1)).includes("x"))
+    assertFalse(new StringReplace(new StringVariable("a",Map("a"->"")::Nil),new StringLiteral("a",1),new StringLiteral("a",1)).includes("x"))
+    assertTrue(new StringReplace(new StringVariable("a",Map("a"->"")::Nil),new StringLiteral("a",1),new StringLiteral("a",1)).includes("a"))
+    assertFalse(new StringReplace(new StringLiteral("a",1),new StringVariable("a",Map("a"->"")::Nil),new StringLiteral("a",1)).includes("x"))
+    assertTrue(new StringReplace(new StringLiteral("a",1),new StringVariable("a",Map("a"->"")::Nil),new StringLiteral("a",1)).includes("a"))
+    assertFalse(new StringReplace(new StringLiteral("a",1),new StringLiteral("a",1),new StringVariable("a",Map("a"->"")::Nil)).includes("x"))
+    assertTrue(new StringReplace(new StringLiteral("a",1),new StringLiteral("a",1),new StringVariable("a",Map("a"->"")::Nil)).includes("a"))
+    assertTrue(new IntToString(variable).includes("x"))
+    assertFalse(new IntToString(variable).includes("a"))
+  }
 }

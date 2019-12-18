@@ -5,6 +5,7 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode{
   val height = 0
   val value: T
   val values: List[T] = List.fill(numContexts)(value)
+  def includes(varName: String): Boolean = false
 }
 class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode{
   override lazy val code: String = '"' + value + '"' //escape?

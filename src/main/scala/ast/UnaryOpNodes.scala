@@ -5,6 +5,7 @@ trait UnaryOpNode[T] extends ASTNode{
   def doOp(x: Any): T
   override lazy val values : List[T] = arg.values.map(doOp)
   override val height = 1 + arg.height
+  def includes(varName: String): Boolean = arg.includes(varName)
 }
 
 class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode {

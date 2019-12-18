@@ -11,6 +11,8 @@ trait TernaryOpNode[T] extends ASTNode{
   def doOp(a0: Any, a1: Any, a2: Any): T
   lazy val values : List[T] =
     arg0.values.zip(arg1.values).zip(arg2.values).map(tup => doOp(tup._1._1, tup._1._2, tup._2)).toList
+
+  def includes(varName: String): Boolean = arg0.includes(varName) || arg1.includes(varName) || arg2.includes(varName)
 }
 
 class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode {
