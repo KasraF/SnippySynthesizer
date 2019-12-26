@@ -1,6 +1,7 @@
 package enumeration
 
 import ast.{ASTNode, VocabFactory, VocabMaker}
+import trace.DebugPrints.dprintln
 
 import scala.collection.mutable
 
@@ -38,7 +39,7 @@ class Enumerator(val vocab: VocabFactory, val oeManager: OEValuesManager, val co
   }
   var height = 0
   def changeLevel(): Boolean = {
-    println(currLevelProgs.length)
+    dprintln(currLevelProgs.length)
     if (currLevelProgs.isEmpty) return false
 
     currIter = vocab.nonLeaves
