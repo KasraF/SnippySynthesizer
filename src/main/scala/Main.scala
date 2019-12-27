@@ -12,11 +12,11 @@ import trace.DebugPrints.{dprintln,iprintln}
 
 object Main extends App {
   val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\name-combine-3-long-repeat.sl"
-   //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
-   //"src/test/benchmarks/modified_benchmarks/bikes_small_1.sl"
-    "src/test/benchmarks/syguscomp/split-numbers-from-units-of-measure_1.sl"
+  //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
+  //"src/test/benchmarks/modified_benchmarks/get-first-name-from-name_1.sl"
+   //"src/test/benchmarks/syguscomp/split-numbers-from-units-of-measure_1.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
-   //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\from_2018\\bikes_small.sl"//uargs(0)
+   "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\compare-two-strings.sl"//uargs(0)
   def synthesize(filename: String) = {
      val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
      assert(task.isPBE)
