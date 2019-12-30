@@ -6,6 +6,7 @@ trait ASTNode {
   val code: String
   val height: Int
   val terms: Int
+  val children: Iterable[ASTNode]
   def includes(varName: String): Boolean
 }
 

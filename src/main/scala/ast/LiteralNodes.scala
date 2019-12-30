@@ -6,6 +6,7 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode{
   val terms = 1
   val value: T
   val values: List[T] = List.fill(numContexts)(value)
+  override val children: Iterable[ASTNode] = Iterable.empty
   def includes(varName: String): Boolean = false
 }
 class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode{

@@ -9,6 +9,7 @@ trait BinaryOpNode[T] extends ASTNode{
   def doOp(l: Any, r: Any): T
   lazy val values : List[T] =
     lhs.values.zip(rhs.values).map(pair => doOp(pair._1,pair._2)).toList
+  override val children: Iterable[ASTNode] = Iterable(lhs,rhs)
   def includes(varName: String): Boolean = lhs.includes(varName) || rhs.includes(varName)
 }
 
