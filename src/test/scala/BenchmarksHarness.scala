@@ -11,7 +11,7 @@ object BenchmarksHarness extends App {
     val origFilename = filenameToGoldStandard(file.getName)
     val goldStandard = Solutions.solutions.withDefaultValue(Nil)(origFilename)
 
-    file.getName + (if (goldStandard.contains(programs.head._1.code))
+    file.getName + (if (programs.isEmpty) Console.RED + " NOT FOUND" + Console.RESET else if (goldStandard.contains(programs.head._1.code))
       " PASSED"
     else Console.RED + programs.zipWithIndex.dropWhile{case ((tree,rate),idx) => !goldStandard.contains(tree.code)}.headOption.map{case ((tree,rate),idx) =>
       " " + tree.code + " " + rate + " (" + idx + ")" + " [" + programs.head._1.code + " " + programs.head._2 + "]"}.getOrElse(" NOT FOUND")  + Console.RESET )
