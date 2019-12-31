@@ -22,20 +22,29 @@ class InterpreterTests extends JUnitSuite {
   }
 
   @Test def parseSyGuS(): Unit = {
-    assert(!parseBenchmarks("src/test/benchmarks/syguscomp", identity))
+    assert(!interpretBenchmarks("src/test/benchmarks/syguscomp", identity))
   }
 
   @Test def parseContradiction(): Unit = {
-    assert(!parseBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl"))
+    assert(!interpretBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl"))
   }
 
   @Test def parseGarbage(): Unit = {
-    assert(!parseBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl"))
+    assert(!interpretBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl"))
   }
 
   @Test def parseTooHard(): Unit = {
-    assert(!parseBenchmarks("src/test/benchmarks/too-hard",identity))
+    assert(!interpretBenchmarks("src/test/benchmarks/too-hard",identity))
   }
+
+  @Test def correctSyGuS(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/syguscomp", identity, true))
+  }
+
+  @Test def correctTooHard(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/too-hard",identity, true))
+  }
+
 
   val slFileContent = """(set-logic SLIA)
                         |(synth-fun f ((col1 String) (col2 String)) String
@@ -70,7 +79,7 @@ class InterpreterTests extends JUnitSuite {
                         |
                         |(check-synth)""".stripMargin
 
-  def parseBenchmarks(dirname: String, filenameToGoldStandard: String => String): Boolean = {
+  def interpretBenchmarks(dirname: String, filenameToGoldStandard: String => String, checkOutput: Boolean = false): Boolean = {
     var failed: Boolean = false
     for {
       file <- new java.io.File(dirname).listFiles().toList
@@ -80,11 +89,16 @@ class InterpreterTests extends JUnitSuite {
     } {
       prog match {
         case None => {
-          println(s"Failed to parse solution for $origFilename: $gold")
+          println(s"\nFailed to parse solution for $origFilename: $gold")
           failed = true
         }
-        case Some(p) =>
-          println(s"OK: ${p.code}")
+        case Some((p, outputs)) =>
+          println(s"\nParsed: ${p.code}")
+          if (checkOutput && p.values != outputs) {
+            println(s"Output: ${p.values.mkString(", ")}")
+            println(s"Expect: ${outputs.mkString(", ")}")
+            failed = true
+          }
       }
     }
     failed
