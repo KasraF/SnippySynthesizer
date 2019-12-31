@@ -11,17 +11,22 @@ object BenchmarksHarness extends App {
     val origFilename = filenameToGoldStandard(file.getName)
     val goldStandard = Solutions.solutions.withDefaultValue(Nil)(origFilename)
 
-    file.getName + (if (programs.isEmpty) Console.RED + " NOT FOUND" + Console.RESET else if (goldStandard.contains(programs.head._1.code))
+    /*file.getName + (if (programs.isEmpty) Console.RED + " NOT FOUND" + Console.RESET else if (goldStandard.contains(programs.head._1.code))
       " PASSED"
     else Console.RED + programs.zipWithIndex.dropWhile{case ((tree,rate),idx) => !goldStandard.contains(tree.code)}.headOption.map{case ((tree,rate),idx) =>
-      " " + tree.code + " " + rate + " (" + idx + ")" + " [" + programs.head._1.code + " " + programs.head._2 + "]"}.getOrElse(" NOT FOUND")  + Console.RESET )
+      " " + tree.code + " " + rate + " (" + idx + ")" + " [" + programs.head._1.code + " " + programs.head._2 + "]"}.getOrElse(" NOT FOUND")  + Console.RESET )*/
+
+    if (goldStandard.isEmpty) file.getName + "NO GOLD STANDARD"
+    else file.getName + ":\n" + programs.take(5).map{case (prog, rate) =>
+      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg,ast.SimilarityMetric.compute(prog,goldProg))/*.toDouble / Math.max(prog.terms,goldProg.terms)*/).maxBy(_._2)}
+        .mkString("\n") + "\n"
   }
 
-  val origBenchmarks: List[String] = runBenchmarks("src/test/benchmarks/syguscomp",identity)
+  val origBenchmarks: List[String] = Nil //runBenchmarks("src/test/benchmarks/syguscomp",identity)
 
-  val contradictionBenchmarks = runBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl")
+  val contradictionBenchmarks = Nil //runBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl")
 
-  val garbageBenchmarks = runBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl")
+  val garbageBenchmarks = Nil //runBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl")
 
   val tooHardBenchmarks = runBenchmarks("src/test/benchmarks/too-hard",identity)
 
