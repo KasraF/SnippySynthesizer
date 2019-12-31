@@ -58,11 +58,12 @@ object Main extends App {
      rankedProgs.sortBy(-_._2).take(100)
    }
 
-  def interpret(filename: String, str: String): Option[ASTNode] = try {
+  def interpret(filename: String, str: String): Option[(ASTNode, List[Any])] = try {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
     val parsed = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(str)))).bfTerm()
     val visitor = new ASTGenerator(task)
-    Some(visitor.visit(parsed))
+    val ast = visitor.visit(parsed)
+    Some(ast, task.examples.map(_.output))
   } catch {
     case e: RecognitionException => {
       iprintln(s"Cannot parse program: ${e.getMessage}")
@@ -75,8 +76,8 @@ object Main extends App {
   }
 
   trace.DebugPrints.setInfo()
-//  val prog = interpret(filename, "(str.++ firstname lastname)")
-//  println(prog.map(_.code))
-//  println(prog.get.values)
+//  val (prog, _) = interpret(filename, "(str.++ firstname lastname)").get
+//  println(prog.code)
+//  println(prog.values)
   synthesize(filename).foreach(pr => println((pr._1.code,pr._2)))
 }

@@ -1,6 +1,4 @@
-import ast._
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
-import org.junit.Assert.{assertEquals, assertTrue}
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 
@@ -21,6 +19,30 @@ class InterpreterTests extends JUnitSuite {
     val visitor = new ASTGenerator(task)
     val ast = visitor.visit(parsed)
     assert(ast != null)
+  }
+
+  @Test def parseSyGuS(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/syguscomp", identity))
+  }
+
+  @Test def parseContradiction(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl"))
+  }
+
+  @Test def parseGarbage(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl"))
+  }
+
+  @Test def parseTooHard(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/too-hard",identity))
+  }
+
+  @Test def correctSyGuS(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/syguscomp", identity, true))
+  }
+
+  @Test def correctTooHard(): Unit = {
+    assert(!interpretBenchmarks("src/test/benchmarks/too-hard",identity, true))
   }
 
 
@@ -56,4 +78,30 @@ class InterpreterTests extends JUnitSuite {
                         |                  "University of Michigan, Ann Arbor, MI, USA"))
                         |
                         |(check-synth)""".stripMargin
+
+  def interpretBenchmarks(dirname: String, filenameToGoldStandard: String => String, checkOutput: Boolean = false): Boolean = {
+    var failed: Boolean = false
+    for {
+      file <- new java.io.File(dirname).listFiles().toList
+      origFilename = filenameToGoldStandard(file.getName)
+      gold <- Solutions.solutions.withDefaultValue(Nil)(origFilename)
+      prog = Main.interpret(file.getAbsolutePath, gold)
+    } {
+      prog match {
+        case None => {
+          println(s"\nFailed to parse solution for $origFilename: $gold")
+          failed = true
+        }
+        case Some((p, outputs)) =>
+          println(s"\nParsed: ${p.code}")
+          if (checkOutput && p.values != outputs) {
+            println(s"Output: ${p.values.mkString(", ")}")
+            println(s"Expect: ${outputs.mkString(", ")}")
+            failed = true
+          }
+      }
+    }
+    failed
+  }
+
 }
