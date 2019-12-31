@@ -1,6 +1,7 @@
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
+import trace.DebugPrints
 
 class InterpreterTests extends JUnitSuite {
   @Test def stringProg(): Unit = {
@@ -89,14 +90,14 @@ class InterpreterTests extends JUnitSuite {
     } {
       prog match {
         case None => {
-          println(s"\nFailed to parse solution for $origFilename: $gold")
+          println(Console.RED + s"\nFailed to parse solution for $origFilename: $gold" + Console.RESET)
           failed = true
         }
         case Some((p, outputs)) =>
           println(s"\nParsed: ${p.code}")
           if (checkOutput && p.values != outputs) {
-            println(s"Output: ${p.values.mkString(", ")}")
-            println(s"Expect: ${outputs.mkString(", ")}")
+            println(Console.RED + s"Output: ${p.values.mkString(", ")}")
+            println(s"Expect: ${outputs.mkString(", ")}" + Console.RESET)
             failed = true
           }
       }
