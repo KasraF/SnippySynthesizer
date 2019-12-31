@@ -12,6 +12,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("\"abc\"",stringLiteral.code)
     assertEquals(0,stringLiteral.height)
     assertEquals(1,stringLiteral.terms)
+    assertTrue(stringLiteral.children.isEmpty)
   }
 
   @Test def intLiteralNode(): Unit = {
@@ -21,6 +22,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("2",intLiteral.code)
     assertEquals(0,intLiteral.height)
     assertEquals(1,intLiteral.terms)
+    assertTrue(intLiteral.children.isEmpty)
   }
 
   @Test def boolLiteralNode(): Unit = {
@@ -30,6 +32,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("true",boolLiteral.code)
     assertEquals(0,boolLiteral.height)
     assertEquals(1,boolLiteral.terms)
+    assertTrue(boolLiteral.children.isEmpty)
   }
 
   @Test def variableNode(): Unit = {
@@ -41,6 +44,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(1,stringVariableNode.terms)
     assertEquals("abc",stringVariableNode.values(0))
     assertEquals("",stringVariableNode.values(1))
+    assertTrue(stringVariableNode.children.isEmpty)
 
     val intVariableNode: IntNode = new IntVariable("y",Map("y" -> 2) :: Nil)
     assertEquals(Types.Int,intVariableNode.nodeType)
@@ -49,6 +53,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(1,intVariableNode.terms)
     assertEquals(1,intVariableNode.values.length)
     assertEquals(List(2),intVariableNode.values)
+    assertTrue(intVariableNode.children.isEmpty)
 
     val contexts2: List[Map[String,Any]] = List(Map("x" -> "abc","z"-> true),Map("x" -> "","y" -> "abcd","z" -> false), Map("z" -> true))
     val boolVariableNode: BoolNode = new BoolVariable("z",contexts2)
@@ -57,6 +62,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(1,boolVariableNode.terms)
     assertEquals(3,boolVariableNode.values.length)
     assertEquals(List(true,false,true),boolVariableNode.values)
+    assertTrue(boolVariableNode.children.isEmpty)
   }
 
   @Test def stringConcatNode: Unit = {
@@ -68,6 +74,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, strConcat.terms)
     assertEquals("(str.++ \"abc\" x)", strConcat.code)
     assertEquals(List("abc123","abc456"),strConcat.values)
+    assertEquals(List(lhs,rhs), strConcat.children)
   }
 
   @Test def stringReplaceNode: Unit = {
@@ -80,6 +87,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(4, strReplace.terms)
     assertEquals("(str.replace x \"12\" \"2\")",strReplace.code)
     assertEquals(List("2312","456"),strReplace.values)
+    assertEquals(List(arg0,arg1,arg2),strReplace.children)
   }
 
   @Test def stringAtNode: Unit = {
@@ -91,12 +99,14 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, strAt.terms)
     assertEquals("(str.at str 1)",strAt.code)
     assertEquals(List("b","b"),strAt.values)
+    assertEquals(List(lhs,rhs), strAt.children)
 
     val strAt2 = new StringAt(strAt,rhs)
     assertEquals("(str.at (str.at str 1) 1)",strAt2.code)
     assertEquals(2,strAt2.height)
     assertEquals(5, strAt2.terms)
     assertEquals(List("",""), strAt2.values)
+    assertEquals(List(strAt,rhs),strAt2.children)
   }
 
   @Test def intToStringNode: Unit = {
@@ -107,6 +117,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(2, intToString.terms)
     assertEquals("(int.to.str i)", intToString.code)
     assertEquals(List("1", "", "0"), intToString.values)
+    assertEquals(List(arg),intToString.children)
   }
 
   @Test def stringITENode: Unit = {
@@ -119,6 +130,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(4, ite.terms)
     assertEquals("(ite b \"true\" \"false\")", ite.code)
     assertEquals(List("true","false"),ite.values)
+    assertEquals(List(cond,exp1,exp2), ite.children)
   }
 
   @Test def substringNode: Unit = {
@@ -133,6 +145,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals("(str.substr str 1 3)",substring.code)
     //Desired behavior from euphony/eusolver: a[b:(c+b)] if 0 <= b and len(a) >= (c+b) >= b else ''
     assertEquals(List("","","","bcd"),substring.values)
+    assertEquals(List(str,from,to),substring.children)
 
   }
 
@@ -145,6 +158,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, add.terms)
     assertEquals("(+ 1 2)", add.code)
     assertEquals(List(3), add.values)
+    assertEquals(List(lhs,rhs),add.children)
   }
 
   @Test def intSubNode: Unit = {
@@ -156,6 +170,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, sub.terms)
     assertEquals("(- 1 2)", sub.code)
     assertEquals(List(-1), sub.values)
+    assertEquals(List(lhs,rhs),sub.children)
   }
 
   @Test def strelnNode: Unit = {
@@ -166,6 +181,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(2,strlen.terms)
     assertEquals("(str.len s)", strlen.code)
     assertEquals(List(0,1), strlen.values)
+    assertEquals(List(str),strlen.children)
   }
 
   @Test def stringToIntNode: Unit = {
@@ -177,6 +193,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(2, strToInt.terms)
     assertEquals("(str.to.int \"88\")",strToInt.code)
     assertEquals(List(88), strToInt.values)
+    assertEquals(List(str),strToInt.children)
 
     val str2 = new StringLiteral("a",1)
     val strToInt2: IntNode = new StringToInt(str2)
@@ -186,6 +203,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(2, strToInt2.terms)
     assertEquals("(str.to.int \"a\")",strToInt2.code)
     assertEquals(List(-1), strToInt2.values)
+    assertEquals(List(str2),strToInt2.children)
   }
 
   @Test def intITENode: Unit = {
@@ -198,6 +216,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(4,ite.terms)
     assertEquals("(ite b 5 -10)", ite.code)
     assertEquals(List(5,-10),ite.values)
+    assertEquals(List(cond,exp1,exp2), ite.children)
   }
 
   @Test def indexOfNode: Unit = {
@@ -211,6 +230,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(4, indexOf.terms)
     assertEquals("(str.indexof \"abcd\" s 1)",indexOf.code)
     assertEquals(List(-1,2,-1),indexOf.values)
+    assertEquals(List(arg0,arg1,arg2), indexOf.children)
   }
 
   @Test def lteNode: Unit = {
@@ -222,6 +242,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, lte.terms)
     assertEquals("(<= 1 1)", lte.code)
     assertEquals(List(true), lte.values)
+    assertEquals(List(lhs,rhs), lte.children)
   }
 
   @Test def eqNode: Unit = {
@@ -234,6 +255,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, eq.terms)
     assertEquals("(= i j)", eq.code)
     assertEquals(List(false,true),eq.values)
+    assertEquals(List(lhs,rhs),eq.children)
   }
 
   @Test def prefixOfNode: Unit = {
@@ -245,6 +267,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, prefixOf.terms)
     assertEquals("(str.prefixof \"abc\" x)", prefixOf.code)
     assertEquals(List(true,false),prefixOf.values)
+    assertEquals(List(lhs,rhs),prefixOf.children)
   }
 
   @Test def suffixOfNode: Unit = {
@@ -256,6 +279,7 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, suffixOf.terms)
     assertEquals("(str.suffixof \"abc\" x)", suffixOf.code)
     assertEquals(List(false,true),suffixOf.values)
+    assertEquals(List(lhs,rhs),suffixOf.children)
   }
 
   @Test def strContains: Unit = {
@@ -267,6 +291,9 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(3, contains.terms)
     assertEquals("(str.contains \"abc\" x)", contains.code)
     assertEquals(List(false,true),contains.values)
+    assertEquals(List(lhs,rhs),contains.children)
+    //second iteration
+    assertEquals(List(lhs,rhs),contains.children)
   }
 
   @Test def includesVarWithName: Unit = {

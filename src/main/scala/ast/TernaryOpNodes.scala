@@ -13,6 +13,8 @@ trait TernaryOpNode[T] extends ASTNode{
   lazy val values : List[T] =
     arg0.values.zip(arg1.values).zip(arg2.values).map(tup => doOp(tup._1._1, tup._1._2, tup._2)).toList
 
+  override val children: Iterable[ASTNode] = Iterable(arg0,arg1,arg2)
+
   def includes(varName: String): Boolean = arg0.includes(varName) || arg1.includes(varName) || arg2.includes(varName)
 }
 
