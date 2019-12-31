@@ -1,4 +1,4 @@
-// Generated from SyGuS.g4 by ANTLR 4.7.2
+// Generated from H:/Work/partialcorrectness/src/main/java\SyGuS.g4 by ANTLR 4.7.2
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
@@ -125,6 +125,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitSyGuS(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitSyGuS(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final SyGuSContext syGuS() throws RecognitionException {
@@ -182,6 +187,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitSort(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitSort(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -262,6 +272,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitBfTerm(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitBfTerm(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -361,6 +376,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitTerm(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitTerm(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -539,6 +559,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitSortedVar(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitSortedVar(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final SortedVarContext sortedVar() throws RecognitionException {
@@ -585,6 +610,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitVarBinding(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitVarBinding(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final VarBindingContext varBinding() throws RecognitionException {
@@ -626,6 +656,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitFeature(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitFeature(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -697,6 +732,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitCmd(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitCmd(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -926,6 +966,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitSmtCmd(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitSmtCmd(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final SmtCmdContext smtCmd() throws RecognitionException {
@@ -1126,6 +1171,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitSortDecl(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitSortDecl(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final SortDeclContext sortDecl() throws RecognitionException {
@@ -1173,6 +1223,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitDTDec(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitDTDec(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1234,6 +1289,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitDtConsDec(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitDtConsDec(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final DtConsDecContext dtConsDec() throws RecognitionException {
@@ -1294,6 +1354,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitGrammarDef(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitGrammarDef(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1357,6 +1422,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitGroupedRuleList(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitGroupedRuleList(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1424,6 +1494,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitGTerm(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitGTerm(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 
@@ -1500,6 +1575,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitIdentifier(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitIdentifier(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final IdentifierContext identifier() throws RecognitionException {
@@ -1574,6 +1654,11 @@ public class SyGuSParser extends Parser {
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitIndex(this);
 		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitIndex(this);
+			else return visitor.visitChildren(this);
+		}
 	}
 
 	public final IndexContext index() throws RecognitionException {
@@ -1624,6 +1709,11 @@ public class SyGuSParser extends Parser {
 		@Override
 		public void exitRule(ParseTreeListener listener) {
 			if ( listener instanceof SyGuSListener ) ((SyGuSListener)listener).exitLiteral(this);
+		}
+		@Override
+		public <T> T accept(ParseTreeVisitor<? extends T> visitor) {
+			if ( visitor instanceof SyGuSVisitor ) return ((SyGuSVisitor<? extends T>)visitor).visitLiteral(this);
+			else return visitor.visitChildren(this);
 		}
 	}
 

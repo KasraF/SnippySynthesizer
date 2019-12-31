@@ -1,5 +1,6 @@
 import ast.ASTNode
 import enumeration.InputsValuesManager
+import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException}
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
@@ -11,12 +12,13 @@ import trace.DebugPrints.{dprintln,iprintln}
 
 
 object Main extends App {
-  val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\name-combine-3-long-repeat.sl"
+  val filename = "C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\name-combine-3-long-repeat.sl"
   //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
   //"src/test/benchmarks/modified_benchmarks/get-first-name-from-name_1.sl"
    //"src/test/benchmarks/syguscomp/split-numbers-from-units-of-measure_1.sl"
-  //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
-   "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\compare-two-strings.sl"//uargs(0)
+//  "C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
+//   "C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\compare-two-strings.sl"//uargs(0)
+//    "H:\\Work\\sygus\\comp\\2017\\PBE_Strings_Track\\name-combine-3-long-repeat.sl"
   def synthesize(filename: String) = {
      val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
      assert(task.isPBE)
@@ -56,7 +58,25 @@ object Main extends App {
      rankedProgs.sortBy(-_._2).take(100)
    }
 
-  trace.DebugPrints.setInfo()
-  synthesize(filename).foreach(pr => println((pr._1.code,pr._2)))
+  def interpret(filename: String, str: String): Option[ASTNode] = try {
+    val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
+    val parsed = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(str)))).bfTerm()
+    val visitor = new ASTGenerator(task)
+    Some(visitor.visit(parsed))
+  } catch {
+    case e: RecognitionException => {
+      iprintln(s"Cannot parse program: ${e.getMessage}")
+      None
+    }
+    case e: ResolutionException => {
+      iprintln(s"Cannot resolve program: ${e.msg}")
+      None
+    }
+  }
 
+  trace.DebugPrints.setInfo()
+//  val prog = interpret(filename, "(str.++ firstname lastname)")
+//  println(prog.map(_.code))
+//  println(prog.get.values)
+  synthesize(filename).foreach(pr => println((pr._1.code,pr._2)))
 }
