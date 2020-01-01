@@ -2,6 +2,7 @@ import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import trace.DebugPrints
+import sygus._
 
 class InterpreterTests extends JUnitSuite {
   @Test def stringProg(): Unit = {

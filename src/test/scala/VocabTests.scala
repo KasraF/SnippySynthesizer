@@ -1,4 +1,5 @@
 import ast._
+import sygus._
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import org.junit.Test
 import org.junit.Assert._

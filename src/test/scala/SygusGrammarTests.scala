@@ -2,7 +2,7 @@ import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._
 import java.io.{File, FilenameFilter}
-
+import sygus._
 import ast.Types
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 

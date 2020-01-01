@@ -4,6 +4,7 @@ import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Test
 import org.junit.Assert._
+import sygus.{SyGuSLexer, SyGuSParser, SygusFileTask}
 
 import collection.JavaConverters._
 

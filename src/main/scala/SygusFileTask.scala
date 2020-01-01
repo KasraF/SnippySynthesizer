@@ -1,10 +1,10 @@
-//package query
+package sygus
 
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams}
 
 import collection.JavaConverters._
 import Logic.Logic
-import SyGuSParser.TermContext
+import sygus.SyGuSParser.TermContext
 import ast._
 import ast.Types.Types
 

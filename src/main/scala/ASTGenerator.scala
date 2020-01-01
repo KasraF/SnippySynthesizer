@@ -1,5 +1,6 @@
+package sygus
 import ast._
-import SyGuSParser._
+import sygus.SyGuSParser._
 import org.antlr.v4.runtime.ParserRuleContext
 
 case class ResolutionException(msg: String) extends Exception

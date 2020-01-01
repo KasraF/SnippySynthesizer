@@ -1,4 +1,5 @@
-// Generated from H:/Work/partialcorrectness/src/main/java\SyGuS.g4 by ANTLR 4.7.2
+// Generated from SyGuS.g4 by ANTLR 4.7.2
+package sygus;
 import org.antlr.v4.runtime.atn.*;
 import org.antlr.v4.runtime.dfa.DFA;
 import org.antlr.v4.runtime.*;
