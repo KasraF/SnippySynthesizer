@@ -1,6 +1,7 @@
 import ast.ASTNode
 import enumeration.InputsValuesManager
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException}
+import sygus._
 
 import scala.collection.mutable
 import scala.collection.mutable.ListBuffer
