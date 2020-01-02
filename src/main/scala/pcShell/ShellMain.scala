@@ -62,7 +62,10 @@ object ShellMain extends App {
         prettyPrintSyntaxError(e)
       }
       case e: ResolutionException => {
-        println(s"Cannot resolve program: ${e.msg}")
+        val startIdx = e.badCtx.getStart.getStartIndex
+        val len = e.badCtx.getStop.getStopIndex - startIdx + 1
+        println(" " * (startIdx + 2) + "^" + (if (len > 1) "-" * (len - 2) + "^" else ""))
+        println("Cannot resolve program")
       }
       case e: ParseCancellationException =>{
         prettyPrintSyntaxError(e.getCause.asInstanceOf[RecognitionException])

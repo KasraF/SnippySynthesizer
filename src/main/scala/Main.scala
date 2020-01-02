@@ -71,7 +71,7 @@ object Main extends App {
       None
     }
     case e: ResolutionException => {
-      iprintln(s"Cannot resolve program: ${e.msg}")
+      iprintln(s"Cannot resolve program: ${e.badCtx.getText}")
       None
     }
   }

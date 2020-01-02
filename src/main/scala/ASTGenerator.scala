@@ -3,7 +3,7 @@ import ast._
 import sygus.SyGuSParser._
 import org.antlr.v4.runtime.ParserRuleContext
 
-case class ResolutionException(msg: String) extends Exception
+case class ResolutionException(badCtx: ParserRuleContext) extends Exception
 
 class ASTGenerator(task: SygusFileTask) extends SyGuSBaseVisitor[ASTNode] {
 
@@ -25,7 +25,7 @@ class ASTGenerator(task: SygusFileTask) extends SyGuSBaseVisitor[ASTNode] {
             return node
         }
       })
-      throw ResolutionException(ctx.getText)
+      throw ResolutionException(ctx)
     }
   }
 
@@ -40,7 +40,7 @@ class ASTGenerator(task: SygusFileTask) extends SyGuSBaseVisitor[ASTNode] {
       if (sameExpr(ctx, node, ignoreWhitespace = false))
         return node
     })
-    throw ResolutionException(ctx.getText)
+    throw ResolutionException(ctx)
   }
 
   private def sameExpr(ctx: ParserRuleContext, node: ASTNode, ignoreWhitespace: Boolean): Boolean =
