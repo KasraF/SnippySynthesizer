@@ -15,8 +15,8 @@ import trace.DebugPrints.{dprintln,iprintln}
 object Main extends App {
   val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_3_short.sl"
   //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
-  "src/test/benchmarks/modified_benchmarks/name-combine_1.sl"
-   //"src/test/benchmarks/syguscomp/create-email-address-with-name-and-domain.sl"
+  //"src/test/benchmarks/modified_benchmarks/name-combine_1.sl"
+   "src/test/benchmarks/syguscomp/38871714.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
    //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\stackoverflow4.sl"//args(0)
 
@@ -81,7 +81,7 @@ object Main extends App {
     }
   }
 
-  trace.DebugPrints.setInfo()
+  trace.DebugPrints.setDebug()
 //  val (prog, _) = interpret(filename, "(str.++ firstname lastname)").get
 //  println(prog.code)
 //  println(prog.values)
