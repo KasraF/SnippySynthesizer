@@ -143,8 +143,8 @@ class ASTNodeTests extends JUnitSuite{
     assertEquals(1, substring.height)
     assertEquals(4, substring.terms)
     assertEquals("(str.substr str 1 3)",substring.code)
-    //Desired behavior from euphony/eusolver: a[b:(c+b)] if 0 <= b and len(a) >= (c+b) >= b else ''
-    assertEquals(List("","","","bcd"),substring.values)
+    //Desired behavior from CVC4/Z3, checked by z3.
+    assertEquals(List("","b","bc","bcd"),substring.values)
     assertEquals(List(str,from,to),substring.children)
 
   }

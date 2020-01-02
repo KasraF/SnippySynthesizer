@@ -39,13 +39,17 @@ class IntITE(val arg0: BoolNode, val arg1: IntNode, val arg2: IntNode) extends T
 
 class Substring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[String] with StringNode {
   override def doOp(a0: Any, a1: Any, a2: Any): String = {
-    //a[b:(c+b)] if 0 <= b and len(a) >= (c+b) >= b else ''
+    //replacing eusolver def with the cvc4/z3 def:
+    //if (i.strictlyNegative() || j.strictlyNegative() || i >= s_len)
+    //  results[currNode] = EvalResult(String(""));
+    //else if (i + j > s_len)
+    //  EvalResult(s.suffix((s_len - i).toUnsignedInt()));
+    //else EvalResult(s.substr(i.toUnsignedInt(), j.toUnsignedInt()));
     val a = a0.asInstanceOf[String]
     val b = a1.asInstanceOf[Int]
     val c = a2.asInstanceOf[Int]
-    if (0 <= b && a.length >= (c+b) && (c+b) >= b)
-      a.drop(b).take(c)
-    else ""
+    if (b < 0 || c < 0 || b >= a.length) ""
+    else a.drop(b).take(c)
   }
 
   override lazy val code: String = List(arg0.code,arg1.code,arg2.code).mkString("(str.substr "," ",")")
