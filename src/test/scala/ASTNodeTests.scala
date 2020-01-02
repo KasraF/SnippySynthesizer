@@ -261,25 +261,27 @@ class ASTNodeTests extends JUnitSuite{
   @Test def prefixOfNode: Unit = {
     val lhs = new StringLiteral("abc",2)
     val rhs = new StringVariable("x", Map("x" -> "ab"):: Map("x" -> "c") :: Nil)
-    val prefixOf: BoolNode = new PrefixOf(lhs,rhs)
+    //CVC4 has (str.prefixof possible_prefix full_string), so we will too.
+    val prefixOf: BoolNode = new PrefixOf(rhs,lhs)
     assertEquals(Types.Bool,prefixOf.nodeType)
     assertEquals(1,prefixOf.height)
     assertEquals(3, prefixOf.terms)
-    assertEquals("(str.prefixof \"abc\" x)", prefixOf.code)
+    assertEquals("(str.prefixof x \"abc\")", prefixOf.code)
     assertEquals(List(true,false),prefixOf.values)
-    assertEquals(List(lhs,rhs),prefixOf.children)
+    assertEquals(List(rhs,lhs),prefixOf.children)
   }
 
   @Test def suffixOfNode: Unit = {
     val lhs = new StringLiteral("abc",2)
     val rhs = new StringVariable("x", Map("x" -> "ab"):: Map("x" -> "c") :: Nil)
-    val suffixOf: BoolNode = new SuffixOf(lhs,rhs)
+    //CVC4 has (str.prefixof possible_prefix full_string), so we will too.
+    val suffixOf: BoolNode = new SuffixOf(rhs,lhs)
     assertEquals(Types.Bool,suffixOf.nodeType)
     assertEquals(1,suffixOf.height)
     assertEquals(3, suffixOf.terms)
-    assertEquals("(str.suffixof \"abc\" x)", suffixOf.code)
+    assertEquals("(str.suffixof x \"abc\")", suffixOf.code)
     assertEquals(List(false,true),suffixOf.values)
-    assertEquals(List(lhs,rhs),suffixOf.children)
+    assertEquals(List(rhs, lhs),suffixOf.children)
   }
 
   @Test def strContains: Unit = {

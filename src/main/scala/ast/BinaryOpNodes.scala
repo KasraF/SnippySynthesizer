@@ -58,13 +58,13 @@ class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean
 }
 
 class PrefixOf(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode {
-  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[String].startsWith(r.asInstanceOf[String])
+  override def doOp(l: Any, r: Any): Boolean = r.asInstanceOf[String].startsWith(l.asInstanceOf[String])
 
   override lazy val code: String = "(str.prefixof " + lhs.code + " " + rhs.code + ")"
 }
 
 class SuffixOf(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode {
-  override def doOp(l: Any, r: Any): Boolean = l.asInstanceOf[String].endsWith(r.asInstanceOf[String])
+  override def doOp(l: Any, r: Any): Boolean = r.asInstanceOf[String].endsWith(l.asInstanceOf[String])
 
   override lazy val code: String = "(str.suffixof " + lhs.code + " " + rhs.code + ")"
 }
