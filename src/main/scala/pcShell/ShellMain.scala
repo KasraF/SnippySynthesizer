@@ -14,9 +14,9 @@ object ShellMain extends App {
   val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;
-    "'" + s.replace("\n", "\\n")
+    "\"" + s.replace("\n", "\\n")
      .replace("\r", "\\r")
-     .replace("\t", "\\t") + "'"
+     .replace("\t", "\\t") + "\""
   }
 
   def getTokenErrorDisplay(t: Token): String = {
@@ -26,17 +26,23 @@ object ShellMain extends App {
     else s = "<" + t.getType + ">"
     escapeWSAndQuote(s)
   }
+  class EOFExpectedException(recognizer: Parser) extends RecognitionException(recognizer,recognizer.getInputStream(), recognizer.getContext) {
+    this.setOffendingToken(recognizer.getCurrentToken)
+  }
+
   def prettyPrintSyntaxError(exception: RecognitionException) = {
     val offset = if (exception.isInstanceOf[LexerNoViableAltException]) exception.asInstanceOf[LexerNoViableAltException].getStartIndex + 2 else exception.getOffendingToken.getStartIndex + 1
     print(" " * (offset) + "^")
     if (exception.getOffendingToken != null && exception.getOffendingToken.getStopIndex - exception.getOffendingToken.getStartIndex > 1)
-      print("-" * (exception.getOffendingToken.getStopIndex - exception.getOffendingToken.getStartIndex - 1) + "^")
+      print("-" * (exception.getOffendingToken.getStopIndex - exception.getOffendingToken.getStartIndex) + "^")
     println
     exception match {
       case e: NoViableAltException =>
         println("no viable alternative at input " + (if (e.getStartToken == Token.EOF) "<EOF>" else escapeWSAndQuote(e.getOffendingToken.getText)))
       case e: InputMismatchException =>
-        println( s"mismatched input ${getTokenErrorDisplay(e.getOffendingToken())}, expecting ${e.getExpectedTokens().toString()}")
+        println( s"mismatched input ${getTokenErrorDisplay(e.getOffendingToken())}, expecting ${e.getExpectedTokens().toString(e.getRecognizer.getVocabulary)}")
+      case e: EOFExpectedException =>
+        println( s"mismatched input ${getTokenErrorDisplay(e.getOffendingToken())}, expecting <EOF>")
       case e: LexerNoViableAltException =>
         println("bad token")
     }
@@ -54,6 +60,8 @@ object ShellMain extends App {
       parser.removeErrorListeners()
       parser.setErrorHandler(new BailErrorStrategy)
       val parsed = parser.bfTerm()
+      if (parser.getCurrentToken.getType != Token.EOF)
+        throw new EOFExpectedException(parser)
       val visitor = new ASTGenerator(task)
       val ast = visitor.visit(parsed)
       println(Tabulator.format(List("input","result","expected") +:
