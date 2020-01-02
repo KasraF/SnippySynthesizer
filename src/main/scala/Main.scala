@@ -1,6 +1,6 @@
 import ast.ASTNode
 import enumeration.InputsValuesManager
-import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException}
+import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException, Token}
 import sygus._
 
 import scala.collection.mutable
@@ -61,10 +61,15 @@ object Main extends App {
 
   def interpret(filename: String, str: String): Option[(ASTNode, List[Any])] = try {
     val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
-    val parsed = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(str)))).bfTerm()
+    val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(str))))
+    val parsed = parser.bfTerm()
     val visitor = new ASTGenerator(task)
     val ast = visitor.visit(parsed)
-    Some(ast, task.examples.map(_.output))
+    if (parser.getCurrentToken.getType != Token.EOF) {
+      iprintln("Expected <EOF>")
+      None
+    }
+    else Some(ast, task.examples.map(_.output))
   } catch {
     case e: RecognitionException => {
       iprintln(s"Cannot parse program: ${e.getMessage}")
