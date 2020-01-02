@@ -48,6 +48,8 @@ object ShellMain extends App {
     }
   }
 
+  def escapeIfString(elem: Any): String = if (elem.isInstanceOf[String]) escapeWSAndQuote(elem.asInstanceOf[String]) else elem.toString
+
   Iterator.continually{
     print("> ")
     Console.in.readLine()
@@ -66,8 +68,8 @@ object ShellMain extends App {
       val ast = visitor.visit(parsed)
       println(Tabulator.format(List("input","result","expected") +:
         task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
-          s"${kv._1} -> ${if (kv._2.isInstanceOf[String]) escapeWSAndQuote(kv._2.toString) else kv._2}"
-        ).mkString("\n"), pair._2, pair._1.output))))
+          s"${kv._1} -> ${escapeIfString(kv._2.toString)}"
+        ).mkString("\n"), escapeIfString(pair._2), escapeIfString(pair._1.output)))))
     } catch {
       case e: RecognitionException => {
         prettyPrintSyntaxError(e)
