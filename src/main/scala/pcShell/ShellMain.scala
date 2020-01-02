@@ -10,7 +10,7 @@ import sygus._
 import trace.DebugPrints.iprintln
 
 object ShellMain extends App {
-  val taskFilename = "src/test/benchmarks/too-hard/39060015.sl"//args(0)
+  val taskFilename = "src/test/benchmarks/syguscomp/join-first-and-last-name.sl"//args(0)
   val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;
@@ -56,7 +56,10 @@ object ShellMain extends App {
       val parsed = parser.bfTerm()
       val visitor = new ASTGenerator(task)
       val ast = visitor.visit(parsed)
-      Some(ast, task.examples.map(_.output))
+      println(Tabulator.format(List("input","result","expected") +:
+        task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
+          s"${kv._1} -> ${if (kv._2.isInstanceOf[String]) escapeWSAndQuote(kv._2.toString) else kv._2}"
+        ).mkString("\n"), pair._2, pair._1.output))))
     } catch {
       case e: RecognitionException => {
         prettyPrintSyntaxError(e)
