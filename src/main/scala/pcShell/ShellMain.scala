@@ -1,5 +1,6 @@
 package pcShell
 
+import java.io.PrintStream
 import java.util
 
 import jline.UnsupportedTerminal
@@ -7,11 +8,12 @@ import jline.console.ConsoleReader
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.antlr.v4.runtime._
 import org.antlr.v4.runtime.atn.{ATNConfigSet, ATNSimulator}
+import pcShell.Tabulator.GreenString
 import sygus._
 
 
 object ShellMain extends App {
-  val taskFilename = "src/test/benchmarks/too-hard/41503046.sl"//args(0)
+  val taskFilename = args(0)
   val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;
@@ -51,11 +53,13 @@ object ShellMain extends App {
 
   def escapeIfString(elem: Any): String = if (elem.isInstanceOf[String]) escapeWSAndQuote(elem.asInstanceOf[String]) else elem.toString
 
-  //import jline.TerminalFactory
-  //jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
+  import jline.TerminalFactory
+  jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
   val reader = new ConsoleReader()
   reader.setPrompt("> ")
   reader.setHistoryEnabled(true)
+  //val out = new PrintStream(reader.getOutput)
+
   var line: String = null
   while ((line = reader.readLine()) != null) {
       if (!line.trim.isEmpty) try {
@@ -78,7 +82,9 @@ object ShellMain extends App {
       println(Tabulator.format(List("input","result","expected") +:
         task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
           s"${kv._1} -> ${escapeIfString(kv._2.toString)}"
-        ).mkString("\n"), escapeIfString(pair._2), escapeIfString(pair._1.output)))))
+        ).mkString("\n"),
+          if (pair._2 == pair._1.output) GreenString(escapeIfString(pair._2)) else escapeIfString(pair._2),
+          escapeIfString(pair._1.output)))))
     }} catch {
       case e: RecognitionException => {
         prettyPrintSyntaxError(e)
