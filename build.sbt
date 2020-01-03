@@ -4,8 +4,11 @@ version := "0.1"
 
 scalaVersion := "2.13.1"
 
-libraryDependencies +=
-  "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
+libraryDependencies += "org.scala-lang.modules" %% "scala-parallel-collections" % "0.2.0"
+
+// https://mvnrepository.com/artifact/jline/jline
+libraryDependencies += "jline" % "jline" % "2.14.6"
+
 
 // https://mvnrepository.com/artifact/org.antlr/antlr4-runtime
 libraryDependencies += "org.antlr" % "antlr4-runtime" % "4.7.2"

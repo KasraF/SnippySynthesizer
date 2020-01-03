@@ -2,15 +2,16 @@ package pcShell
 
 import java.util
 
+import jline.UnsupportedTerminal
+import jline.console.ConsoleReader
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.antlr.v4.runtime._
 import org.antlr.v4.runtime.atn.{ATNConfigSet, ATNSimulator}
-import org.antlr.v4.runtime.dfa.DFA
 import sygus._
-import trace.DebugPrints.iprintln
+
 
 object ShellMain extends App {
-  val taskFilename = "src/test/benchmarks/syguscomp/join-first-and-last-name.sl"//args(0)
+  val taskFilename = "src/test/benchmarks/too-hard/41503046.sl"//args(0)
   val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;
@@ -50,11 +51,19 @@ object ShellMain extends App {
 
   def escapeIfString(elem: Any): String = if (elem.isInstanceOf[String]) escapeWSAndQuote(elem.asInstanceOf[String]) else elem.toString
 
-  Iterator.continually{
-    print("> ")
-    Console.in.readLine()
-  }.takeWhile(_ != null).foreach { line =>
+  //import jline.TerminalFactory
+  //jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
+  val reader = new ConsoleReader()
+  reader.setPrompt("> ")
+  reader.setHistoryEnabled(true)
+  var line: String = null
+  while ((line = reader.readLine()) != null) {
       if (!line.trim.isEmpty) try {
+      if (line.trim.startsWith(":")) line.trim.drop(1) match {
+        case "quit" | "q" => sys.exit(0)
+        case "synt" => println("THE SYNTHESIZER RUNS! MAGIC HAPPENS! TBD")
+        case _ => println("Not a valid command, try :quit or :synt")
+      } else {
       val lexer = new SyGuSLexer(CharStreams.fromString(line))
       lexer.removeErrorListeners()
       lexer.addErrorListener(new ThrowingLexerErrorListener)
@@ -70,7 +79,7 @@ object ShellMain extends App {
         task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
           s"${kv._1} -> ${escapeIfString(kv._2.toString)}"
         ).mkString("\n"), escapeIfString(pair._2), escapeIfString(pair._1.output)))))
-    } catch {
+    }} catch {
       case e: RecognitionException => {
         prettyPrintSyntaxError(e)
       }
