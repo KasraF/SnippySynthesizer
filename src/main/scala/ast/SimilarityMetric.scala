@@ -3,12 +3,13 @@ package ast
 import scala.collection.mutable
 
 object SimilarityMetric {
-  def compute(lhs: ASTNode, rhs: String): Int = {
-    if (lhs.height > 0 && lhs.code == rhs) lhs.terms
+  def compute(lhs: ASTNode, rhs: ASTNode): Int = {
+    if (lhs.height > 0 && lhs.code == rhs.code) lhs.terms
     else {
       val lhsSubTrees = mutable.ListBuffer[ASTNode]()
 
-      findEmbededSubtrees(lhs,rhs,lhsSubTrees)
+      if (findEmbededSubtrees(lhs,rhs.code,lhsSubTrees))
+        lhsSubTrees += lhs
 
 //      val rhsSubTrees = mutable.ListBuffer[ASTNode]()
 //      findEmbededSubtrees(rhs,lhs.code,rhsSubTrees)
