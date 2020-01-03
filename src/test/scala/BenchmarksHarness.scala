@@ -1,5 +1,5 @@
-import Main.RankedProgram
-import sygus.SygusFileTask
+import sygus.Main.RankedProgram
+import sygus._
 
 object Solutions {
 
