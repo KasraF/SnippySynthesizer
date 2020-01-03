@@ -16,9 +16,10 @@ object BenchmarksHarness extends App {
     else Console.RED + programs.zipWithIndex.dropWhile{case ((tree,rate),idx) => !goldStandard.contains(tree.code)}.headOption.map{case ((tree,rate),idx) =>
       " " + tree.code + " " + rate + " (" + idx + ")" + " [" + programs.head._1.code + " " + programs.head._2 + "]"}.getOrElse(" NOT FOUND")  + Console.RESET )*/
 
-    if (goldStandard.isEmpty) file.getName + "NO GOLD STANDARD"
-    else file.getName + ":\n" + programs.take(5).map{case (prog, rate) =>
-      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg,ast.SimilarityMetric.compute(prog,goldProg))/*.toDouble / Math.max(prog.terms,goldProg.terms)*/).maxBy(_._2)}
+    if (goldStandard.isEmpty) file.getName + " NO GOLD STANDARD\n" + programs.take(10).map{case (prog, rate) => prog.code + " " + rate}
+      .mkString("\n") + "\n"
+    else file.getName + ":\n" + programs.take(10).map{case (prog, rate) =>
+      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg,ast.SimilarityMetric.compute(prog,goldProg))).maxBy(_._2)}
         .mkString("\n") + "\n"
   }
 
