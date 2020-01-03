@@ -44,6 +44,18 @@ class SimilarityMetricTests  extends JUnitSuite {
     assertEquals(6,SimilarityMetric.compute(top4,top5))
   }
 
+  @Test def sharedParentOtherChildren: Unit = {
+    val same1 = new IntToString(new IntLiteral(2,1))
+    val same2 = new IntToString(new IntLiteral(2,1))
+
+    val same3 = new StringConcat(new StringLiteral("123",1),new StringLiteral("456",1))
+    val same4 = new StringConcat(new StringLiteral("123",1),new StringLiteral("456",1))
+
+    val top1 = new Contains(same1,new StringITE(new BoolLiteral(true,1),same3,new StringLiteral("bbb",1)))
+    val top3 = new Contains(same2,same4)
+    assertEquals(1 + same1.terms + same3.terms, SimilarityMetric.compute(top1,top3))
+  }
+
   @Test def bugFromTheWild: Unit = {
     val prog1 = "(str.substr _arg_0 0 (str.indexof _arg_0 \" \" 1))"
     val prog2 = "(ite (str.contains _arg_0 \"ssp.\") (str.substr _arg_0 0 (+ (str.indexof _arg_0 \"ssp.\" 1) -1)) (str.substr _arg_0 0 (str.indexof _arg_0 \" \" 1)))"

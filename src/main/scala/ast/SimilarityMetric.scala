@@ -1,35 +1,33 @@
 package ast
 
 import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
 
 object SimilarityMetric {
   def compute(lhs: ASTNode, rhs: ASTNode): Int = {
-    if (lhs.height > 0 && lhs.code == rhs.code) lhs.terms
-    else {
-      val lhsSubTrees = mutable.ListBuffer[ASTNode]()
-
-      if (findEmbededSubtrees(lhs,rhs.code,lhsSubTrees))
-        lhsSubTrees += lhs
-
-//      val rhsSubTrees = mutable.ListBuffer[ASTNode]()
-//      findEmbededSubtrees(rhs,lhs.code,rhsSubTrees)
-
-      /*Math.max(*/lhsSubTrees.filter(t => t.height > 0).map(_.terms).sum//,rhsSubTrees.filter(t => t.height > 0).map(_.terms).sum)
-    }
-    //if subtree(lhs) in full(rhs) (or vice versa)
-    //try larger tree
-    //if nontrivial , keep
-    //sum all kept
+    val accumulatedTerms = mutable.ListBuffer[Int]()
+    doRecurse(lhs,rhs,accumulatedTerms)
+    accumulatedTerms.sum
   }
 
-  def findEmbededSubtrees(tree: ASTNode, otherCode: String, collection: mutable.ListBuffer[ASTNode]): Boolean = {
-    if (otherCode.contains(tree.code)) true
+  def doRecurse(lhs: ASTNode, rhs: ASTNode, accumulatedTerms: ListBuffer[Int]): Unit = {
+    if (lhs.height == 0 || rhs.height == 0) return
+    if (lhs.code == rhs.code) {
+      accumulatedTerms += lhs.terms
+      return
+    }
+    if (rhs.code.contains(lhs.code)) {
+      for (child <- rhs.children) doRecurse(lhs,child,accumulatedTerms)
+    }
     else {
-      for (child <- tree.children) {
-        if (findEmbededSubtrees(child,otherCode,collection))
-          collection += child
+      if (lhs.getClass == rhs.getClass) {//root node is the same
+        //partition so only separately count children not in this score already
+        val (sameChildren,diffChildren) = lhs.children.zip(rhs.children).partition{case (l,r) => l.height > 0 && l.code == r.code}
+        if (!sameChildren.isEmpty) accumulatedTerms += 1 + sameChildren.map(_._1.terms).sum
+        for (child <- diffChildren.unzip._1) doRecurse(child,rhs,accumulatedTerms)
       }
-      false
+      else for(child <- lhs.children) doRecurse(child,rhs,accumulatedTerms)
     }
   }
+
 }
