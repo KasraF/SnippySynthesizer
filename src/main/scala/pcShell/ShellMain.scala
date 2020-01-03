@@ -1,8 +1,7 @@
 package pcShell
 
-import java.io.PrintStream
 import java.util
-
+import java.io.PrintWriter
 import jline.UnsupportedTerminal
 import jline.console.ConsoleReader
 import org.antlr.v4.runtime.misc.ParseCancellationException
@@ -35,38 +34,39 @@ object ShellMain extends App {
 
   def prettyPrintSyntaxError(exception: RecognitionException) = {
     val offset = if (exception.isInstanceOf[LexerNoViableAltException]) exception.asInstanceOf[LexerNoViableAltException].getStartIndex + 2 else exception.getOffendingToken.getStartIndex + 1
-    print(" " * (offset) + "^")
+    out.print(" " * (offset) + "^")
     if (exception.getOffendingToken != null && exception.getOffendingToken.getStopIndex - exception.getOffendingToken.getStartIndex > 1)
-      print("-" * (exception.getOffendingToken.getStopIndex - exception.getOffendingToken.getStartIndex) + "^")
-    println
+      out.print("-" * (exception.getOffendingToken.getStopIndex - exception.getOffendingToken.getStartIndex) + "^")
+    out.println
     exception match {
       case e: NoViableAltException =>
-        println("no viable alternative at input " + (if (e.getStartToken == Token.EOF) "<EOF>" else escapeWSAndQuote(e.getOffendingToken.getText)))
+        out.println("no viable alternative at input " + (if (e.getStartToken == Token.EOF) "<EOF>" else escapeWSAndQuote(e.getOffendingToken.getText)))
       case e: InputMismatchException =>
-        println( s"mismatched input ${getTokenErrorDisplay(e.getOffendingToken())}, expecting ${e.getExpectedTokens().toString(e.getRecognizer.getVocabulary)}")
+        out.println( s"mismatched input ${getTokenErrorDisplay(e.getOffendingToken())}, expecting ${e.getExpectedTokens().toString(e.getRecognizer.getVocabulary)}")
       case e: EOFExpectedException =>
-        println( s"mismatched input ${getTokenErrorDisplay(e.getOffendingToken())}, expecting <EOF>")
+        out.println( s"mismatched input ${getTokenErrorDisplay(e.getOffendingToken())}, expecting <EOF>")
       case e: LexerNoViableAltException =>
-        println("bad token")
+        out.println("bad token")
     }
   }
 
   def escapeIfString(elem: Any): String = if (elem.isInstanceOf[String]) escapeWSAndQuote(elem.asInstanceOf[String]) else elem.toString
 
-  import jline.TerminalFactory
-  jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
+//  import jline.TerminalFactory
+//  jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
   val reader = new ConsoleReader()
   reader.setPrompt("> ")
   reader.setHistoryEnabled(true)
-  //val out = new PrintStream(reader.getOutput)
+
+  val out = new PrintWriter(reader.getOutput)
 
   var line: String = null
   while ((line = reader.readLine()) != null) {
       if (!line.trim.isEmpty) try {
       if (line.trim.startsWith(":")) line.trim.drop(1) match {
         case "quit" | "q" => sys.exit(0)
-        case "synt" => println("THE SYNTHESIZER RUNS! MAGIC HAPPENS! TBD")
-        case _ => println("Not a valid command, try :quit or :synt")
+        case "synt" => out.println("THE SYNTHESIZER RUNS! MAGIC HAPPENS! TBD")
+        case _ => out.println("Not a valid command, try :quit or :synt")
       } else {
       val lexer = new SyGuSLexer(CharStreams.fromString(line))
       lexer.removeErrorListeners()
@@ -79,7 +79,7 @@ object ShellMain extends App {
         throw new EOFExpectedException(parser)
       val visitor = new ASTGenerator(task)
       val ast = visitor.visit(parsed)
-      println(Tabulator.format(List("input","result","expected") +:
+      out.println(Tabulator.format(List("input","result","expected") +:
         task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
           s"${kv._1} -> ${escapeIfString(kv._2.toString)}"
         ).mkString("\n"),
@@ -92,8 +92,8 @@ object ShellMain extends App {
       case e: ResolutionException => {
         val startIdx = e.badCtx.getStart.getStartIndex
         val len = e.badCtx.getStop.getStopIndex - startIdx + 1
-        println(" " * (startIdx + 2) + "^" + (if (len > 1) "-" * (len - 2) + "^" else ""))
-        println("Cannot resolve program")
+        out.println(" " * (startIdx + 2) + "^" + (if (len > 1) "-" * (len - 2) + "^" else ""))
+        out.println("Cannot resolve program")
       }
       case e: ParseCancellationException =>{
         prettyPrintSyntaxError(e.getCause.asInstanceOf[RecognitionException])
