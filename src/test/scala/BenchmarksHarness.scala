@@ -1,3 +1,4 @@
+import Main.RankedProgram
 import sygus.SygusFileTask
 
 object Solutions {
@@ -16,25 +17,25 @@ object BenchmarksHarness extends App {
       Main.interpret(task,solution)
     }
 
-    /*file.getName + (if (programs.isEmpty) Console.RED + " NOT FOUND" + Console.RESET else if (goldStandard.contains(programs.head._1.code))
+    file.getName + (if (programs.isEmpty) Console.RED + " NO RESULTS" + Console.RESET else if (goldStandard.exists(gold => gold.code == programs.head.program.code))
       " PASSED"
-    else Console.RED + programs.zipWithIndex.dropWhile{case ((tree,rate),idx) => !goldStandard.contains(tree.code)}.headOption.map{case ((tree,rate),idx) =>
-      " " + tree.code + " " + rate + " (" + idx + ")" + " [" + programs.head._1.code + " " + programs.head._2 + "]"}.getOrElse(" NOT FOUND")  + Console.RESET )*/
+    else Console.RED + programs.zipWithIndex.dropWhile{case (RankedProgram(tree,rate),idx) => !goldStandard.exists(gold => gold.code == tree.code)}.headOption.map{case (RankedProgram(tree,rate),idx) =>
+      " " + tree.code + " " + rate + " (" + idx + ")" + " [" + programs.head.program.code + " " + programs.head.rank + "]"}.getOrElse(" NOT FOUND")  + Console.RESET )
 
-    if (goldStandard.isEmpty) file.getName + " NO GOLD STANDARD\n" + programs.take(10).map{case (prog, rate) => prog.code + " " + rate}
-      .mkString("\n") + "\n"
-    else file.getName + ":\n" + programs.take(10).map{case (prog, rate) =>
-      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg.code,ast.SimilarityMetric.compute(prog,goldProg))).maxBy(_._2)}
-        .mkString("\n") + "\n"
+//    if (goldStandard.isEmpty) file.getName + " NO GOLD STANDARD\n" + programs.take(10).map{case RankedProgram(prog, rate) => prog.code + " " + rate}
+//      .mkString("\n") + "\n"
+//    else file.getName + ":\n" + programs.take(10).map{case RankedProgram(prog, rate) =>
+//      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg.code,ast.SimilarityMetric.compute(prog,goldProg))).maxBy(_._2)}
+//        .mkString("\n") + "\n"
   }
 
   val origBenchmarks: List[String] = Nil //runBenchmarks("src/test/benchmarks/syguscomp",identity)
 
-  val contradictionBenchmarks = Nil //runBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl")
+  val contradictionBenchmarks = runBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl")
 
-  val garbageBenchmarks = Nil //runBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl")
+  val garbageBenchmarks = runBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl")
 
-  val tooHardBenchmarks = runBenchmarks("src/test/benchmarks/too-hard",identity)
+  val tooHardBenchmarks = Nil//runBenchmarks("src/test/benchmarks/too-hard",identity)
 
   println("Original benchmarks:")
   origBenchmarks.foreach(println)
