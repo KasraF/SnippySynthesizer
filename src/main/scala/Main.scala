@@ -59,17 +59,21 @@ object Main extends App {
      rankedProgs.sortBy(-_._2).take(100)
    }
 
-  def interpret(filename: String, str: String): Option[(ASTNode, List[Any])] = try {
-    val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
+  case class ExpectedEOFException() extends Exception
+  def interpret(task: SygusFileTask, str: String): ASTNode = {
     val parser = new SyGuSParser(new BufferedTokenStream(new SyGuSLexer(CharStreams.fromString(str))))
     val parsed = parser.bfTerm()
     val visitor = new ASTGenerator(task)
     val ast = visitor.visit(parsed)
     if (parser.getCurrentToken.getType != Token.EOF) {
-      iprintln("Expected <EOF>")
-      None
+      throw ExpectedEOFException()
     }
-    else Some(ast, task.examples.map(_.output))
+    ast
+  }
+  def interpret(filename: String, str: String): Option[(ASTNode, List[Any])] = try {
+    val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
+    val ast = interpret(task,str)
+    Some(ast, task.examples.map(_.output))
   } catch {
     case e: RecognitionException => {
       iprintln(s"Cannot parse program: ${e.getMessage}")
@@ -77,6 +81,10 @@ object Main extends App {
     }
     case e: ResolutionException => {
       iprintln(s"Cannot resolve program: ${e.badCtx.getText}")
+      None
+    }
+    case e: ExpectedEOFException => {
+      iprintln("Expected <EOF>")
       None
     }
   }

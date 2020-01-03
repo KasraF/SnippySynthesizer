@@ -1,3 +1,5 @@
+import sygus.SygusFileTask
+
 object Solutions {
 
   lazy val solutions = scala.io.Source.fromFile("src/test/benchmarks/solutions.txt").getLines().map(line =>
@@ -9,7 +11,10 @@ object BenchmarksHarness extends App {
   def runBenchmarks(dirname: String, filenameToGoldStandard: String => String): List[String] = for (file <- new java.io.File(dirname).listFiles().toList) yield {
     val programs = Main.synthesize(file.getAbsolutePath)
     val origFilename = filenameToGoldStandard(file.getName)
-    val goldStandard = Solutions.solutions.withDefaultValue(Nil)(origFilename)
+    val task = new SygusFileTask(scala.io.Source.fromFile(file).mkString)
+    val goldStandard = Solutions.solutions.withDefaultValue(Nil)(origFilename).map{ solution =>
+      Main.interpret(task,solution)
+    }
 
     /*file.getName + (if (programs.isEmpty) Console.RED + " NOT FOUND" + Console.RESET else if (goldStandard.contains(programs.head._1.code))
       " PASSED"
@@ -19,7 +24,7 @@ object BenchmarksHarness extends App {
     if (goldStandard.isEmpty) file.getName + " NO GOLD STANDARD\n" + programs.take(10).map{case (prog, rate) => prog.code + " " + rate}
       .mkString("\n") + "\n"
     else file.getName + ":\n" + programs.take(10).map{case (prog, rate) =>
-      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg,ast.SimilarityMetric.compute(prog,goldProg))).maxBy(_._2)}
+      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg.code,ast.SimilarityMetric.compute(prog,goldProg))).maxBy(_._2)}
         .mkString("\n") + "\n"
   }
 
