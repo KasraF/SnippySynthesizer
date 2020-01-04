@@ -109,7 +109,6 @@ object ShellMain extends App {
           } else {
             currentResults = results.map(_.program.code).toList
             val fits = results.map{r: RankedProgram => task.fit(r.program)}
-            currentResults.reverse.foreach(reader.getHistory.add(_))
             currentResults.zip(fits).zipWithIndex.foreach(
               { case ((p, fit), i) => cprintln(s"$infoColor${i + 1}:${Console.RESET} $p $infoColor${showFit(fit)}${Console.RESET}")}
             )
@@ -118,9 +117,14 @@ object ShellMain extends App {
         case s => allCatch opt s.toInt match {
           case None => cprintln("Not a valid command, try :quit or :synt", errorColor)
           case Some(idx) => currentResults.lift(idx - 1) match {
-            case None => cprintln(s"Try index between 1 and ${currentResults.length}", errorColor)
+            case None => {
+              cprintln(s"Try index between 1 and ${currentResults.length}", errorColor)
+              reader.getHistory.removeLast()
+            }
             case Some(p) => {
-              out.println(p)
+              cprintln(p)
+              reader.getHistory.removeLast()
+              reader.getHistory.add(p)
               evalExpr(p)
             }
           }
