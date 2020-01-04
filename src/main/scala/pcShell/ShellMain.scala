@@ -94,7 +94,10 @@ object ShellMain extends App {
 //  import jline.TerminalFactory
 //  jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
   consoleEnabled = true
-  val hint: String = "Input a program to evaluate or try :synt (to synthesize a program) or :quit (to quit)"
+  val hint: String = "Input a program to evaluate or try\n" +
+    "  :synt (:s)    -- to synthesize a program\n" +
+    "  :quit (:q)    -- to quit\n" +
+    "  :1, :2, ...   -- for most recent synthesis results"
   cprintln(s"Welcome to Besto! $hint", infoColor)
 
   var line: String = null
@@ -120,7 +123,7 @@ object ShellMain extends App {
           case None => cprintln(s"Invalid command. $hint", errorColor)
           case Some(idx) => currentResults.lift(idx - 1) match {
             case None => {
-              cprintln(s"Try index between 1 and ${currentResults.length}", errorColor)
+              cprintln(s"There are only ${currentResults.length} results currently available", errorColor)
               reader.getHistory.removeLast()
             }
             case Some(p) => {
