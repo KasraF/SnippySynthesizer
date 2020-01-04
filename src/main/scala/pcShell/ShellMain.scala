@@ -68,10 +68,20 @@ object ShellMain extends App {
       if (line.trim.startsWith(":")) line.trim.drop(1) match {
         case "quit" | "q" => sys.exit(0)
         case "synt" | "s" => {
-          val results = Main.synthesizeFromTask(task, 15, true).take(5)
-          val resultStrings = results.map(_.program.code)
-          resultStrings.reverse.foreach(reader.getHistory.add(_))
-          resultStrings.zipWithIndex.foreach({case (p, i) => out.println(s"$infoColor$i:${Console.RESET} ${p}")})
+          out.println(s"${infoColor}Synthesizing... (Press any key to interrupt)${Console.RESET}")
+          out.flush()
+          val results = Main.synthesizeFromTask(task, 40, true).take(5)
+          if (results.isEmpty) {
+            out.println(s"${infoColor}No results, try waiting a bit longer${Console.RESET}")
+          } else {
+            val resultStrings = results.map(_.program.code)
+            val expectedResults = task.examples.map(_.output)
+            val fits = results.map(_.program.values.zip(expectedResults).count(pair => pair._1 == pair._2))
+            val n = expectedResults.length
+            resultStrings.reverse.foreach(reader.getHistory.add(_))
+            resultStrings.zip(fits).zipWithIndex.foreach(
+              { case ((p, fit), i) => out.println(s"$infoColor${i + 1}:${Console.RESET} $p $infoColor[$fit/$n]${Console.RESET}") })
+          }
         }
         case _ => out.println("Not a valid command, try :quit or :synt")
       } else {
