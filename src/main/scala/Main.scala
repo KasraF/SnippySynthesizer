@@ -15,8 +15,8 @@ import trace.DebugPrints.{dprintln,iprintln}
 object Main extends App {
   val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_3_short.sl"
   //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
-  "src/test/benchmarks/modified_benchmarks/contradiction/38664547_1.sl"
-   //"src/test/benchmarks/syguscomp/initials_small.sl"
+  "src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
+  // "src/test/benchmarks/syguscomp/firstname.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
    //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\stackoverflow4.sl"//args(0)
 
@@ -34,20 +34,26 @@ object Main extends App {
     val t0 = System.nanoTime()
      breakable {
        for ((program, i) <- enumerator.zipWithIndex) {
-         val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
-         //There will only be one program matching 1...1, but portentially many for 1..101..1, do rank those as well?
-         if (results.exists(identity)) {
-//           if (!foundPrograms.contains(results)) foundPrograms.put(results, ListBuffer())
-//           foundPrograms(results) += program
-            val rank = ProgramRanking.ranking(program,task.examples.map(_.output),task.functionParameters.map(_._1))
-           val ranked = RankedProgram(program,rank)
-            val ip = ranks.search(ranked)
-            if (ip.insertionPoint > 0 || ranks.length < 50)
-              ranks.insert(ip.insertionPoint,ranked)
-            if (ranks.length > 50) ranks.remove(0)
-           if (results.forall(identity)) {
-             iprintln(program.code)
-             break
+         if (program.nodeType == task.functionReturnType) {
+
+
+           val results = task.examples.zip(program.values).map(pair => pair._1.output == pair._2)
+           //There will only be one program matching 1...1, but portentially many for 1..101..1, do rank those as well?
+           if (results.exists(identity)) {
+             //           if (!foundPrograms.contains(results)) foundPrograms.put(results, ListBuffer())
+             //           foundPrograms(results) += program
+             val rank = ProgramRanking.ranking(program,task.examples.map(_.output),task.functionParameters.map(_._1))
+             val ranked = RankedProgram(program,rank)
+             val ip = ranks.search(ranked)
+             if (ip.insertionPoint > 0 || ranks.length < 50) {
+               ranks.insert(ip.insertionPoint, ranked)
+               if (ranks.length > 50) ranks.remove(0)
+             }
+
+             if (results.forall(identity)) {
+               iprintln(program.code)
+               break
+             }
            }
          }
 
