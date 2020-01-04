@@ -1,4 +1,6 @@
 package sygus
+import java.io.InputStreamReader
+
 import ast.ASTNode
 import enumeration.{InputsValuesManager, ProgramRanking}
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException, Token}
@@ -27,10 +29,11 @@ object Main extends App {
   def synthesize(filename: String) = {
      val task = new SygusFileTask(scala.io.Source.fromFile(filename).mkString)
      assert(task.isPBE)
-    synthesizeFromTask(task, 40)
+    synthesizeFromTask(task)
    }
 
-  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 40) = {
+  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 40, interactive: Boolean = false) = {
+    val reader: InputStreamReader = new InputStreamReader(System.in)
     val oeManager = new InputsValuesManager()
     val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
@@ -59,7 +62,7 @@ object Main extends App {
         if (i % 1000 == 0) {
           dprintln(i + ": " + program.code)
         }
-        if (!deadline.hasTimeLeft)
+        if ((interactive && reader.ready()) || !deadline.hasTimeLeft)
           break
       }
     }

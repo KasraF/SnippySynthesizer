@@ -1,15 +1,10 @@
 package pcShell
 
-import java.util
 import java.io.PrintWriter
-
-import jline.UnsupportedTerminal
 import jline.console.ConsoleReader
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.antlr.v4.runtime._
-import org.antlr.v4.runtime.atn.{ATNConfigSet, ATNSimulator}
 import pcShell.Tabulator.GreenString
-import sygus.Main.RankedProgram
 import sygus._
 
 
@@ -73,7 +68,7 @@ object ShellMain extends App {
       if (line.trim.startsWith(":")) line.trim.drop(1) match {
         case "quit" | "q" => sys.exit(0)
         case "synt" | "s" => {
-          val results = Main.synthesizeFromTask(task, 5).take(5)
+          val results = Main.synthesizeFromTask(task, 15, true).take(5)
           val resultStrings = results.map(_.program.code)
           resultStrings.reverse.foreach(reader.getHistory.add(_))
           resultStrings.zipWithIndex.foreach({case (p, i) => out.println(s"$infoColor$i:${Console.RESET} ${p}")})
