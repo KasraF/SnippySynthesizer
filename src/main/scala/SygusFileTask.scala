@@ -60,6 +60,13 @@ class SygusFileTask(content: String) {
     }.sortBy(maker => if (maker.arity > 0 && maker.returnType.toString == functionReturnType.toString) -1 else 0)
     VocabFactory(makers.toList)
   }
+
+  def fit(program: ASTNode): (Int, Int) = {
+    val expectedResults = examples.map(_.output)
+    val k = program.values.zip(expectedResults).count(pair => pair._1 == pair._2)
+    val n = expectedResults.length
+    (k, n)
+  }
 }
 
 object SygusFileTask{

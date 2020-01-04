@@ -1,12 +1,16 @@
 package pcShell
 
 import java.io.PrintWriter
+
 import jline.console.ConsoleReader
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.antlr.v4.runtime._
 import pcShell.Tabulator.GreenString
 import sygus._
+
 import scala.util.control.Exception.allCatch
+import ConsolePrints._
+import sygus.Main.RankedProgram
 
 
 
@@ -14,9 +18,6 @@ object ShellMain extends App {
   val taskFilename = args(0)
   val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
   var currentResults: List[String] = Nil
-
-  val errorColor = Console.RED
-  val infoColor = Console.YELLOW
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;
     "\"" + s.replace("\n", "\\n")
@@ -69,7 +70,7 @@ object ShellMain extends App {
       throw new EOFExpectedException(parser)
     val visitor = new ASTGenerator(task)
     val ast = visitor.visit(parsed)
-    out.println(Tabulator.format(List("input","result","expected") +:
+    cprintln(Tabulator.format(List("input","result","expected") +:
       task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
         s"${kv._1} -> ${escapeIfString(kv._2.toString)}"
       ).mkString("\n"),
@@ -82,8 +83,8 @@ object ShellMain extends App {
     case e: ResolutionException => {
       val startIdx = e.badCtx.getStart.getStartIndex
       val len = e.badCtx.getStop.getStopIndex - startIdx + 1
-      out.println(errorColor + " " * (startIdx + 2) + "^" + (if (len > 1) "-" * (len - 2) + "^" else ""))
-      out.println("Cannot resolve program" + Console.RESET)
+      cprintln(" " * (startIdx + 2) + "^" + (if (len > 1) "-" * (len - 2) + "^" else ""), errorColor)
+      cprintln("Cannot resolve program", errorColor)
     }
     case e: ParseCancellationException =>{
       prettyPrintSyntaxError(e.getCause.asInstanceOf[RecognitionException])
@@ -92,11 +93,7 @@ object ShellMain extends App {
 
 //  import jline.TerminalFactory
 //  jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
-  val reader = new ConsoleReader()
-  reader.setPrompt("> ")
-  reader.setHistoryEnabled(true)
-
-  val out = new PrintWriter(reader.getOutput)
+  consoleEnabled = true
 
   var line: String = null
   while ((line = reader.readLine()) != null) {
@@ -105,25 +102,23 @@ object ShellMain extends App {
       if (line.trim.startsWith(":")) trimmedLine.drop(1) match {
         case "quit" | "q" => sys.exit(0)
         case "synt" | "s" => {
-          out.println(s"${infoColor}Synthesizing... (Press any key to interrupt)${Console.RESET}")
-          out.flush()
-          val results = Main.synthesizeFromTask(task, 40, true).take(5)
+          cprintln("Synthesizing... (Press any key to interrupt)", infoColor)
+          val results = Main.synthesizeFromTask(task, 40).take(5)
           if (results.isEmpty) {
-            out.println(s"${infoColor}No results, try waiting a bit longer${Console.RESET}")
+            cprintln("No results, try waiting a bit longer", infoColor)
           } else {
             currentResults = results.map(_.program.code).toList
-            val expectedResults = task.examples.map(_.output)
-            val fits = results.map(_.program.values.zip(expectedResults).count(pair => pair._1 == pair._2))
-            val n = expectedResults.length
+            val fits = results.map{r: RankedProgram => task.fit(r.program)}
             currentResults.reverse.foreach(reader.getHistory.add(_))
             currentResults.zip(fits).zipWithIndex.foreach(
-              { case ((p, fit), i) => out.println(s"$infoColor${i + 1}:${Console.RESET} $p $infoColor[$fit/$n]${Console.RESET}") })
+              { case ((p, fit), i) => cprintln(s"$infoColor${i + 1}:${Console.RESET} $p $infoColor${showFit(fit)}${Console.RESET}")}
+            )
           }
         }
         case s => allCatch opt s.toInt match {
-          case None => out.println(s"${infoColor}Not a valid command, try :quit or :synt${Console.RESET}")
+          case None => cprintln("Not a valid command, try :quit or :synt", errorColor)
           case Some(idx) => currentResults.lift(idx - 1) match {
-            case None => out.println(s"${infoColor}Try index between 1 and ${currentResults.length}${Console.RESET}")
+            case None => cprintln(s"Try index between 1 and ${currentResults.length}", errorColor)
             case Some(p) => {
               out.println(p)
               evalExpr(p)

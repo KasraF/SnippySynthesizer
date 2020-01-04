@@ -1,8 +1,9 @@
 package sygus
-import java.io.InputStreamReader
+import java.io.{InputStreamReader, PrintWriter}
 
 import ast.ASTNode
 import enumeration.{InputsValuesManager, ProgramRanking}
+import jline.console.ConsoleReader
 import org.antlr.v4.runtime.{BufferedTokenStream, CharStreams, RecognitionException, Token}
 
 import scala.collection.mutable
@@ -12,6 +13,7 @@ import scala.collection.mutable.ListBuffer
 import util.control.Breaks._
 import scala.concurrent.duration._
 import trace.DebugPrints.{dprintln,iprintln}
+import pcShell.ConsolePrints._
 
 
 object Main extends App {
@@ -32,8 +34,7 @@ object Main extends App {
     synthesizeFromTask(task)
    }
 
-  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 40, interactive: Boolean = false) = {
-    val reader: InputStreamReader = new InputStreamReader(System.in)
+  def synthesizeFromTask(task: SygusFileTask, timeout: Int = 40) = {
     val oeManager = new InputsValuesManager()
     val enumerator = new enumeration.Enumerator(task.vocab, oeManager, task.examples.map(_.input))
     //val foundPrograms: mutable.Map[List[Boolean], mutable.ListBuffer[ASTNode]] = mutable.HashMap()
@@ -61,9 +62,12 @@ object Main extends App {
 
         if (i % 1000 == 0) {
           dprintln(i + ": " + program.code)
+          cprint(s"\rCurrent best: ${ranks.take(1).map{r => showFit(task.fit(r.program))}.mkString("")}", infoColor)
         }
-        if ((interactive && reader.ready()) || !deadline.hasTimeLeft)
+        if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) {
+          cprintln("")
           break
+        }
       }
     }
     val t1 = System.nanoTime()
