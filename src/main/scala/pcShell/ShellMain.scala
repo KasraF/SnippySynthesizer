@@ -5,7 +5,7 @@ import java.io.PrintWriter
 import jline.console.ConsoleReader
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.antlr.v4.runtime._
-import pcShell.Tabulator.GreenString
+import pcShell.Tabulator.ColorString
 import sygus._
 
 import scala.util.control.Exception.allCatch
@@ -74,7 +74,7 @@ object ShellMain extends App {
       task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
         s"${kv._1} -> ${escapeIfString(kv._2.toString)}"
       ).mkString("\n"),
-        if (pair._2 == pair._1.output) GreenString(escapeIfString(pair._2)) else escapeIfString(pair._2),
+        if (pair._2 == pair._1.output) ColorString(escapeIfString(pair._2), Console.GREEN_B) else ColorString(escapeIfString(pair._2), Console.RED_B),
         escapeIfString(pair._1.output)))))
   } catch {
     case e: RecognitionException => {

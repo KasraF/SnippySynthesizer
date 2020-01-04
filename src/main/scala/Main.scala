@@ -56,6 +56,7 @@ object Main extends App {
           if (ranks.length > 50) ranks.remove(0)
           if (results.forall(identity)) {
             iprintln(program.code)
+            cprintln(s"\rCurrent best: ${ranks.take(1).map{r => showFit(task.fit(r.program))}.mkString("")}", infoColor)
             break
           }
         }
