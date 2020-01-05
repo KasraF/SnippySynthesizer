@@ -1,12 +1,14 @@
 package pcShell
 
-import java.io.{InputStreamReader, PrintWriter}
+import java.io.{FileOutputStream, InputStreamReader, OutputStream, PrintWriter}
 
 import jline.console.ConsoleReader
+import org.apache.commons.io.output.{NullOutputStream, TeeOutputStream, WriterOutputStream}
 
 object ConsolePrints {
 
   var consoleEnabled: Boolean = false
+  var outFile: Option[java.io.File] = None
 
   lazy val reader: ConsoleReader = {
     val r = new ConsoleReader()
@@ -15,7 +17,13 @@ object ConsolePrints {
     r
   }
 
-  lazy val out: PrintWriter = new PrintWriter(reader.getOutput, true)
+  lazy val out: PrintWriter =  outFile.map{f =>
+    val pw = new PrintWriter( new TeeOutputStream(new WriterOutputStream( reader.getOutput), new FileOutputStream(f)), true)
+    pw.println(s"Otuput file: ${f.getAbsolutePath}")
+    pw
+  }.getOrElse(
+    new PrintWriter(reader.getOutput,true))
+
   lazy val in: InputStreamReader = new InputStreamReader(System.in)
 
   val errorColor: String = Console.RED

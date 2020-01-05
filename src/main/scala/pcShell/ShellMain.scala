@@ -1,5 +1,7 @@
 package pcShell
 
+import java.io.File
+
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.antlr.v4.runtime._
 import pcShell.Tabulator.ColorString
@@ -14,6 +16,8 @@ import sygus.Main.RankedProgram
 
 object ShellMain extends App {
   val taskFilename = args(0)
+  if (args.length > 1 && args(1) == "--out")
+    outFile = Some(File.createTempFile("bester_", ".log",new java.io.File(".")))
   val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
   var currentResults: scala.collection.immutable.List[String] = Nil
 
