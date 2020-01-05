@@ -41,9 +41,10 @@ object ShellMain extends App {
     override def complete(buffer: String, cursor: Int, candidates: java.util.List[CharSequence]): Int = { // buffer could be null
       if (buffer == null) tokens.foreach(t => candidates.add(t))
       else {
-        val (pref, suf) = buffer.splitAt(buffer.lastIndexWhere(c => c.isWhitespace || c == '(') + 1)
+        val (preCursor, postCursor) = buffer.splitAt(cursor)
+        val (pref, suf) = preCursor.splitAt(preCursor.lastIndexWhere(c => c.isWhitespace || c == '(') + 1)
         val results = tokens.filter(_.startsWith(suf))
-        results.foreach(t => candidates.add(pref + t))
+        results.foreach(t => candidates.add(pref + t + postCursor))
       }
       if (candidates.isEmpty) -1
       else 0
