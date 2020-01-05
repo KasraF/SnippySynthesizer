@@ -58,14 +58,14 @@ object Main extends App {
           if (ranks.length > 50) ranks.remove(0)
           if (results.forall(identity)) {
             iprintln(program.code)
-            cprintln(s"\rCurrent best: ${ranks.take(1).map{r => showFit(task.fit(r.program))}.mkString("")}", infoColor)
+            cprintln(s"\rCurrent best: ${ranks.takeRight(1).map{r => showFit(task.fit(r.program))}.mkString("")}", infoColor)
             break
           }
         }}
 
         if (i % 1000 == 0) {
           dprintln(i + ": " + program.code)
-          cprint(s"\rCurrent best: ${ranks.take(1).map{r => showFit(task.fit(r.program))}.mkString("")}", infoColor)
+          cprint(s"\rCurrent best: ${ranks.takeRight(1).map{r => showFit(task.fit(r.program))}.mkString("")}", infoColor)
         }
         if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) {
           cprintln("")
