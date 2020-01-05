@@ -19,10 +19,8 @@ class ASTGenerator(task: SygusFileTask) extends SyGuSBaseVisitor[ASTNode] {
       } yield res).toList
       val contexts = task.examples.map(_.input)
       task.vocab.nodeMakers.foreach(m => {
-        if (m.canMake(childASTs)) {
-          val node = m.apply(childASTs, contexts)
-          if (sameExpr(ctx, node, ignoreWhitespace = true))
-            return node
+        if (m.head == ctx.getChild(1).getText && m.canMake(childASTs)) {
+          return m.apply(childASTs, contexts)
         }
       })
       throw ResolutionException(ctx)
@@ -36,16 +34,10 @@ class ASTGenerator(task: SygusFileTask) extends SyGuSBaseVisitor[ASTNode] {
   private def visitTerminal(ctx: ParserRuleContext): ASTNode = {
     val contexts = task.examples.map(_.input)
     task.vocab.leavesMakers.foreach(m => {
-      val node = m.apply(Nil, contexts)
-      if (sameExpr(ctx, node, ignoreWhitespace = false))
-        return node
+      if (m.head == ctx.getText) {
+        return m.apply(Nil, contexts)
+      }
     })
     throw ResolutionException(ctx)
   }
-
-  private def sameExpr(ctx: ParserRuleContext, node: ASTNode, ignoreWhitespace: Boolean): Boolean =
-    if (ignoreWhitespace)
-      ctx.getText.filterNot(_.isWhitespace) == node.code.filterNot(_.isWhitespace)
-    else
-      ctx.getText == node.code
 }

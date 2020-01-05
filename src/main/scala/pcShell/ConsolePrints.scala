@@ -33,4 +33,5 @@ object ConsolePrints {
   }
 
   def showFit(fit: (Int, Int)): String = s"[${fit._1}/${fit._2}]"
+
 }

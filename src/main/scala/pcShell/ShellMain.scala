@@ -1,8 +1,5 @@
 package pcShell
 
-import java.io.PrintWriter
-
-import jline.console.ConsoleReader
 import org.antlr.v4.runtime.misc.ParseCancellationException
 import org.antlr.v4.runtime._
 import pcShell.Tabulator.ColorString
@@ -10,6 +7,7 @@ import sygus._
 
 import scala.util.control.Exception.allCatch
 import ConsolePrints._
+import jline.console.completer.{Completer, StringsCompleter}
 import sygus.Main.RankedProgram
 
 
@@ -17,7 +15,7 @@ import sygus.Main.RankedProgram
 object ShellMain extends App {
   val taskFilename = args(0)
   val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
-  var currentResults: List[String] = Nil
+  var currentResults: scala.collection.immutable.List[String] = Nil
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;
     "\"" + s.replace("\n", "\\n")
@@ -32,8 +30,25 @@ object ShellMain extends App {
     else s = "<" + t.getType + ">"
     escapeWSAndQuote(s)
   }
+
   class EOFExpectedException(recognizer: Parser) extends RecognitionException(recognizer,recognizer.getInputStream(), recognizer.getContext) {
     this.setOffendingToken(recognizer.getCurrentToken)
+  }
+
+  class SygusCompleter(task: SygusFileTask) extends Completer {
+    lazy val tokens: List[String] = task.vocab.leavesMakers.map(_.head) ++ task.vocab.nodeMakers.map(_.head)
+
+    override def complete(buffer: String, cursor: Int, candidates: java.util.List[CharSequence]): Int = { // buffer could be null
+      if (buffer == null) tokens.foreach(t => candidates.add(t))
+      else {
+        val (preCursor, postCursor) = buffer.splitAt(cursor)
+        val (pref, suf) = preCursor.splitAt(preCursor.lastIndexWhere(c => c.isWhitespace || c == '(') + 1)
+        val results = tokens.filter(_.startsWith(suf))
+        results.foreach(t => candidates.add(pref + t + postCursor))
+      }
+      if (candidates.isEmpty) -1
+      else 0
+    }
   }
 
   def prettyPrintSyntaxError(exception: RecognitionException) = {
@@ -94,6 +109,8 @@ object ShellMain extends App {
 //  import jline.TerminalFactory
 //  jline.TerminalFactory.registerFlavor(TerminalFactory.Flavor.WINDOWS, classOf[UnsupportedTerminal])
   consoleEnabled = true
+  reader.addCompleter(new SygusCompleter(task))
+
   val hint: String = "Input a program to evaluate or try\n" +
     "  :synt (:s)    -- to synthesize a program\n" +
     "  :quit (:q)    -- to quit\n" +
