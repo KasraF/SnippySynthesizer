@@ -1,4 +1,5 @@
-import Main.RankedProgram
+import sygus.Main.RankedProgram
+import sygus.Main
 import ast.ASTNode
 import sygus.SygusFileTask
 
