@@ -1,5 +1,5 @@
 object ProcessCVC4Output extends App{
-  val file = "src/test/benchmarks/modified_benchmarks/cvc4tests.out"
+  val file = "src/test/benchmarks/modified_benchmarks/cvc4tests_time.out" //cvc4tests.out"
   val lines = scala.io.Source.fromFile(file).getLines().toList
   val separators = -1 +:lines.zipWithIndex.filter{case (str,idx) => str.startsWith("--")}.map(_._2)
   val resultRegex = """\s*\(define-fun\s+f\s*\((\([A-Za-z0-9_\s]+\)\s*)*\)\s+[A-Za-z]+\s*(.*)\)""".r
@@ -8,7 +8,7 @@ object ProcessCVC4Output extends App{
     val to = window(1)
     val segment = lines.slice(from + 1, to)
     val filename = segment.head
-    val time = segment.last
+    val time = if (segment.last.last == 's') segment.last.dropRight(1) else segment.last
     val programs = (for (l <- segment.drop(1).dropRight(1)) yield
       l match {
         case resultRegex(_,func) => func
