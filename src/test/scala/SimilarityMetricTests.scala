@@ -68,4 +68,15 @@ class SimilarityMetricTests  extends JUnitSuite {
     //we expect this:
     assertEquals(tree1.terms, SimilarityMetric.compute(tree1,tree2))
   }
+
+  @Test def bugFromWild2: Unit = {
+    val prog1 = "(str.replace _arg_0 (str.substr (str.replace _arg_0 \" \" \"\") (str.indexof _arg_0 \" \" 1) (str.len _arg_0)) (str.substr (str.++ \"in\" _arg_0) (str.indexof _arg_0 \"in\" 1) (str.indexof _arg_0 \" \" 1)))"
+    val prog2 = "(str.++ (str.substr _arg_0 0 (str.indexof _arg_0 \" \" 1)) (str.substr _arg_0 (str.indexof _arg_0 \" \" 1) (- (str.indexof _arg_0 \" \" (+ 1 (str.indexof _arg_0 \" \" 1))) (str.indexof _arg_0 \" \" 1))))"
+
+    val tree1: ASTNode = Main.interpret("src/test/benchmarks/too-hard/stackoverflow2.sl",prog1).get._1
+    val tree2: ASTNode = Main.interpret("src/test/benchmarks/too-hard/stackoverflow2.sl",prog2).get._1
+
+    assertEquals(16, SimilarityMetric.compute(tree1,tree2))
+
+  }
 }

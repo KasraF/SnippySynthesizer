@@ -14,7 +14,7 @@ object BenchmarksHarness extends App {
   def runBenchmarks(dirname: String,
                     filenameToGoldStandard: String => String,
                     resultPrinter: (List[RankedProgram], List[ASTNode], Long) => String
-                   ): List[String] = for (file <- new java.io.File(dirname).listFiles().toList) yield {
+                   ): List[String] = for (file <- new java.io.File(dirname).listFiles().toList; if (file.getName.startsWith("stackoverflow2"))) yield {
     val t0 = System.currentTimeMillis()
     val programs = Main.synthesize(file.getAbsolutePath)
     val t1 = System.currentTimeMillis()
@@ -32,21 +32,53 @@ object BenchmarksHarness extends App {
 //    else Console.RED + programs.zipWithIndex.dropWhile{case (RankedProgram(tree,rate),idx) => !goldStandard.exists(gold => gold.code == tree.code)}.headOption.map{case (RankedProgram(tree,rate),idx) =>
 //      " " + tree.code + " " + rate + " (" + idx + ")" + " [" + programs.head.program.code + " " + programs.head.rank + "]"}.getOrElse(" NOT FOUND")  + Console.RESET
     val idx = programs.zipWithIndex.filter{case (program,idx) => goldStandard.exists(gold => gold.code == program.program.code)}.headOption.map(_._2.toString).getOrElse("")
-    "," + idx + "," + Math.ceil(msec.toDouble / 1000).toInt
+    "," + idx + "," + msec
   }
   val origBenchmarks: List[String] = Nil//runBenchmarks("src/test/benchmarks/syguscomp",identity,regularBenchmarkPrinter)
 
-  val contradictionBenchmarks = runBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl",regularBenchmarkPrinter)
+  val contradictionBenchmarks = Nil//runBenchmarks("src/test/benchmarks/modified_benchmarks/contradiction", filename => filename.dropRight(5) + ".sl",regularBenchmarkPrinter)
 
-  val garbageBenchmarks = runBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl",regularBenchmarkPrinter)
+  val garbageBenchmarks = Nil//runBenchmarks("src/test/benchmarks/modified_benchmarks/returns_garbage", filename => filename.dropRight(5) + ".sl",regularBenchmarkPrinter)
 
-  val tooHardBenchmarks = Nil /*runBenchmarks("src/test/benchmarks/too-hard",identity, { (programs,goldStandard) =>
-    if (goldStandard.isEmpty) " NO GOLD STANDARD\n" + programs.take(10).map{case RankedProgram(prog, rate) => prog.code + " " + rate}
-      .mkString("\n") + "\n"
-    else ":\n" + programs.take(10).map{case RankedProgram(prog, rate) =>
-      prog.code + " " + rate + " " +  goldStandard.map(goldProg => (goldProg.code,ast.SimilarityMetric.compute(prog,goldProg))).maxBy(_._2)}
-      .mkString("\n") + "\n"
-  })*/
+  val tooHardBenchmarks = runBenchmarks("src/test/benchmarks/too-hard",identity, { (_origPrograms,goldStandard, msec) =>
+    val programs = _origPrograms.take(5)
+
+    def goldSimSorter (gold1: (ASTNode,Int),gold2: (ASTNode,Int)): Boolean = (gold1,gold2) match {
+      case ((goldProg1,sim1),(goldProg2,sim2)) => if (sim1 == sim2) goldProg1.terms < goldProg2.terms
+      else sim1 > sim2
+    }
+    val progsWithClosest = programs.map(program =>
+      goldStandard.map(goldProg => (goldProg,ast.SimilarityMetric.compute(program.program,goldProg))).sortWith(goldSimSorter).head
+    )
+    val topSolution = programs.headOption.map(_.program)
+    val closestToTop = progsWithClosest.headOption
+    val bestSolution = /*programs.zipWithIndex.map(prog => (prog._1.program,goldStandard.map(goldProg =>
+      (goldProg,ast.SimilarityMetric.compute(prog._1.program,goldProg))).sortWith(goldSimSorter).head,
+      prog._2)
+    ).sortWith{case ((prog1, gold1, idx1),(prog2, gold2, idx2)) => goldSimSorter(gold2,gold2)}.headOption*/
+      progsWithClosest.zipWithIndex.sortWith{case ((gold1,idx1),(gold2,idx2)) => goldSimSorter(gold1,gold2)}.headOption
+    List(
+      //gold standard data:
+       goldStandard.length//# solutions
+      ,goldStandard.map(_.height).sum.toDouble / goldStandard.length// average height
+      ,goldStandard.map(_.terms).sum.toDouble / goldStandard.length// average terms
+      //solution at rank 1 (topSolution)
+      ,topSolution.map(_.height).getOrElse(0)// height
+      ,topSolution.map(_.terms).getOrElse(0)// terms
+      ,closestToTop.map(_._2).getOrElse(0)// distance (terms)
+      ,closestToTop.map{case (gold,sim) => sim.toDouble / gold.terms}.getOrElse(0)// % of closest solution
+      //best solution
+      ,bestSolution.map(_._2).getOrElse("N/A")// rank
+      ,bestSolution.map{case ((gold,sim),idx) => programs(idx).program.height}.getOrElse(0)// height
+      ,bestSolution.map{case ((gold,sim),idx) => programs(idx).program.terms}.getOrElse(0)// terms
+      ,bestSolution.map(_._1._2).getOrElse("N/A")// distance (terms)
+      ,bestSolution.map{case ((gold,sim),idx) => sim.toDouble / gold.terms}.getOrElse(0)// % of closest solution
+      //averages
+      ,if (programs.isEmpty) 0 else (progsWithClosest.map(_._2).sum.toDouble / programs.length)// distance
+      ,if (programs.isEmpty) 0 else (progsWithClosest.map{case (gold,sim) => sim.toDouble / gold.terms}.sum / programs.length)// % of closest
+
+    ).mkString(",",",","")
+  })
 
   println("Original benchmarks:")
   origBenchmarks.foreach(println)

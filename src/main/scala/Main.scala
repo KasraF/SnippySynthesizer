@@ -19,10 +19,11 @@ import pcShell.ConsolePrints._
 object Main extends App {
   val filename = //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_3_short.sl"
   //"src/test/benchmarks/too-hard/split-numbers-from-units-of-measure_2.sl"
-  "src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
-  // "src/test/benchmarks/syguscomp/firstname.sl"
+  //"src/test/benchmarks/modified_benchmarks/returns_garbage/compare-two-strings_1.sl"
+   "src/test/benchmarks/syguscomp/change-negative-numbers-to-positive.sl"
   //"C:\\utils\\sygus-solvers\\SyGuS-Comp17\\PBE_Strings_Track\\univ_2_short.sl"
    //"C:\\utils\\sygus-solvers\\PBE_SLIA_Track\\euphony\\stackoverflow4.sl"//args(0)
+  //"C:\\Users\\hila\\prime\\papers\\postdoc_papers\\partial_correctness\\figures\\count-line-breaks-in-cell.sl"
 
   case class RankedProgram(program:ASTNode, rank:Double) extends Ordered[RankedProgram] {
     override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
