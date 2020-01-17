@@ -14,7 +14,7 @@ object BenchmarksHarness extends App {
   def runBenchmarks(dirname: String,
                     filenameToGoldStandard: String => String,
                     resultPrinter: (List[RankedProgram], List[ASTNode], Long) => String
-                   ): List[String] = for (file <- new java.io.File(dirname).listFiles().toList; if (file.getName.startsWith("stackoverflow2"))) yield {
+                   ): List[String] = for (file <- new java.io.File(dirname).listFiles().toList) yield {
     val t0 = System.currentTimeMillis()
     val programs = Main.synthesize(file.getAbsolutePath)
     val t1 = System.currentTimeMillis()
