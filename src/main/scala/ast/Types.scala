@@ -1,6 +1,7 @@
 package ast
 
-object Types extends Enumeration {
-  type Types = Value
-  val String, Int, Real, Bool = Value
+object Types extends Enumeration
+{
+	type Types = Value
+	val String, Int, Bool = Value
 }

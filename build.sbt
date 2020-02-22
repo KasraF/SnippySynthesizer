@@ -19,6 +19,9 @@ libraryDependencies += "org.apache.commons" % "commons-lang3" % "3.9"
 // https://mvnrepository.com/artifact/commons-io/commons-io
 libraryDependencies += "commons-io" % "commons-io" % "2.6"
 
+// https://mvnrepository.com/artifact/net.liftweb/lift-json
+libraryDependencies += "net.liftweb" %% "lift-json" % "3.4.1"
+
 // https://mvnrepository.com/artifact/junit/junit
 libraryDependencies += "junit" % "junit" % "4.13-rc-1" % Test
 // https://mvnrepository.com/artifact/org.scalatest/scalatest

@@ -18,7 +18,7 @@ object ShellMain extends App {
   val taskFilename = args(0)
   if (args.length > 1 && args(1) == "--out")
     outFile = Some(File.createTempFile("bester_", ".log",new java.io.File(".")))
-  val task = new SygusFileTask(scala.io.Source.fromFile(taskFilename).mkString)
+  val task: SynthesisTask = new PythonPBETask(scala.io.Source.fromFile(taskFilename).mkString)
   var currentResults: scala.collection.immutable.List[String] = Nil
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;
@@ -39,7 +39,7 @@ object ShellMain extends App {
     this.setOffendingToken(recognizer.getCurrentToken)
   }
 
-  class SygusCompleter(task: SygusFileTask) extends Completer {
+  class SygusCompleter(task: SynthesisTask) extends Completer {
     lazy val tokens: List[String] = task.vocab.leavesMakers.map(_.head) ++ task.vocab.nodeMakers.map(_.head)
 
     override def complete(buffer: String, cursor: Int, candidates: java.util.List[CharSequence]): Int = { // buffer could be null
@@ -75,39 +75,9 @@ object ShellMain extends App {
     out.print(Console.RESET)
   }
 
-  def escapeIfString(elem: Any): String = if (elem.isInstanceOf[String]) escapeWSAndQuote(elem.asInstanceOf[String]) else elem.toString
-
-  def evalExpr(s: String) = try {
-    val lexer = new SyGuSLexer(CharStreams.fromString(s))
-    lexer.removeErrorListeners()
-    lexer.addErrorListener(new ThrowingLexerErrorListener)
-    val parser = new SyGuSParser(new BufferedTokenStream(lexer))
-    parser.removeErrorListeners()
-    parser.setErrorHandler(new BailErrorStrategy)
-    val parsed = parser.bfTerm()
-    if (parser.getCurrentToken.getType != Token.EOF)
-      throw new EOFExpectedException(parser)
-    val visitor = new ASTGenerator(task)
-    val ast = visitor.visit(parsed)
-    cprintln(Tabulator.format(List("input","result","expected") +:
-      task.examples.zip(ast.values).map(pair => List(pair._1.input.toList.map(kv =>
-        s"${kv._1} -> ${escapeIfString(kv._2.toString)}"
-      ).mkString("\n"),
-        if (pair._2 == pair._1.output) ColorString(escapeIfString(pair._2), Console.GREEN_B) else ColorString(escapeIfString(pair._2), Console.RED_B),
-        escapeIfString(pair._1.output)))))
-  } catch {
-    case e: RecognitionException => {
-      prettyPrintSyntaxError(e)
-    }
-    case e: ResolutionException => {
-      val startIdx = e.badCtx.getStart.getStartIndex
-      val len = e.badCtx.getStop.getStopIndex - startIdx + 1
-      cprintln(" " * (startIdx + 2) + "^" + (if (len > 1) "-" * (len - 2) + "^" else ""), errorColor)
-      cprintln("Cannot resolve program", errorColor)
-    }
-    case e: ParseCancellationException =>{
-      prettyPrintSyntaxError(e.getCause.asInstanceOf[RecognitionException])
-    }
+  def escapeIfString(elem: Any): String = elem match {
+    case str: String => escapeWSAndQuote(str)
+    case _ => elem.toString
   }
 
 //  import jline.TerminalFactory
@@ -151,11 +121,11 @@ object ShellMain extends App {
               cprintln(p)
               reader.getHistory.removeLast()
               reader.getHistory.add(p)
-              evalExpr(p)
+              // evalExpr(p)
             }
           }
         }
-      } else evalExpr(trimmedLine)
+      } // else evalExpr(trimmedLine)
     }
   }
 }
