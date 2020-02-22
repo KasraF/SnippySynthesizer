@@ -2,7 +2,8 @@ package ast
 
 abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 {
-	assert(numContexts > 0)
+	// TODO Why is this necessary?
+	// assert(numContexts > 0)
 	override val children: Iterable[ASTNode] = Iterable.empty
 	val height = 0
 	val terms  = 1

@@ -4,10 +4,10 @@ import ast.Types.Types
 
 trait VocabMaker
 {
-	val arity     : Int
+	val arity: Int
 	val childTypes: List[Types]
 	val returnType: Types
-	val head      : String
+	val head: String
 
 	def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode
 
@@ -17,7 +17,7 @@ trait VocabMaker
 
 class VocabFactory(
 	val leavesMakers: List[VocabMaker],
-	val nodeMakers                 : List[VocabMaker])
+	val nodeMakers  : List[VocabMaker])
 {
 	def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
 

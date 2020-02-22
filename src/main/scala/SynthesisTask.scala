@@ -1,5 +1,6 @@
 package sygus
 
+import ast.Types.Types
 import ast._
 import net.liftweb.json.JsonAST.{JObject, JValue}
 import net.liftweb.json.JsonParser
@@ -26,7 +27,7 @@ class PythonPBETask(content: String) extends SynthesisTask {
 	override val returnType: ast.Types.Value = ast.Types.Bool
 	override val parameters: List[(String, ast.Types.Value)] = List()
 
-	override val vocab: VocabFactory = null
+	override val vocab: VocabFactory = PythonPBETask.vocabFactory()
 	override val examples: List[Example] = List()
 
 	override def fit(program: ASTNode): (Int, Int) = (1,1)
@@ -40,6 +41,43 @@ object PythonPBETask {
 			 .map(obj => obj.asInstanceOf[JObject])
 			 .map(obj => obj.values)
 			 .map(values => values.filter(entry => !PythonExample.reserved_names.contains(entry._1)))
+		println(examples)
 		new PythonPBETask(json)
+	}
+
+	private def vocabFactory() : VocabFactory =
+	{
+		val vocab: List[VocabMaker] =
+			List() :+
+			  // Literals
+			  new VocabMaker {
+				  override val arity: Int = 0
+				  override val childTypes: List[Types] = Nil
+				  override val returnType: Types = Types.String
+				  override val head: String = " "
+
+				  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					  new StringLiteral(" ", contexts.length)
+			  } :+
+			  new VocabMaker {
+				  override val arity: Int = 0
+				  override val childTypes: List[Types] = Nil
+				  override val returnType: Types = Types.Int
+				  override val head: String = "0"
+
+				  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					  new IntLiteral(0, contexts.length)
+			  } :+
+			  new VocabMaker {
+				  override val arity: Int = 0
+				  override val childTypes: List[Types] = Nil
+				  override val returnType: Types = Types.Int
+				  override val head: String = "1"
+
+				  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					  new IntLiteral(1, contexts.length)
+			  }
+
+		VocabFactory(vocab)
 	}
 }
