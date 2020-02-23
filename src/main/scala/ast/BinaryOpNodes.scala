@@ -58,6 +58,14 @@ class IntSubtraction(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[In
 	override def doOp(l: Any, r: Any): Int = l.asInstanceOf[Int] - r.asInstanceOf[Int]
 }
 
+class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = lhs.code + " // " + rhs.code
+
+	override def doOp(l: Any, r: Any): Int = l.asInstanceOf[Int] / r.asInstanceOf[Int]
+}
+
+
 class IntLessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
 {
 	override lazy val code: String = lhs.code + " <= " + rhs.code

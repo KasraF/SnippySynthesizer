@@ -18,7 +18,7 @@ object ShellMain extends App {
   val taskFilename = args(0)
   if (args.length > 1 && args(1) == "--out")
     outFile = Some(File.createTempFile("bester_", ".log",new java.io.File(".")))
-  val task: SynthesisTask = new PythonPBETask(scala.io.Source.fromFile(taskFilename).mkString)
+  val task: SynthesisTask = PythonPBETask.fromString(scala.io.Source.fromFile(taskFilename).mkString)
   var currentResults: scala.collection.immutable.List[String] = Nil
 
   def escapeWSAndQuote(s: String) = { //		if ( s==null ) return s;

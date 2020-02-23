@@ -3,7 +3,7 @@
     "time": 0,
     "#": "",
     "$": "",
-    "s": "'test'",
+    "s": "test",
     "lineno": 1,
     "next_lineno": 2
   },
@@ -11,8 +11,8 @@
     "time": 1,
     "#": "",
     "$": "",
-    "s": "'test'",
-    "rs": "'es'",
+    "s": "test",
+    "rs": "es",
     "lineno": 2,
     "prev_lineno": 1,
     "next_lineno": "R2"
