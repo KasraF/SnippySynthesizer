@@ -25,7 +25,7 @@ object Main extends App
 		synthesizeFromTask(task)
 	}
 
-	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 15) =
+	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 150000) =
 	{
 		val oeManager = new InputsValuesManager()
 		val enumerator = new enumeration.Enumerator(
@@ -99,6 +99,6 @@ object Main extends App
 
 	case class ExpectedEOFException() extends Exception
 
-	trace.DebugPrints.setDebug()
+	// trace.DebugPrints.setDebug()
 	synthesize(args.head).foreach(pr => println((pr.program.code, pr.rank)))
 }

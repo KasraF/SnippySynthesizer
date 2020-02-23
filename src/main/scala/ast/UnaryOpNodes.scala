@@ -15,14 +15,14 @@ trait UnaryOpNode[T] extends ASTNode
 
 class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode
 {
-	override lazy val code: String = "(int.to.str " + arg.code + ")"
+	override lazy val code: String = "str(" + arg.code + ")"
 
 	override def doOp(x: Any): String = if (x.asInstanceOf[Int] >= 0) x.asInstanceOf[Int].toString else ""
 }
 
 class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 {
-	override lazy val code: String = "(str.to.int " + arg.code + ")"
+	override lazy val code: String = "int(" + arg.code + ")"
 
 	override def doOp(x: Any): Int =
 	{
@@ -37,7 +37,14 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 
 class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 {
-	override lazy val code: String = "(str.len " + arg.code + ")"
+	override lazy val code: String = "len(" + arg.code + ")"
 
 	override def doOp(x: Any): Int = x.asInstanceOf[String].length
+}
+
+class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNode
+{
+	override lazy val code: String = arg.code + ".lower()"
+
+	override def doOp(x: Any): String = x.asInstanceOf[String].toLowerCase
 }
