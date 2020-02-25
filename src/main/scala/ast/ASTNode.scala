@@ -5,7 +5,7 @@ import ast.Types.Types
 trait ASTNode
 {
 	val nodeType: Types.Types
-	val values  : List[Any]
+	val values  : List[Option[Any]]
 	val code    : String
 	val height  : Int
 	val terms   : Int
@@ -16,24 +16,24 @@ trait ASTNode
 
 trait StringNode extends ASTNode
 {
-	override val values: List[String]
+	override val values: List[Option[String]]
 	override val nodeType: Types = Types.String
 }
 
 trait IntNode extends ASTNode
 {
-	override val values: List[Int]
+	override val values: List[Option[Int]]
 	override val nodeType: Types = Types.Int
 }
 
 trait BoolNode extends ASTNode
 {
-	override val values: List[Boolean]
+	override val values: List[Option[Boolean]]
 	override val nodeType: Types = Types.Bool
 }
 
 trait StringListNode extends ASTNode
 {
-	override val values: List[Iterable[String]]
+	override val values: List[Option[Iterable[String]]]
 	override val nodeType: Types = Types.StringList
 }

@@ -1,6 +1,6 @@
 package ast
 
-import org.apache.commons.lang3.StringUtils
+import trace.DebugPrints.eprintln
 
 trait QuaternaryOpNode[T] extends ASTNode
 {
@@ -9,7 +9,7 @@ trait QuaternaryOpNode[T] extends ASTNode
 	val arg2: ASTNode
 	val arg3: ASTNode
 
-	lazy val values: List[T] = arg0.values
+	lazy val values: List[Option[T]] = arg0.values
 	  .zip(arg1.values)
 	  .zip(arg2.values)
 	  .zip(arg3.values)
@@ -22,7 +22,7 @@ trait QuaternaryOpNode[T] extends ASTNode
 	  arg1.values.length == arg2.values.length &&
 	  arg2.values.length == arg3.values.length)
 
-	def doOp(a0: Any, a1: Any, a2: Any, a3: Any): T
+	def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[T]
 
 	def includes(varName: String): Boolean =
 		arg0.includes(varName) ||
@@ -37,18 +37,16 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 		(if (arg0.terms > 1) ("(" + arg0.code + ")") else arg0.code) +
 		  "[" + arg1.code + ":" + arg2.code + ":"  + arg3.code + "]"
 
-	override def doOp(a0: Any, a1: Any, a2: Any, a3: Any): String =
-	{
-		val s = a0.asInstanceOf[String]
-		val start = a1.asInstanceOf[Int]
-		val end = a2.asInstanceOf[Int]
-		val step = a3.asInstanceOf[Int]
-
-		// TODO What is Python's semantics here?
-		if (start < 0 || end < 0 || start >= s.length || end >= s.length) {
-			""
-		} else {
-			(for(i <- start to end by step) yield s(i)).mkString
-		}
+	override def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[String] = (a0, a1, a2, a3) match {
+		case (s: String, start: Int, end: Int, step: Int) =>
+			if (start < 0 || end < 0 || start >= s.length || end >= s.length) {
+				// TODO What is Python's semantics here?
+				None
+			} else {
+				Some((for(i <- start to end by step) yield s(i)).mkString)
+			}
+		case _ =>
+			eprintln(s"Wrong types: $arg0 $arg1 $arg2 $arg3")
+			None
 	}
 }

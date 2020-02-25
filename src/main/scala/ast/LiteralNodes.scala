@@ -8,7 +8,7 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 	val height = 0
 	val terms  = 1
 	val value: T
-	val values: List[T] = List.fill(numContexts)(value)
+	val values: List[Option[T]] = List.fill(numContexts)(value).map(Some(_))
 
 	def includes(varName: String): Boolean = false
 }

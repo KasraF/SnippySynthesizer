@@ -4,11 +4,9 @@ class StringSplit(val lhs: ASTNode, val rhs: ASTNode) extends BinaryOpNode[Itera
 {
 	override lazy val code: String = lhs.code + ".split(" + rhs.code + ")"
 
-	override def doOp(l: Any, r: Any): Iterable[String] =
-	{
-		val strLhs = l.asInstanceOf[String]
-		val strRhs = r.asInstanceOf[String]
-		strLhs.split(strRhs)
+	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
+		case (l: String, r: String ) => Some(l.split(r))
+		case _ => wrongType(l, r)
 	}
 }
 
@@ -16,11 +14,9 @@ class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpN
 {
 	override lazy val code: String = lhs.code + ".join(" + rhs.code + ")"
 
-	override def doOp(l: Any, r: Any): String =
-	{
-		val str = l.asInstanceOf[String]
-		val lst = r.asInstanceOf[Iterable[String]]
-		lst.mkString(str)
+	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
+		case (str: String, lst: Iterable[String]) => Some(lst.mkString(str))
+		case _ => wrongType(l, r)
 	}
 }
 
@@ -29,10 +25,10 @@ class StringReverseList(val arg: StringListNode) extends UnaryOpNode[Iterable[St
 	// TODO This needs to also work with just Strings, since Strings are StringLists of their characters
 	override lazy val code: String = "[w.reverse() for c in " + arg.code + "]"
 
-	override def doOp(arg: Any): Iterable[String] =
+	override def doOp(arg: Any): Option[Iterable[String]] = arg match
 	{
-		val lst = arg.asInstanceOf[Iterable[String]]
-		lst.map(_.reverse)
+		case lst: Iterable[String] => Some(lst.map(_.reverse))
+		case _ => wrongType(arg)
 	}
 }
 
@@ -40,10 +36,8 @@ class SubstringList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOpN
 {
 	override lazy val code: String = "[w[" + rhs.code + "] for c in " + lhs.code + "]"
 
-	override def doOp(lhs: Any, rhs: Any): Iterable[String] =
-	{
-		val lst = lhs.asInstanceOf[Iterable[String]]
-		val idx = rhs.asInstanceOf[Int]
-		lst.map(_(idx).toString)
+	override def doOp(lhs: Any, rhs: Any): Option[Iterable[String]] = (lhs, rhs) match {
+		case (lst: Iterable[String], idx: Int) => Some(lst.map(_(idx).toString))
+		case _ => wrongType(lhs, rhs)
 	}
 }
