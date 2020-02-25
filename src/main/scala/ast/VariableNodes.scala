@@ -2,9 +2,9 @@ package ast
 
 abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 {
-	override lazy val code    : String            = name
+	override lazy val code: String = name
 	override val height: Int = 0
-	override      val children: Iterable[ASTNode] = Iterable.empty
+	override val children: Iterable[ASTNode] = Iterable.empty
 	val terms = 1
 	val name: String
 	val values: List[T] = contexts.map { context =>

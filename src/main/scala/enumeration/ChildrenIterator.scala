@@ -3,19 +3,20 @@ package enumeration
 import ast.ASTNode
 import ast.Types.Types
 
-class ChildrenIterator(val childrenCandidates: List[ASTNode], val childTypes: List[Types], val currHeight: Int) extends Iterator[List[ASTNode]]
+class ChildrenIterator(
+  val childrenCandidates: List[ASTNode],
+  val childTypes: List[Types],
+  val currHeight: Int)
+  extends Iterator[List[ASTNode]]
 {
-	val childrenLists: List[List[ASTNode]]      = childTypes.map(t => childrenCandidates.filter(_.nodeType == t))
-	val candidates   : Array[Iterator[ASTNode]] = childrenLists.map(l => l.iterator).toArray
-	val allExceptLast: Array[ASTNode]           = candidates.dropRight(1).map(_.next())
-	var next_child   : Option[List[ASTNode]]    = None
+	// TODO Handle cases where none of the children match the parent
+	val childrenLists: List[List[ASTNode]] = childTypes.map(t => childrenCandidates.filter(_.nodeType == t))
+	val candidates: Array[Iterator[ASTNode]] = childrenLists.map(l => l.iterator).toArray
+	val allExceptLast: Array[ASTNode] = candidates.dropRight(1).map(_.next())
+	var next_child: Option[List[ASTNode]] = None
 
 	def getNextChild(): Unit =
 	{
-		// TODO Remove me
-		if (next_child.isDefined) println("ChildrenIterator.getNextChild called but next_child not empty.")
-
-		next_child = None
 		while (next_child.isEmpty) {
 			if (candidates.last.hasNext) {
 				val children = allExceptLast.toList :+ candidates.last.next()

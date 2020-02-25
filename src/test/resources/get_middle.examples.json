@@ -3,7 +3,8 @@
     "time": 0,
     "#": "",
     "$": "",
-    "s": "test",
+    "r": 3,
+    "s": "abcdef",
     "lineno": 1,
     "next_lineno": 2
   },
@@ -11,8 +12,9 @@
     "time": 1,
     "#": "",
     "$": "",
-    "s": "test",
-    "rs": "es",
+    "r": 3,
+    "s": "abcdef",
+    "rs": "defabc",
     "lineno": 2,
     "prev_lineno": 1,
     "next_lineno": "R2"

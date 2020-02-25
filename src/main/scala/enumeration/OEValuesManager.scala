@@ -9,6 +9,7 @@ trait OEValuesManager
 	def isRepresentative(program: ast.ASTNode): Boolean
 }
 
+// TODO Prioritize cleaner programs
 class InputsValuesManager extends OEValuesManager
 {
 	val classValues: mutable.Set[List[Any]] = mutable.HashSet[List[Any]]()

@@ -2,10 +2,10 @@ package ast
 
 trait UnaryOpNode[T] extends ASTNode
 {
-	override lazy val values  : List[T]           = arg.values.map(doOp)
-	override      val height                      = 1 + arg.height
-	override      val terms   : Int               = 1 + arg.terms
-	override      val children: Iterable[ASTNode] = Iterable(arg)
+	override lazy val values: List[T] = arg.values.map(doOp)
+	override val height = 1 + arg.height
+	override val terms: Int = 1 + arg.terms
+	override val children: Iterable[ASTNode] = Iterable(arg)
 	val arg: ASTNode
 
 	def doOp(x: Any): T
@@ -27,12 +27,12 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 	override def doOp(x: Any): Int =
 	{
 		val str = x.asInstanceOf[String]
-      if (!str.isEmpty && str.forall(c => c.isDigit)) {
-        str.toInt
-      } else {
-        -1
-      }
-    }
+		if (!str.isEmpty && str.forall(c => c.isDigit)) {
+			str.toInt
+		} else {
+			-1
+		}
+	}
 }
 
 class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode

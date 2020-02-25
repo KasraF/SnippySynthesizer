@@ -1,4 +1,4 @@
-name := "partialcorrectness_sem"
+name := "PythonSynthesizer"
 
 version := "0.1"
 

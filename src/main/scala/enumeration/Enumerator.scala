@@ -6,10 +6,10 @@ import trace.DebugPrints.dprintln
 import scala.collection.mutable
 
 class Enumerator(
-	val vocab: VocabFactory,
-	val oeManager: OEValuesManager,
-	val contexts: List[Map[String, Any]])
-	extends Iterator[ASTNode]
+  val vocab    : VocabFactory,
+  val oeManager: OEValuesManager,
+  val contexts : List[Map[String, Any]])
+  extends Iterator[ASTNode]
 {
 	override def toString(): String = "enumeration.Enumerator"
 
@@ -37,20 +37,36 @@ class Enumerator(
 		res
 	}
 
+	/**
+	 * This method moves the rootMaker to the next possible non-leaf. Note that this does not
+	 * change the level/height of generated programs.
+	 * @return False if we have exhausted all non-leaf AST nodes.
+	 */
 	def advanceRoot(): Boolean =
 	{
-		if (!currIter.hasNext) return false
+		// We may not have any children for a root
+		childrenIterator = null
 
-		rootMaker = currIter.next()
-		childrenIterator = if (rootMaker.arity == 0) {
-			Iterator.single(Nil)
-		} else {
-			new ChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, height)
+		while (childrenIterator == null) {
+			if (!currIter.hasNext) return false
+			rootMaker = currIter.next()
+			if (rootMaker.arity == 0) {
+				childrenIterator = Iterator.single(Nil)
+			} else if (rootMaker.childTypes.map(t => prevLevelProgs.filter(_.nodeType == t)).forall(_.nonEmpty)) {
+				childrenIterator =
+				  new ChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, height)
+			} else {
+				println("Couldn't find children for " + rootMaker)
+			}
 		}
 
 		true
 	}
 
+	/**
+	 * This method resets the variables to begin enumerating the next level (taller) trees.
+	 * @return False if the current level failed to generate any new programs.
+	 */
 	def changeLevel(): Boolean =
 	{
 		dprintln(currLevelProgs.length)
@@ -67,7 +83,8 @@ class Enumerator(
 	{
 		var res: Option[ASTNode] = None
 
-      while (res.isEmpty) {
+		// Iterate while no non-equivalent program is found
+		while (res.isEmpty) {
 			if (childrenIterator.hasNext) {
 				val children = childrenIterator.next()
 				if (rootMaker.canMake(children)) {
@@ -79,13 +96,11 @@ class Enumerator(
 			}
 			else if (currIter.hasNext) {
 				if (!advanceRoot()) {
-					return None
+					if (!changeLevel()) return None
 				}
 			}
-			else {
-				if (!changeLevel()) {
-					return None
-				}
+			else if (!changeLevel()) {
+				return None
 			}
 		}
 		currLevelProgs += res.get

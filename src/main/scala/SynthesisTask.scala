@@ -177,7 +177,6 @@ object PythonPBETask
 			},
 			new VocabMaker
 			{
-				// TODO Support start:end:step indexing
 				override val arity: Int = 2
 				override val childTypes: List[Types] = List(Types.String, Types.Int)
 				override val returnType: Types = Types.String
@@ -185,6 +184,16 @@ object PythonPBETask
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new StringAt(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[IntNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.String, Types.String)
+				override val returnType: Types = Types.Int
+				override val head: String = ".find()"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new Find(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
 			},
 			new VocabMaker
 			{
@@ -248,6 +257,46 @@ object PythonPBETask
 						children.head.asInstanceOf[StringNode],
 						children(1).asInstanceOf[IntNode],
 						children(2).asInstanceOf[IntNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.String, Types.String)
+				override val returnType: Types = Types.StringList
+				override val head: String = ".split()"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new StringSplit(children.head, children.tail.head)
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.String, Types.StringList)
+				override val returnType: Types = Types.String
+				override val head: String = ".join()"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new StringJoin(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[StringListNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 1
+				override val childTypes: List[Types] = List(Types.StringList)
+				override val returnType: Types = Types.StringList
+				override val head: String = "[w.split() for w in]"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new StringReverseList(children.head.asInstanceOf[StringListNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.StringList, Types.Int)
+				override val returnType: Types = Types.StringList
+				override val head: String = "[w[] for w in]"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new SubstringList(children.head.asInstanceOf[StringListNode], children.tail.head.asInstanceOf[IntNode])
 			})
 //			new VocabMaker
 //			{
