@@ -55,8 +55,6 @@ class Enumerator(
 			} else if (rootMaker.childTypes.map(t => prevLevelProgs.filter(_.nodeType == t)).forall(_.nonEmpty)) {
 				childrenIterator =
 				  new ChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, height)
-			} else {
-				println("Couldn't find children for " + rootMaker)
 			}
 		}
 

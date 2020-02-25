@@ -4,6 +4,8 @@ import ast.ASTNode
 import enumeration.InputsValuesManager
 import pcShell.ConsolePrints._
 
+import trace.DebugPrints.dprintln
+
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
 import scala.util.control.Breaks._
@@ -21,7 +23,7 @@ object Main extends App
 		synthesizeFromTask(task)
 	}
 
-	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 1500) : Seq[RankedProgram] =
+	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 5) : Seq[RankedProgram] =
 	{
 		val oeManager = new InputsValuesManager()
 		val enumerator = new enumeration.Enumerator(
@@ -47,7 +49,7 @@ object Main extends App
 					break
 				}
 
-				if (i % 1000 == 0) println(s"[$i] (${program.height}) ${program.code}")
+				if (i % 1000 == 0) dprintln(s"[$i] (${program.height}) ${program.code}")
 			}
 		}
 
@@ -56,6 +58,6 @@ object Main extends App
 
 	case class ExpectedEOFException() extends Exception
 
-	trace.DebugPrints.setDebug()
+	// trace.DebugPrints.setDebug()
 	synthesize(args.head)
 }

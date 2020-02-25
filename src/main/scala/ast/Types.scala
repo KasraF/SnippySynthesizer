@@ -10,7 +10,10 @@ object Types extends Enumeration
 			 case _: String => Types.String
 			 case _: Int => Types.Int
 			 case _: Boolean => Types.Bool
-			 case _ => Unknown
+			 case _ => {
+				 println("Could not determine type of " + x)
+				 Unknown
+			 }
 		 }
 	}
 }

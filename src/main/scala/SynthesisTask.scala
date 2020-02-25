@@ -54,15 +54,25 @@ class PythonPBETask extends SynthesisTask
 
 object PythonPBETask
 {
+	private def cleanupInput(input: Map[String, Any]): Map[String, Any] = {
+		input.map(variable => variable._2 match {
+			case i: BigInt => (variable._1, i.intValue) // We won't worry about overflow
+			case s: String => (variable._1, s.substring(1, s.length - 1)) // Strip the single quotes
+			case _ => {
+				assert(false, "Input type not recognized" + variable._2.getClass.getSimpleName)
+				variable
+			}
+		})
+	}
+
 	def fromString(json: String): PythonPBETask =
 	{
 		val examples = JsonParser.parse(json).children.map(obj => obj.asInstanceOf[JObject])
 		  .map(obj => obj.values)
 		  .map(values => values.filter(entry => !PythonExample.reserved_names.contains(entry._1)))
-		val before: Map[String, AnyRef] = examples.head.asInstanceOf[Map[String, AnyRef]]
-		val after: Map[String, AnyRef] =
-			examples.tail.head.asInstanceOf[Map[String, AnyRef]].
-			  filter(entry => !before.contains(entry._1) || !before(entry._1).equals(entry._2))
+		val before: Map[String, Any] = cleanupInput(examples.head)
+		val after: Map[String, Any] = cleanupInput(examples.tail.head)
+		  .filter(entry => !before.contains(entry._1) || !before(entry._1).equals(entry._2))
 
 		// TODO How can we support multiple results/variable assignment?
 		assert(after.size == 1, "Multiple results not supported")
@@ -70,7 +80,7 @@ object PythonPBETask
 		val rs = new PythonPBETask
 		{
 			returnType = Types.typeof(after.head._2)
-			parameters = before.toList.map(entry => (entry._1, Types.typeof(entry._2)))
+			parameters = before.map(entry => (entry._1, Types.typeof(entry._2))).toList
 			vocab = PythonPBETask.vocabFactory(parameters)
 			examples = List(Example(before, after.head._2))
 		}
@@ -315,7 +325,6 @@ object PythonPBETask
 
 		VocabFactory(vocab.appendedAll(
 			variables.
-			  filter(variable => !variable._2.equals(Types.Unknown)).
 			  map {
 				  case (name, Types.String) => new VocabMaker
 				  {
