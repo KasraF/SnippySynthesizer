@@ -1,0 +1,11 @@
+[
+  {
+    "space": "' '",
+    "s": "'Hello world!'"
+  },
+  {
+    "space": "' '",
+    "s": "'Hello world!'",
+    "rs": "'olleH !dlrow'"
+  }
+]

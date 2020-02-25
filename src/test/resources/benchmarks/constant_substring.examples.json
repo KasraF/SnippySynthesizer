@@ -1,0 +1,9 @@
+[
+  {
+    "s": "'Hello, world!'"
+  },
+  {
+    "s": "'Hello, world!'",
+    "rs": "'world'"
+  }
+]
