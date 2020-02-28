@@ -1,6 +1,9 @@
 import java.io.File
 
+import ast.ASTNode
 import sygus.Main
+
+import scala.concurrent.duration.FiniteDuration
 
 object Benchmarks extends App
 {
@@ -31,6 +34,9 @@ object Benchmarks extends App
 		  val index = benchmark._2 + 1
 		  val name: String = file.substring(file.lastIndexOf("/") + 1, file.indexOf("."))
 		  print(f"($index%2d)  [$name%18s] ")
-		  Main.synthesize(file)
+		  Main.synthesize(file) match {
+			  case None => println("Timeout")
+			  case Some((program: ASTNode, time: Int)) => println(f"[${time / 1000.0}%1.3f] ${program.code}")
+		  }
 	  })
 }

@@ -17,14 +17,15 @@ object Main extends App
 		override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
 	}
 
-	def synthesize(filename: String) =
+	def synthesize(filename: String) : Option[(ASTNode, Int)] =
 	{
 		val task: SynthesisTask = PythonPBETask.fromString(fromFile(filename).mkString)
 		synthesizeFromTask(task)
 	}
 
-	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 5) : Seq[RankedProgram] =
+	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 5) : Option[(ASTNode, Int)] =
 	{
+		var rs: Option[(ASTNode, Int)] = None
 		val oeManager = new InputsValuesManager()
 		val enumerator = new enumeration.Enumerator(
 			task.vocab,
@@ -39,25 +40,24 @@ object Main extends App
 					                  .zip(program.values)
 					                  .map(pair => pair._1.output == pair._2)
 					if (results.forall(identity)) {
-						println(program.code)
+						rs = Some((program, timeout * 1000 - deadline.timeLeft.toMillis.toInt))
 						break
 					}
 				}
 
-				if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) {
-					println("None")
-					break
-				}
-
+				if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) break
 				if (i % 1000 == 0) dprintln(s"[$i] (${program.height}) ${program.code}")
 			}
 		}
 
-		List()
+		rs
 	}
 
 	case class ExpectedEOFException() extends Exception
 
 	// trace.DebugPrints.setDebug()
-	synthesize(args.head)
+	synthesize(args.head) match {
+		case None => println("None")
+		case Some((program: ASTNode, time: Int)) => println(s"[$time] ${program.code}")
+	}
 }
