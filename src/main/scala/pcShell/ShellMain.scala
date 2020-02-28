@@ -9,8 +9,11 @@ import sygus._
 
 import scala.util.control.Exception.allCatch
 import ConsolePrints._
+import ast.ASTNode
 import jline.console.completer.{Completer, StringsCompleter}
 import sygus.Main.RankedProgram
+
+import scala.concurrent.duration.FiniteDuration
 
 
 
@@ -99,17 +102,13 @@ object ShellMain extends App {
         case "quit" | "q" => sys.exit(0)
         case "synt" | "s" => {
           cprintln("Synthesizing... (Press any key to interrupt)", infoColor)
-          val results = Main.synthesizeFromTask(task, 40).take(5)
+          val results: Option[(ASTNode, Int)] = Main.synthesizeFromTask(task, 40)
           if (results.isEmpty) {
             cprintln("No results, try waiting a bit longer", infoColor)
           } else {
-            currentResults = results.map(_.program.code).toList
-            val fits = results.map{r: RankedProgram => task.fit(r.program)}
-            currentResults.zip(fits).zipWithIndex.foreach(
-              { case ((p, fit), i) => cprintln(s"$infoColor${i + 1}:${Console.RESET} $p $infoColor${showFit(fit)}${Console.RESET}")}
-            )
+            val p = results.get._1
+            cprintln(s"$p")}
           }
-        }
         case s => allCatch opt s.toInt match {
           case None => cprintln(s"Invalid command. $hint", errorColor)
           case Some(idx) => currentResults.lift(idx - 1) match {

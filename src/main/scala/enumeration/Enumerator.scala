@@ -87,7 +87,7 @@ class Enumerator(
 				val children = childrenIterator.next()
 				if (rootMaker.canMake(children)) {
 					val prog = rootMaker(children, contexts)
-					if (oeManager.isRepresentative(prog)) {
+					if (prog.values.nonEmpty && oeManager.isRepresentative(prog)) {
 						res = Some(prog)
 					}
 				}

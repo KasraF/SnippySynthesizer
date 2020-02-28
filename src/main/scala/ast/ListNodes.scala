@@ -37,7 +37,10 @@ class SubstringList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOpN
 	override lazy val code: String = "[w[" + rhs.code + "] for c in " + lhs.code + "]"
 
 	override def doOp(lhs: Any, rhs: Any): Option[Iterable[String]] = (lhs, rhs) match {
-		case (lst: Iterable[String], idx: Int) => Some(lst.map(_(idx).toString))
+		case (lst: Iterable[String], idx: Int) => {
+			if (idx > -1 && lst.forall(s => s.length > idx)) Some(lst.map(_(idx).toString))
+			else None
+		}
 		case _ => wrongType(lhs, rhs)
 	}
 }

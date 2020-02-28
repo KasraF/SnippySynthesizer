@@ -4,7 +4,7 @@ import trace.DebugPrints.eprintln
 
 trait UnaryOpNode[T] extends ASTNode
 {
-	override lazy val values: List[Option[T]] = arg.values.map(doOp)
+	override lazy val values: List[T] = arg.values.map(doOp).filter(_.isDefined).map(_.get)
 	override val height = 1 + arg.height
 	override val terms: Int = 1 + arg.terms
 	override val children: Iterable[ASTNode] = Iterable(arg)
@@ -37,7 +37,7 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 	override def doOp(x: Any): Option[Int] = x match {
 		case str: String =>
 			if (!str.isEmpty && str.forall(c => c.isDigit)) {
-				Some(str.toInt)
+				str.toIntOption
 			} else {
 				None
 			}

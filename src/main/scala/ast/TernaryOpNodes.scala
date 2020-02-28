@@ -4,7 +4,7 @@ import trace.DebugPrints.eprintln
 
 trait TernaryOpNode[T] extends ASTNode
 {
-	lazy val values: List[Option[T]] = arg0.values.zip(arg1.values).zip(arg2.values).map(tup => doOp(tup._1._1, tup._1._2, tup._2))
+	lazy val values: List[T] = arg0.values.zip(arg1.values).zip(arg2.values).map(tup => doOp(tup._1._1, tup._1._2, tup._2)).filter(_.isDefined).map(_.get)
 	override val height: Int = 1 + Math.max(arg0.height, Math.max(arg1.height, arg2.height))
 	override val terms : Int = 1 + arg0.terms + arg1.terms + arg2.terms
 	override val children: Iterable[ASTNode] = Iterable(arg0, arg1, arg2)

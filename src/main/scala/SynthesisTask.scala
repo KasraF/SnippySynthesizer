@@ -198,6 +198,16 @@ object PythonPBETask
 			new VocabMaker
 			{
 				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.String, Types.Int)
+				override val returnType: Types = Types.String
+				override val head: String = "[::step]"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new StringStep(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[IntNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 2
 				override val childTypes: List[Types] = List(Types.String, Types.String)
 				override val returnType: Types = Types.Int
 				override val head: String = ".find()"
