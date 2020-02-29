@@ -40,7 +40,9 @@ object Main extends App
 					                  .zip(program.values)
 					                  .map(pair => pair._1.output == pair._2)
 					if (results.forall(identity)) {
-						rs = Some((program, timeout * 1000 - deadline.timeLeft.toMillis.toInt))
+						rs = Some(
+							(PostProcessor.clean(program),
+							  timeout * 1000 - deadline.timeLeft.toMillis.toInt))
 						break
 					}
 				}

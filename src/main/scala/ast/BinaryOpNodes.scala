@@ -2,19 +2,20 @@ package ast
 
 import trace.DebugPrints.eprintln
 
-trait BinaryOpNode[T] extends ASTNode
+trait BinaryOpNode[T,LHS <: ASTNode, RHS <: ASTNode] extends ASTNode
 {
 	lazy val values: List[T] = lhs.values.zip(rhs.values).map(pair => doOp(pair._1, pair._2)).filter(_.isDefined).map(_.get)
 	override val height: Int = 1 + Math.max(lhs.height, rhs.height)
 	override val terms: Int = 1 + lhs.terms + rhs.terms
 	override val children: Iterable[ASTNode] = Iterable(lhs, rhs)
 
-	val lhs: ASTNode
-	val rhs: ASTNode
+	val lhs: LHS
+	val rhs: RHS
 
 	assert(lhs.values.length == rhs.values.length)
 
 	def doOp(l: Any, r: Any): Option[T]
+	def make(l: LHS, r: RHS): BinaryOpNode[T,LHS,RHS]
 
 	def includes(varName: String): Boolean = lhs.includes(varName) || rhs.includes(varName)
 
@@ -25,9 +26,11 @@ trait BinaryOpNode[T] extends ASTNode
 	}
 }
 
-class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[String] with StringNode
+class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[String, StringNode, StringNode] with StringNode
 {
 	override lazy val code: String = lhs.code + " + " + rhs.code
+
+	override def make(l: StringNode, r: StringNode): BinaryOpNode[String, StringNode, StringNode] = ???
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (l: String, r: String) => Some(l + r)
