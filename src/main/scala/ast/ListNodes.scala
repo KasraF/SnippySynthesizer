@@ -75,6 +75,9 @@ class StringToIntList(val arg: StringListNode) extends UnaryOpNode[Iterable[Int]
 		case _: Iterable[String] => None
 		case _ => wrongType(arg)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[Int]] =
+		new StringToIntList(x.asInstanceOf[StringListNode])
 }
 
 class SortedStringList(val arg: StringListNode) extends UnaryOpNode[Iterable[String]] with StringListNode
@@ -86,4 +89,7 @@ class SortedStringList(val arg: StringListNode) extends UnaryOpNode[Iterable[Str
 		case lst: Iterable[String] => Some(lst.toList.sorted)
 		case _ => wrongType(arg)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
+		new SortedStringList(x.asInstanceOf[StringListNode])
 }

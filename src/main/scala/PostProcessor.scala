@@ -1,6 +1,6 @@
 package sygus
 
-import ast.{ASTNode, BinaryOpNode, IntAddition, IntLiteral, IntNode, IntSubtraction, QuaternaryOpNode, TernaryOpNode}
+import ast.{ASTNode, BinaryOpNode, IntAddition, IntLiteral, IntNode, IntSubtraction, QuaternaryOpNode, StringConcat, StringLiteral, StringNode, TernaryOpNode, UnaryOpNode}
 
 object PostProcessor
 {
@@ -21,6 +21,16 @@ object PostProcessor
 				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value - b.value, 1)
 				case _ => new IntSubtraction(lhs, rhs)
 			}
+		case concat: StringConcat =>
+			val lhs: StringNode = clean(concat.lhs).asInstanceOf[StringNode]
+			val rhs: StringNode = clean(concat.rhs).asInstanceOf[StringNode]
+			(lhs, rhs) match {
+				case (a: StringLiteral, b: StringLiteral) => new StringLiteral(a.value + b.value, 1)
+				case _ => new StringConcat(lhs, rhs)
+			}
+		case uni: UnaryOpNode[_] =>
+			val arg = clean(uni.arg)
+			uni.make(arg)
 		case bin: BinaryOpNode[_] =>
 			val lhs: ASTNode = clean(bin.lhs)
 			val rhs: ASTNode = clean(bin.rhs)

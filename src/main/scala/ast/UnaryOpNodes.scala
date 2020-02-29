@@ -11,7 +11,7 @@ trait UnaryOpNode[T] extends ASTNode
 	val arg: ASTNode
 
 	def doOp(x: Any): Option[T]
-
+	def make(x: ASTNode): UnaryOpNode[T]
 	def includes(varName: String): Boolean = arg.includes(varName)
 	protected def wrongType(x: Any) : Option[T] =
 	{
@@ -28,6 +28,9 @@ class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode
 		case x: Int => Some(x.toString)
 		case _ => wrongType(x)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[String] =
+		new IntToString(x.asInstanceOf[IntNode])
 }
 
 class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
@@ -43,6 +46,9 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 			}
 		case _ => wrongType(x)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[Int] =
+		new StringToInt(x.asInstanceOf[StringNode])
 }
 
 class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
@@ -54,6 +60,9 @@ class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 		case x: String => Some(x.length)
 		case _ => wrongType(x)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[Int] =
+		new StringLength(x.asInstanceOf[StringNode])
 }
 
 class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNode
@@ -65,6 +74,9 @@ class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNo
 		case x: String => Some(x.toLowerCase)
 		case _ => wrongType(x)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[String] =
+		new StringLower(x.asInstanceOf[StringNode])
 }
 
 class Max(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
@@ -74,6 +86,9 @@ class Max(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
 		case lst: Iterable[Int] => if (lst.isEmpty) None else Some(lst.max)
 		case _ => wrongType(x)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[Int] =
+		new Max(x.asInstanceOf[IntListNode])
 }
 
 class Min(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
@@ -83,4 +98,7 @@ class Min(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
 		case lst: Iterable[Int] => if (lst.isEmpty) None else Some(lst.min)
 		case _ => wrongType(x)
 	}
+
+	override def make(x: ASTNode): UnaryOpNode[Int] =
+		new Min(x.asInstanceOf[IntListNode])
 }
