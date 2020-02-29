@@ -238,6 +238,26 @@ object PythonPBETask
 			new VocabMaker
 			{
 				override val arity: Int = 1
+				override val childTypes: List[Types] = List(Types.IntList)
+				override val returnType: Types = Types.Int
+				override val head: String = "min"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new Min(children.head.asInstanceOf[IntListNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 1
+				override val childTypes: List[Types] = List(Types.IntList)
+				override val returnType: Types = Types.Int
+				override val head: String = "max"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new Max(children.head.asInstanceOf[IntListNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 1
 				override val childTypes: List[Types] = List(Types.String)
 				override val returnType: Types = Types.String
 				override val head: String = "lower"
@@ -303,10 +323,22 @@ object PythonPBETask
 				override val arity: Int = 1
 				override val childTypes: List[Types] = List(Types.StringList)
 				override val returnType: Types = Types.StringList
-				override val head: String = "[w.split() for w in]"
+				override val head: String = "sorted()"
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringReverseList(children.head.asInstanceOf[StringListNode])
+					new SortedStringList(children.head.asInstanceOf[StringListNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.StringList, Types.Int)
+				override val returnType: Types = Types.StringList
+				override val head: String = "[w[::i] for w in]"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new StringStepList(
+						children.head.asInstanceOf[StringListNode],
+						children.tail.head.asInstanceOf[IntNode])
 			},
 			new VocabMaker
 			{
@@ -317,6 +349,16 @@ object PythonPBETask
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new SubstringList(children.head.asInstanceOf[StringListNode], children.tail.head.asInstanceOf[IntNode])
+			},
+			new VocabMaker
+			{
+				override val arity: Int = 1
+				override val childTypes: List[Types] = List(Types.StringList)
+				override val returnType: Types = Types.IntList
+				override val head: String = "[int(w) for w in]"
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new StringToIntList(children.head.asInstanceOf[StringListNode])
 			})
 //			new VocabMaker
 //			{

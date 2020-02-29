@@ -46,7 +46,7 @@ object Main extends App
 				}
 
 				if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) break
-				if (i % 1000 == 0) dprintln(s"[$i] (${program.height}) ${program.code}")
+				dprintln(s"[$i] (${program.height}) ${program.code}")
 			}
 		}
 
@@ -55,7 +55,7 @@ object Main extends App
 
 	case class ExpectedEOFException() extends Exception
 
-	// trace.DebugPrints.setDebug()
+	trace.DebugPrints.setDebug()
 	synthesize(args.head) match {
 		case None => println("None")
 		case Some((program: ASTNode, time: Int)) => println(s"[$time] ${program.code}")

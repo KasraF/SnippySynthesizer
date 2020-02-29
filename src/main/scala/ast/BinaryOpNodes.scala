@@ -52,7 +52,7 @@ class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Str
 	override lazy val code: String = lhs.code + "[::" + rhs.code + "]"
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
-		case (_, step: 0) => None
+		case (_, _: 0) => None
 		case (str: String, step: Int) =>
 			// TODO Is there a better way to do this?
 			var rs: String = ""

@@ -66,3 +66,21 @@ class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNo
 		case _ => wrongType(x)
 	}
 }
+
+class Max(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = "max(" + arg.code + ")"
+	override def doOp(x: Any): Option[Int] = x match {
+		case lst: Iterable[Int] => if (lst.isEmpty) None else Some(lst.max)
+		case _ => wrongType(x)
+	}
+}
+
+class Min(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = "min(" + arg.code + ")"
+	override def doOp(x: Any): Option[Int] = x match {
+		case lst: Iterable[Int] => if (lst.isEmpty) None else Some(lst.min)
+		case _ => wrongType(x)
+	}
+}

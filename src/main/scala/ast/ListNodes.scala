@@ -20,15 +20,24 @@ class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpN
 	}
 }
 
-class StringReverseList(val arg: StringListNode) extends UnaryOpNode[Iterable[String]] with StringListNode
+class StringStepList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOpNode[Iterable[String]] with StringListNode
 {
-	// TODO This needs to also work with just Strings, since Strings are StringLists of their characters
-	override lazy val code: String = "[w.reverse() for c in " + arg.code + "]"
+	override lazy val code: String = "[w[::" + rhs.code + "] for c in " + lhs.code + "]"
 
-	override def doOp(arg: Any): Option[Iterable[String]] = arg match
+	override def doOp(lst: Any, step: Any): Option[Iterable[String]] = (lst, step) match
 	{
-		case lst: Iterable[String] => Some(lst.map(_.reverse))
-		case _ => wrongType(arg)
+		case (_, _: 0) => None
+		case (lst: Iterable[String], step: Int) => Some(lst.map(str => {
+			// TODO Is there a better way to do this?
+			var rs: String = ""
+			var idx = if (step > 0) 0 else str.length + step
+			while (idx >= 0 && idx < str.length) {
+				rs += str(idx)
+				idx += step
+			}
+			rs
+		}))
+		case _ => wrongType(lst, step)
 	}
 }
 
@@ -37,10 +46,32 @@ class SubstringList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOpN
 	override lazy val code: String = "[w[" + rhs.code + "] for c in " + lhs.code + "]"
 
 	override def doOp(lhs: Any, rhs: Any): Option[Iterable[String]] = (lhs, rhs) match {
-		case (lst: Iterable[String], idx: Int) => {
-			if (idx > -1 && lst.forall(s => s.length > idx)) Some(lst.map(_(idx).toString))
+		case (lst: Iterable[String], idx: Int) =>
+			if (idx > -1 && lst.forall(_.length > idx)) Some(lst.map(_(idx).toString))
 			else None
-		}
 		case _ => wrongType(lhs, rhs)
+	}
+}
+
+class StringToIntList(val arg: StringListNode) extends UnaryOpNode[Iterable[Int]] with IntListNode
+{
+	override lazy val code: String = "[int(i) for i in " + arg.code + "]"
+
+	override def doOp(arg: Any): Option[Iterable[Int]] = arg match
+	{
+		case lst: Iterable[String] if lst.forall(s => s.nonEmpty && s.forall(_.isDigit)) => Some(lst.map(_.toInt))
+		case _: Iterable[String] => None
+		case _ => wrongType(arg)
+	}
+}
+
+class SortedStringList(val arg: StringListNode) extends UnaryOpNode[Iterable[String]] with StringListNode
+{
+	override lazy val code: String = "sorted(" + arg.code + ")"
+
+	override def doOp(arg: Any): Option[Iterable[String]] = arg match
+	{
+		case lst: Iterable[String] => Some(lst.toList.sorted)
+		case _ => wrongType(arg)
 	}
 }

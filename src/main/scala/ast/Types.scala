@@ -3,7 +3,7 @@ package ast
 object Types extends Enumeration
 {
 	type Types = Value
-	val String, Int, Bool, StringList, Unknown = Value
+	val String, Int, Bool, StringList, IntList, Unknown = Value
 
 	def typeof(x: Any) : Types.Value = {
 		 x match {

@@ -37,3 +37,9 @@ trait StringListNode extends ASTNode
 	override val values: List[Iterable[String]]
 	override val nodeType: Types = Types.StringList
 }
+
+trait IntListNode extends ASTNode
+{
+	override val values: List[Iterable[Int]]
+	override val nodeType: Types = Types.IntList
+}
