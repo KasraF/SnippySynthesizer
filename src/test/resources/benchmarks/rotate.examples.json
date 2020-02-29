@@ -1,10 +1,10 @@
 [
   {
-    "count": 2,
+    "count": 1,
     "s": "'abc'"
   },
   {
-    "count": 2,
+    "count": 1,
     "s": "'abc'",
     "rs": "'bca'"
   }
