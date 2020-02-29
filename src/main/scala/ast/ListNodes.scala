@@ -1,6 +1,6 @@
 package ast
 
-class StringSplit(val lhs: ASTNode, val rhs: ASTNode) extends BinaryOpNode[Iterable[String]] with StringListNode
+class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
 {
 	override lazy val code: String = lhs.code + ".split(" + rhs.code + ")"
 
@@ -8,6 +8,9 @@ class StringSplit(val lhs: ASTNode, val rhs: ASTNode) extends BinaryOpNode[Itera
 		case (l: String, r: String ) => Some(l.split(r))
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] =
+		new StringSplit(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
 
 class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpNode[String] with StringNode
@@ -18,6 +21,9 @@ class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpN
 		case (str: String, lst: Iterable[String]) => Some(lst.mkString(str))
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
+		new StringJoin(l.asInstanceOf[StringNode], r.asInstanceOf[StringListNode])
 }
 
 class StringStepList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOpNode[Iterable[String]] with StringListNode
@@ -39,6 +45,9 @@ class StringStepList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOp
 		}))
 		case _ => wrongType(lst, step)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] =
+		new StringStepList(l.asInstanceOf[StringListNode], r.asInstanceOf[IntNode])
 }
 
 class SubstringList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOpNode[Iterable[String]] with StringListNode
@@ -51,6 +60,9 @@ class SubstringList(val lhs: StringListNode, val rhs: IntNode) extends BinaryOpN
 			else None
 		case _ => wrongType(lhs, rhs)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] =
+		new SubstringList(l.asInstanceOf[StringListNode], r.asInstanceOf[IntNode])
 }
 
 class StringToIntList(val arg: StringListNode) extends UnaryOpNode[Iterable[Int]] with IntListNode

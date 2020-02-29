@@ -25,6 +25,8 @@ trait QuaternaryOpNode[T] extends ASTNode
 
 	def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[T]
 
+	def make(a0: ASTNode, a1: ASTNode, a2: ASTNode, a3: ASTNode): QuaternaryOpNode[T]
+
 	def includes(varName: String): Boolean =
 		arg0.includes(varName) ||
 		  arg1.includes(varName) ||
@@ -50,4 +52,11 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 			eprintln(s"Wrong types: $arg0 $arg1 $arg2 $arg3")
 			None
 	}
+
+	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode, a3: ASTNode): QuaternaryOpNode[String] =
+		new QuaternarySubstring(
+			a0.asInstanceOf[StringNode],
+			a1.asInstanceOf[IntNode],
+			a2.asInstanceOf[IntNode],
+			a3.asInstanceOf[IntNode])
 }

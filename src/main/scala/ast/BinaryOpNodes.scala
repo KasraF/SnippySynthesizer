@@ -2,20 +2,20 @@ package ast
 
 import trace.DebugPrints.eprintln
 
-trait BinaryOpNode[T,LHS <: ASTNode, RHS <: ASTNode] extends ASTNode
+trait BinaryOpNode[T] extends ASTNode
 {
 	lazy val values: List[T] = lhs.values.zip(rhs.values).map(pair => doOp(pair._1, pair._2)).filter(_.isDefined).map(_.get)
 	override val height: Int = 1 + Math.max(lhs.height, rhs.height)
 	override val terms: Int = 1 + lhs.terms + rhs.terms
 	override val children: Iterable[ASTNode] = Iterable(lhs, rhs)
 
-	val lhs: LHS
-	val rhs: RHS
+	val lhs: ASTNode
+	val rhs: ASTNode
 
 	assert(lhs.values.length == rhs.values.length)
 
 	def doOp(l: Any, r: Any): Option[T]
-	def make(l: LHS, r: RHS): BinaryOpNode[T,LHS,RHS]
+	def make(l: ASTNode, r: ASTNode): BinaryOpNode[T]
 
 	def includes(varName: String): Boolean = lhs.includes(varName) || rhs.includes(varName)
 
@@ -26,16 +26,17 @@ trait BinaryOpNode[T,LHS <: ASTNode, RHS <: ASTNode] extends ASTNode
 	}
 }
 
-class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[String, StringNode, StringNode] with StringNode
+class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[String] with StringNode
 {
 	override lazy val code: String = lhs.code + " + " + rhs.code
-
-	override def make(l: StringNode, r: StringNode): BinaryOpNode[String, StringNode, StringNode] = ???
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (l: String, r: String) => Some(l + r)
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
+		new StringConcat(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
 
 class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
@@ -48,6 +49,9 @@ class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Strin
 			else Some(str(idx).toString)
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
+		new StringAt(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 }
 
 class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
@@ -67,6 +71,9 @@ class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Str
 			Some(rs)
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
+		new StringStep(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 }
 
 class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
@@ -77,6 +84,9 @@ class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] 
 		case (l: Int, r: Int) => Some(l.asInstanceOf[Int] + r.asInstanceOf[Int])
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
+		new IntAddition(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 }
 
 class IntSubtraction(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
@@ -87,6 +97,9 @@ class IntSubtraction(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[In
 		case (l: Int, r: Int) => Some(l - r)
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
+		new IntSubtraction(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 }
 
 class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
@@ -100,6 +113,9 @@ class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] 
 			case (l: Int, r: Int) => Some(l / r)
 			case _ => wrongType(l, r)
 		}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
+		new IntDivision(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
 }
 
 
@@ -111,6 +127,9 @@ class IntLessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boo
 		case (l: Int, r: Int) => Some(l <= r)
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		new IntLessThanEq(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
 }
 
 class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
@@ -121,6 +140,9 @@ class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean
 		case (l: Int, r: Int) => Some(l == r)
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		new IntEquals(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
 }
 
 class Find(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
@@ -131,6 +153,9 @@ class Find(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] w
 		case (l: String, r: String) => Some(l.indexOf(r))
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
+		new Find(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
 
 class Contains(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode
@@ -141,4 +166,7 @@ class Contains(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Bo
 		case (substr: String, str: String) => Some(str.contains(substr))
 		case _ => wrongType(l, r)
 	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		new Contains(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }

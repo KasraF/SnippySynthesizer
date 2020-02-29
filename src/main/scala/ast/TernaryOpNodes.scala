@@ -8,13 +8,16 @@ trait TernaryOpNode[T] extends ASTNode
 	override val height: Int = 1 + Math.max(arg0.height, Math.max(arg1.height, arg2.height))
 	override val terms : Int = 1 + arg0.terms + arg1.terms + arg2.terms
 	override val children: Iterable[ASTNode] = Iterable(arg0, arg1, arg2)
-	val arg0: ASTNode
 
-	assert(arg0.values.length == arg1.values.length && arg1.values.length == arg2.values.length)
+	val arg0: ASTNode
 	val arg1: ASTNode
 	val arg2: ASTNode
 
+	assert(arg0.values.length == arg1.values.length && arg1.values.length == arg2.values.length)
+
 	def doOp(a0: Any, a1: Any, a2: Any): Option[T]
+
+	def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[T]
 
 	def includes(varName: String): Boolean = arg0.includes(varName) || arg1.includes(varName) || arg2.includes(varName)
 	protected def wrongType(l: Any, m: Any, r: Any) : Option[T] = {
@@ -38,4 +41,7 @@ class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNod
 			}
 		case _ => wrongType(a0, a1, a2)
 	}
+
+	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
+		new TernarySubstring(a0.asInstanceOf[StringNode], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
 }

@@ -306,7 +306,7 @@ object PythonPBETask
 				override val head: String = ".split()"
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringSplit(children.head, children.tail.head)
+					new StringSplit(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[StringNode])
 			},
 			new VocabMaker
 			{
