@@ -1,13 +1,16 @@
 package sygus
 
+import java.io.{BufferedWriter, FileWriter}
+
 import ast.ASTNode
 import enumeration.InputsValuesManager
 import pcShell.ConsolePrints._
-
 import trace.DebugPrints.dprintln
 
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
+import scala.reflect.io.File
+import scala.tools.nsc.io.JFile
 import scala.util.control.Breaks._
 
 object Main extends App
@@ -57,9 +60,13 @@ object Main extends App
 
 	case class ExpectedEOFException() extends Exception
 
-	trace.DebugPrints.setDebug()
+	// trace.DebugPrints.setDebug()
+	val writer = new BufferedWriter(new FileWriter(args.head + ".out"))
+
 	synthesize(args.head) match {
-		case None => println("None")
-		case Some((program: ASTNode, time: Int)) => println(s"[$time] ${program.code}")
+		case None => writer.write("None")
+		case Some((program: ASTNode, time: Int)) => writer.write(s"${program.code}")
 	}
+
+	writer.close()
 }
