@@ -25,5 +25,5 @@ class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numC
 
 class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode
 {
-	override  val code: String = value.toString
+	override val code: String = value.toString.capitalize
 }

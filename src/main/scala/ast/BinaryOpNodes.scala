@@ -39,7 +39,7 @@ class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNod
 		new StringConcat(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
 
-class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
+class BinarySubstring(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
 {
 	override lazy val code: String = lhs.code + "[" + rhs.code + "]"
 
@@ -51,7 +51,7 @@ class StringAt(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Strin
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
-		new StringAt(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
+		new BinarySubstring(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 }
 
 class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode

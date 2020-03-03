@@ -193,7 +193,7 @@ object PythonPBETask
 				override val head: String = "[]"
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringAt(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[IntNode])
+					new BinarySubstring(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[IntNode])
 			},
 			new VocabMaker
 			{

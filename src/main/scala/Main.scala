@@ -9,8 +9,6 @@ import trace.DebugPrints.dprintln
 
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
-import scala.reflect.io.File
-import scala.tools.nsc.io.JFile
 import scala.util.control.Breaks._
 
 object Main extends App
@@ -61,12 +59,13 @@ object Main extends App
 	case class ExpectedEOFException() extends Exception
 
 	// trace.DebugPrints.setDebug()
-	val writer = new BufferedWriter(new FileWriter(args.head + ".out"))
-
-	synthesize(args.head) match {
-		case None => writer.write("None")
-		case Some((program: ASTNode, time: Int)) => writer.write(s"${program.code}")
+	val (program, time) = synthesize(args.head) match {
+		case None => ("None", -1)
+		case Some((program: ASTNode, time: Int)) => (program.code, time)
 	}
 
+	val writer = new BufferedWriter(new FileWriter(args.head + ".out"))
+	writer.write(program);
+	println(f"[${time / 1000.0}%1.3f] $program");
 	writer.close()
 }
