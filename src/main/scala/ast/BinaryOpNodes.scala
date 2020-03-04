@@ -4,7 +4,10 @@ import trace.DebugPrints.eprintln
 
 trait BinaryOpNode[T] extends ASTNode
 {
-	lazy val values: List[T] = lhs.values.zip(rhs.values).map(pair => doOp(pair._1, pair._2)).filter(_.isDefined).map(_.get)
+	lazy val values: List[T] = lhs.values.zip(rhs.values).map(pair => doOp(pair._1, pair._2)) match {
+		case l if l.forall(_.isDefined) => l.map(_.get)
+		case _ => Nil
+	}
 	override val height: Int = 1 + Math.max(lhs.height, rhs.height)
 	override val terms: Int = 1 + lhs.terms + rhs.terms
 	override val children: Iterable[ASTNode] = Iterable(lhs, rhs)
@@ -41,7 +44,10 @@ class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNod
 
 class BinarySubstring(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
 {
-	override lazy val code: String = lhs.code + "[" + rhs.code + "]"
+	override lazy val code: String = lhs.terms match {
+		case 1 => lhs.code + "[" + rhs.code + "]"
+		case _ => "(" + lhs.code + ")[" + rhs.code + "]"
+	}
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (str: String, idx: Int) =>
@@ -116,33 +122,6 @@ class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] 
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
 		new IntDivision(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
-}
-
-
-class IntLessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
-{
-	override lazy val code: String = lhs.code + " <= " + rhs.code
-
-	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
-		case (l: Int, r: Int) => Some(l <= r)
-		case _ => wrongType(l, r)
-	}
-
-	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new IntLessThanEq(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
-}
-
-class IntEquals(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
-{
-	override lazy val code: String = lhs.code + " == " + rhs.code
-
-	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
-		case (l: Int, r: Int) => Some(l == r)
-		case _ => wrongType(l, r)
-	}
-
-	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new IntEquals(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
 }
 
 class Find(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] with IntNode

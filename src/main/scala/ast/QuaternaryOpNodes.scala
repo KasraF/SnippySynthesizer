@@ -13,8 +13,11 @@ trait QuaternaryOpNode[T] extends ASTNode
 	  .zip(arg1.values)
 	  .zip(arg2.values)
 	  .zip(arg3.values)
-	  .map(tup => doOp(tup._1._1._1, tup._1._1._2, tup._1._2, tup._2))
-	  .filter(_.isDefined).map(_.get)
+	  .map(tup => doOp(tup._1._1._1, tup._1._1._2, tup._1._2, tup._2)) match {
+		case l if l.forall(_.isDefined) => l.map(_.get)
+		case _ => Nil
+	}
+
 	override val height: Int = 1 + Math.max(arg0.height, Math.max(arg1.height, Math.max(arg2.height, arg3.height)))
 	override val terms : Int = 1 + arg0.terms + arg1.terms + arg2.terms + arg3.terms
 	override val children: Iterable[ASTNode] = Iterable(arg0, arg1, arg2, arg3)
@@ -43,8 +46,8 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 	override def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[String] = (a0, a1, a2, a3) match {
 		case (_, _, _, 0) => None
 		case (s: String, start_orig: Int, end_orig: Int, step: Int) =>
-			val start = if (start_orig >= 0) start_orig else s.length + start_orig
-			val end = if (end_orig >= 0) end_orig else s.length + end_orig
+			val start = if (start_orig >= 0) start_orig else (s.length + start_orig).max(0).min(s.length)
+			val end = if (end_orig >= 0) end_orig else (s.length + end_orig).max(0).min(s.length)
 
 			var rs = ""
 
@@ -52,7 +55,7 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 				var idx = start;
 
 				while (idx < end) {
-					if (idx >= 0 && idx < s.length) rs += s(idx)
+					rs += s(idx)
 					idx += step
 				}
 			}

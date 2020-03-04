@@ -28,6 +28,7 @@ object Benchmarks extends App
 	benchmarks.listFiles()
 	  .map(_.getAbsolutePath)
 	  .filter(_.contains(".examples.json"))
+	  .filter(!_.contains(".out"))
 	  .zipWithIndex
 	  .foreach(benchmark => {
 		  val file = benchmark._1

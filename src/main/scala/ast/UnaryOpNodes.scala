@@ -4,7 +4,11 @@ import trace.DebugPrints.eprintln
 
 trait UnaryOpNode[T] extends ASTNode
 {
-	override lazy val values: List[T] = arg.values.map(doOp).filter(_.isDefined).map(_.get)
+	override lazy val values: List[T] = arg.values.map(doOp) match {
+		case l if l.forall(_.isDefined) => l.map(_.get)
+		case _ => Nil
+	}
+
 	override val height = 1 + arg.height
 	override val terms: Int = 1 + arg.terms
 	override val children: Iterable[ASTNode] = Iterable(arg)
@@ -67,7 +71,10 @@ class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 
 class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNode
 {
-	override lazy val code: String = arg.code + ".lower()"
+	override lazy val code: String = arg.terms match {
+		case 1 => arg.code + ".lower()"
+		case _ => "(" + arg.code + ").lower()"
+	}
 
 	override def doOp(x: Any): Option[String] = x match {
 		// TODO What's python's semantics here?

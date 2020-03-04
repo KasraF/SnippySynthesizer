@@ -2,7 +2,10 @@ package ast
 
 class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
 {
-	override lazy val code: String = lhs.code + ".split(" + rhs.code + ")"
+	override lazy val code: String = lhs.terms match {
+		case 1 => lhs.code + ".split(" + rhs.code + ")"
+		case _ => "(" + lhs.code + ").split(" + rhs.code + ")"
+	}
 
 	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
 		case (l: String, r: String ) => Some(l.split(r))
@@ -15,7 +18,10 @@ class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode
 
 class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpNode[String] with StringNode
 {
-	override lazy val code: String = lhs.code + ".join(" + rhs.code + ")"
+	override lazy val code: String = lhs.terms match {
+		case 1 => lhs.code + ".join(" + rhs.code + ")"
+		case _ => "(" + lhs.code + ").join(" + rhs.code + ")"
+	}
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (str: String, lst: Iterable[String]) => Some(lst.mkString(str))
