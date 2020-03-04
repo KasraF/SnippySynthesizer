@@ -32,16 +32,40 @@ class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNod
 		(if (arg0.terms > 1) "(" + arg0.code + ")" else arg0.code) + "[" + arg1.code + ":" + arg2.code + "]"
 
 	override def doOp(a0: Any, a1: Any, a2: Any): Option[String] = (a0, a1, a2) match {
-		case (s: String, start: Int, end: Int) =>
-			// TODO What's Python's semantics here?
-			if (start < 0 || end < 0 || start >= s.length || end > s.length) {
-				Some("")
-			} else {
-				Some(s.slice(start, end))
+		case (s: String, start_orig: Int, end_orig: Int) =>
+			// The max() and min() remove unnecessary looping
+			val start = (if (start_orig >= 0) start_orig else (s.length + start_orig)).max(0).min(s.length)
+			val end = (if (end_orig >= 0) end_orig else (s.length + end_orig)).max(0).min(s.length)
+			var rs = ""
+
+			if (start < end) {
+				var idx = start;
+
+				while (idx < end) {
+					if (idx < s.length) rs += s(idx)
+					idx += 1
+				}
 			}
+
+			Some(rs)
 		case _ => wrongType(a0, a1, a2)
 	}
 
 	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
 		new TernarySubstring(a0.asInstanceOf[StringNode], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
+}
+
+class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode
+{
+	override lazy val code: String =
+		(if (arg0.terms > 1) "(" + arg0.code + ")" else arg0.code) + ".replace(" + arg1.code + ", " + arg2.code + ")"
+
+	override def doOp(a0: Any, a1: Any, a2: Any): Option[String] = (a0, a1, a2) match {
+		case (s: String, it: String, that: String) =>
+			Some(s.replace(it, that))
+		case _ => wrongType(a0, a1, a2)
+	}
+
+	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
+		new StringReplace(a0.asInstanceOf[StringNode], a1.asInstanceOf[StringNode], a2.asInstanceOf[StringNode])
 }
