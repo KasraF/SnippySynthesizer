@@ -158,26 +158,6 @@ object PythonPBETask
 			new VocabMaker
 			{
 				override val arity: Int = 2
-				override val childTypes: List[Types] = List(Types.Int, Types.Int)
-				override val returnType: Types = Types.Int
-				override val head: String = "<="
-
-				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntLessThanEq(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
-			},
-			new VocabMaker
-			{
-				override val arity: Int = 2
-				override val childTypes: List[Types] = List(Types.Int, Types.Int)
-				override val returnType: Types = Types.Int
-				override val head: String = "=="
-
-				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntEquals(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
-			},
-			new VocabMaker
-			{
-				override val arity: Int = 2
 				override val childTypes: List[Types] = List(Types.String, Types.String)
 				override val returnType: Types = Types.String
 				override val head: String = "+"
