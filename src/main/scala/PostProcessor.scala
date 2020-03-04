@@ -10,7 +10,7 @@ object PostProcessor
 			val rhs: IntNode = clean(add.rhs).asInstanceOf[IntNode]
 
 			(lhs, rhs) match {
-				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value + b.value, 1)
+				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value + b.value, a.values.length)
 				case _ => new IntAddition(lhs, rhs)
 			}
 		case sub: IntSubtraction =>
@@ -18,16 +18,17 @@ object PostProcessor
 			val rhs: IntNode = clean(sub.rhs).asInstanceOf[IntNode]
 
 			(lhs, rhs) match {
-				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value - b.value, 1)
+				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value - b.value, a.values.length)
 				case _ => new IntSubtraction(lhs, rhs)
 			}
 		case concat: StringConcat =>
 			val lhs: StringNode = clean(concat.lhs).asInstanceOf[StringNode]
 			val rhs: StringNode = clean(concat.rhs).asInstanceOf[StringNode]
 			(lhs, rhs) match {
-				case (a: StringLiteral, b: StringLiteral) => new StringLiteral(a.value + b.value, 1)
+				case (a: StringLiteral, b: StringLiteral) => new StringLiteral(a.value + b.value, a.values.length)
 				case _ => new StringConcat(lhs, rhs)
 			}
+		case s: StringNode if s.values.forall(_.equals("")) => new StringLiteral("", s.values.length)
 		case uni: UnaryOpNode[_] =>
 			val arg = clean(uni.arg)
 			uni.make(arg)
