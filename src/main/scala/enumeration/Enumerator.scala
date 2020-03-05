@@ -14,7 +14,6 @@ class Enumerator(
 	override def toString(): String = "enumeration.Enumerator"
 
 	var currIter: Iterator[VocabMaker] = vocab.leaves()
-	var childrenIterator: Iterator[List[ASTNode]] = Iterator.single(Nil)
 	var rootMaker: VocabMaker = currIter.next()
 	var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
 	var currLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
@@ -45,17 +44,12 @@ class Enumerator(
 	def advanceRoot(): Boolean =
 	{
 		// We may not have any children for a root
-		childrenIterator = null
-
-		while (childrenIterator == null) {
+		rootMaker = null
+		while (rootMaker == null || !rootMaker.hasNext) {
+			// We are out of programs!
 			if (!currIter.hasNext) return false
 			rootMaker = currIter.next()
-			if (rootMaker.arity == 0) {
-				childrenIterator = Iterator.single(Nil)
-			} else if (rootMaker.childTypes.map(t => prevLevelProgs.filter(_.nodeType == t)).forall(_.nonEmpty)) {
-				childrenIterator =
-				  new ChildrenIterator(prevLevelProgs.toList, rootMaker.childTypes, height)
-			}
+			rootMaker.init(prevLevelProgs.toList, contexts, height)
 		}
 
 		true
@@ -83,13 +77,10 @@ class Enumerator(
 
 		// Iterate while no non-equivalent program is found
 		while (res.isEmpty) {
-			if (childrenIterator.hasNext) {
-				val children = childrenIterator.next()
-				if (rootMaker.canMake(children)) {
-					val prog = rootMaker(children, contexts)
-					if (prog.values.nonEmpty && oeManager.isRepresentative(prog)) {
-						res = Some(prog)
-					}
+			if (rootMaker.hasNext) {
+				val prog = rootMaker.next
+				if (prog.values.nonEmpty && oeManager.isRepresentative(prog)) {
+					res = Some(prog)
 				}
 			}
 			else if (currIter.hasNext) {

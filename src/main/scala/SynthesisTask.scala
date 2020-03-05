@@ -111,7 +111,7 @@ object PythonPBETask
 				override val returnType: Types = Types.Int
 				override val head: String = "0"
 
-				override def apply(children    : List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new IntLiteral(0, contexts.length)
 			},
 			new VocabMaker
@@ -339,21 +339,22 @@ object PythonPBETask
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new StringToIntList(children.head.asInstanceOf[StringListNode])
-			},
-			new VocabMaker
-			{
-				override val arity: Int = 4
-				override val childTypes: List[Types] = List(Types.String, Types.Int, Types.Int, Types.Int)
-				override val returnType: Types = Types.String
-				override val head: String = "[::]"
-
-				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new QuaternarySubstring(
-						children.head.asInstanceOf[StringNode],
-						children(1).asInstanceOf[IntNode],
-						children(2).asInstanceOf[IntNode],
-						children(3).asInstanceOf[IntNode])
-			})
+			}
+//			new VocabMaker
+//			{
+//				override val arity: Int = 4
+//				override val childTypes: List[Types] = List(Types.String, Types.Int, Types.Int, Types.Int)
+//				override val returnType: Types = Types.String
+//				override val head: String = "[::]"
+//
+//				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+//					new QuaternarySubstring(
+//						children.head.asInstanceOf[StringNode],
+//						children(1).asInstanceOf[IntNode],
+//						children(2).asInstanceOf[IntNode],
+//						children(3).asInstanceOf[IntNode])
+//			}
+		)
 
 		VocabFactory(vocab.appendedAll(
 			variables.

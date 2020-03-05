@@ -37,6 +37,7 @@ trait QuaternaryOpNode[T] extends ASTNode
 		  arg3.includes(varName)
 }
 
+// TODO Test is extensively before adding it
 class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode, val arg3: IntNode) extends QuaternaryOpNode[String] with StringNode
 {
 	override lazy val code: String =
@@ -46,18 +47,13 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 	override def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[String] = (a0, a1, a2, a3) match {
 		case (_, _, _, 0) => None
 		case (s: String, start_orig: Int, end_orig: Int, step: Int) =>
-			val start = if (start_orig >= 0) start_orig else (s.length + start_orig).max(0).min(s.length)
-			val end = if (end_orig >= 0) end_orig else (s.length + end_orig).max(0).min(s.length)
+			val start = (if (start_orig >= 0) start_orig else (s.length + start_orig)).max(0).min(s.length)
+			val end = (if (end_orig >= 0) end_orig else (s.length + end_orig)).max(0).min(s.length)
 
 			var rs = ""
 
 			if (step > 0 && start < end || step < -1 && start > end) {
-				var idx = start;
-
-				while (idx < end) {
-					rs += s(idx)
-					idx += step
-				}
+				for (idx <- start to end by step) rs += s(idx)
 			}
 
 			Some(rs)
