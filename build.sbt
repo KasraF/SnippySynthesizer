@@ -30,7 +30,6 @@ libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.0" % Test
 // https://mvnrepository.com/artifact/org.scalatestplus/scalatestplus-junit
 libraryDependencies += "org.scalatestplus" %% "scalatestplus-junit" % "1.0.0-SNAP9"
 
-
 mainClass in (Compile) := Some("sygus.Main")
 
 //Anlr command line:
