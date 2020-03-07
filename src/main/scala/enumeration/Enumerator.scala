@@ -1,6 +1,6 @@
 package enumeration
 
-import ast.{ASTNode, VocabFactory, VocabMaker}
+import ast.{ASTNode, ListCompVocabMaker, VocabFactory, VocabMaker}
 import trace.DebugPrints.dprintln
 
 import scala.collection.mutable
@@ -14,6 +14,7 @@ class Enumerator(
 	override def toString(): String = "enumeration.Enumerator"
 
 	var currIter: Iterator[VocabMaker] = vocab.leaves()
+	// TODO Bug: This is not init()-ed
 	var rootMaker: VocabMaker = currIter.next()
 	var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
 	var currLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
@@ -49,7 +50,7 @@ class Enumerator(
 			// We are out of programs!
 			if (!currIter.hasNext) return false
 			rootMaker = currIter.next()
-			rootMaker.init(prevLevelProgs.toList, contexts, height)
+			rootMaker.init(prevLevelProgs.toList, contexts, this.vocab, height)
 		}
 
 		true
@@ -61,7 +62,7 @@ class Enumerator(
 	 */
 	def changeLevel(): Boolean =
 	{
-		dprintln(currLevelProgs.length)
+		// dprintln(currLevelProgs.length)
 		if (currLevelProgs.isEmpty) return false
 
 		currIter = vocab.nonLeaves()
@@ -79,6 +80,7 @@ class Enumerator(
 		while (res.isEmpty) {
 			if (rootMaker.hasNext) {
 				val prog = rootMaker.next
+
 				if (prog.values.nonEmpty && oeManager.isRepresentative(prog)) {
 					res = Some(prog)
 				}

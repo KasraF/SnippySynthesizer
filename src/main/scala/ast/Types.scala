@@ -5,6 +5,20 @@ object Types extends Enumeration
 	type Types = Value
 	val String, Int, Bool, StringList, IntList, Unknown = Value
 
+	def listOf(t: Types.Value) : Types.Value = t match {
+		case Int => IntList
+		case String => StringList
+		case t =>
+			assert(false, s"list of type not supported: $t")
+			Unknown
+	}
+
+	def isListType(t: Types.Value) : Boolean = t match {
+		case IntList => true
+		case StringList => true
+		case _ => false
+	}
+
 	def typeof(x: Any) : Types.Value = {
 		 x match {
 			 case _: String => Types.String
