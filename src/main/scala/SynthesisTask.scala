@@ -287,26 +287,10 @@ object PythonPBETask
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new SortedStringList(children.head.asInstanceOf[StringListNode])
 			},
-			new ListCompVocabMaker
-			{
-				override val inputListType: Types = Types.String
-				override val outputListType: Types = Types.String
-			},
-			new ListCompVocabMaker
-			{
-				override val inputListType: Types = Types.String
-				override val outputListType: Types = Types.Int
-			},
-			new ListCompVocabMaker
-			{
-				override val inputListType: Types = Types.Int
-				override val outputListType: Types = Types.String
-			},
-			new ListCompVocabMaker
-			{
-				override val inputListType: Types = Types.Int
-				override val outputListType: Types = Types.Int
-			}
+			new ListCompVocabMaker(Types.String, Types.String) {},
+			new ListCompVocabMaker(Types.String, Types.Int) {},
+			new ListCompVocabMaker(Types.Int, Types.String) {},
+			new ListCompVocabMaker(Types.Int, Types.Int) {},
 //			new BasicVocabMaker
 //			{
 //				override val arity: Int = 2

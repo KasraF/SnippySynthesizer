@@ -24,7 +24,7 @@ trait BinaryOpNode[T] extends ASTNode
 
 	protected def wrongType(l: Any, r: Any): Option[T] =
 	{
-		eprintln(false, s"Wrong value types: $l $r")
+		eprintln(s"[${this.getClass.getSimpleName}] Wrong value types: $l $r")
 		None
 	}
 }

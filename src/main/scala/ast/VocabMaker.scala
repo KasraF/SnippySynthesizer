@@ -1,19 +1,15 @@
 package ast
 
-import java.io.ObjectInputValidation
-
 import ast.Types.Types
 import enumeration.{ChildrenIterator, Enumerator, InputsValuesManager}
 
-import scala.collection.immutable
-
-trait VocabMaker extends Iterator[ASTNode]
+trait VocabMaker
 {
 	val arity: Int
-	def init(progs: List[ASTNode], contexts : List[Map[String, Any]], vocabFactory: VocabFactory, height: Int) : Unit
+	def init(progs: List[ASTNode], contexts : List[Map[String, Any]], vocabFactory: VocabFactory, height: Int) : Iterator[ASTNode]
 }
 
-trait BasicVocabMaker extends VocabMaker
+trait BasicVocabMaker extends VocabMaker with Iterator[ASTNode]
 {
 	val childTypes: List[Types]
 	val returnType: Types
@@ -30,7 +26,11 @@ trait BasicVocabMaker extends VocabMaker
 		this(this.childIterator.next(), this.contexts)
 	}
 
-	override def init(progs: List[ASTNode], contexts : List[Map[String, Any]], vocabFactory: VocabFactory, height: Int) : Unit =
+	override def init(
+	  progs: List[ASTNode],
+	  contexts : List[Map[String, Any]],
+	  vocabFactory: VocabFactory,
+	  height: Int) : Iterator[ASTNode] =
 	{
 		this.contexts = contexts
 		if (this.arity == 0) {
@@ -42,31 +42,37 @@ trait BasicVocabMaker extends VocabMaker
 		} else {
 			this.childIterator = new ChildrenIterator(progs, childTypes, height)
 		}
+
+		this
 	}
 }
 
-trait ListCompVocabMaker extends VocabMaker
+abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) extends VocabMaker with Iterator[ASTNode]
 {
 	override val arity: Int = 2
-	val inputListType: Types
-	val outputListType: Types
 
 	var listIter: Iterator[ASTNode] = _
 	var mapVocab: VocabFactory = _
 	var contexts: List[Map[String, Any]] = _
 
-	var enumerator: Enumerator = _
+	var enumerator: Iterator[ASTNode] = _
 	var currList: ASTNode = _
 	var childHeight: Int = _
 	var varName: String = _
 
 	var nextProg: Option[ASTNode] = None
 
+	assert(inputListType.equals(Types.Int) || inputListType.equals(Types.String),
+	       s"List comprehension input type not supported: $inputListType")
+
+	assert(outputListType.equals(Types.Int) || outputListType.equals(Types.String),
+	       s"List comprehension output type not supported: $inputListType")
+
 	override def init(
 	  progs: List[ASTNode],
 	  contexts : List[Map[String, Any]],
 	  vocabFactory: VocabFactory,
-	  height: Int) : Unit =
+	  height: Int) : Iterator[ASTNode] =
 	{
 		this.listIter = progs.filter(n => n.nodeType.equals(Types.listOf(this.inputListType))).iterator
 		this.childHeight = height - 1
@@ -96,12 +102,10 @@ trait ListCompVocabMaker extends VocabMaker
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new IntVariable(varName, contexts)
 			}
-			case t =>
-				assert(false, s"type '$t' not supported for list comp")
-				null
 		}
 
-		val vocabs = (newVarVocab :: vocabFactory.leavesMakers).reverse :::
+		val vocabs = newVarVocab ::
+		  vocabFactory.leavesMakers :::
 		  vocabFactory.nodeMakers
 		    .filter(_.isInstanceOf[BasicVocabMaker])
 		    .map(_.asInstanceOf[BasicVocabMaker])
@@ -109,6 +113,8 @@ trait ListCompVocabMaker extends VocabMaker
 
 		this.mapVocab = VocabFactory.apply(vocabs)
 		if (this.listIter.hasNext) this.nextList()
+
+		this
 	}
 
 	override def hasNext: Boolean =
@@ -130,6 +136,8 @@ trait ListCompVocabMaker extends VocabMaker
 		if (this.enumerator == null) return
 
 		while (this.nextProg.isEmpty) {
+			if (!this.enumerator.hasNext) return
+
 			val next = this.enumerator.next()
 			if (next.height > this.childHeight) {
 				// We are out of map functions to synthesize for this list.
@@ -137,7 +145,12 @@ trait ListCompVocabMaker extends VocabMaker
 				else return
 			} else if (next.nodeType.eq(this.outputListType) && next.includes(this.varName)) {
 				// next is a valid program
-				val node = new ListCompNode(this.currList, next, this.varName)
+				val node = (this.inputListType, this.outputListType) match {
+					case (Types.String, Types.String) => new StringToStringListCompNode(this.currList.asInstanceOf[StringListNode], next.asInstanceOf[StringNode], this.varName)
+					case (Types.String, Types.Int) => new StringToIntListCompNode(this.currList.asInstanceOf[StringListNode], next.asInstanceOf[IntNode], this.varName)
+					case (Types.Int, Types.String) => new IntToStringListCompNode(this.currList.asInstanceOf[IntListNode], next.asInstanceOf[StringNode], this.varName)
+					case (Types.Int, Types.Int) => new IntToIntListCompNode(this.currList.asInstanceOf[IntListNode], next.asInstanceOf[IntNode], this.varName)
+				}
 				this.nextProg = Some(node)
 			}
 		}
@@ -145,10 +158,22 @@ trait ListCompVocabMaker extends VocabMaker
 
 	private def nextList() : Unit =
 	{
-		this.currList = listIter.next()
-		val newContexts = this.contexts.flatMap(m => this.currList.values.map(value => m + (this.varName -> value)));
-		val oeValuesManager = new InputsValuesManager();
-		this.enumerator = new Enumerator(this.mapVocab, oeValuesManager, newContexts)
+		this.currList = null
+
+		while (currList == null) {
+			val lst = listIter.next()
+
+			if (lst.values.head.asInstanceOf[List[_]].nonEmpty) {
+				this.currList = lst
+				val newContexts =
+					this.contexts.flatMap(
+						m => this.currList.values.flatMap(
+							values => values.asInstanceOf[List[Any]].map(
+								value => m + (this.varName -> value))))
+				val oeValuesManager = new InputsValuesManager();
+				this.enumerator = new Enumerator(this.mapVocab, oeValuesManager, newContexts)
+			}
+		}
 	}
 }
 

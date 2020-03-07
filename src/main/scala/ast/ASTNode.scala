@@ -43,3 +43,23 @@ trait IntListNode extends ASTNode
 	override val values: List[Iterable[Int]]
 	override val nodeType: Types = Types.IntList
 }
+
+object EmptyStringListNode extends StringListNode
+{
+	override val values: List[Iterable[String]] = List(Nil)
+	override val code: String = "[]"
+	override val height: Int = 0
+	override val terms: Int = 0
+	override val children: Iterable[ASTNode] = Nil
+	override def includes(varName: String): Boolean = false
+}
+
+object EmptyIntListNode extends IntListNode
+{
+	override val values: List[Iterable[Int]] = List(Nil)
+	override val code: String = "[]"
+	override val height: Int = 0
+	override val terms: Int = 0
+	override val children: Iterable[ASTNode] = Nil
+	override def includes(varName: String): Boolean = false
+}

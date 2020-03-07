@@ -17,11 +17,5 @@ object DebugPrints {
   }
   def dprintln(str: => Any) = if (debug) println(str)
   def iprintln(str: => Any) = if (info) println(str)
-  def eprintln(str: => Any) = {
-    val stackTrace = Thread.currentThread().getStackTrace()(2)
-    val clazz = stackTrace.getClassName
-    val method = stackTrace.getMethodName
-    val line = stackTrace.getLineNumber
-    System.err.println(s"$clazz.$method[$line] $str")
-  }
+  def eprintln(str: => Any) = System.err.println(str)
 }

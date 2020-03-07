@@ -1,10 +1,14 @@
 package ast
 import ast.Types.Types
 
-class ListCompNode(list: ASTNode, map: ASTNode, varName: String) extends ASTNode
+trait ListCompNode[T] extends ASTNode
 {
+	val list: ASTNode
+	val map: ASTNode
+	val varName: String
+
 	override val nodeType: Types = Types.listOf(map.nodeType)
-	override val values: List[Any] = List(map.values)
+	override val values: List[Iterable[T]] = List(map.values.asInstanceOf[List[T]])
 	override val height: Int = 1 + Math.max(list.height, map.height)
 	override val terms: Int = 1 + list.terms + map.terms
 	override val children: Iterable[ASTNode] = List(list, map)
@@ -12,6 +16,11 @@ class ListCompNode(list: ASTNode, map: ASTNode, varName: String) extends ASTNode
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
 }
+
+class StringToStringListCompNode(val list: StringListNode, val map: StringNode, val varName: String) extends ListCompNode[String] with StringListNode
+class StringToIntListCompNode(val list: StringListNode, val map: IntNode, val varName: String) extends ListCompNode[Int] with IntListNode
+class IntToStringListCompNode(val list: IntListNode, val map: StringNode, val varName: String) extends ListCompNode[String] with StringListNode
+class IntToIntListCompNode(val list: IntListNode, val map: IntNode, val varName: String) extends ListCompNode[Int] with IntListNode
 
 class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
 {
@@ -21,7 +30,7 @@ class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode
 	}
 
 	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
-		case (l: String, r: String ) => Some(l.split(r))
+		case (l: String, r: String ) => Some(l.split(r).toList)
 		case _ => wrongType(l, r)
 	}
 

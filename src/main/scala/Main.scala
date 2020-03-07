@@ -24,7 +24,7 @@ object Main extends App
 		synthesizeFromTask(task)
 	}
 
-	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 500000) : Option[(ASTNode, Int)] =
+	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 5) : Option[(ASTNode, Int)] =
 	{
 		var rs: Option[(ASTNode, Int)] = None
 		val oeManager = new InputsValuesManager()
