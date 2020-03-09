@@ -407,6 +407,602 @@ class ASTNodeTests extends JUnitSuite
 		}
 	}
 
+	// Quaternary Operations
+	@Test def quaternarySubstringNode(): Unit =
+	{
+		val str: StringNode = new StringLiteral("abc", 1)
+		var node: QuaternarySubstring = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(3,1),
+			new IntLiteral(1,1))
+		assertEquals(1, node.values.length)
+		assertEquals("abc", node.values.head)
+		assertEquals(Types.String, node.nodeType)
+		assertEquals("\"abc\"[0:3:1]", node.code)
+		assertEquals(1, node.height)
+		assertEquals(5, node.terms)
+		assertEquals(node.children.size, 4)
+
+		// [-4, -3] -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(-3,1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [-4, -2] -> "a"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(-2,1),
+			new IntLiteral(1,1))
+		assertEquals("a", node.values.head)
+
+		// [-4, -1] -> "ab"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(-1,1),
+			new IntLiteral(1,1))
+		assertEquals("ab", node.values.head)
+
+		// [-4, 0]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(0,1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [-4, 1]  -> "a"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(1,1),
+			new IntLiteral(1,1))
+		assertEquals("a", node.values.head)
+
+		// [-4, 2]  -> "ab"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(2,1),
+			new IntLiteral(1,1))
+		assertEquals("ab", node.values.head)
+
+		// [-4, 3]  -> "abc"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(3,1),
+			new IntLiteral(1,1))
+		assertEquals("abc", node.values.head)
+
+		// [-4, 4]  -> "abc"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-4,1),
+			new IntLiteral(4,1),
+			new IntLiteral(1,1))
+		assertEquals("abc", node.values.head)
+
+		// [0, -4]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(-4,1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [0, -3]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(-3,1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [0, -2]  -> "a"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(-2,1),
+			new IntLiteral(1,1))
+		assertEquals("a", node.values.head)
+
+		// [0, -1]  -> "ab"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(-1, 1),
+			new IntLiteral(1,1))
+		assertEquals("ab", node.values.head)
+
+		// [0, 0]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(0, 1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [0, 1]  -> "a"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(1, 1),
+			new IntLiteral(1,1))
+		assertEquals("a", node.values.head)
+
+		// [0, 2]  -> "ab"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(2, 1),
+			new IntLiteral(1,1))
+		assertEquals("ab", node.values.head)
+
+		// [0, 3]  -> "abc"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(3, 1),
+			new IntLiteral(1,1))
+		assertEquals("abc", node.values.head)
+
+		// [0, 4]  -> "abc"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0,1),
+			new IntLiteral(4, 1),
+			new IntLiteral(1,1))
+		assertEquals("abc", node.values.head)
+
+		// [1, -4]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(-4, 1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [1, -3]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(-3, 1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [1, -2]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [1, -1]  -> "b"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(-1, 1),
+			new IntLiteral(1,1))
+		assertEquals("b", node.values.head)
+
+		// [1, 0]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(0, 1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [1, 1]  -> ""
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(1, 1),
+			new IntLiteral(1,1))
+		assertEquals("", node.values.head)
+
+		// [1, 2]  -> "b"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(2, 1),
+			new IntLiteral(1,1))
+		assertEquals("b", node.values.head)
+
+		// [1, 3]  -> "bc"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(3, 1),
+			new IntLiteral(1,1))
+		assertEquals("bc", node.values.head)
+
+		// [1, 4]  -> "bc"
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1,1),
+			new IntLiteral(4, 1),
+			new IntLiteral(1,1))
+		assertEquals("bc", node.values.head)
+
+
+		// [3, -4]  -> ""
+		// [3, -3]  -> ""
+		// [3, -2]  -> ""
+		// [3, -1]  -> ""
+		// [3, 0]  -> ""
+		// [3, 1]  -> ""
+		// [3, 2]  -> ""
+		// [3, 3]  -> ""
+		// [3, 4]  -> ""
+		for (i <- -3 to 4) {
+			node = new QuaternarySubstring(
+				str,
+				new IntLiteral(3,1),
+				new IntLiteral(i, 1),
+				new IntLiteral(1,1))
+			assertEquals("", node.values.head)
+		}
+
+		// s[3:-3:-1] -> 'cb'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(3,1),
+			new IntLiteral(-3, 1),
+			new IntLiteral(-1,1))
+		assertEquals("cb", node.values.head)
+
+		// s[3:-2:-1] -> 'c'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(3,1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(-1,1))
+		assertEquals("c", node.values.head)
+
+		// s[3:-1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(3,1),
+			new IntLiteral(-1, 1),
+			new IntLiteral(-1,1))
+		assertEquals("", node.values.head)
+
+		// s[3:0:-1] -> 'cb'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(3,1),
+			new IntLiteral(0, 1),
+			new IntLiteral(-1,1))
+		assertEquals("cb", node.values.head)
+
+		// s[3:1:-1] -> 'c'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(3,1),
+			new IntLiteral(1, 1),
+			new IntLiteral(-1,1))
+		assertEquals("c", node.values.head)
+
+		// s[3:3:-1] -> ''
+		// s[3:2:-1] -> ''
+		// s[3:4:-1] -> ''
+		for (i <- 2 to 4) {
+			node = new QuaternarySubstring(
+				str,
+				new IntLiteral(3, 1),
+				new IntLiteral(i, 1),
+				new IntLiteral(-1, 1))
+			assertEquals("", node.values.head)
+		}
+
+		// s[2:-3:-1] -> 'cb'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(-3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("cb", node.values.head)
+
+		// s[2:-2:-1] -> 'c'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("c", node.values.head)
+
+		// s[2:-1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(-1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[2:0:-1] -> 'cb'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(0, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("cb", node.values.head)
+
+		// s[2:1:-1] -> 'c'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("c", node.values.head)
+
+		// s[2:2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[2:3:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[2:4:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(2, 1),
+			new IntLiteral(4, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[1:-3:-1] -> 'b'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1, 1),
+			new IntLiteral(-3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("b", node.values.head)
+
+		// s[1:-2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1, 1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[1:-1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1, 1),
+			new IntLiteral(-1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[1:0:-1] -> 'b'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1, 1),
+			new IntLiteral(0, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("b", node.values.head)
+
+		// s[1:1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1, 1),
+			new IntLiteral(1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[1:2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1, 1),
+			new IntLiteral(2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[1:3:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(1, 1),
+			new IntLiteral(3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:-3:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0, 1),
+			new IntLiteral(-3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:-2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0, 1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:-1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0, 1),
+			new IntLiteral(-1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:0:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0, 1),
+			new IntLiteral(0, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0, 1),
+			new IntLiteral(1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0, 1),
+			new IntLiteral(2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:3:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(0, 1),
+			new IntLiteral(3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[0:4:-1] -> ''
+		for (i <- -3 to 4) {
+			node = new QuaternarySubstring(
+				str,
+				new IntLiteral(0,1),
+				new IntLiteral(i, 1),
+				new IntLiteral(-1,1))
+			assertEquals("", node.values.head)
+		}
+
+		// s[-1:-3:-1] -> 'cb'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-1, 1),
+			new IntLiteral(-3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("cb", node.values.head)
+
+		// s[-1:-2:-1] -> 'c'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-1, 1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("c", node.values.head)
+
+		// s[-1:-1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-1, 1),
+			new IntLiteral(-1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[-1:0:-1] -> 'cb'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-1, 1),
+			new IntLiteral(0, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("cb", node.values.head)
+
+		// s[-1:1:-1] -> 'c'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-1, 1),
+			new IntLiteral(1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("c", node.values.head)
+
+		// s[-1:2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-1, 1),
+			new IntLiteral(2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[-1:3:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-1, 1),
+			new IntLiteral(3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[-2:-3:-1] -> 'b'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-2, 1),
+			new IntLiteral(-3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("b", node.values.head)
+
+		// s[-2:-2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-2, 1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[-2:-1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-2, 1),
+			new IntLiteral(-2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[-2:0:-1] -> 'b'
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-2, 1),
+			new IntLiteral(0, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("b", node.values.head)
+
+		// s[-2:1:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-2, 1),
+			new IntLiteral(1, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[-2:2:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-2, 1),
+			new IntLiteral(2, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+		// s[-2:3:-1] -> ''
+		node = new QuaternarySubstring(
+			str,
+			new IntLiteral(-2, 1),
+			new IntLiteral(3, 1),
+			new IntLiteral(-1, 1))
+		assertEquals("", node.values.head)
+
+	}
+
 	// TODO Write the unit tests for other nodes
 	// Ternary Operations
 	@Test def stringConcatNode(): Unit = ()
@@ -417,9 +1013,6 @@ class ASTNodeTests extends JUnitSuite
 	@Test def findNode(): Unit = ()
 	@Test def containsNode(): Unit = ()
 	@Test def stringReplaceNode(): Unit = ()
-
-	// Quaternary Operations
-	@Test def quaternarySubstringNode(): Unit = ()
 
 	// List Operations
 	@Test def stringSplitNode(): Unit = ()

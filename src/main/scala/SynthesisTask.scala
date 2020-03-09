@@ -314,7 +314,7 @@ object PythonPBETask
 						lst.asInstanceOf[IntListNode],
 						map.asInstanceOf[IntNode],
 						this.varName)
-			},
+			}
 //			new BasicVocabMaker
 //			{
 //				override val arity: Int = 4

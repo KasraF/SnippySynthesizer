@@ -51,9 +51,18 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 			val end = (if (end_orig >= 0) end_orig else (s.length + end_orig)).max(0).min(s.length)
 
 			var rs = ""
+			var idx = start
 
-			if (step > 0 && start < end || step < -1 && start > end) {
-				for (idx <- start to end by step) rs += s(idx)
+			if (step > 0) {
+				while (idx < end) {
+					if (idx < s.length) rs += s(idx)
+					idx += step
+				}
+			} else if (step < 0) {
+				while (idx > end) {
+					if (idx < s.length) rs += s(idx)
+					idx += step
+				}
 			}
 
 			Some(rs)

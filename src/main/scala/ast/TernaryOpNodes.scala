@@ -39,12 +39,7 @@ class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNod
 			var rs = ""
 
 			if (start < end) {
-				var idx = start;
-
-				while (idx < end) {
-					if (idx < s.length) rs += s(idx)
-					idx += 1
-				}
+				for (idx <- start until end) rs += s(idx)
 			}
 
 			Some(rs)
