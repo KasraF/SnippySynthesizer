@@ -2,8 +2,8 @@ package ast
 
 abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 {
-	// TODO Why is this necessary?
-	// assert(numContexts > 0)
+	assert(numContexts > 0)
+
 	override val children: Iterable[ASTNode] = Iterable.empty
 	val height = 0
 	val terms  = 1
@@ -15,12 +15,12 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 
 class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode
 {
-	override  val code: String = '"' + value + '"' //escape?
+	override val code: String = '"' + value + '"'
 }
 
 class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode
 {
-	override  val code: String = value.toString
+	override val code: String = value.toString
 }
 
 class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode

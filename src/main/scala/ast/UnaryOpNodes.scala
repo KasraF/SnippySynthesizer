@@ -9,7 +9,7 @@ trait UnaryOpNode[T] extends ASTNode
 		case _ => Nil
 	}
 
-	override val height = 1 + arg.height
+	override val height: Int = 1 + arg.height
 	override val terms: Int = 1 + arg.terms
 	override val children: Iterable[ASTNode] = Iterable(arg)
 	val arg: ASTNode
@@ -108,4 +108,18 @@ class Min(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
 		new Min(x.asInstanceOf[IntListNode])
+}
+
+class SortedStringList(val arg: StringListNode) extends UnaryOpNode[Iterable[String]] with StringListNode
+{
+	override lazy val code: String = "sorted(" + arg.code + ")"
+
+	override def doOp(arg: Any): Option[Iterable[String]] = arg match
+	{
+		case lst: Iterable[String] => Some(lst.toList.sorted)
+		case _ => wrongType(arg)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
+		new SortedStringList(x.asInstanceOf[StringListNode])
 }

@@ -149,3 +149,35 @@ class Contains(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Bo
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
 		new Contains(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
+
+class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
+{
+	override lazy val code: String = lhs.terms match {
+		case 1 => lhs.code + ".split(" + rhs.code + ")"
+		case _ => "(" + lhs.code + ").split(" + rhs.code + ")"
+	}
+
+	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
+		case (l: String, r: String ) => Some(l.split(r).toList)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] =
+		new StringSplit(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+}
+
+class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpNode[String] with StringNode
+{
+	override lazy val code: String = lhs.terms match {
+		case 1 => lhs.code + ".join(" + rhs.code + ")"
+		case _ => "(" + lhs.code + ").join(" + rhs.code + ")"
+	}
+
+	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
+		case (str: String, lst: Iterable[_]) => Some(lst.mkString(str))
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
+		new StringJoin(l.asInstanceOf[StringNode], r.asInstanceOf[StringListNode])
+}

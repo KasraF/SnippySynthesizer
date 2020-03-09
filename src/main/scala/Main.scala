@@ -4,7 +4,6 @@ import java.io.{BufferedWriter, FileWriter}
 
 import ast.ASTNode
 import enumeration.InputsValuesManager
-import pcShell.ConsolePrints._
 import trace.DebugPrints.dprintln
 
 import scala.concurrent.duration._
@@ -48,8 +47,12 @@ object Main extends App
 					}
 				}
 
-				if ((consoleEnabled && in.ready()) || !deadline.hasTimeLeft) break
-				// dprintln(s"[$i] (${program.height}) ${program.code}")
+				if (!deadline.hasTimeLeft) break
+
+				if (trace.DebugPrints.debug) {
+					val p = PostProcessor.clean(program)
+					dprintln(s"[$i] (${program.height}) ${p.code}")
+				}
 			}
 		}
 
@@ -65,7 +68,7 @@ object Main extends App
 	}
 
 	val writer = new BufferedWriter(new FileWriter(args.head + ".out"))
-	writer.write(program);
-	println(f"[${time / 1000.0}%1.3f] $program");
+	writer.write(program)
+	println(f"[${time / 1000.0}%1.3f] $program")
 	writer.close()
 }

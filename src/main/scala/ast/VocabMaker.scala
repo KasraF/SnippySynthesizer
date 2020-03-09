@@ -1,13 +1,34 @@
 package ast
 
+
 import ast.Types.Types
-import enumeration.{ChildrenIterator, Enumerator, InputsValuesManager}
+import enumeration._
+
+class VocabFactory(
+  val leavesMakers: List[VocabMaker],
+  val nodeMakers  : List[VocabMaker])
+{
+	def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
+
+	def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator
+}
+
+object VocabFactory
+{
+	def apply(vocabMakers: Seq[VocabMaker]): VocabFactory =
+	{
+		val (leavesMakers, nodeMakers) = vocabMakers.toList.partition(m => m.arity == 0)
+		new VocabFactory(leavesMakers, nodeMakers)
+	}
+}
+
 
 trait VocabMaker
 {
 	val arity: Int
 	def init(progs: List[ASTNode], contexts : List[Map[String, Any]], vocabFactory: VocabFactory, height: Int) : Iterator[ASTNode]
 }
+
 
 trait BasicVocabMaker extends VocabMaker with Iterator[ASTNode]
 {
@@ -33,19 +54,21 @@ trait BasicVocabMaker extends VocabMaker with Iterator[ASTNode]
 	  height: Int) : Iterator[ASTNode] =
 	{
 		this.contexts = contexts
-		if (this.arity == 0) {
+
+		this.childIterator = if (this.arity == 0) {
 			// No children needed, but we still return 1 value
-			this.childIterator = Iterator.single(Nil)
+			Iterator.single(Nil)
 		} else if (this.childTypes.map(t => progs.filter(_.nodeType == t)).exists(_.isEmpty)) {
 			// Don't have any candidates for one or more children
-			this.childIterator = Iterator.empty
+			Iterator.empty
 		} else {
-			this.childIterator = new ChildrenIterator(progs, childTypes, height)
+			new ChildrenIterator(progs, childTypes, height)
 		}
 
 		this
 	}
 }
+
 
 abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) extends VocabMaker with Iterator[ASTNode]
 {
@@ -67,6 +90,8 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 
 	assert(outputListType.equals(Types.Int) || outputListType.equals(Types.String),
 	       s"List comprehension output type not supported: $inputListType")
+
+	def makeNode(lst: ASTNode, map: ASTNode) : ASTNode
 
 	override def init(
 	  progs: List[ASTNode],
@@ -104,12 +129,10 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 			}
 		}
 
+		// We don't support nested list comprehensions
 		val vocabs = newVarVocab ::
 		  vocabFactory.leavesMakers :::
-		  vocabFactory.nodeMakers
-		    .filter(_.isInstanceOf[BasicVocabMaker])
-		    .map(_.asInstanceOf[BasicVocabMaker])
-		    .filter(v => !Types.isListType(v.returnType))
+		  vocabFactory.nodeMakers.filter(_.isInstanceOf[BasicVocabMaker])
 
 		this.mapVocab = VocabFactory.apply(vocabs)
 		if (this.listIter.hasNext) this.nextList()
@@ -119,19 +142,19 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 
 	override def hasNext: Boolean =
 	{
-		if (this.nextProg.isEmpty) getNextProgram()
+		if (this.nextProg.isEmpty) nextProgram()
 		this.nextProg.isDefined
 	}
 
 	override def next: ASTNode =
 	{
-		if (this.nextProg.isEmpty) getNextProgram()
+		if (this.nextProg.isEmpty) nextProgram()
 		val rs = this.nextProg.get
 		this.nextProg = None
 		rs
 	}
 
-	private def getNextProgram() : Unit =
+	private def nextProgram() : Unit =
 	{
 		if (this.enumerator == null) return
 
@@ -145,12 +168,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 				else return
 			} else if (next.nodeType.eq(this.outputListType) && next.includes(this.varName)) {
 				// next is a valid program
-				val node = (this.inputListType, this.outputListType) match {
-					case (Types.String, Types.String) => new StringToStringListCompNode(this.currList.asInstanceOf[StringListNode], next.asInstanceOf[StringNode], this.varName)
-					case (Types.String, Types.Int) => new StringToIntListCompNode(this.currList.asInstanceOf[StringListNode], next.asInstanceOf[IntNode], this.varName)
-					case (Types.Int, Types.String) => new IntToStringListCompNode(this.currList.asInstanceOf[IntListNode], next.asInstanceOf[StringNode], this.varName)
-					case (Types.Int, Types.Int) => new IntToIntListCompNode(this.currList.asInstanceOf[IntListNode], next.asInstanceOf[IntNode], this.varName)
-				}
+				val node = this.makeNode(this.currList, next)
 				this.nextProg = Some(node)
 			}
 		}
@@ -174,23 +192,5 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 				this.enumerator = new Enumerator(this.mapVocab, oeValuesManager, newContexts)
 			}
 		}
-	}
-}
-
-class VocabFactory(
-	val leavesMakers: List[VocabMaker],
-	val nodeMakers  : List[VocabMaker])
-{
-	def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
-
-	def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator
-}
-
-object VocabFactory
-{
-	def apply(vocabMakers: Seq[VocabMaker]): VocabFactory =
-	{
-		val (leavesMakers, nodeMakers) = vocabMakers.toList.partition(m => m.arity == 0)
-		new VocabFactory(leavesMakers, nodeMakers)
 	}
 }

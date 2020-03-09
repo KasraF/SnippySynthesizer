@@ -9,7 +9,7 @@ object Types extends Enumeration
 		case Int => IntList
 		case String => StringList
 		case t =>
-			assert(false, s"list of type not supported: $t")
+			assert(assertion = false, s"list of type not supported: $t")
 			Unknown
 	}
 
@@ -24,10 +24,9 @@ object Types extends Enumeration
 			 case _: String => Types.String
 			 case _: Int => Types.Int
 			 case _: Boolean => Types.Bool
-			 case _ => {
+			 case _ =>
 				 println("Could not determine type of " + x)
 				 Unknown
-			 }
 		 }
 	}
 }

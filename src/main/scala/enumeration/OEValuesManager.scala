@@ -6,7 +6,7 @@ import scala.collection.mutable
 
 trait OEValuesManager
 {
-	def isRepresentative(program: ast.ASTNode): Boolean
+	def isRepresentative(program: ASTNode): Boolean
 }
 
 // TODO Prioritize cleaner programs

@@ -172,7 +172,7 @@ object PythonPBETask
 				override val arity: Int = 2
 				override val childTypes: List[Types] = List(Types.String, Types.Int)
 				override val returnType: Types = Types.String
-				
+
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new StringStep(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[IntNode])
 			},
@@ -287,39 +287,34 @@ object PythonPBETask
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new SortedStringList(children.head.asInstanceOf[StringListNode])
 			},
-			new ListCompVocabMaker(Types.String, Types.String) {},
-			new ListCompVocabMaker(Types.String, Types.Int) {},
-			new ListCompVocabMaker(Types.Int, Types.String) {},
-			new ListCompVocabMaker(Types.Int, Types.Int) {},
-//			new BasicVocabMaker
-//			{
-//				override val arity: Int = 2
-//				override val childTypes: List[Types] = List(Types.StringList, Types.Int)
-//				override val returnType: Types = Types.StringList
-//
-//				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-//					new StringStepList(
-//						children.head.asInstanceOf[StringListNode],
-//						children.tail.head.asInstanceOf[IntNode])
-//			},
-//			new BasicVocabMaker
-//			{
-//				override val arity: Int = 2
-//				override val childTypes: List[Types] = List(Types.StringList, Types.Int)
-//				override val returnType: Types = Types.StringList
-//
-//				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-//					new SubstringList(children.head.asInstanceOf[StringListNode], children.tail.head.asInstanceOf[IntNode])
-//			},
-//			new BasicVocabMaker
-//			{
-//				override val arity: Int = 1
-//				override val childTypes: List[Types] = List(Types.StringList)
-//				override val returnType: Types = Types.IntList
-//
-//				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-//					new StringToIntList(children.head.asInstanceOf[StringListNode])
-//			},
+			new ListCompVocabMaker(Types.String, Types.String) {
+				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
+					new StringToStringListCompNode(
+						lst.asInstanceOf[StringListNode],
+						map.asInstanceOf[StringNode],
+						this.varName)
+			},
+			new ListCompVocabMaker(Types.String, Types.Int) {
+				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
+					new StringToIntListCompNode(
+						lst.asInstanceOf[StringListNode],
+						map.asInstanceOf[IntNode],
+						this.varName)
+			},
+			new ListCompVocabMaker(Types.Int, Types.String) {
+				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
+					new IntToStringListCompNode(
+						lst.asInstanceOf[IntListNode],
+						map.asInstanceOf[StringNode],
+						this.varName)
+			},
+			new ListCompVocabMaker(Types.Int, Types.Int) {
+				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
+					new IntToIntListCompNode(
+						lst.asInstanceOf[IntListNode],
+						map.asInstanceOf[IntNode],
+						this.varName)
+			},
 //			new BasicVocabMaker
 //			{
 //				override val arity: Int = 4
