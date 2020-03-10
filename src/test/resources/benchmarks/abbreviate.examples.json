@@ -1,11 +1,71 @@
 [
-  {
-    "dot": "'.'",
-    "s": "'Sorin Lerner'"
-  },
-  {
-    "dot": "'.'",
-    "s": "'Sorin Lerner'",
-    "rs": "'S.L'"
-  }
+  [
+    {
+      "time": 1,
+      "#": "",
+      "$": "",
+      "name": "'Sorin Lerner'",
+      "dot": "'.'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": 3
+    },
+    {
+      "time": 2,
+      "#": "",
+      "$": "",
+      "name": "'Sorin Lerner'",
+      "dot": "'.'",
+      "rs": "'S.L'",
+      "lineno": 3,
+      "prev_lineno": 2,
+      "next_lineno": "R3"
+    }
+  ],
+  [
+    {
+      "time": 5,
+      "#": "",
+      "$": "",
+      "name": "'Nadia Polikarpova'",
+      "dot": "'.'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": 3
+    },
+    {
+      "time": 6,
+      "#": "",
+      "$": "",
+      "name": "'Nadia Polikarpova'",
+      "dot": "'.'",
+      "rs": "'N.P'",
+      "lineno": 3,
+      "prev_lineno": 2,
+      "next_lineno": "R3"
+    }
+  ],
+  [
+    {
+      "time": 9,
+      "#": "",
+      "$": "",
+      "name": "'Hila Peleg'",
+      "dot": "'.'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": 3
+    },
+    {
+      "time": 10,
+      "#": "",
+      "$": "",
+      "name": "'Hila Peleg'",
+      "dot": "'.'",
+      "rs": "'H.P'",
+      "lineno": 3,
+      "prev_lineno": 2,
+      "next_lineno": "R3"
+    }
+  ]
 ]

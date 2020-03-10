@@ -183,11 +183,9 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 
 			if (lst.values.head.asInstanceOf[List[_]].nonEmpty) {
 				this.currList = lst
-				val newContexts =
-					this.contexts.flatMap(
-						m => this.currList.values.flatMap(
-							values => values.asInstanceOf[List[Any]].map(
-								value => m + (this.varName -> value))))
+				val newContexts = this.contexts.zipWithIndex
+				  .flatMap(context => this.currList.values(context._2).asInstanceOf[List[Any]]
+				    .map(value => context._1 + (this.varName -> value)))
 				val oeValuesManager = new InputsValuesManager();
 				this.enumerator = new Enumerator(this.mapVocab, oeValuesManager, newContexts)
 			}

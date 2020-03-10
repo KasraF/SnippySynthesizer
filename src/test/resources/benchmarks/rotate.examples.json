@@ -1,11 +1,47 @@
 [
-  {
-    "count": 1,
-    "s": "'abc'"
-  },
-  {
-    "count": 1,
-    "s": "'abc'",
-    "rs": "'bca'"
-  }
+  [
+    {
+      "time": 0,
+      "#": "",
+      "$": "",
+      "s": "'abcd'",
+      "count": "1",
+      "lineno": 1,
+      "next_lineno": 2
+    },
+    {
+      "time": 1,
+      "#": "",
+      "$": "",
+      "s": "'abcd'",
+      "count": "1",
+      "rs": "'dabc'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": "R2"
+    }
+  ],
+  [
+    {
+      "time": 3,
+      "#": "",
+      "$": "",
+      "s": "'abcd'",
+      "count": "2",
+      "lineno": 1,
+      "prev_lineno": "R2",
+      "next_lineno": 2
+    },
+    {
+      "time": 4,
+      "#": "",
+      "$": "",
+      "s": "'abcd'",
+      "count": "2",
+      "rs": "'cdab'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": "R2"
+    }
+  ]
 ]

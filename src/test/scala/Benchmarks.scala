@@ -37,7 +37,7 @@ object Benchmarks extends App
 		  print(f"($index%2d)  [$name%18s] ")
 		  Main.synthesize(file) match {
 			  case None => println("Timeout")
-			  case Some((program: ASTNode, time: Int)) => println(f"[${time / 1000.0}%1.3f] ${program.code}")
+			  case Some((program: String, time: Int)) => println(f"[${time / 1000.0}%1.3f] $program")
 		  }
 	  })
 }

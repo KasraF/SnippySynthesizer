@@ -9,7 +9,11 @@ trait ListCompNode[T] extends ASTNode
 	val varName: String
 
 	override val nodeType: Types = Types.listOf(map.nodeType)
-	override val values: List[Iterable[T]] = List(map.values.asInstanceOf[List[T]])
+	override val values: List[Iterable[T]] = list.values.indices.map(
+		i => map.values.slice(
+			i * map.values.length / list.values.length,
+			(i+1) * map.values.length / list.values.length)).
+	  toList.asInstanceOf[List[Iterable[T]]]// List(map.values.asInstanceOf[List[T]])
 	override val height: Int = 1 + Math.max(list.height, map.height)
 	override val terms: Int = 1 + list.terms + map.terms
 	override val children: Iterable[ASTNode] = List(list, map)

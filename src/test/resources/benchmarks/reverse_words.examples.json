@@ -1,11 +1,64 @@
 [
-  {
-    "space": "' '",
-    "s": "'Hello world!'"
-  },
-  {
-    "space": "' '",
-    "s": "'Hello world!'",
-    "rs": "'olleH !dlrow'"
-  }
+  [
+    {
+      "time": 0,
+      "#": "",
+      "$": "",
+      "line": "'hello world!'",
+      "lineno": 1,
+      "next_lineno": 2
+    },
+    {
+      "time": 1,
+      "#": "",
+      "$": "",
+      "line": "'hello world!'",
+      "rs": "'world! hello'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": "R2"
+    }
+  ],
+  [
+    {
+      "time": 3,
+      "#": "",
+      "$": "",
+      "line": "'Sorin Lerner'",
+      "lineno": 1,
+      "prev_lineno": "R2",
+      "next_lineno": 2
+    },
+    {
+      "time": 4,
+      "#": "",
+      "$": "",
+      "line": "'Sorin Lerner'",
+      "rs": "'Lerner Sorin'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": "R2"
+    }
+  ],
+  [
+    {
+      "time": 7,
+      "#": "",
+      "$": "",
+      "line": "'Nadia Polikarpova'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": "R2"
+    },
+    {
+      "time": 7,
+      "#": "",
+      "$": "",
+      "line": "'Nadia Polikarpova'",
+      "rs": "'Polikarpova Nadia'",
+      "lineno": 2,
+      "prev_lineno": 1,
+      "next_lineno": "R2"
+    }
+  ]
 ]

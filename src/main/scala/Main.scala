@@ -17,15 +17,15 @@ object Main extends App
 		override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
 	}
 
-	def synthesize(filename: String) : Option[(ASTNode, Int)] =
+	def synthesize(filename: String) : Option[(String, Int)] =
 	{
 		val task: SynthesisTask = PythonPBETask.fromString(fromFile(filename).mkString)
 		synthesizeFromTask(task)
 	}
 
-	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 5) : Option[(ASTNode, Int)] =
+	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 5) : Option[(String, Int)] =
 	{
-		var rs: Option[(ASTNode, Int)] = None
+		var rs: Option[(String, Int)] = None
 		val oeManager = new InputsValuesManager()
 		val enumerator = new enumeration.Enumerator(
 			task.vocab,
@@ -41,7 +41,7 @@ object Main extends App
 					                  .map(pair => pair._1.output == pair._2)
 					if (results.forall(identity)) {
 						rs = Some(
-							(PostProcessor.clean(program),
+							(task.asInstanceOf[sygus.PythonPBETask].outputVar + " = " + PostProcessor.clean(program).code,
 							  timeout * 1000 - deadline.timeLeft.toMillis.toInt))
 						break
 					}
@@ -61,10 +61,10 @@ object Main extends App
 
 	case class ExpectedEOFException() extends Exception
 
-	trace.DebugPrints.setDebug()
+	// trace.DebugPrints.setDebug()
 	val (program, time) = synthesize(args.head) match {
 		case None => ("None", -1)
-		case Some((program: ASTNode, time: Int)) => (program.code, time)
+		case Some((program: String, time: Int)) => (program, time)
 	}
 
 	val writer = new BufferedWriter(new FileWriter(args.head + ".out"))

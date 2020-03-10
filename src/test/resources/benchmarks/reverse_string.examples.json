@@ -1,9 +1,20 @@
 [
-  {
-    "s": "'hello'"
-  },
-  {
-    "s": "'hello'",
-    "rs": "'olleh'"
-  }
+  [
+    {
+      "s": "'hello'"
+    },
+    {
+      "s": "'hello'",
+      "rs": "'olleh'"
+    }
+  ],
+  [
+    {
+      "s": "'world'"
+    },
+    {
+      "s": "'world'",
+      "rs": "'dlrow'"
+    }
+  ]
 ]
