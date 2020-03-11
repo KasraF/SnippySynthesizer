@@ -53,16 +53,47 @@ class PythonPBETask(
 
 object PythonPBETask
 {
-	private def cleanupInput(input: Map[String, Any]): Map[String, Any] = {
+	private def cleanupInput(input: Any) : Option[Any] =
+	{
+		if (!input.isInstanceOf[String])
+			None
+		else input.asInstanceOf[String].trim match {
+			case "" => None
+			case s if s(0).equals('\'') =>
+				// String
+				Some(s.substring(1, s.length - 1))
+			case s if s.forall(_.isDigit) =>
+				// Int
+				Some(s.toInt)
+			case s if s.startsWith("[") =>
+				// List
+				Some(s.substring(1, s.length - 1).split(',').map(v => cleanupInput(v).get).toList)
+			case s if s.startsWith("{") && s.contains(":") =>
+				// Map
+				Some(s.substring(1, s.length - 1)
+				       .split(',')
+				       .map(entryStr => entryStr.split(':').map(e => cleanupInput(e).get))
+				       .map(lst => lst.head -> lst.tail.head)
+				       .toMap)
+			case s if s.startsWith("{") =>
+				// Set
+				Some(s.substring(1, s.length - 1).split(',').map(e => cleanupInput(e).get).toSet)
+			case _ => None
+		}
+	}
+
+	private def cleanupInputs(input: Map[String, Any]): Map[String, Any] = {
 		input
 		  .filter(v => !PythonExample.reserved_names.contains(v._1))
-		  .map(variable => variable._2 match {
-			case s: String if s.nonEmpty && s(0).equals('\'') => (variable._1, s.substring(1, s.length - 1)) // Strip the single quotes
-			case s: String if s.nonEmpty && s.forall(_.isDigit) => (variable._1, s.toInt)
-			case _ =>
-				assert(assertion = false, s"Input type not recognized: ${variable._2.getClass.getSimpleName}")
-				variable
+		  // TODO Is there a cleaner way to do this?
+		  .map(variable => cleanupInput(variable._2) match {
+			  case None =>
+				  trace.DebugPrints.eprintln(s"Input not recognized: $variable")
+				  (variable._1, null)
+			  case Some(v) =>
+				  (variable._1, v)
 		  })
+  		.filter(v => v._2 != null)
 	}
 
 	def buildExample(lst: List[Map[String, Any]]) : (String, Example) =
@@ -76,7 +107,7 @@ object PythonPBETask
 	def fromString(json: String): PythonPBETask =
 	{
 		val json_examples = JsonParser.parse(json).children
-		  .map(lst => lst.asInstanceOf[JArray].children.map(obj => cleanupInput(obj.asInstanceOf[JObject].values)))
+		  .map(lst => lst.asInstanceOf[JArray].children.map(obj => cleanupInputs(obj.asInstanceOf[JObject].values)))
   		  .map(buildExample)
 
 		assert(json_examples.nonEmpty, "No examples provided")
@@ -376,7 +407,7 @@ object PythonPBETask
 						  new BoolVariable(name, contexts)
 				  }
 				  case (name, typ) =>
-					  assert(false, s"Input type $typ not supported for input $name")
+					  assert(assertion = false, s"Input type $typ not supported for input $name")
 					  null
 			  }
 			))

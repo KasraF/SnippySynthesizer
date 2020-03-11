@@ -1,4 +1,5 @@
 package ast
+import ast.Types.Types
 
 abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 {
