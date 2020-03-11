@@ -62,7 +62,7 @@ object PythonPBETask
 			case s if s(0).equals('\'') =>
 				// String
 				Some(s.substring(1, s.length - 1))
-			case s if s.forall(_.isDigit) =>
+			case s if s.forall(_.isDigit) || s.startsWith("-") && s.substring(1).forall(_.isDigit) =>
 				// Int
 				Some(s.toInt)
 			case s if s.startsWith("[") =>
@@ -154,6 +154,15 @@ object PythonPBETask
 				
 				override def apply(children    : List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new IntLiteral(1, contexts.length)
+			},
+			new BasicVocabMaker
+			{
+				override val arity: Int = 0
+				override val childTypes: List[Types] = Nil
+				override val returnType: Types = Types.Int
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new IntLiteral(-1, contexts.length)
 			},
 			// Binary Ops
 			new BasicVocabMaker
