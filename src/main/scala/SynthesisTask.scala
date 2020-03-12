@@ -415,6 +415,15 @@ object PythonPBETask
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new BoolVariable(name, contexts)
 				  }
+				  case (name, Types.Map(Types.String, Types.Int)) => new BasicVocabMaker
+				  {
+					  override val arity: Int = 0
+					  override val childTypes: List[Types] = Nil
+					  override val returnType: Types = Types.Map(Types.String, Types.Int)
+
+					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						  new StringIntMapVariable(name, contexts)
+				  }
 				  case (name, typ) =>
 					  assert(assertion = false, s"Input type $typ not supported for input $name")
 					  null

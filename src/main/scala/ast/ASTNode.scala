@@ -44,6 +44,12 @@ trait IntListNode extends ASTNode
 	override val nodeType: Types = Types.IntList
 }
 
+trait StringIntMapNode extends ASTNode
+{
+	override val values: List[Map[String,Int]]
+	override val nodeType: Types = Types.Map(Types.String, Types.Int)
+}
+
 object EmptyStringListNode extends StringListNode
 {
 	override val values: List[Iterable[String]] = List(Nil)
