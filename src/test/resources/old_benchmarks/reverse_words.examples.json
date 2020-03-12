@@ -4,6 +4,7 @@
       "time": 0,
       "#": "",
       "$": "",
+      "step": "-1",
       "line": "'hello world!'",
       "lineno": 1,
       "next_lineno": 2
@@ -12,8 +13,9 @@
       "time": 1,
       "#": "",
       "$": "",
+      "step": "-1",
       "line": "'hello world!'",
-      "rs": "'world! hello'",
+      "rs": "'olleh !dlrow'",
       "lineno": 2,
       "prev_lineno": 1,
       "next_lineno": "R2"
@@ -24,6 +26,7 @@
       "time": 3,
       "#": "",
       "$": "",
+      "step": "-1",
       "line": "'Sorin Lerner'",
       "lineno": 1,
       "prev_lineno": "R2",
@@ -33,29 +36,9 @@
       "time": 4,
       "#": "",
       "$": "",
+      "step": "-1",
       "line": "'Sorin Lerner'",
-      "rs": "'Lerner Sorin'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": "R2"
-    }
-  ],
-  [
-    {
-      "time": 7,
-      "#": "",
-      "$": "",
-      "line": "'Nadia Polikarpova'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": "R2"
-    },
-    {
-      "time": 7,
-      "#": "",
-      "$": "",
-      "line": "'Nadia Polikarpova'",
-      "rs": "'Polikarpova Nadia'",
+      "rs": "'niroS renreL'",
       "lineno": 2,
       "prev_lineno": 1,
       "next_lineno": "R2"

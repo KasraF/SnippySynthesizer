@@ -30,6 +30,7 @@ object Benchmarks extends App
 	  .filter(_.contains(".examples.json"))
 	  .filter(!_.contains(".out"))
 	  .zipWithIndex
+	  .sorted
 	  .foreach(benchmark => {
 		  val file = benchmark._1
 		  val index = benchmark._2 + 1
