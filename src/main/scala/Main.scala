@@ -2,7 +2,7 @@ package sygus
 
 import java.io.{BufferedWriter, FileWriter}
 
-import ast.ASTNode
+import ast.{ASTNode, LiteralNode}
 import enumeration.InputsValuesManager
 import trace.DebugPrints.dprintln
 

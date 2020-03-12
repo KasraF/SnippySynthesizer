@@ -46,6 +46,17 @@ object PostProcessor
 			val arg2: ASTNode = clean(qua.arg2)
 			val arg3: ASTNode = clean(qua.arg3)
 			qua.make(arg0, arg1, arg2, arg3)
+		case map: MapCompNode[a,b] =>
+			// TODO Fix the types
+			val list: StringNode = clean(map.list).asInstanceOf[StringNode]
+			val key: StringNode = clean(map.key).asInstanceOf[StringNode]
+			val value: IntNode = clean(map.value).asInstanceOf[IntNode]
+			new StringIntMapCompNode(list, key, value, map.varName)
+		case map: FilteredMapNode[a,b] =>
+			// TODO Fix the types
+			val mapNode: StringIntMapNode = clean(map.map).asInstanceOf[StringIntMapNode]
+			val filter: BoolNode = clean(map.filter).asInstanceOf[BoolNode]
+			new StringIntFilteredMapNode(mapNode, filter, map.keyName)
 		case n => n
 	}
 }

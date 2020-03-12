@@ -69,6 +69,20 @@ class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 		new StringLength(x.asInstanceOf[StringNode])
 }
 
+class MapLength(val arg: StringIntMapNode) extends UnaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = "len(" + arg.code + ")"
+
+	override def doOp(x: Any): Option[Int] = x match
+	{
+		case x: List[_] => Some(x.size)
+		case _ => wrongType(x)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Int] =
+		new MapLength(x.asInstanceOf[StringIntMapNode])
+}
+
 class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNode
 {
 	override lazy val code: String = arg.terms match {

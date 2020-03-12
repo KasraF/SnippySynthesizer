@@ -23,6 +23,8 @@ object Types extends Enumeration
 				case that: Types.Map => that.keyType.equals(this.keyType) && that.valType.equals(this.valType)
 				case _ => false
 			}
+
+		override def toString(): String = s"Map[$keyType,$valType]"
 	}
 
 	val String, Int, Bool, Unknown = Value
@@ -55,6 +57,7 @@ object Types extends Enumeration
 			 case x: scala.List[_] if x.nonEmpty => x.head match {
 				 case _: String => StringList
 				 case _: Int    => IntList
+				 case (a, b) => Map(typeof(a), typeof(b))
 				 case _         => Unknown
 			 }
 			 case x: scala.collection.Set[_] if x.nonEmpty => x.head match {

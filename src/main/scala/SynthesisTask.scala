@@ -4,7 +4,7 @@ import ast.Types.Types
 import ast._
 import net.liftweb.json.JsonAST.{JArray, JObject}
 import net.liftweb.json.JsonParser
-import vocab.{BasicVocabMaker, ListCompVocabMaker, MapCompVocabMaker, VocabFactory, VocabMaker}
+import vocab._
 
 trait SynthesisTask
 {
@@ -75,7 +75,7 @@ object PythonPBETask
 				       .split(',')
 				       .map(entryStr => entryStr.split(':').map(e => cleanupInput(e).get))
 				       .map(lst => lst.head -> lst.tail.head)
-				       .toMap)
+				       .toList)
 			case s if s.startsWith("{") =>
 				// Set
 				Some(s.substring(1, s.length - 1).split(',').map(e => cleanupInput(e).get).toSet)
@@ -196,6 +196,15 @@ object PythonPBETask
 			new BasicVocabMaker
 			{
 				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.Int, Types.Int)
+				override val returnType: Types = Types.Bool
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new GreaterThanEq(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+			},
+			new BasicVocabMaker
+			{
+				override val arity: Int = 2
 				override val childTypes: List[Types] = List(Types.String, Types.String)
 				override val returnType: Types = Types.String
 				
@@ -255,6 +264,15 @@ object PythonPBETask
 				
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new StringLength(children.head.asInstanceOf[StringNode])
+			},
+			new BasicVocabMaker
+			{
+				override val arity: Int = 1
+				override val childTypes: List[Types] = List(Types.Map(Types.String, Types.Int))
+				override val returnType: Types = Types.Int
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new MapLength(children.head.asInstanceOf[StringIntMapNode])
 			},
 			new BasicVocabMaker
 			{
@@ -389,9 +407,22 @@ object PythonPBETask
 			},
 			new MapCompVocabMaker(Types.String, Types.Int) {
 				override def makeNode(lst: ASTNode, key: ASTNode, value: ASTNode): ASTNode =
-					new StringIntMapCompNode(lst.asInstanceOf[StringNode], key, value, this.varName)
+					new StringIntMapCompNode(lst.asInstanceOf[StringNode], key.asInstanceOf[StringNode], value.asInstanceOf[IntNode], this.varName)
+			},
+			new FilteredMapVocabMaker(Types.String, Types.Int) {
+				override def makeNode(map: ASTNode, filter: BoolNode) : ASTNode =
+					new StringIntFilteredMapNode(map.asInstanceOf[StringIntMapNode], filter, this.keyName)
+			},
+			new BasicVocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.Map(Types.String, Types.Int), Types.String)
+				override val returnType: Types = Types.Int
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new MapGet(children.head.asInstanceOf[StringIntMapNode], children(1).asInstanceOf[StringNode])
 			}
-//			new BasicVocabMaker
+			//			new BasicVocabMaker
 //			{
 //				override val arity: Int = 4
 //				override val childTypes: List[Types] = List(Types.String, Types.Int, Types.Int, Types.Int)

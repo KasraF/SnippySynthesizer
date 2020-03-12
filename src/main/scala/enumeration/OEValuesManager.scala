@@ -1,6 +1,6 @@
 package enumeration
 
-import ast.ASTNode
+import ast.{ASTNode, BinaryOpNode, LiteralNode, QuaternaryOpNode, TernaryOpNode, UnaryOpNode}
 
 import scala.collection.mutable
 

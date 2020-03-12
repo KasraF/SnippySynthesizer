@@ -29,6 +29,19 @@ trait BinaryOpNode[T] extends ASTNode
 	}
 }
 
+class GreaterThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " <= " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Int, r: Int) => Some(l <= r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		new GreaterThanEq(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+}
+
 class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[String] with StringNode
 {
 	override lazy val code: String = lhs.code + " + " + rhs.code
@@ -41,6 +54,27 @@ class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNod
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
 		new StringConcat(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
+
+class MapGet(val lhs: StringIntMapNode, val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = lhs.terms match {
+		case 1 => lhs.code + "[" + rhs.code + "]"
+		case _ => "(" + lhs.code + ")[" + rhs.code + "]"
+	}
+
+	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
+		case (map: List[(String,Int)], key: String) =>
+			map.find(_._1.equals(key)) match {
+				case Some(a) =>Some(a._2)
+				case _ => None
+			}
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
+		new MapGet(l.asInstanceOf[StringIntMapNode], r.asInstanceOf[StringNode])
+}
+
 
 class BinarySubstring(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
 {
