@@ -1,0 +1,25 @@
+[
+  [
+    {
+      "time": 10,
+      "#": "",
+      "$": "",
+      "inp": "'aabbcde'",
+      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+      "lineno": 2,
+      "prev_lineno": "R1",
+      "next_lineno": 3
+    },
+    {
+      "time": 11,
+      "#": "",
+      "$": "",
+      "inp": "'aabbcde'",
+      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+      "filters": "{'a': 2, 'b': 2}",
+      "lineno": 3,
+      "prev_lineno": 2,
+      "next_lineno": "R3"
+    }
+  ]
+]
