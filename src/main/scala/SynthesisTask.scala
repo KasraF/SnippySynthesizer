@@ -170,28 +170,10 @@ object PythonPBETask
 			{
 				override val arity: Int = 2
 				override val childTypes: List[Types] = List(Types.Int, Types.Int)
-				override val returnType: Types = Types.Int
-				
+				override val returnType: Types = Types.Bool
+
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntAddition(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
-			},
-			new BasicVocabMaker
-			{
-				override val arity: Int = 2
-				override val childTypes: List[Types] = List(Types.Int, Types.Int)
-				override val returnType: Types = Types.Int
-				
-				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntSubtraction(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
-			},
-			new BasicVocabMaker
-			{
-				override val arity: Int = 2
-				override val childTypes: List[Types] = List(Types.Int, Types.Int)
-				override val returnType: Types = Types.Int
-				
-				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntDivision(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+					new GreaterThan(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
 			},
 			new BasicVocabMaker
 			{
@@ -200,7 +182,7 @@ object PythonPBETask
 				override val returnType: Types = Types.Bool
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new GreaterThanEq(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+					new LessThanEq(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
 			},
 			new BasicVocabMaker
 			{
@@ -421,6 +403,33 @@ object PythonPBETask
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new MapGet(children.head.asInstanceOf[StringIntMapNode], children(1).asInstanceOf[StringNode])
+			},
+			new BasicVocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.Int, Types.Int)
+				override val returnType: Types = Types.Int
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new IntAddition(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+			},
+			new BasicVocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.Int, Types.Int)
+				override val returnType: Types = Types.Int
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new IntSubtraction(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
+			},
+			new BasicVocabMaker
+			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.Int, Types.Int)
+				override val returnType: Types = Types.Int
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new IntDivision(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
 			}
 			//			new BasicVocabMaker
 //			{

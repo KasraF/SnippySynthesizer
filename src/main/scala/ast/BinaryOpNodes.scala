@@ -29,7 +29,7 @@ trait BinaryOpNode[T] extends ASTNode
 	}
 }
 
-class GreaterThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
+class LessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
 {
 	override lazy val code: String = lhs.code + " <= " + rhs.code
 
@@ -39,7 +39,20 @@ class GreaterThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boo
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new GreaterThanEq(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+		new LessThanEq(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+}
+
+class GreaterThan(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " > " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Int, r: Int) => Some(l > r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		new GreaterThan(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 }
 
 class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[String] with StringNode
