@@ -1,6 +1,7 @@
 package enumeration
 
-import ast.{ASTNode, VocabFactory, VocabMaker}
+import ast.ASTNode
+import vocab.{VocabFactory, VocabMaker}
 
 import scala.collection.mutable
 

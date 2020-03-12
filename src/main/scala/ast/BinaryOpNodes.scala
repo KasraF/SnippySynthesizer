@@ -150,6 +150,36 @@ class Contains(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Bo
 		new Contains(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
 
+class Count(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = lhs.code + ".count(" + rhs.code + ")"
+
+	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
+		case ("", _) => Some(0)
+		case (l: String, "") => Some(l.length + 1)
+		case (l: String, r: String) => {
+			// TODO I vaguely remember something from algorithms class about a faster way
+			var count = 0
+			var i = 0
+
+			while (i < l.length - r.length + 1) {
+				if (l.substring(i, i + r.length) == r) {
+					count += 1
+					i += r.length
+				} else {
+					i += 1
+				}
+			}
+
+			Some(count)
+		}
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
+		new Count(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+}
+
 class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
 {
 	override lazy val code: String = lhs.terms match {

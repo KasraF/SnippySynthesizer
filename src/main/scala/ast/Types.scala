@@ -4,16 +4,16 @@ object Types extends Enumeration
 {
 	type Types = Value
 
-	case class List(subtype: Types) extends super.Val {
+	case class List(childType: Types) extends super.Val {
 		override def canEqual(that: Any): Boolean = this.equals(that)
 		override def equals(that: Any): Boolean =
-			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].subtype.equals(this.subtype)
+			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].childType.equals(this.childType)
 	}
 
-	case class Set(subtype: Types) extends super.Val {
+	case class Set(childType: Types) extends super.Val {
 		override def canEqual(that: Any): Boolean = this.equals(that)
 		override def equals(that: Any): Boolean =
-			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].subtype.equals(this.subtype)
+			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].childType.equals(this.childType)
 	}
 
 	case class Map(keyType: Types, valType: Types) extends super.Val {
@@ -34,6 +34,13 @@ object Types extends Enumeration
 	val IntSet: Set = Types.Set(Int)
 
 	def listOf(t: Types.Value) : Types.Value = Types.List(t)
+
+	def childOf(t: Types.Types): Types.Types = t match {
+		case Types.List(t) => t
+		case Types.Set(t) => t
+		case Types.String => t
+		case _ => Unknown
+	}
 
 	def isListType(t: Types.Value) : Boolean = t match {
 		case Types.List(_) => true

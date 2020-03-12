@@ -4,6 +4,7 @@ import ast.Types.Types
 import ast._
 import net.liftweb.json.JsonAST.{JArray, JObject}
 import net.liftweb.json.JsonParser
+import vocab.{BasicVocabMaker, ListCompVocabMaker, MapCompVocabMaker, VocabFactory, VocabMaker}
 
 trait SynthesisTask
 {
@@ -239,6 +240,15 @@ object PythonPBETask
 			},
 			new BasicVocabMaker
 			{
+				override val arity: Int = 2
+				override val childTypes: List[Types] = List(Types.String, Types.String)
+				override val returnType: Types = Types.Int
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new Count(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
+			},
+			new BasicVocabMaker
+			{
 				override val arity: Int = 1
 				override val childTypes: List[Types] = List(Types.String)
 				override val returnType: Types = Types.Int
@@ -303,18 +313,18 @@ object PythonPBETask
 						children(1).asInstanceOf[IntNode],
 						children(2).asInstanceOf[IntNode])
 			},
-//			new BasicVocabMaker
-//			{
-//				override val arity: Int = 3
-//				override val childTypes: List[Types] = List(Types.String, Types.String, Types.String)
-//				override val returnType: Types = Types.String
-//
-//				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-//					new StringReplace(
-//						children.head.asInstanceOf[StringNode],
-//						children(1).asInstanceOf[StringNode],
-//						children(2).asInstanceOf[StringNode])
-//			},
+			//			new BasicVocabMaker
+			//			{
+			//				override val arity: Int = 3
+			//				override val childTypes: List[Types] = List(Types.String, Types.String, Types.String)
+			//				override val returnType: Types = Types.String
+			//
+			//				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+			//					new StringReplace(
+			//						children.head.asInstanceOf[StringNode],
+			//						children(1).asInstanceOf[StringNode],
+			//						children(2).asInstanceOf[StringNode])
+			//			},
 			new BasicVocabMaker
 			{
 				override val arity: Int = 2
@@ -369,6 +379,17 @@ object PythonPBETask
 						lst.asInstanceOf[IntListNode],
 						map.asInstanceOf[IntNode],
 						this.varName)
+			},
+			new ListCompVocabMaker(Types.Int, Types.Int) {
+				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
+					new IntToIntListCompNode(
+						lst.asInstanceOf[IntListNode],
+						map.asInstanceOf[IntNode],
+						this.varName)
+			},
+			new MapCompVocabMaker(Types.String, Types.Int) {
+				override def makeNode(lst: ASTNode, key: ASTNode, value: ASTNode): ASTNode =
+					new StringIntMapCompNode(lst.asInstanceOf[StringNode], key, value, this.varName)
 			}
 //			new BasicVocabMaker
 //			{
