@@ -32,7 +32,7 @@ trait BasicVocabMaker extends VocabMaker with Iterator[ASTNode]
 		this.childIterator = if (this.arity == 0) {
 			// No children needed, but we still return 1 value
 			Iterator.single(Nil)
-		} else if (this.childTypes.map(t => progs.filter(_.nodeType == t)).exists(_.isEmpty)) {
+		} else if (this.childTypes.map(t => progs.filter(c => t.equals(c.nodeType))).exists(_.isEmpty)) {
 			// Don't have any candidates for one or more children
 			Iterator.empty
 		} else {

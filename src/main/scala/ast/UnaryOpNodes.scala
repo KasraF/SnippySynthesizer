@@ -55,32 +55,19 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 		new StringToInt(x.asInstanceOf[StringNode])
 }
 
-class StringLength(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
+class Length(val arg: IterableNode) extends UnaryOpNode[Int] with IntNode
 {
 	override lazy val code: String = "len(" + arg.code + ")"
 
 	override def doOp(x: Any): Option[Int] = x match
 	{
 		case x: String => Some(x.length)
+		case l: List[_] => Some(l.length)
 		case _ => wrongType(x)
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new StringLength(x.asInstanceOf[StringNode])
-}
-
-class MapLength(val arg: StringIntMapNode) extends UnaryOpNode[Int] with IntNode
-{
-	override lazy val code: String = "len(" + arg.code + ")"
-
-	override def doOp(x: Any): Option[Int] = x match
-	{
-		case x: List[_] => Some(x.size)
-		case _ => wrongType(x)
-	}
-
-	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new MapLength(x.asInstanceOf[StringIntMapNode])
+		new Length(x.asInstanceOf[IterableNode])
 }
 
 class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNode
@@ -100,7 +87,7 @@ class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNo
 		new StringLower(x.asInstanceOf[StringNode])
 }
 
-class Max(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
+class Max(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 {
 	override lazy val code: String = "max(" + arg.code + ")"
 	override def doOp(x: Any): Option[Int] = x match {
@@ -109,10 +96,10 @@ class Max(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new Max(x.asInstanceOf[IntListNode])
+		new Max(x.asInstanceOf[ListNode[Int]])
 }
 
-class Min(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
+class Min(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 {
 	override lazy val code: String = "min(" + arg.code + ")"
 	override def doOp(x: Any): Option[Int] = x match {
@@ -121,10 +108,10 @@ class Min(val arg: IntListNode) extends UnaryOpNode[Int] with IntNode
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new Min(x.asInstanceOf[IntListNode])
+		new Min(x.asInstanceOf[ListNode[Int]])
 }
 
-class SortedStringList(val arg: StringListNode) extends UnaryOpNode[Iterable[String]] with StringListNode
+class SortedStringList(val arg: ListNode[String]) extends UnaryOpNode[Iterable[String]] with StringListNode
 {
 	override lazy val code: String = "sorted(" + arg.code + ")"
 
@@ -135,5 +122,5 @@ class SortedStringList(val arg: StringListNode) extends UnaryOpNode[Iterable[Str
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
-		new SortedStringList(x.asInstanceOf[StringListNode])
+		new SortedStringList(x.asInstanceOf[ListNode[String]])
 }

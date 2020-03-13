@@ -10,7 +10,7 @@ class ChildrenIterator(
   extends Iterator[List[ASTNode]]
 {
 	// TODO Handle cases where none of the children match the parent
-	val childrenLists: List[List[ASTNode]] = childTypes.map(t => childrenCandidates.filter(_.nodeType == t))
+	val childrenLists: List[List[ASTNode]] = childTypes.map(t => childrenCandidates.filter(c => t.equals(c.nodeType)))
 	val candidates: Array[Iterator[ASTNode]] = childrenLists.map(l => l.iterator).toArray
 	val allExceptLast: Array[ASTNode] = candidates.dropRight(1).map(_.next())
 	var next_child: Option[List[ASTNode]] = None

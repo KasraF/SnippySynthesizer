@@ -4,7 +4,7 @@ import ast.Types.Types
 import ast._
 import enumeration.{Enumerator, InputsValuesManager}
 
-abstract class MapCompVocabMaker(inputType: Types, valueType: Types) extends VocabMaker with Iterator[ASTNode]
+abstract class MapCompVocabMaker(iterableType: Types, valueType: Types) extends VocabMaker with Iterator[ASTNode]
 {
 	override val arity: Int = 3
 
@@ -19,8 +19,10 @@ abstract class MapCompVocabMaker(inputType: Types, valueType: Types) extends Voc
 
 	var nextProg: Option[ASTNode] = None
 
-	assert(inputType.equals(Types.Int) || inputType.equals(Types.String),
-	       s"List comprehension input type not supported: $inputType")
+	assert(iterableType.equals(Types.String) ||
+	         iterableType.equals(Types.List(Types.Int)) ||
+	         iterableType.equals(Types.List(Types.String)),
+	       s"List comprehension iterable type not supported: $iterableType")
 
 	assert(valueType.equals(Types.Int) || valueType.equals(Types.String),
 	       s"List comprehension output type not supported: $valueType")
@@ -33,7 +35,7 @@ abstract class MapCompVocabMaker(inputType: Types, valueType: Types) extends Voc
 	  vocabFactory: VocabFactory,
 	  height: Int) : Iterator[ASTNode] =
 	{
-		this.listIter = progs.filter(n => n.nodeType.equals(this.inputType)).iterator
+		this.listIter = progs.filter(n => n.nodeType.equals(this.iterableType)).iterator
 		this.childHeight = height - 1
 		this.varName = "var"
 		this.contexts = contexts
@@ -44,7 +46,7 @@ abstract class MapCompVocabMaker(inputType: Types, valueType: Types) extends Voc
 
 		// Filter the vocabs for the map function
 		// TODO There has to be a more efficient way
-		val newVarVocab = this.inputType match {
+		val newVarVocab = this.iterableType match {
 			case Types.String => new BasicVocabMaker {
 				override val arity: Int = 0
 				override val childTypes: List[Types] = Nil
@@ -53,7 +55,15 @@ abstract class MapCompVocabMaker(inputType: Types, valueType: Types) extends Voc
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new StringVariable(varName, contexts)
 			}
-			case Types.Int => new BasicVocabMaker {
+			case Types.List(Types.String) => new BasicVocabMaker {
+				override val arity: Int = 0
+				override val childTypes: List[Types] = Nil
+				override val returnType: Types = Types.String
+
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					new StringVariable(varName, contexts)
+			}
+			case Types.List(Types.Int) => new BasicVocabMaker {
 				override val arity: Int = 0
 				override val childTypes: List[Types] = Nil
 				override val returnType: Types = Types.Int

@@ -74,18 +74,6 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals(node.children.size, 1)
 	}
 
-	@Test def stringLengthNode(): Unit =
-	{
-		val node: StringLength = new StringLength(new StringLiteral("83", 1))
-		assertEquals(1, node.values.length)
-		assertEquals(2, node.values.head)
-		assertEquals(Types.Int, node.nodeType)
-		assertEquals("len(\"83\")", node.code)
-		assertEquals(1, node.height)
-		assertEquals(2, node.terms)
-		assertEquals(node.children.size, 1)
-	}
-
 	@Test def stringLowerNode(): Unit =
 	{
 		var node: StringLower = new StringLower(new StringLiteral("aBC", 1))

@@ -2,16 +2,17 @@ package ast
 
 import ast.Types.Types
 
-trait MapCompNode[K,V] extends ASTNode
+trait MapCompNode[K,V] extends MapNode[K,V]
 {
-	val list: ASTNode
+	val list: IterableNode
 	val key: ASTNode
 	val value: ASTNode
 	val varName: String
 
 	assert(key.values.length == value.values.length, "Key and value did not match")
 
-	override val nodeType: Types = Types.Map(Types.childOf(list.nodeType), value.nodeType)
+	override val keyType: Types = Types.childOf(list.nodeType)
+	override val valType: Types = value.nodeType
 
 	override val values: List[List[(K,V)]] = {
 		val entries = key.values.zip(value.values)
@@ -33,13 +34,14 @@ trait MapCompNode[K,V] extends ASTNode
 		varName.equals(this.varName) || list.includes(varName) || key.includes(varName) || value.includes(varName)
 }
 
-trait FilteredMapNode[K,V] extends ASTNode
+trait FilteredMapNode[K,V] extends MapNode[K,V]
 {
-	val map: ASTNode
-	val filter: ASTNode
+	val map: MapNode[K,V]
+	val filter: BoolNode
 	val keyName: String
 
-	override val nodeType: Types = map.nodeType
+	override val keyType: Types = map.keyType
+	override val valType: Types = map.valType
 
 	override val values: List[List[(K,V)]] = {
 		map.values
@@ -61,7 +63,34 @@ trait FilteredMapNode[K,V] extends ASTNode
 	override val code: String = s"{$keyName: ${map.code}[$keyName] for $keyName in ${map.code} if ${filter.code}}"
 	override def includes(varName: String): Boolean =
 		varName.equals(this.keyName) || map.includes(varName) || filter.includes(varName)
+
+	def make(map: MapNode[K,V], filter: BoolNode, keyName: String) : FilteredMapNode[K,V]
 }
 
-class StringIntMapCompNode(val list: StringNode, val key: StringNode, val value: IntNode, val varName: String) extends MapCompNode[String,Int] with StringIntMapNode
-class StringIntFilteredMapNode(val map: StringIntMapNode, val filter: BoolNode, val keyName: String) extends FilteredMapNode[String,Int] with StringIntMapNode
+class StringStringMapCompNode    (val list: StringNode,       val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String,String]
+class StringIntMapCompNode       (val list: StringNode,       val key: StringNode, val value: IntNode,    val varName: String) extends MapCompNode[String,Int]
+class StringListStringMapCompNode(val list: ListNode[String], val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String,String]
+class StringListIntMapCompNode   (val list: ListNode[String], val key: StringNode, val value: IntNode,    val varName: String) extends MapCompNode[String,Int]
+class IntStringMapCompNode       (val list: ListNode[Int],    val key: IntNode,    val value: StringNode, val varName: String) extends MapCompNode[Int,String]
+class IntIntMapCompNode          (val list: ListNode[String], val key: IntNode,    val value: IntNode,    val varName: String) extends MapCompNode[Int,Int]
+
+class StringStringFilteredMapNode(val map: MapNode[String,String], val filter: BoolNode, val keyName: String) extends FilteredMapNode[String,String]
+{
+	override def make(map: MapNode[String, String], filter: BoolNode, keyName: String): FilteredMapNode[String, String] =
+		new StringStringFilteredMapNode(map, filter, keyName)
+}
+class StringIntFilteredMapNode(val map: MapNode[String,Int], val filter: BoolNode, val keyName: String) extends FilteredMapNode[String,Int]
+{
+	override def make(map: MapNode[String, Int], filter: BoolNode, keyName: String): FilteredMapNode[String, Int] =
+		new StringIntFilteredMapNode(map, filter, keyName)
+}
+class IntStringFilteredMapNode(val map: MapNode[Int,String], val filter: BoolNode, val keyName: String) extends FilteredMapNode[Int,String]
+{
+	override def make(map: MapNode[Int, String], filter: BoolNode, keyName: String): FilteredMapNode[Int, String] =
+		new IntStringFilteredMapNode(map, filter, keyName)
+}
+class IntIntFilteredMapNode(val map: MapNode[Int,Int], val filter: BoolNode, val keyName: String) extends FilteredMapNode[Int,Int]
+{
+	override def make(map: MapNode[Int, Int], filter: BoolNode, keyName: String): FilteredMapNode[Int, Int] =
+		new IntIntFilteredMapNode(map, filter, keyName)
+}

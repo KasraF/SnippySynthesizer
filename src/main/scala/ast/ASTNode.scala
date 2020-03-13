@@ -14,7 +14,9 @@ trait ASTNode
 	def includes(varName: String): Boolean
 }
 
-trait StringNode extends ASTNode
+trait IterableNode extends ASTNode
+
+trait StringNode extends IterableNode
 {
 	override val values: List[String]
 	override val nodeType: Types = Types.String
@@ -32,40 +34,45 @@ trait BoolNode extends ASTNode
 	override val nodeType: Types = Types.Bool
 }
 
-trait StringListNode extends ASTNode
-{
-	override val values: List[Iterable[String]]
-	override val nodeType: Types = Types.StringList
+trait ListNode[T] extends IterableNode {
+	val childType: Types
+	override val values: List[Iterable[T]]
+	override lazy val nodeType: Types = Types.List(childType)
 }
 
-trait IntListNode extends ASTNode
+trait StringListNode extends ListNode[String] { override val childType: Types = Types.String }
+trait IntListNode extends ListNode[Int] { override val childType: Types = Types.Int}
+trait BoolListNode extends ListNode[Boolean]  { override val childType: Types = Types.Bool}
+
+trait MapNode[K,V] extends IterableNode
 {
-	override val values: List[Iterable[Int]]
-	override val nodeType: Types = Types.IntList
+	val keyType: Types
+	val valType: Types
+
+	override val values: List[List[(K,V)]]
+	override lazy val nodeType: Types = Types.Map(keyType, valType)
 }
 
-trait StringIntMapNode extends ASTNode
+trait StringStringMapNode extends MapNode[String,String]
 {
-	override val values: List[List[(String,Int)]]
-	override val nodeType: Types = Types.Map(Types.String, Types.Int)
+	override val keyType: Types = Types.String
+	override val valType: Types = Types.String
 }
 
-object EmptyStringListNode extends StringListNode
+trait StringIntMapNode extends MapNode[String,Int]
 {
-	override val values: List[Iterable[String]] = List(Nil)
-	override val code: String = "[]"
-	override val height: Int = 0
-	override val terms: Int = 0
-	override val children: Iterable[ASTNode] = Nil
-	override def includes(varName: String): Boolean = false
+	override val keyType: Types = Types.String
+	override val valType: Types = Types.Int
 }
 
-object EmptyIntListNode extends IntListNode
+trait IntStringMapNode extends MapNode[Int,String]
 {
-	override val values: List[Iterable[Int]] = List(Nil)
-	override val code: String = "[]"
-	override val height: Int = 0
-	override val terms: Int = 0
-	override val children: Iterable[ASTNode] = Nil
-	override def includes(varName: String): Boolean = false
+	override val keyType: Types = Types.Int
+	override val valType: Types = Types.String
+}
+
+trait IntIntMapNode extends MapNode[Int,Int]
+{
+	override val keyType: Types = Types.Int
+	override val valType: Types = Types.Int
 }

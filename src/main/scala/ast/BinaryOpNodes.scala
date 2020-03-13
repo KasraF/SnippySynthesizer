@@ -2,6 +2,8 @@ package ast
 
 import trace.DebugPrints.eprintln
 
+import scala.collection.LinearSeq
+
 trait BinaryOpNode[T] extends ASTNode
 {
 	lazy val values: List[T] = lhs.values.zip(rhs.values).map(pair => doOp(pair._1, pair._2)) match {
@@ -68,7 +70,7 @@ class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNod
 		new StringConcat(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
 
-class MapGet(val lhs: StringIntMapNode, val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
+class MapGet(val lhs: MapNode[String,Int], val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
 {
 	override lazy val code: String = lhs.terms match {
 		case 1 => lhs.code + "[" + rhs.code + "]"
@@ -85,9 +87,8 @@ class MapGet(val lhs: StringIntMapNode, val rhs: StringNode) extends BinaryOpNod
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new MapGet(l.asInstanceOf[StringIntMapNode], r.asInstanceOf[StringNode])
+		new MapGet(l.asInstanceOf[MapNode[String,Int]], r.asInstanceOf[StringNode])
 }
-
 
 class BinarySubstring(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
 {
@@ -235,7 +236,8 @@ class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode
 	}
 
 	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
-		case (l: String, r: String ) => Some(l.split(r).toList)
+		case (_, "") => None
+		case (l: String, r: String) => Some(l.split(r).toList)
 		case _ => wrongType(l, r)
 	}
 
@@ -243,7 +245,7 @@ class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode
 		new StringSplit(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 }
 
-class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpNode[String] with StringNode
+class StringJoin(val lhs: StringNode, val rhs: ListNode[String]) extends BinaryOpNode[String] with StringNode
 {
 	override lazy val code: String = lhs.terms match {
 		case 1 => lhs.code + ".join(" + rhs.code + ")"
@@ -256,5 +258,5 @@ class StringJoin(val lhs: StringNode, val rhs: StringListNode) extends BinaryOpN
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
-		new StringJoin(l.asInstanceOf[StringNode], r.asInstanceOf[StringListNode])
+		new StringJoin(l.asInstanceOf[StringNode], r.asInstanceOf[ListNode[String]])
 }

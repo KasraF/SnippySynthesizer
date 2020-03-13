@@ -241,20 +241,11 @@ object PythonPBETask
 			new BasicVocabMaker
 			{
 				override val arity: Int = 1
-				override val childTypes: List[Types] = List(Types.String)
+				override val childTypes: List[Types] = List(Types.Iterable(Types.Any))
 				override val returnType: Types = Types.Int
 				
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringLength(children.head.asInstanceOf[StringNode])
-			},
-			new BasicVocabMaker
-			{
-				override val arity: Int = 1
-				override val childTypes: List[Types] = List(Types.Map(Types.String, Types.Int))
-				override val returnType: Types = Types.Int
-
-				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new MapLength(children.head.asInstanceOf[StringIntMapNode])
+					new Length(children.head.asInstanceOf[IterableNode])
 			},
 			new BasicVocabMaker
 			{
@@ -263,7 +254,7 @@ object PythonPBETask
 				override val returnType: Types = Types.Int
 				
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new Min(children.head.asInstanceOf[IntListNode])
+					new Min(children.head.asInstanceOf[ListNode[Int]])
 			},
 			new BasicVocabMaker
 			{
@@ -272,7 +263,7 @@ object PythonPBETask
 				override val returnType: Types = Types.Int
 				
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new Max(children.head.asInstanceOf[IntListNode])
+					new Max(children.head.asInstanceOf[ListNode[Int]])
 			},
 			new BasicVocabMaker
 			{
@@ -341,7 +332,7 @@ object PythonPBETask
 				override val returnType: Types = Types.String
 				
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringJoin(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[StringListNode])
+					new StringJoin(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[ListNode[String]])
 			},
 			new BasicVocabMaker
 			{
@@ -350,50 +341,58 @@ object PythonPBETask
 				override val returnType: Types = Types.StringList
 				
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new SortedStringList(children.head.asInstanceOf[StringListNode])
+					new SortedStringList(children.head.asInstanceOf[ListNode[String]])
 			},
 			new ListCompVocabMaker(Types.String, Types.String) {
 				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
 					new StringToStringListCompNode(
-						lst.asInstanceOf[StringListNode],
+						lst.asInstanceOf[ListNode[String]],
 						map.asInstanceOf[StringNode],
 						this.varName)
 			},
 			new ListCompVocabMaker(Types.String, Types.Int) {
 				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
 					new StringToIntListCompNode(
-						lst.asInstanceOf[StringListNode],
+						lst.asInstanceOf[ListNode[String]],
 						map.asInstanceOf[IntNode],
 						this.varName)
 			},
 			new ListCompVocabMaker(Types.Int, Types.String) {
 				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
 					new IntToStringListCompNode(
-						lst.asInstanceOf[IntListNode],
+						lst.asInstanceOf[ListNode[Int]],
 						map.asInstanceOf[StringNode],
 						this.varName)
 			},
 			new ListCompVocabMaker(Types.Int, Types.Int) {
 				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
 					new IntToIntListCompNode(
-						lst.asInstanceOf[IntListNode],
+						lst.asInstanceOf[ListNode[Int]],
 						map.asInstanceOf[IntNode],
 						this.varName)
 			},
 			new ListCompVocabMaker(Types.Int, Types.Int) {
 				override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
 					new IntToIntListCompNode(
-						lst.asInstanceOf[IntListNode],
+						lst.asInstanceOf[ListNode[Int]],
 						map.asInstanceOf[IntNode],
 						this.varName)
+			},
+			new MapCompVocabMaker(Types.String, Types.String) {
+				override def makeNode(lst: ASTNode, key: ASTNode, value: ASTNode): ASTNode =
+					new StringStringMapCompNode(lst.asInstanceOf[StringNode], key.asInstanceOf[StringNode], value.asInstanceOf[StringNode], this.varName)
 			},
 			new MapCompVocabMaker(Types.String, Types.Int) {
 				override def makeNode(lst: ASTNode, key: ASTNode, value: ASTNode): ASTNode =
 					new StringIntMapCompNode(lst.asInstanceOf[StringNode], key.asInstanceOf[StringNode], value.asInstanceOf[IntNode], this.varName)
 			},
+			new FilteredMapVocabMaker(Types.String, Types.String) {
+				override def makeNode(map: ASTNode, filter: BoolNode) : ASTNode =
+					new StringStringFilteredMapNode(map.asInstanceOf[StringStringMapNode], filter, this.keyName)
+			},
 			new FilteredMapVocabMaker(Types.String, Types.Int) {
 				override def makeNode(map: ASTNode, filter: BoolNode) : ASTNode =
-					new StringIntFilteredMapNode(map.asInstanceOf[StringIntMapNode], filter, this.keyName)
+					new StringIntFilteredMapNode(map.asInstanceOf[MapNode[String,Int]], filter, this.keyName)
 			},
 			new BasicVocabMaker
 			{
@@ -402,7 +401,7 @@ object PythonPBETask
 				override val returnType: Types = Types.Int
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new MapGet(children.head.asInstanceOf[StringIntMapNode], children(1).asInstanceOf[StringNode])
+					new MapGet(children.head.asInstanceOf[MapNode[String,Int]], children(1).asInstanceOf[StringNode])
 			},
 			new BasicVocabMaker
 			{
@@ -431,19 +430,6 @@ object PythonPBETask
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					new IntDivision(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[IntNode])
 			}
-			//			new BasicVocabMaker
-//			{
-//				override val arity: Int = 4
-//				override val childTypes: List[Types] = List(Types.String, Types.Int, Types.Int, Types.Int)
-//				override val returnType: Types = Types.String
-//				//
-//				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-//					new QuaternarySubstring(
-//						children.head.asInstanceOf[StringNode],
-//						children(1).asInstanceOf[IntNode],
-//						children(2).asInstanceOf[IntNode],
-//						children(3).asInstanceOf[IntNode])
-//			}
 		)
 
 		VocabFactory(vocab.appendedAll(
@@ -476,14 +462,21 @@ object PythonPBETask
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new BoolVariable(name, contexts)
 				  }
-				  case (name, Types.Map(Types.String, Types.Int)) => new BasicVocabMaker
-				  {
+				  case (name, Types.List(childType)) => new BasicVocabMaker {
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
-					  override val returnType: Types = Types.Map(Types.String, Types.Int)
+					  override val returnType: Types = Types.List(childType)
 
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						  new StringIntMapVariable(name, contexts)
+						  new ListVariable(name, contexts, childType)
+				  }
+				  case (name, Types.Map(keyType, valType)) => new BasicVocabMaker {
+					  override val arity: Int = 0
+					  override val childTypes: List[Types] = Nil
+					  override val returnType: Types = Types.Map(keyType, valType)
+
+					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						  new MapVariable(name, contexts, keyType, valType)
 				  }
 				  case (name, typ) =>
 					  assert(assertion = false, s"Input type $typ not supported for input $name")

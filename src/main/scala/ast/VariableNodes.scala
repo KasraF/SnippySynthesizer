@@ -16,4 +16,5 @@ abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 class StringVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[String](contexts) with StringNode
 class IntVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[Int](contexts) with IntNode
 class BoolVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[Boolean](contexts) with BoolNode
-class StringIntMapVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[List[(String, Int)]](contexts) with StringIntMapNode
+class ListVariable[T](val name: String, val contexts: List[Map[String,Any]], val childType: Types) extends VariableNode[List[T]](contexts) with ListNode[T]
+class MapVariable[K,V](val name: String, val contexts: List[Map[String, Any]], val keyType: Types, val valType: Types) extends VariableNode[List[(K,V)]](contexts) with MapNode[K,V]

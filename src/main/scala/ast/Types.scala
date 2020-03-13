@@ -4,16 +4,33 @@ object Types extends Enumeration
 {
 	type Types = Value
 
+	case class Iterable(childType: Types) extends super.Val {
+		override def canEqual(that: Any): Boolean = this.equals(that)
+		override def equals(that: Any): Boolean =
+			that match {
+				case String => this.childType.equals(String)
+				case List(t) => this.childType.equals(t)
+				case Set(t) => this.childType.equals(t)
+				case Iterable(t) => this.childType.equals(t)
+				case Map(t,_) => this.childType.equals(t)
+				case _ => false
+			}
+
+		override def toString(): String = s"Iterable[$childType]"
+	}
+
 	case class List(childType: Types) extends super.Val {
 		override def canEqual(that: Any): Boolean = this.equals(that)
 		override def equals(that: Any): Boolean =
 			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].childType.equals(this.childType)
+		override def toString(): String = s"List[$childType]"
 	}
 
 	case class Set(childType: Types) extends super.Val {
 		override def canEqual(that: Any): Boolean = this.equals(that)
 		override def equals(that: Any): Boolean =
 			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].childType.equals(this.childType)
+		override def toString(): String = s"Set[$childType]"
 	}
 
 	case class Map(keyType: Types, valType: Types) extends super.Val {
@@ -25,6 +42,12 @@ object Types extends Enumeration
 			}
 
 		override def toString(): String = s"Map[$keyType,$valType]"
+	}
+
+	case object Any extends super.Val {
+		override def canEqual(that: Any): Boolean = this.equals(that)
+		override def equals(that: Any): Boolean = true
+		override def toString(): String = "Any"
 	}
 
 	val String, Int, Bool, Unknown = Value

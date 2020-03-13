@@ -21,6 +21,14 @@ object PostProcessor
 				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value - b.value, a.values.length)
 				case _ => new IntSubtraction(lhs, rhs)
 			}
+		case sub: IntDivision =>
+			val lhs: IntNode = clean(sub.lhs).asInstanceOf[IntNode]
+			val rhs: IntNode = clean(sub.rhs).asInstanceOf[IntNode]
+
+			(lhs, rhs) match {
+				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value / b.value, a.values.length)
+				case _ => new IntDivision(lhs, rhs)
+			}
 		case concat: StringConcat =>
 			val lhs: StringNode = clean(concat.lhs).asInstanceOf[StringNode]
 			val rhs: StringNode = clean(concat.rhs).asInstanceOf[StringNode]
@@ -54,9 +62,9 @@ object PostProcessor
 			new StringIntMapCompNode(list, key, value, map.varName)
 		case map: FilteredMapNode[a,b] =>
 			// TODO Fix the types
-			val mapNode: StringIntMapNode = clean(map.map).asInstanceOf[StringIntMapNode]
+			val mapNode: MapNode[a,b] = clean(map.map).asInstanceOf[MapNode[a,b]]
 			val filter: BoolNode = clean(map.filter).asInstanceOf[BoolNode]
-			new StringIntFilteredMapNode(mapNode, filter, map.keyName)
+			map.make(mapNode, filter, map.keyName)
 		case n => n
 	}
 }

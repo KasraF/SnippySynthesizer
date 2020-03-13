@@ -2,13 +2,13 @@ package ast
 
 import ast.Types.Types
 
-trait ListCompNode[T] extends ASTNode
+trait ListCompNode[T] extends ListNode[T]
 {
 	val list: ASTNode
 	val map: ASTNode
 	val varName: String
 
-	override val nodeType: Types = Types.listOf(map.nodeType)
+	override val childType: Types = map.nodeType
 	override val values: List[Iterable[T]] = list.values.indices.map(
 		i => map.values.slice(
 			i * map.values.length / list.values.length,
@@ -22,7 +22,7 @@ trait ListCompNode[T] extends ASTNode
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
 }
 
-class StringToStringListCompNode(val list: StringListNode, val map: StringNode, val varName: String) extends ListCompNode[String] with StringListNode
-class StringToIntListCompNode(val list: StringListNode, val map: IntNode, val varName: String) extends ListCompNode[Int] with IntListNode
-class IntToStringListCompNode(val list: IntListNode, val map: StringNode, val varName: String) extends ListCompNode[String] with StringListNode
-class IntToIntListCompNode(val list: IntListNode, val map: IntNode, val varName: String) extends ListCompNode[Int] with IntListNode
+class StringToStringListCompNode(val list: ListNode[String], val map: StringNode, val varName: String) extends ListCompNode[String]
+class StringToIntListCompNode(val list: ListNode[String], val map: IntNode, val varName: String) extends ListCompNode[Int]
+class IntToStringListCompNode(val list: ListNode[Int], val map: StringNode, val varName: String) extends ListCompNode[String]
+class IntToIntListCompNode(val list: ListNode[Int], val map: IntNode, val varName: String) extends ListCompNode[Int]
