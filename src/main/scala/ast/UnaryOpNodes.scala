@@ -79,7 +79,6 @@ class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNo
 	override lazy val code: String = arg.parensIfNeeded + ".lower()"
 
 	override def doOp(x: Any): Option[String] = x match {
-		// TODO What's python's semantics here?
 		case x: String => Some(x.toLowerCase)
 		case _ => wrongType(x)
 	}
