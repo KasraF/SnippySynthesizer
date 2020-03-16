@@ -33,6 +33,7 @@ trait BinaryOpNode[T] extends ASTNode
 
 class LessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String = lhs.code + " <= " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
@@ -46,6 +47,7 @@ class LessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolea
 
 class GreaterThan(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String = lhs.code + " > " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
@@ -59,6 +61,7 @@ class GreaterThan(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Boole
 
 class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[String] with StringNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String = lhs.code + " + " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
@@ -72,10 +75,8 @@ class StringConcat(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNod
 
 class MapGet(val lhs: MapNode[String,Int], val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
 {
-	override lazy val code: String = lhs.terms match {
-		case 1 => lhs.code + "[" + rhs.code + "]"
-		case _ => "(" + lhs.code + ")[" + rhs.code + "]"
-	}
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + "[" + rhs.code + "]"
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
 		case (map: List[(String,Int)], key: String) =>
@@ -92,10 +93,8 @@ class MapGet(val lhs: MapNode[String,Int], val rhs: StringNode) extends BinaryOp
 
 class BinarySubstring(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
 {
-	override lazy val code: String = lhs.terms match {
-		case 1 => lhs.code + "[" + rhs.code + "]"
-		case _ => "(" + lhs.code + ")[" + rhs.code + "]"
-	}
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded  + "[" + rhs.code + "]"
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (str: String, idx: Int) =>
@@ -110,7 +109,8 @@ class BinarySubstring(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNod
 
 class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[String] with StringNode
 {
-	override lazy val code: String = lhs.code + "[::" + rhs.code + "]"
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + "[::" + rhs.code + "]"
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (_, _: 0) => None
@@ -132,6 +132,7 @@ class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Str
 
 class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String = lhs.code + " + " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
@@ -145,6 +146,7 @@ class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] 
 
 class IntSubtraction(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String = lhs.code + " - " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
@@ -158,8 +160,9 @@ class IntSubtraction(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[In
 
 class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String =
-		(if (lhs.terms > 1) "(" + lhs.code + ")" else lhs.code) + " // " + rhs.code
+		lhs.parensIfNeeded + " // " + rhs.parensIfNeeded
 
 	override def doOp(l: Any, r: Any): Option[Int] =
 		(l, r) match {
@@ -174,7 +177,8 @@ class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] 
 
 class Find(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
 {
-	override lazy val code: String = lhs.code + ".find(" + rhs.code + ")"
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + ".find(" + rhs.code + ")"
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
 		case (l: String, r: String) => Some(l.indexOf(r))
@@ -187,7 +191,8 @@ class Find(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] w
 
 class Contains(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode
 {
-	override lazy val code: String = lhs.code + " in " + rhs.code
+	override protected val parenless: Boolean = false
+	override lazy val code: String = lhs.parensIfNeeded + " in " + rhs.parensIfNeeded
 
 	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
 		case (substr: String, str: String) => Some(str.contains(substr))
@@ -200,7 +205,8 @@ class Contains(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Bo
 
 class Count(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] with IntNode
 {
-	override lazy val code: String = lhs.code + ".count(" + rhs.code + ")"
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + ".count(" + rhs.code + ")"
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
 		case ("", _) => Some(0)
@@ -230,10 +236,8 @@ class Count(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] 
 
 class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
 {
-	override lazy val code: String = lhs.terms match {
-		case 1 => lhs.code + ".split(" + rhs.code + ")"
-		case _ => "(" + lhs.code + ").split(" + rhs.code + ")"
-	}
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + ".split(" + rhs.code + ")"
 
 	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
 		case (_, "") => None
@@ -247,10 +251,8 @@ class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode
 
 class StringJoin(val lhs: StringNode, val rhs: ListNode[String]) extends BinaryOpNode[String] with StringNode
 {
-	override lazy val code: String = lhs.terms match {
-		case 1 => lhs.code + ".join(" + rhs.code + ")"
-		case _ => "(" + lhs.code + ").join(" + rhs.code + ")"
-	}
+	override protected val parenless: Boolean = false
+	override lazy val code: String = lhs.parensIfNeeded + ".join(" + rhs.code + ")"
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (str: String, lst: Iterable[_]) => Some(lst.mkString(str))

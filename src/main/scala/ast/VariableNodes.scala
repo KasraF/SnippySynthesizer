@@ -9,6 +9,7 @@ abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 	val terms = 1
 	val name: String
 	val values: List[T] = contexts.map { context => context(name).asInstanceOf[T]}
+	override protected val parenless: Boolean = true
 
 	def includes(varName: String): Boolean = name == varName
 }

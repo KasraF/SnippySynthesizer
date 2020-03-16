@@ -18,6 +18,7 @@ trait ListCompNode[T] extends ListNode[T]
 	override val terms: Int = 1 + list.terms + map.terms
 	override val children: Iterable[ASTNode] = List(list, map)
 	override val code: String = s"[${map.code} for $varName in ${list.code}]"
+	override protected val parenless: Boolean = true
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
 }

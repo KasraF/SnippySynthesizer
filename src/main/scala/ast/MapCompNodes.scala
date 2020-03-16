@@ -29,6 +29,7 @@ trait MapCompNode[K,V] extends MapNode[K,V]
 	override val height: Int = 1 + Math.max(list.height, value.height)
 	override val terms: Int = 1 + list.terms + value.terms
 	override val children: Iterable[ASTNode] = List(list, value)
+	override protected val parenless: Boolean = true
 	override val code: String = s"{${key.code}: ${value.code} for $varName in ${list.code}}"
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || key.includes(varName) || value.includes(varName)
@@ -60,6 +61,7 @@ trait FilteredMapNode[K,V] extends MapNode[K,V]
 	override val height: Int = 1 + Math.max(map.height, filter.height)
 	override val terms: Int = 1 + map.terms + filter.terms
 	override val children: Iterable[ASTNode] = List(map, filter)
+	override protected val parenless: Boolean = true
 	override val code: String = s"{$keyName: ${map.code}[$keyName] for $keyName in ${map.code} if ${filter.code}}"
 	override def includes(varName: String): Boolean =
 		varName.equals(this.keyName) || map.includes(varName) || filter.includes(varName)

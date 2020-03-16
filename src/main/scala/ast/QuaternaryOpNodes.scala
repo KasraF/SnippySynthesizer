@@ -40,9 +40,9 @@ trait QuaternaryOpNode[T] extends ASTNode
 // TODO Test is extensively before adding it
 class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode, val arg3: IntNode) extends QuaternaryOpNode[String] with StringNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String =
-		(if (arg0.terms > 1) ("(" + arg0.code + ")") else arg0.code) +
-		  "[" + arg1.code + ":" + arg2.code + ":"  + arg3.code + "]"
+		arg0.parensIfNeeded + "[" + arg1.code + ":" + arg2.code + ":"  + arg3.code + "]"
 
 	override def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[String] = (a0, a1, a2, a3) match {
 		case (_, _, _, 0) => None

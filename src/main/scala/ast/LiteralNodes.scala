@@ -15,15 +15,18 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 
 class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode
 {
-	override val code: String = '"' + value + '"'
+	override protected val parenless: Boolean = true
+	override val code: String = '"' + value + '"' //TODO escape if needed
 }
 
 class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode
 {
+	override protected val parenless: Boolean = true
 	override val code: String = value.toString
 }
 
 class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode
 {
+	override protected val parenless: Boolean = true
 	override val code: String = value.toString.capitalize
 }

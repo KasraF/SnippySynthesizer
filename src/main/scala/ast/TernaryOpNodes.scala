@@ -28,8 +28,9 @@ trait TernaryOpNode[T] extends ASTNode
 
 class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[String] with StringNode
 {
+	override protected val parenless: Boolean = true
 	override lazy val code: String =
-		(if (arg0.terms > 1) "(" + arg0.code + ")" else arg0.code) + "[" + arg1.code + ":" + arg2.code + "]"
+		arg0.parensIfNeeded + "[" + arg1.code + ":" + arg2.code + "]"
 
 	override def doOp(a0: Any, a1: Any, a2: Any): Option[String] = (a0, a1, a2) match {
 		case (s: String, start_orig: Int, end_orig: Int) =>
@@ -52,8 +53,9 @@ class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNod
 
 class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode
 {
+	override protected val parenless: Boolean = false
 	override lazy val code: String =
-		(if (arg0.terms > 1) "(" + arg0.code + ")" else arg0.code) + ".replace(" + arg1.code + ", " + arg2.code + ")"
+		arg0.parensIfNeeded + ".replace(" + arg1.code + ", " + arg2.code + ")"
 
 	override def doOp(a0: Any, a1: Any, a2: Any): Option[String] = (a0, a1, a2) match {
 		case (s: String, it: String, that: String) =>

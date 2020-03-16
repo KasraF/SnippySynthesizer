@@ -26,6 +26,7 @@ trait UnaryOpNode[T] extends ASTNode
 
 class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode
 {
+	override protected val parenless: Boolean = true
 	override lazy val code: String = "str(" + arg.code + ")"
 
 	override def doOp(x: Any): Option[String] = x match {
@@ -39,6 +40,7 @@ class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode
 
 class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 {
+	override protected val parenless: Boolean = true
 	override lazy val code: String = "int(" + arg.code + ")"
 
 	override def doOp(x: Any): Option[Int] = x match {
@@ -57,6 +59,7 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 
 class Length(val arg: IterableNode) extends UnaryOpNode[Int] with IntNode
 {
+	override protected val parenless: Boolean = true
 	override lazy val code: String = "len(" + arg.code + ")"
 
 	override def doOp(x: Any): Option[Int] = x match
@@ -72,10 +75,8 @@ class Length(val arg: IterableNode) extends UnaryOpNode[Int] with IntNode
 
 class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNode
 {
-	override lazy val code: String = arg.terms match {
-		case 1 => arg.code + ".lower()"
-		case _ => "(" + arg.code + ").lower()"
-	}
+	override protected val parenless: Boolean = true
+	override lazy val code: String = arg.parensIfNeeded + ".lower()"
 
 	override def doOp(x: Any): Option[String] = x match {
 		// TODO What's python's semantics here?
@@ -89,6 +90,7 @@ class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNo
 
 class Max(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 {
+	override protected val parenless: Boolean = true
 	override lazy val code: String = "max(" + arg.code + ")"
 	override def doOp(x: Any): Option[Int] = x match {
 		case lst: Iterable[Int] => if (lst.isEmpty) None else Some(lst.max)
@@ -101,6 +103,7 @@ class Max(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 
 class Min(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 {
+	override protected val parenless: Boolean = true
 	override lazy val code: String = "min(" + arg.code + ")"
 	override def doOp(x: Any): Option[Int] = x match {
 		case lst: Iterable[Int] => if (lst.isEmpty) None else Some(lst.min)
@@ -113,6 +116,7 @@ class Min(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 
 class SortedStringList(val arg: ListNode[String]) extends UnaryOpNode[Iterable[String]] with StringListNode
 {
+	override protected val parenless: Boolean = true
 	override lazy val code: String = "sorted(" + arg.code + ")"
 
 	override def doOp(arg: Any): Option[Iterable[String]] = arg match

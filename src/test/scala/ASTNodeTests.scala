@@ -101,6 +101,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val node: Max = new Max(new IntListNode {
 			override val values: List[Iterable[Int]] = List(-1123 :: 2 :: 1 :: Nil)
+			override protected val parenless: Boolean = true
 			override val code: String = "[-1123, 2, 1]"
 			override val height: Int = 1
 			override val terms: Int = 1
@@ -121,6 +122,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val node: Min = new Min(new IntListNode {
 			override val values: List[Iterable[Int]] = List(-1123 :: 2 :: 1 :: Nil)
+			override protected val parenless: Boolean = true
 			override val code: String = "[-1123, 2, 1]"
 			override val height: Int = 1
 			override val terms: Int = 1
@@ -1009,4 +1011,40 @@ class ASTNodeTests extends JUnitSuite
 	@Test def substringListNode(): Unit = ()
 	@Test def stringToIntListNode(): Unit = ()
 	@Test def sortedStringListNode(): Unit = ()
+
+	@Test def printingNodes() = {
+		assertEquals("2",new IntLiteral(2,1).code)
+		val inp = new StringVariable("inp",Map("inp" -> "'abc'") :: Nil)
+		val addStrings = new StringConcat(inp,new StringLiteral(" ",1))
+		assertEquals("inp + \" \"", addStrings.code)
+		val substr = new TernarySubstring(addStrings,new IntLiteral(0,1), new IntLiteral(1,1))
+		assertEquals("(inp + \" \")[0:1]",substr.code)
+		val substr2 = new TernarySubstring(inp,new IntLiteral(0,1), new IntLiteral(1,1))
+		assertEquals("inp[0:1]", substr2.code)
+
+		val split = new StringSplit(addStrings,new StringLiteral(",",1))
+		assertEquals("(inp + \" \").split(\",\")",split.code)
+		val split2 = new StringSplit(inp,new StringLiteral(",",1))
+		assertEquals("inp.split(\",\")",split2.code)
+
+		val step = new StringStep(inp,new IntLiteral(-2,1))
+		assertEquals("inp[::-2]",step.code)
+		val step2 = new StringStep(addStrings,new IntLiteral(-2,1))
+		assertEquals("(inp + \" \")[::-2]",step2.code)
+
+		val find = new Find(addStrings,inp)
+		assertEquals("(inp + \" \").find(inp)",find.code)
+
+		val find2 = new Find(step2,inp)
+		assertEquals("(inp + \" \")[::-2].find(inp)",find2.code)
+
+		val addNumbers = new IntAddition(new IntAddition(new IntLiteral(1,1),new IntLiteral(2,1)),new IntAddition(new IntLiteral(3,1), new IntLiteral(4,1)))
+		assertEquals("1 + 2 + 3 + 4", addNumbers.code)
+
+		val divNumbers = new IntDivision(addNumbers,new IntLiteral(1,1))
+		assertEquals("(1 + 2 + 3 + 4) // 1", divNumbers.code)
+
+		val divNumbers2 = new IntDivision(new IntLiteral(1,1),addNumbers)
+		assertEquals("1 // (1 + 2 + 3 + 4)", divNumbers2.code)
+	}
 }

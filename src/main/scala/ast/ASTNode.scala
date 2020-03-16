@@ -10,8 +10,9 @@ trait ASTNode
 	val height  : Int
 	val terms   : Int
 	val children: Iterable[ASTNode]
-
+	protected val parenless: Boolean
 	def includes(varName: String): Boolean
+	def parensIfNeeded: String = if (height > 0 && !parenless) "(" + code + ")" else code
 }
 
 trait IterableNode extends ASTNode
