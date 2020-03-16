@@ -54,40 +54,13 @@ class PythonPBETask(
 
 object PythonPBETask
 {
-	private def cleanupInput(input: Any) : Option[Any] =
-	{
-		if (!input.isInstanceOf[String])
-			None
-		else input.asInstanceOf[String].trim match {
-			case "" => None
-			case s if s(0).equals('\'') =>
-				// String
-				Some(s.substring(1, s.length - 1))
-			case s if s.forall(_.isDigit) || s.startsWith("-") && s.substring(1).forall(_.isDigit) =>
-				// Int
-				Some(s.toInt)
-			case s if s.startsWith("[") =>
-				// List
-				Some(s.substring(1, s.length - 1).split(',').map(v => cleanupInput(v).get).toList)
-			case s if s.startsWith("{") && s.contains(":") =>
-				// Map
-				Some(s.substring(1, s.length - 1)
-				       .split(',')
-				       .map(entryStr => entryStr.split(':').map(e => cleanupInput(e).get))
-				       .map(lst => lst.head -> lst.tail.head)
-				       .toList)
-			case s if s.startsWith("{") =>
-				// Set
-				Some(s.substring(1, s.length - 1).split(',').map(e => cleanupInput(e).get).toSet)
-			case _ => None
-		}
-	}
-
 	private def cleanupInputs(input: Map[String, Any]): Map[String, Any] = {
+		val parser = new InputParser
 		input
 		  .filter(v => !PythonExample.reserved_names.contains(v._1))
 		  // TODO Is there a cleaner way to do this?
-		  .map(variable => cleanupInput(variable._2) match {
+		  .filter(_._2.isInstanceOf[String])
+		  .map(variable => parser.parse(variable._2.asInstanceOf[String]) match {
 			  case None =>
 				  trace.DebugPrints.eprintln(s"Input not recognized: $variable")
 				  (variable._1, null)
