@@ -2,7 +2,7 @@ package sygus
 
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams}
-import sygus.Python3Parser.{AtomContext, DictorsetmakerContext, Testlist_compContext}
+import sygus.Python3Parser.{AtomContext, DictorsetmakerContext, FactorContext, Testlist_compContext}
 
 import scala.collection.JavaConverters._
 
@@ -125,13 +125,28 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 	}
 
 
+	override def visitFactor(ctx: FactorContext): Option[Any] =
+	{
+		if (ctx.MINUS() != null) {
+			// Probably a negative number?
+			this.visitChildren(ctx) match {
+				case Some(a) if a.isInstanceOf[Int] => Some(-a.asInstanceOf[Int])
+				case _ => None
+			}
+		} else {
+			this.visitChildren(ctx)
+		}
+	}
+
+
 	override def visitTerminal(node: TerminalNode): Option[Any] =
 	{
 		// TODO How to get the actual value?
 		node.getSymbol.getType match {
 			case Python3Lexer.TRUE => Some(true)
 			case Python3Lexer.FALSE => Some(false)
-			case Python3Lexer.NUMBER => Some(node.getText.toInt)
+			case Python3Lexer.NUMBER =>
+				Some(node.getText.toInt)
 			case _ => None
 		}
 	}

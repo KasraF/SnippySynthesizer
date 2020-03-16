@@ -43,7 +43,7 @@ class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
 
 	override def doOp(x: Any): Option[Int] = x match {
 		case str: String =>
-			if (!str.isEmpty && str.forall(c => c.isDigit)) {
+			if (!str.isEmpty && (str(0) == '-' && str.substring(1).forall(_.isDigit)) || str.forall(_.isDigit)) {
 				str.toIntOption
 			} else {
 				None

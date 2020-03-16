@@ -20,7 +20,7 @@ class ParserTests extends JUnitSuite
 	@Test def parseIntList(): Unit = assertEquals(Some(List(123)), parser.parse("[123]"))
 	@Test def parseStrList(): Unit = assertEquals(Some(List("abc")), parser.parse("['abc']"))
 	@Test def parseBoolList(): Unit = assertEquals(Some(List(false)), parser.parse("[False]"))
-	@Test def parseIntMultiList(): Unit = assertEquals(Some(List(1, 2, 3)), parser.parse("[1, 2, 3]"))
+	@Test def parseIntMultiList(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse("[1, 2, -3]"))
 	@Test def parseStrMultiList(): Unit = assertEquals(Some(List("a", "b", "c")), parser.parse("['a', 'b', 'c']"))
 	@Test def parseBoolMultiList(): Unit = assertEquals(Some(List(false, true)), parser.parse("[False, True]"))
 	@Test def parseEmptyList(): Unit = assertEquals(Some(List()), parser.parse("[]"))
