@@ -1007,7 +1007,27 @@ class ASTNodeTests extends JUnitSuite
 	// List Operations
 	@Test def stringSplitNode(): Unit = ()
 	@Test def stringJoinNode(): Unit = ()
-	@Test def stringStepListNode(): Unit = ()
+	@Test def stringStepListNode(): Unit = {
+		val x = new StringVariable("x", Map("x" -> "abcde") :: Map("x" -> "a") :: Map("x" -> "ab") :: Nil)
+		val step = new StringStep(x,new IntLiteral(1,x.values.length))
+		assertEquals("x[::1]",step.code)
+		assertEquals(List("abcde","a","ab"),step.values)
+
+		val step2 = new StringStep(x,new IntLiteral(-1,x.values.length))
+		assertEquals("x[::-1]",step2.code)
+		assertEquals(List("edcba", "a", "ba"),step2.values)
+
+		val step3 = new StringStep(x,new IntLiteral(2,x.values.length))
+		assertEquals("x[::2]",step3.code)
+		assertEquals(List("ace", "a", "a"),step3.values)
+
+		val step4 = new StringStep(x,new IntLiteral(-2,x.values.length))
+		assertEquals("x[::-2]",step4.code)
+		assertEquals(List("eca", "a", "b"),step4.values)
+
+		val step5 = new StringStep(x, new IntLiteral(0,x.values.length))
+		assertEquals(Nil,step5.values)
+	}
 	@Test def substringListNode(): Unit = ()
 	@Test def stringToIntListNode(): Unit = ()
 	@Test def sortedStringListNode(): Unit = ()

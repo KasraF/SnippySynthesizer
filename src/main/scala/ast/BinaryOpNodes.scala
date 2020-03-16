@@ -115,14 +115,13 @@ class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Str
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (_, _: 0) => None
 		case (str: String, step: Int) =>
-			// TODO Is there a better way to do this?
-			var rs: String = ""
+			var rs: StringBuilder = new StringBuilder(Math.abs(str.length / step) + 1)
 			var idx = if (step > 0) 0 else str.length - 1
 			while (idx >= 0 && idx < str.length) {
 				rs += str(idx)
 				idx += step
 			}
-			Some(rs)
+			Some(rs.toString)
 		case _ => wrongType(l, r)
 	}
 
