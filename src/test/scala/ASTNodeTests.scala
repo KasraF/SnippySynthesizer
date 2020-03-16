@@ -1031,6 +1031,16 @@ class ASTNodeTests extends JUnitSuite
 	@Test def substringListNode(): Unit = ()
 	@Test def stringToIntListNode(): Unit = ()
 	@Test def sortedStringListNode(): Unit = ()
+	@Test def stringCount(): Unit = {
+		val x = new StringVariable("x", Map("x" -> "") :: Map("x" -> "abc") :: Map("x" -> "bc") :: Map("x" -> "aaaabc") :: Map("x" -> "abcabc") :: Nil)
+		val count = new Count(x,new StringLiteral("a",x.values.length))
+		assertEquals("x.count(\"a\")",count.code)
+		assertEquals(List(0, 1, 0, 4, 2), count.values)
+
+		val count2 = new Count(x,new StringLiteral("aa",x.values.length))
+		assertEquals("x.count(\"aa\")",count2.code)
+		assertEquals(List(0, 0, 0, 2, 0),count2.values)
+	}
 
 	@Test def printingNodes() = {
 		assertEquals("2",new IntLiteral(2,1).code)

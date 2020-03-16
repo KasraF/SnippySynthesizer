@@ -211,19 +211,16 @@ class Count(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[Int] 
 		case ("", _) => Some(0)
 		case (l: String, "") => Some(l.length + 1)
 		case (l: String, r: String) => {
-			// TODO I vaguely remember something from algorithms class about a faster way
 			var count = 0
 			var i = 0
-
-			while (i < l.length - r.length + 1) {
-				if (l.substring(i, i + r.length) == r) {
+			while (i != -1) {
+				val nextInstance = l.indexOf(r,i)
+				if (nextInstance > -1) {
 					count += 1
-					i += r.length
-				} else {
-					i += 1
+					i = nextInstance + r.length
 				}
+				else i = -1
 			}
-
 			Some(count)
 		}
 		case _ => wrongType(l, r)
