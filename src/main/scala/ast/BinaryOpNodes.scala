@@ -79,11 +79,7 @@ class MapGet(val lhs: MapNode[String,Int], val rhs: StringNode) extends BinaryOp
 	override lazy val code: String = lhs.parensIfNeeded + "[" + rhs.code + "]"
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
-		case (map: List[(String,Int)], key: String) =>
-			map.find(_._1.equals(key)) match {
-				case Some(a) =>Some(a._2)
-				case _ => None
-			}
+		case (map: Map[String,Int], key: String) => map.get(key)
 		case _ => wrongType(l, r)
 	}
 

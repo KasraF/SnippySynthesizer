@@ -14,14 +14,14 @@ trait MapCompNode[K,V] extends MapNode[K,V]
 	override val keyType: Types = Types.childOf(list.nodeType)
 	override val valType: Types = value.nodeType
 
-	override val values: List[List[(K,V)]] = {
+	override val values: List[Map[K,V]] = {
 		val entries = key.values.zip(value.values)
 		val rs = list.values
 		  .indices
 		  .map(i => entries.slice(
 			  i * entries.length / list.values.length,
 			  (i+1) * entries.length / list.values.length))
-		  .map(l => l.map { case (k: Any, v: Any) => k.asInstanceOf[K] -> v.asInstanceOf[V] }.distinct)
+		  .map(l => l.map { case (k: Any, v: Any) => k.asInstanceOf[K] -> v.asInstanceOf[V] }.distinct.toMap)
 		  .toList
 		rs
 	}
@@ -44,20 +44,7 @@ trait FilteredMapNode[K,V] extends MapNode[K,V]
 	override val keyType: Types = map.keyType
 	override val valType: Types = map.valType
 
-	override val values: List[List[(K,V)]] = {
-		map.values
-		  .indices
-		  .map(i => filter.values.asInstanceOf[List[Boolean]].slice(
-			  i * filter.values.length / map.values.length,
-			  (i+1) * filter.values.length / map.values.length))
-		  .zip(map.values.asInstanceOf[List[List[(K,V)]]])
-		  .map {
-			  case (preds: List[Boolean], entries: List[(K,V)]) =>
-				  entries.zip(preds).filter(_._2).map(_._1).distinct
-		  }
-		  .toList
-	}
-
+	override val values: List[Map[K,V]] = filterOp(map, filter)
 	override val height: Int = 1 + Math.max(map.height, filter.height)
 	override val terms: Int = 1 + map.terms + filter.terms
 	override val children: Iterable[ASTNode] = List(map, filter)
@@ -65,8 +52,46 @@ trait FilteredMapNode[K,V] extends MapNode[K,V]
 	override val code: String = s"{$keyName: ${map.code}[$keyName] for $keyName in ${map.code} if ${filter.code}}"
 	override def includes(varName: String): Boolean =
 		varName.equals(this.keyName) || map.includes(varName) || filter.includes(varName)
-
 	def make(map: MapNode[K,V], filter: BoolNode, keyName: String) : FilteredMapNode[K,V]
+
+	def findKeyVarInNode(node: ASTNode) : Option[VariableNode[_]] =
+	{
+		node match {
+			case n: VariableNode[_] if n.name == keyName => Some(n)
+			case n: ASTNode if n.terms > 1 => findKeyVar(n.children)
+			case _ => None
+		}
+	}
+	def findKeyVar(nodes: Iterable[ASTNode]) : Option[VariableNode[_]] =
+	{
+		val keyVar = nodes.map(findKeyVarInNode).filter(_.isDefined)
+		if (keyVar.isEmpty) None
+		else {
+			keyVar.head
+		}
+	}
+	def filterOp(map: MapNode[K,V], filter: BoolNode) : List[Map[K,V]] =
+	{
+	    val keyNode: VariableNode[_] = findKeyVar(filter.children).get
+		val filterValues = map.values
+		  .indices
+		  .map(i => filter.values.slice(
+			  i * filter.values.length / map.values.length,
+			  (i+1) * filter.values.length / map.values.length))
+		val keyValues = map.values
+		  .indices
+		  .map(i => keyNode.values.slice(
+			  i * keyNode.values.length / map.values.length,
+			  (i+1) * keyNode.values.length / map.values.length))
+		map.values
+		  .zip(keyValues.zip(filterValues).map(tup => tup._1.zip(tup._2)))
+		  .map( {
+			  case (map: Map[K,V], keyMap: List[(K,Boolean)]) =>
+				  map.filter({
+					  case (k: K, _) => keyMap.find(_._1.equals(k)).get._2
+				  })
+		  })
+	}
 }
 
 class StringStringMapCompNode    (val list: StringNode,       val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String,String]
