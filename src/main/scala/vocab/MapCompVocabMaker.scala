@@ -256,14 +256,14 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types) extends V
 		while (!done && mapIter.hasNext) {
 			val map = mapIter.next()
 
-			if (map.values.head.asInstanceOf[List[_]].nonEmpty) {
+			if (map.values.head.asInstanceOf[Map[_,_]].nonEmpty) {
 				this.currMap = map
 				val newContexts = this.contexts.zipWithIndex
-				  .flatMap(context =>
-					           this.currMap.values(context._2)
-					             .asInstanceOf[List[(String, Int)]]
-					             .map(_._1)
-					             .map(value => context._1 + (this.keyName -> value)))
+				  .flatMap(
+					  context =>
+						  this.currMap.values(context._2)
+						    .asInstanceOf[Map[String, Int]].keys
+						    .map(key => context._1 + (this.keyName -> key)))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = new Enumerator(this.filterVocab, oeValuesManager, newContexts)
 				done = true

@@ -50,7 +50,7 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 				return thing.accept(this)
 			} else {
 				// Empty dictionary
-				return Some(List())
+				return Some(Map())
 			}
 		}
 
@@ -81,37 +81,20 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 	{
 		if (!ctx.COLON().isEmpty) {
 			// This is a map
-			val lst = ctx.children.asScala
-			  .map(_.accept(this))
-			  .filter(_.isDefined)
-			  .map(_.get)
-			var rs = List((lst.head, lst.tail.head))
+			val map = ctx.children.asScala
+			              .map(_.accept(this))
+			              .filter(_.isDefined)
+			              .map(_.get)
+			              .zipWithIndex
+						  .groupBy(_._2 / 2)
+						  .map(arr => (arr._2.head._1, arr._2.tail.head._1))
+			val keyTypes = map.keys.map(_.getClass)
+			val valTypes = map.values.map(_.getClass)
 
-			for (i <- 2 until lst.length by 2) {
-				val key = lst(i)
-				val value = lst(i+1)
-				rs = rs :+ (key, value)
-			}
-
-			val keyType = rs.head._1.getClass
-			val valType = rs.head._2.getClass
-
-			if (rs.exists(tup => !tup._1.getClass.equals(keyType) || !tup._2.getClass.equals(valType))) {
+			if (keyTypes.exists(!_.equals(keyTypes.head)) || valTypes.exists(!_.equals(valTypes.head)))
 				return None
-			} else {
-				return Some(rs)
-			}
-
-			// TODO We should support these as maps in Scala
-			// Currently we require them as list, because the
-			// order matters. :(
-//			return Some(ctx.children.asScala
-//			  .map(_.accept(this))
-//			  .filter(_.isDefined)
-//			  .map(_.get)
-//			  .zipWithIndex
-//			  .groupBy(_._2 / 2)
-//			  .map(arr => (arr._2.head._1, arr._2.tail.head._1)))
+			else
+				return Some(map)
 		} else if (!ctx.COMMA().isEmpty) {
 			// This is a set
 			Some(ctx.children.asScala

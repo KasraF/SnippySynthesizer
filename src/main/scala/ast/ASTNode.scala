@@ -49,7 +49,7 @@ trait MapNode[K,V] extends IterableNode
 	val keyType: Types
 	val valType: Types
 
-	override val values: List[List[(K,V)]]
+	override val values: List[Map[K,V]]
 	override lazy val nodeType: Types = Types.Map(keyType, valType)
 }
 

@@ -19,7 +19,7 @@ trait UnaryOpNode[T] extends ASTNode
 	def includes(varName: String): Boolean = arg.includes(varName)
 	protected def wrongType(x: Any) : Option[T] =
 	{
-		eprintln(s"Wrong type: $x")
+		eprintln(s"[${this.getClass.getSimpleName}] Wrong value type: $x")
 		None
 	}
 }
@@ -63,6 +63,7 @@ class Length(val arg: IterableNode) extends UnaryOpNode[Int] with IntNode
 	{
 		case x: String => Some(x.length)
 		case l: List[_] => Some(l.length)
+		case m: Map[_,_] => Some(m.size)
 		case _ => wrongType(x)
 	}
 
