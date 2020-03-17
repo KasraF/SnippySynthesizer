@@ -17,10 +17,9 @@ trait SynthesisTask
 
 	override def toString: String =
 	{
-		// TODO What's a faster way to do this?
 		s"\treturnType: $returnType\n" +
 		  s"\tparameters: $parameters\n" +
-		  "\tvocab: ...\n" +
+		  "\tvocab: [...]\n" +
 		  s"\texamples: $examples"
 	}
 }

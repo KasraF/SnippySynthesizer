@@ -2,7 +2,7 @@ package sygus
 
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams}
-import sygus.Python3Parser.{AtomContext, DictorsetmakerContext, FactorContext, Testlist_compContext}
+import sygus.Python3Parser._
 
 import scala.collection.JavaConverters._
 
@@ -16,8 +16,21 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 		val parser = new Python3Parser(new BufferedTokenStream(lexer))
 		parser.removeErrorListeners()
 		parser.setErrorHandler(new BailErrorStrategy)
-		this.visit(parser.term())
+		this.visit(parser.expr())
 	}
+
+	override def visitArith_expr(ctx: Arith_exprContext): Option[Any] =
+	{
+		if (ctx.term().size() > 1) None
+		else this.visitChildren(ctx)
+	}
+
+	override def visitTerm(ctx: TermContext): Option[Any] =
+	{
+		if (ctx.factor().size() > 1) None
+		else this.visitChildren(ctx)
+	}
+
 
 	override def visitAtom(ctx: AtomContext): Option[Any] =
 	{

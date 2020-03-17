@@ -9,6 +9,8 @@ class ParserTests extends JUnitSuite
 
 	// Basic types
 	@Test def parseInt(): Unit = assertEquals(Some(123), parser.parse("123"))
+	@Test def parseNegInt(): Unit = assertEquals(Some(-321), parser.parse("-321"))
+	@Test def parsePosInt(): Unit = assertEquals(Some(32), parser.parse("+32"))
 	@Test def parseTrue(): Unit = assertEquals(Some(true), parser.parse("True"))
 	@Test def parseFalse(): Unit = assertEquals(Some(false), parser.parse("False"))
 	@Test def parseString(): Unit = assertEquals(Some("abc"), parser.parse("'abc'"))
@@ -26,6 +28,10 @@ class ParserTests extends JUnitSuite
 	@Test def parseEmptyList(): Unit = assertEquals(Some(List()), parser.parse("[]"))
 	@Test def parseIntBoolList(): Unit = assertEquals(None, parser.parse("[1, True]"))
 	@Test def parseIntStrList(): Unit = assertEquals(None, parser.parse("[2, 'asd']"))
+	@Test def parseExtraSpaceList0(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse("  [1, 2, -3] "))
+	@Test def parseExtraSpaceList1(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse("[1,2,-3]"))
+	@Test def parseExtraSpaceList2(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse("[1 , 2 , -3]"))
+	@Test def parseExtraSpaceList3(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse(" [ 1 , 2 , -3 ] "))
 
 	// Maps
 	@Test def parseStrStrMap(): Unit = assertEquals(Some(Map("a" -> "a", "b" -> "b")), parser.parse("{'a': 'a', 'b': 'b'}"))
