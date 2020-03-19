@@ -17,6 +17,13 @@ class ASTNodeTests extends JUnitSuite
 		assertTrue(literal.children.isEmpty)
 	}
 
+	@Test def stringLiteralEscaping(): Unit = {
+		assertEquals("\"a\\tb\\r\\n\"", new StringLiteral("a\tb\r\n",1).code)
+		assertEquals("\"a\\\\tb\\\\r\\\\n\"", new StringLiteral("a\\tb\\r\\n",1).code)
+		assertEquals("\"a\\\"b\\\"c\"",new StringLiteral("a\"b\"c",1).code)
+		assertEquals("\"\\xd83d\\xdca9\"",new StringLiteral("\uD83D\uDCA9",1).code)
+	}
+
 	@Test def intLiteralNode(): Unit =
 	{
 		val literal: IntLiteral = new IntLiteral(42, 2)

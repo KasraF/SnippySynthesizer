@@ -16,7 +16,19 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode
 {
 	override protected val parenless: Boolean = true
-	override val code: String = '"' + value + '"' //TODO escape if needed
+	override val code: String = '"' + value.flatMap(c => if (c.toInt >= 32 && c.toInt <= 127 && c != '\\' && c != '"') c.toString
+	else c.toInt match {
+		case 92 => "\\\\" // \
+		case 34 => "\\\"" // "
+		case 7 => "\\a" //bell
+		case 8 => "\\b" //backspace
+		case 9 => "\\t" //tab
+		case 10 => "\\n" //lf
+		case 11 => "\\v" //vertical tab
+		case 12 => "\\f" //formfeed
+		case 13 => "\\r" //cr
+		case _ => "\\x" + c.toInt.toHexString
+	}) + '"'
 }
 
 class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode
