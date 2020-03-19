@@ -4,16 +4,20 @@ import ast.Types.Types
 
 trait ListCompNode[T] extends ListNode[T]
 {
-	val list: ASTNode
+	val list: ListNode[_]
 	val map: ASTNode
 	val varName: String
 
 	override val childType: Types = map.nodeType
-	override val values: List[Iterable[T]] = list.values.indices.map(
-		i => map.values.slice(
-			i * map.values.length / list.values.length,
-			(i+1) * map.values.length / list.values.length)).
-	  toList.asInstanceOf[List[Iterable[T]]]// List(map.values.asInstanceOf[List[T]])
+	override val values: List[List[T]] = {
+		var rs: List[List[_]] = Nil;
+		var start = 0;
+		for (delta <- list.values.map(_.asInstanceOf[List[_]].length)) {
+			rs = rs :+ map.values.slice(start, start+delta)
+			start += delta
+		}
+		rs.asInstanceOf[List[List[T]]]
+	}
 	override val height: Int = 1 + Math.max(list.height, map.height)
 	override val terms: Int = 1 + list.terms + map.terms
 	override val children: Iterable[ASTNode] = List(list, map)
