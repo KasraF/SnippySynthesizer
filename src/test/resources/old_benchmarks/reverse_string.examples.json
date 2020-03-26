@@ -1,20 +1,13 @@
-[
-  [
-    {
-      "s": "'hello'"
-    },
+{
+  "varName": "rs",
+  "env": [
     {
       "s": "'hello'",
       "rs": "'olleh'"
-    }
-  ],
-  [
-    {
-      "s": "'world'"
     },
     {
       "s": "'world'",
       "rs": "'dlrow'"
     }
   ]
-]
+}

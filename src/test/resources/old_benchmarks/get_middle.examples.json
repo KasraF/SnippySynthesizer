@@ -1,13 +1,6 @@
-[
-  [
-    {
-      "time": 0,
-      "#": "",
-      "$": "",
-      "s": "'test'",
-      "lineno": 1,
-      "next_lineno": 2
-    },
+{
+  "varName": "rs",
+  "env": [
     {
       "time": 1,
       "#": "",
@@ -17,17 +10,6 @@
       "lineno": 2,
       "prev_lineno": 1,
       "next_lineno": 3
-    }
-  ],
-  [
-    {
-      "time": 4,
-      "#": "",
-      "$": "",
-      "s": "'example'",
-      "lineno": 1,
-      "prev_lineno": "R3",
-      "next_lineno": 2
     },
     {
       "time": 5,
@@ -38,17 +20,6 @@
       "lineno": 2,
       "prev_lineno": 1,
       "next_lineno": 3
-    }
-  ],
-  [
-    {
-      "time": 8,
-      "#": "",
-      "$": "",
-      "s": "'testing'",
-      "lineno": 1,
-      "prev_lineno": "R3",
-      "next_lineno": 2
     },
     {
       "time": 9,
@@ -61,4 +32,4 @@
       "next_lineno": 3
     }
   ]
-]
+}

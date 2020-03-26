@@ -1,11 +1,9 @@
-[
-  [
-    {
-      "s": "'Hello, world!'"
-    },
+{
+  "varName": "rs",
+  "env": [
     {
       "s": "'Hello, world!'",
       "rs": "'world'"
     }
   ]
-]
+}

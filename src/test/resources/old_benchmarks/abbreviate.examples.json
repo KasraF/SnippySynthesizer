@@ -1,15 +1,6 @@
-[
-  [
-    {
-      "time": 1,
-      "#": "",
-      "$": "",
-      "name": "'Sorin Lerner'",
-      "dot": "'.'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": 3
-    },
+{
+  "varName": "rs",
+  "env": [
     {
       "time": 2,
       "#": "",
@@ -20,18 +11,6 @@
       "lineno": 3,
       "prev_lineno": 2,
       "next_lineno": "R3"
-    }
-  ],
-  [
-    {
-      "time": 5,
-      "#": "",
-      "$": "",
-      "name": "'Nadia Polikarpova'",
-      "dot": "'.'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": 3
     },
     {
       "time": 6,
@@ -43,29 +22,17 @@
       "lineno": 3,
       "prev_lineno": 2,
       "next_lineno": "R3"
-    }
-  ],
-  [
-    {
-      "time": 9,
-      "#": "",
-      "$": "",
-      "name": "'Hila Peleg'",
-      "dot": "'.'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": 3
     },
     {
       "time": 10,
       "#": "",
       "$": "",
-      "name": "'Hila Peleg'",
+      "name": "'Kasra Ferdowsi Fard'",
       "dot": "'.'",
-      "rs": "'H.P'",
+      "rs": "'K.F.F'",
       "lineno": 3,
       "prev_lineno": 2,
       "next_lineno": "R3"
     }
   ]
-]
+}

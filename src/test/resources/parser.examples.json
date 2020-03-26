@@ -1,0 +1,31 @@
+[
+  [
+    {
+      "str": "'abc'",
+      "int": "42",
+      "neg_int": "-32",
+      "true": "True",
+      "false": "False",
+      "int_list": "[-1, 0, 1, 2, 123]",
+      "str_list": "['hello', 'world!', 'this', '1s', 'a', 't35t']",
+      "str_str_map": "{'a': 'Twas', 'b': 'brillig', 'c': 'and', 'd': 'the'}",
+      "str_int_map": "{'a': 0, 'b': 1, 'c': 2, 'd': 3}",
+      "int_str_map": "{0: 'Slithy', 1: 'toves', 2: 'did', 3: 'gyre'}",
+      "int_int_map": "{0: 1, 1: 2, 2: 3, 3: -4}"
+    },
+    {
+      "str": "'abc'",
+      "int": "42",
+      "neg_int": "-32",
+      "true": "True",
+      "false": "False",
+      "int_list": "[-1, 0, 1, 2, 123]",
+      "str_list": "['hello', 'world!', 'this', '1s', 'a', 't35t']",
+      "str_str_map": "{'a': 'Twas', 'b': 'brillig', 'c': 'and', 'd': 'the'}",
+      "str_int_map": "{'a': 0, 'b': 1, 'c': 2, 'd': 3}",
+      "int_str_map": "{0: 'Slithy', 1: 'toves', 2: 'did', 3: 'gyre'}",
+      "int_int_map": "{0: 1, 1: 2, 2: 3, 3: -4}",
+      "rs": "1"
+    }
+  ]
+]

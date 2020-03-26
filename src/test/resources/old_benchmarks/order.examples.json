@@ -1,13 +1,10 @@
-[
-  [
-    {
-      "space": "' '",
-      "s": "'is2 Thi1s T4est 3a'"
-    },
+{
+  "varName": "rv",
+  "env": [
     {
       "space": "' '",
       "s": "'is2 Thi1s T4est 3a'",
       "rv": "'Thi1s is2 3a T4est'"
     }
   ]
-]
+}

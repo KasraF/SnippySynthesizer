@@ -1,15 +1,6 @@
-[
-  [
-    {
-      "time": 10,
-      "#": "",
-      "$": "",
-      "inp": "'aabbcde'",
-      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
-      "lineno": 2,
-      "prev_lineno": "R1",
-      "next_lineno": 3
-    },
+{
+  "varName": "filters",
+  "env": [
     {
       "time": 11,
       "#": "",
@@ -22,4 +13,4 @@
       "next_lineno": "R3"
     }
   ]
-]
+}

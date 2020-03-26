@@ -38,9 +38,14 @@ object Benchmarks extends App
 				  val index = benchmark._2 + 1
 				  val name: String = file.substring(file.lastIndexOf("/") + 1, file.indexOf("."))
 				  print(f"($index%2d)  [$name%18s] ")
-				  Main.synthesize(file) match {
-					  case None => println("Timeout")
-					  case Some((program: String, time: Int)) => println(f"[${time / 1000.0}%1.3f] $program")
+
+				  try {
+					  Main.synthesize(file) match {
+						  case None => println("Timeout")
+						  case Some((program: String, time: Int)) => println(f"[${time / 1000.0}%1.3f] $program")
+					  }
+				  } catch {
+					  case e: Throwable => println(e.getMessage)
 				  }
 			  })
 		})
