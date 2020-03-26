@@ -69,27 +69,21 @@ object PythonPBETask
   		.filter(v => v._2 != null)
 	}
 
-	def buildExample(lst: List[Map[String, Any]]) : (String, Example) =
+	def fromString(jsonString: String): PythonPBETask =
 	{
-		assert(lst.length == 2, "Invalid input format: 2 Objects not provided for example")
-		val outputs = lst.tail.head.filter(v => !lst.head.contains(v._1))
-		assert(outputs.size == 1, "Invalid input format: Output variables not exactly 1")
-		(outputs.head._1, Example(lst.head, outputs.head._2))
-	}
+		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
+		val outputVarName: String = input("varName").asInstanceOf[String]
+		val examples = input("env").asInstanceOf[List[Map[String,Any]]]
+		  .map(cleanupInputs)
+  		  .map(env => Example(env.filter(_._1 != outputVarName), env(outputVarName)))
 
-	def fromString(json: String): PythonPBETask =
-	{
-		val json_examples = JsonParser.parse(json).children
-		  .map(lst => lst.asInstanceOf[JArray].children.map(obj => cleanupInputs(obj.asInstanceOf[JObject].values)))
-  		  .map(buildExample)
-
-		assert(json_examples.nonEmpty, "No examples provided")
-		val outputVarName: String = json_examples.head._1
-		assert(json_examples.forall(_._1.equals(outputVarName)), "Different output variables")
-
-		val examples = json_examples.map(_._2)
 		val returnType = Types.typeof(examples.head.output)
-		val parameters = examples.head.input.map(example => (example._1, Types.typeof(example._2))).toList
+		val parameters =
+			examples.head.input
+			  .map(example => (example._1, Types.typeof(example._2)))
+			  // TODO Handle empty lists/maps/sets
+			  .filter(!_._2.equals(Types.Unknown))
+			  .toList
 		val vocab = PythonPBETask.vocabFactory(parameters)
 
 		val rs = new PythonPBETask(returnType, parameters, vocab, examples, outputVarName)
