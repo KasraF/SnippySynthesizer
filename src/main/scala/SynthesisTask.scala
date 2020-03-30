@@ -6,7 +6,6 @@ import net.liftweb.json.JsonAST.{JArray, JObject}
 import net.liftweb.json.JsonParser
 import vocab._
 
-import scala.collection.mutable
 
 trait SynthesisTask
 {
@@ -102,9 +101,9 @@ object PythonPBETask
 			val outputVal = ex.output.asInstanceOf[String]
 			val stringInputs = for ((_,inputVal) <- ex.input; if(Types.typeof(inputVal) == Types.String))
 				yield inputVal.asInstanceOf[String];
-			val chars = mutable.Set[String]()
-			for (char <- outputVal; if (stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper))))
-					chars += char.toString
+			val chars : Iterable[String] =
+				for (char <- outputVal; if (stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper))))
+						yield char.toString
 			chars.toSet
 		}
 		val intersection = opts.reduce((a,b) => a.intersect(b))
