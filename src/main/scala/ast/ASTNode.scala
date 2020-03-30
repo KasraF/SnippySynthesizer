@@ -13,6 +13,7 @@ trait ASTNode
 	protected val parenless: Boolean
 	def includes(varName: String): Boolean
 	def parensIfNeeded: String = if (height > 0 && !parenless) "(" + code + ")" else code
+	val usesVariables: Boolean
 }
 
 trait IterableNode extends ASTNode

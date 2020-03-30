@@ -17,6 +17,7 @@ trait UnaryOpNode[T] extends ASTNode
 	def doOp(x: Any): Option[T]
 	def make(x: ASTNode): UnaryOpNode[T]
 	def includes(varName: String): Boolean = arg.includes(varName)
+	override lazy val usesVariables: Boolean = arg.usesVariables
 	protected def wrongType(x: Any) : Option[T] =
 	{
 		eprintln(s"[${this.getClass.getSimpleName}] Wrong value type: $x")

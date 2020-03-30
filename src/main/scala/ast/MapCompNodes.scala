@@ -33,6 +33,7 @@ trait MapCompNode[K,V] extends MapNode[K,V]
 	override val code: String = s"{${key.code}: ${value.code} for $varName in ${list.code}}"
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || key.includes(varName) || value.includes(varName)
+	override lazy val usesVariables: Boolean = list.usesVariables || key.usesVariables || value.usesVariables
 }
 
 trait FilteredMapNode[K,V] extends MapNode[K,V]
@@ -52,6 +53,7 @@ trait FilteredMapNode[K,V] extends MapNode[K,V]
 	override val code: String = s"{$keyName: ${map.code}[$keyName] for $keyName in ${map.code} if ${filter.code}}"
 	override def includes(varName: String): Boolean =
 		varName.equals(this.keyName) || map.includes(varName) || filter.includes(varName)
+	override lazy val usesVariables: Boolean = map.usesVariables || filter.usesVariables
 	def make(map: MapNode[K,V], filter: BoolNode, keyName: String) : FilteredMapNode[K,V]
 
 	def findKeyVarInNode(node: ASTNode) : Option[VariableNode[_]] =

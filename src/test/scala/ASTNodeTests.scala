@@ -115,6 +115,7 @@ class ASTNodeTests extends JUnitSuite
 			override val children: Iterable[ASTNode] = Nil
 
 			override def includes(varName: String): Boolean = false
+			override lazy val usesVariables: Boolean = false
 		})
 		assertEquals(1, node.values.length)
 		assertEquals(2, node.values.head)
@@ -136,6 +137,7 @@ class ASTNodeTests extends JUnitSuite
 			override val children: Iterable[ASTNode] = Nil
 
 			override def includes(varName: String): Boolean = false
+			override lazy val usesVariables: Boolean = false
 		})
 		assertEquals(1, node.values.length)
 		assertEquals(-1123, node.values.head)

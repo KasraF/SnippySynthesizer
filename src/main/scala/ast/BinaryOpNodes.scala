@@ -23,6 +23,7 @@ trait BinaryOpNode[T] extends ASTNode
 	def make(l: ASTNode, r: ASTNode): BinaryOpNode[T]
 
 	def includes(varName: String): Boolean = lhs.includes(varName) || rhs.includes(varName)
+	override lazy val usesVariables: Boolean = lhs.usesVariables || rhs.usesVariables
 
 	protected def wrongType(l: Any, r: Any): Option[T] =
 	{

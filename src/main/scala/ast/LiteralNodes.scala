@@ -11,6 +11,7 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 	val values: List[T] = List.fill(numContexts)(value)
 
 	def includes(varName: String): Boolean = false
+	override lazy val usesVariables: Boolean = false
 }
 
 class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode

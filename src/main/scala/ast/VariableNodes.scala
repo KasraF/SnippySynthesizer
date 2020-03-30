@@ -12,6 +12,7 @@ abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 	override protected val parenless: Boolean = true
 
 	def includes(varName: String): Boolean = name == varName
+	override lazy val usesVariables: Boolean = true
 }
 
 class StringVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[String](contexts) with StringNode
