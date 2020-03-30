@@ -6,6 +6,8 @@ import net.liftweb.json.JsonAST.{JArray, JObject}
 import net.liftweb.json.JsonParser
 import vocab._
 
+import scala.collection.mutable
+
 trait SynthesisTask
 {
 	val returnType: ast.Types.Value
@@ -84,26 +86,49 @@ object PythonPBETask
 			  // TODO Handle empty lists/maps/sets
 			  .filter(!_._2.equals(Types.Unknown))
 			  .toList
-		val vocab = PythonPBETask.vocabFactory(parameters)
+		val additionalLiterals = getStringLiterals(examples)
+		val vocab = PythonPBETask.vocabFactory(parameters,additionalLiterals)
 
 		val rs = new PythonPBETask(returnType, parameters, vocab, examples, outputVarName)
 		trace.DebugPrints.dprintln(s"Solving Python PBE Task:\n\n$rs")
 		rs
 	}
 
-	private def vocabFactory(variables: List[(String, Types.Value)]): VocabFactory =
+	private def getStringLiterals(examples: List[Example]): List[String] = {
+		if (examples.exists(ex => Types.typeof(ex.output) != Types.String)) //this is only for strings
+			return Nil
+
+		val opts = examples.map{ex =>
+			val outputVal = ex.output.asInstanceOf[String]
+			val stringInputs = for ((_,inputVal) <- ex.input; if(Types.typeof(inputVal) == Types.String))
+				yield inputVal.asInstanceOf[String];
+			val chars = mutable.Set[String]()
+			for (char <- outputVal; if (stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper))))
+					chars += char.toString
+			chars.toSet
+		}
+		val intersection = opts.reduce((a,b) => a.intersect(b))
+		intersection.toList
+	}
+
+	private def vocabFactory(variables: List[(String, Types.Value)], additionalLiterals: List[String]): VocabFactory =
 	{
-		val vocab: List[VocabMaker] = List(
+		val defaultStringLiterals = List(" ")
+		val stringLiterals = (defaultStringLiterals ++ additionalLiterals).distinct
+
+		val vocab: List[VocabMaker] =
+			stringLiterals.map{str =>
+				new BasicVocabMaker
+				{
+					override val arity: Int = 0
+					override val childTypes: List[Types] = Nil
+					override val returnType: Types = Types.String
+
+					override def apply(children    : List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						new StringLiteral(str, contexts.length)
+				}
+			} ++ List(
 			// Literals
-			new BasicVocabMaker
-			{
-				override val arity: Int = 0
-				override val childTypes: List[Types] = Nil
-				override val returnType: Types = Types.String
-				
-				override def apply(children    : List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringLiteral(" ", contexts.length)
-			},
 			new BasicVocabMaker
 			{
 				override val arity: Int = 0

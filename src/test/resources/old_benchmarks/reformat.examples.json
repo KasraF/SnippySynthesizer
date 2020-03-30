@@ -2,7 +2,6 @@
   "varName": "rs",
   "env": [
     {
-      "dash": "'-'",
       "s": "'Visual Studio Code'",
       "rs": "'visual-studio-code'"
     }
