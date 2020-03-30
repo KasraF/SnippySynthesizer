@@ -4,7 +4,14 @@ import ast._
 
 object PostProcessor
 {
- def clean(node: ASTNode): ASTNode = node match {
+ def clean(node: ASTNode): ASTNode = if (!node.usesVariables && node.values.toSet.size == 1) //second check is a tad redundant but just to be safe
+		Types.typeof(node.values(0)) match {
+				case Types.String => new StringLiteral(node.values(0).asInstanceOf[String],node.values.length)
+				case Types.Bool => new BoolLiteral(node.values(0).asInstanceOf[Boolean],node.values.length)
+				case Types.Int => new IntLiteral(node.values(0).asInstanceOf[Int],node.values.length)
+				case _ => node
+		}
+ 	else node match {
 		case add: IntAddition =>
 			val lhs: IntNode = clean(add.lhs).asInstanceOf[IntNode]
 			val rhs: IntNode = clean(add.rhs).asInstanceOf[IntNode]
