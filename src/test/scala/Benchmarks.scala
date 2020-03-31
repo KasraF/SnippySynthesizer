@@ -28,19 +28,18 @@ object Benchmarks extends App
 		dir => {
 			println("----- -------------------- --------------------------------------")
 			dir.listFiles()
-			  .map(_.getAbsolutePath)
-			  .filter(_.contains(".examples.json"))
-			  .filter(!_.contains(".out"))
+			  .filter(_.getName.contains(".examples.json"))
+			  .filter(!_.getName.contains(".out"))
 			  .sorted
 			  .zipWithIndex
 			  .foreach(benchmark => {
 				  val file = benchmark._1
 				  val index = benchmark._2 + 1
-				  val name: String = file.substring(file.lastIndexOf("/") + 1, file.indexOf("."))
+				  val name: String = file.getName.substring(0,file.getName.indexOf('.'))
 				  print(f"($index%2d)  [$name%18s] ")
 
 				  try {
-					  Main.synthesize(file) match {
+					  Main.synthesize(file.getAbsolutePath) match {
 						  case None => println("Timeout")
 						  case Some((program: String, time: Int)) => println(f"[${time / 1000.0}%1.3f] $program")
 					  }
