@@ -40,10 +40,15 @@ object Main extends App
 					                  .zip(program.values)
 					                  .map(pair => pair._1.output == pair._2)
 					if (results.forall(identity)) {
-						rs = Some(
-							(task.asInstanceOf[sygus.PythonPBETask].outputVar + " = " + PostProcessor.clean(program).code,
-							  timeout * 1000 - deadline.timeLeft.toMillis.toInt))
-						break
+						if (program.usesVariables) {
+							rs = Some(
+								(task.asInstanceOf[sygus.PythonPBETask].outputVar + " = " + PostProcessor.clean(program).code,
+									timeout * 1000 - deadline.timeLeft.toMillis.toInt))
+							break
+						}
+						else {
+							oeManager.classValues.remove(program.values)
+						}
 					}
 				}
 
