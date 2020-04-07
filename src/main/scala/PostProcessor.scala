@@ -62,13 +62,58 @@ object PostProcessor
 			val arg3: ASTNode = clean(qua.arg3)
 			qua.make(arg0, arg1, arg2, arg3)
 		case map: MapCompNode[a,b] =>
-			// TODO Fix the types
-			val list: StringNode = clean(map.list).asInstanceOf[StringNode]
-			val key: StringNode = clean(map.key).asInstanceOf[StringNode]
-			val value: IntNode = clean(map.value).asInstanceOf[IntNode]
-			new StringIntMapCompNode(list, key, value, map.varName)
+			val list = clean(map.list)
+			val key = clean(map.key)
+			val value = clean(map.value)
+
+			map.list.nodeType match {
+				case Types.String =>
+					map.value.nodeType match {
+						case Types.String =>
+							new StringStringMapCompNode(
+								list.asInstanceOf[StringNode],
+								key.asInstanceOf[StringNode],
+								value.asInstanceOf[StringNode],
+								map.varName)
+						case Types.Int =>
+							new StringIntMapCompNode(
+								list.asInstanceOf[StringNode],
+								key.asInstanceOf[StringNode],
+								value.asInstanceOf[IntNode],
+								map.varName)
+					}
+				case Types.StringList =>
+					map.value.nodeType match {
+						case Types.String =>
+							new StringListStringMapCompNode(
+								list.asInstanceOf[StringListNode],
+								key.asInstanceOf[StringNode],
+								value.asInstanceOf[StringNode],
+								map.varName)
+						case Types.Int =>
+							new StringListIntMapCompNode(
+								list.asInstanceOf[StringListNode],
+								key.asInstanceOf[StringNode],
+								value.asInstanceOf[IntNode],
+								map.varName)
+					}
+				case Types.IntList =>
+					map.value.nodeType match {
+						case Types.String =>
+							new IntStringMapCompNode(
+								list.asInstanceOf[IntListNode],
+								key.asInstanceOf[IntNode],
+								value.asInstanceOf[StringNode],
+								map.varName)
+						case Types.Int =>
+							new IntIntMapCompNode(
+								list.asInstanceOf[IntListNode],
+								key.asInstanceOf[IntNode],
+								value.asInstanceOf[IntNode],
+								map.varName)
+					}
+			}
 		case map: FilteredMapNode[a,b] =>
-			// TODO Fix the types
 			val mapNode: MapNode[a,b] = clean(map.map).asInstanceOf[MapNode[a,b]]
 			val filter: BoolNode = clean(map.filter).asInstanceOf[BoolNode]
 			map.make(mapNode, filter, map.keyName)

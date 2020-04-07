@@ -101,7 +101,7 @@ class StringIntMapCompNode       (val list: StringNode,       val key: StringNod
 class StringListStringMapCompNode(val list: ListNode[String], val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String,String]
 class StringListIntMapCompNode   (val list: ListNode[String], val key: StringNode, val value: IntNode,    val varName: String) extends MapCompNode[String,Int]
 class IntStringMapCompNode       (val list: ListNode[Int],    val key: IntNode,    val value: StringNode, val varName: String) extends MapCompNode[Int,String]
-class IntIntMapCompNode          (val list: ListNode[String], val key: IntNode,    val value: IntNode,    val varName: String) extends MapCompNode[Int,Int]
+class IntIntMapCompNode          (val list: ListNode[Int],    val key: IntNode,    val value: IntNode,    val varName: String) extends MapCompNode[Int,Int]
 
 class StringStringFilteredMapNode(val map: MapNode[String,String], val filter: BoolNode, val keyName: String) extends FilteredMapNode[String,String]
 {
