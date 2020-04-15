@@ -2,6 +2,8 @@ package ast
 
 import ast.Types.Types
 
+import scala.collection.immutable.WrappedString
+
 trait ASTNode
 {
 	val nodeType: Types.Types
@@ -16,7 +18,19 @@ trait ASTNode
 	val usesVariables: Boolean
 }
 
-trait IterableNode extends ASTNode
+trait IterableNode extends ASTNode {
+
+	def splitByIterable[A](values: Iterable[Iterable[_]], listToSplit: Iterable[A]): List[Iterable[A]] =
+	{
+		var rs: List[Iterable[A]] = Nil
+		var start = 0
+		for (delta <- values.map(_.size)) {
+			rs = rs :+ listToSplit.slice(start, start + delta)
+			start += delta
+		}
+		rs
+	}
+}
 
 trait StringNode extends IterableNode
 {

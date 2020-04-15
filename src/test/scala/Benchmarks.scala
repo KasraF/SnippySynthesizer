@@ -1,9 +1,6 @@
 import java.io.File
 
-import ast.ASTNode
 import sygus.Main
-
-import scala.concurrent.duration.FiniteDuration
 
 object Benchmarks extends App
 {
