@@ -1,0 +1,25 @@
+{
+  "varName": "mult",
+  "env": [
+    {
+      "time": 12,
+      "#": "",
+      "$": "",
+      "inp": "'abc'",
+      "mult": "2",
+      "lineno": 12,
+      "prev_lineno": 11,
+      "next_lineno": 13
+    },
+    {
+      "time": 12,
+      "#": "",
+      "$": "",
+      "inp": "'abc'",
+      "mult": "3",
+      "lineno": 12,
+      "prev_lineno": 11,
+      "next_lineno": 13
+    }
+  ]
+}

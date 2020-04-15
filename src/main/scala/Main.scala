@@ -23,7 +23,7 @@ object Main extends App
 		synthesizeFromTask(task)
 	}
 
-	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 5) : Option[(String, Int)] =
+	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 7) : Option[(String, Int)] =
 	{
 		var rs: Option[(String, Int)] = None
 		val oeManager = new InputsValuesManager()
@@ -35,6 +35,11 @@ object Main extends App
 
 		breakable {
 			for ((program, i) <- enumerator.zipWithIndex) {
+				if (!deadline.hasTimeLeft || program.height > 3) {
+					rs = Some(("None", timeout * 1000 - deadline.timeLeft.toMillis.toInt))
+					break
+				}
+
 				if (program.nodeType == task.returnType) {
 					val results = task.examples
 					                  .zip(program.values)
@@ -51,8 +56,6 @@ object Main extends App
 						}
 					}
 				}
-
-				if (!deadline.hasTimeLeft) break
 
 				if (trace.DebugPrints.debug) {
 					val p = PostProcessor.clean(program)
