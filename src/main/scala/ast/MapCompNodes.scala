@@ -2,6 +2,8 @@ package ast
 
 import ast.Types.Types
 
+import scala.collection.immutable.WrappedString
+
 trait MapCompNode[K,V] extends MapNode[K,V]
 {
 	val list: IterableNode
@@ -15,15 +17,23 @@ trait MapCompNode[K,V] extends MapNode[K,V]
 	override val valType: Types = value.nodeType
 
 	override val values: List[Map[K,V]] = {
-		val entries = key.values.zip(value.values)
-		val rs = list.values
-		  .indices
-		  .map(i => entries.slice(
-			  i * entries.length / list.values.length,
-			  (i+1) * entries.length / list.values.length))
-		  .map(l => l.map { case (k: Any, v: Any) => k.asInstanceOf[K] -> v.asInstanceOf[V] }.distinct.toMap)
-		  .toList
-		rs
+		if (list.values.isEmpty) {
+			Nil
+		} else {
+			val entries: Iterable[(K, V)] = key.values.zip(value.values).asInstanceOf[Iterable[(K,V)]]
+
+			list.values.head match {
+				case _: String => splitByIterable(list.values.asInstanceOf[List[String]].map(new WrappedString(_)), entries).map(_.toMap)
+				case _: Iterable[_] => splitByIterable(list.values.asInstanceOf[List[Iterable[_]]], entries).map(_.toMap)
+				case _ => list.values
+				  .indices
+				  .map(i => entries.slice(
+					  i * entries.size / list.values.length,
+					  (i+1) * entries.size / list.values.length))
+				  .map(_.toMap)
+				  .toList
+			}
+		}
 	}
 
 	override val height: Int = 1 + Math.max(list.height, value.height)
@@ -75,28 +85,14 @@ trait FilteredMapNode[K,V] extends MapNode[K,V]
 	def filterOp(map: MapNode[K,V], filter: BoolNode) : List[Map[K,V]] =
 	{
 	    val keyNode: VariableNode[Boolean] = findKeyVar(filter.children).get.asInstanceOf[VariableNode[Boolean]]
-		val filterValues = map.values.map(v => v.size).foldLeft((0, List[List[Boolean]]()))(
-			(prev, newSize) =>
-				prev match {
-					case (prevIdx, prevLists) =>
-						val idx = prevIdx + newSize
-						(idx, prevLists :+ filter.values.slice(prevIdx, idx))
-				}
-			)._2
-		val keyValues = map.values.map(v => v.size).foldLeft((0, List[List[Boolean]]()))(
-			(prev, newSize) =>
-				prev match {
-					case (prevIdx, prevLists) =>
-						val idx = prevIdx + newSize
-						(idx, prevLists :+ keyNode.values.slice(prevIdx, idx))
-				}
-			)._2
+		val filterValues = splitByIterable(map.values, filter.values)
+		val keyValues = splitByIterable(map.values, keyNode.values)
 		map.values
 		  .zip(keyValues.zip(filterValues).map(tup => tup._1.zip(tup._2)))
 		  .map( {
-			  case (valMap: Map[K,V], keyMap: List[(K,Boolean)]) =>
+			  case (valMap: Map[K,V], keyMap: Iterable[(K,Boolean)]) =>
 				  valMap.filter({
-					  case (k: K, _) => keyMap.find(_._1.equals(k)).get._2
+					  case (k: K, _: V) => keyMap.find(_._1.equals(k)).get._2
 				  })
 		  })
 	}
