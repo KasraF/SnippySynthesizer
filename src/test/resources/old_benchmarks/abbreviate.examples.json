@@ -2,26 +2,6 @@
   "varName": "rs",
   "env": [
     {
-      "time": 2,
-      "#": "",
-      "$": "",
-      "name": "'Sorin Lerner'",
-      "rs": "'S.L'",
-      "lineno": 3,
-      "prev_lineno": 2,
-      "next_lineno": "R3"
-    },
-    {
-      "time": 6,
-      "#": "",
-      "$": "",
-      "name": "'Nadia Polikarpova'",
-      "rs": "'N.P'",
-      "lineno": 3,
-      "prev_lineno": 2,
-      "next_lineno": "R3"
-    },
-    {
       "time": 10,
       "#": "",
       "$": "",
