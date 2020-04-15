@@ -74,22 +74,28 @@ trait FilteredMapNode[K,V] extends MapNode[K,V]
 	}
 	def filterOp(map: MapNode[K,V], filter: BoolNode) : List[Map[K,V]] =
 	{
-	    val keyNode: VariableNode[_] = findKeyVar(filter.children).get
-		val filterValues = map.values
-		  .indices
-		  .map(i => filter.values.slice(
-			  i * filter.values.length / map.values.length,
-			  (i+1) * filter.values.length / map.values.length))
-		val keyValues = map.values
-		  .indices
-		  .map(i => keyNode.values.slice(
-			  i * keyNode.values.length / map.values.length,
-			  (i+1) * keyNode.values.length / map.values.length))
+	    val keyNode: VariableNode[Boolean] = findKeyVar(filter.children).get.asInstanceOf[VariableNode[Boolean]]
+		val filterValues = map.values.map(v => v.size).foldLeft((0, List[List[Boolean]]()))(
+			(prev, newSize) =>
+				prev match {
+					case (prevIdx, prevLists) =>
+						val idx = prevIdx + newSize
+						(idx, prevLists :+ filter.values.slice(prevIdx, idx))
+				}
+			)._2
+		val keyValues = map.values.map(v => v.size).foldLeft((0, List[List[Boolean]]()))(
+			(prev, newSize) =>
+				prev match {
+					case (prevIdx, prevLists) =>
+						val idx = prevIdx + newSize
+						(idx, prevLists :+ keyNode.values.slice(prevIdx, idx))
+				}
+			)._2
 		map.values
 		  .zip(keyValues.zip(filterValues).map(tup => tup._1.zip(tup._2)))
 		  .map( {
-			  case (map: Map[K,V], keyMap: List[(K,Boolean)]) =>
-				  map.filter({
+			  case (valMap: Map[K,V], keyMap: List[(K,Boolean)]) =>
+				  valMap.filter({
 					  case (k: K, _) => keyMap.find(_._1.equals(k)).get._2
 				  })
 		  })

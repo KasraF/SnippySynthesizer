@@ -1,0 +1,38 @@
+{
+  "varName": "mult",
+  "env": [
+    {
+      "time": 2,
+      "#": "",
+      "$": "",
+      "inp": "'book'",
+      "charmap": "{'b': 1, 'o': 2, 'k': 1}",
+      "mult": "{'o': 2}",
+      "lineno": 12,
+      "prev_lineno": 11,
+      "next_lineno": 13
+    },
+    {
+      "time": 7,
+      "#": "",
+      "$": "",
+      "inp": "'aabbcde'",
+      "charmap": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+      "mult": "{'a': 2, 'b': 2}",
+      "lineno": 12,
+      "prev_lineno": 11,
+      "next_lineno": 13
+    },
+    {
+      "time": 12,
+      "#": "",
+      "$": "",
+      "inp": "'vscode'",
+      "charmap": "{'v': 1, 's': 1, 'c': 1, 'o': 1, 'd': 1, 'e': 1}",
+      "mult": "{}",
+      "lineno": 12,
+      "prev_lineno": 11,
+      "next_lineno": 13
+    }
+  ]
+}
