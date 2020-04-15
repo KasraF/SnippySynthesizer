@@ -101,5 +101,59 @@ class SynthesisTaskTests  extends JUnitSuite{
     assertEquals(Types.Int,task.returnType.asInstanceOf[Types.Map].valType)
   }
 
-  @Test def inferEmptyInputType: Unit = ???
+  @Test def emptyMapInInputVal: Unit = {
+    val task = PythonPBETask.fromString("""{
+                                          |  "varName": "filters",
+                                          |  "env": [
+                                          |    {
+                                          |      "counts": "{}",
+                                          |      "filters": "{'a': 2, 'b': 2}",
+                                          |    },
+                                          |    {
+                                          |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+                                          |      "filters": "{'a': 2, 'b': 2}",
+                                          |    }
+                                          |
+                                          |  ]
+                                          |}""".stripMargin)
+    val varType = task.parameters.find(kv => kv._1 ==  "counts").get._2.asInstanceOf[Types.Map]
+    assertEquals(Types.String,varType.keyType)
+    assertEquals(Types.Int,varType.valType)
+  }
+
+  @Test def emptyListInInputVal: Unit = {
+    val task = PythonPBETask.fromString("""{
+                                          |  "varName": "filters",
+                                          |  "env": [
+                                          |    {
+                                          |      "counts": "[]",
+                                          |      "filters": "{'a': 2, 'b': 2}",
+                                          |    },
+                                          |    {
+                                          |      "counts": "[1, 2, 3]",
+                                          |      "filters": "{'a': 2, 'b': 2}",
+                                          |    }
+                                          |
+                                          |  ]
+                                          |}""".stripMargin)
+    assertEquals(Types.IntList, task.parameters.find(kv => kv._1 ==  "counts").get._2)
+  }
+
+  @Test def onlyEmptyListInInputVal: Unit = {
+    val task = PythonPBETask.fromString("""{
+                                          |  "varName": "filters",
+                                          |  "env": [
+                                          |    {
+                                          |      "counts": "[]",
+                                          |      "filters": "{'a': 2, 'b': 2}",
+                                          |    },
+                                          |    {
+                                          |      "counts": "[]",
+                                          |      "filters": "{'a': 2, 'b': 2}",
+                                          |    }
+                                          |
+                                          |  ]
+                                          |}""".stripMargin)
+    assertEquals(Types.StringList, task.parameters.find(kv => kv._1 ==  "counts").get._2)
+  }
 }

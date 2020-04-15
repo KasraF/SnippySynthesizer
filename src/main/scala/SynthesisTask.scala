@@ -70,7 +70,7 @@ object PythonPBETask
   		.filter(v => v._2 != null)
 	}
 
-	private def getReturnType(values: List[Any]): Types = {
+	private def getTypeOfAll(values: List[Any]): Types = {
 		val (empty, nonempty) = values.partition(v => v.isInstanceOf[Iterable[_]] && v.asInstanceOf[Iterable[_]].isEmpty)
 		val neType = if (nonempty.isEmpty) Types.Unknown else nonempty.map(v => Types.typeof(v)).reduce((acc,t) => if (acc == t) t else Types.Unknown)
 		if (!empty.isEmpty) {
@@ -101,11 +101,14 @@ object PythonPBETask
 		  .map(cleanupInputs)
   		  .map(env => Example(env.filter(_._1 != outputVarName), env(outputVarName)))
 
-		val returnType = getReturnType(examples.map(_.output))
+		val returnType = getTypeOfAll(examples.map(_.output))
 		val parameters =
 			examples.head.input
-			  .map(example => (example._1, Types.typeof(example._2)))
-			  // TODO Handle empty lists/maps/sets
+			  .map{inputVar =>
+					val varValueOpts = examples.map(ex => ex.input.find(kv => kv._1 == inputVar._1))
+					(inputVar._1, if (varValueOpts.exists(_.isEmpty)) Types.Unknown else getTypeOfAll(varValueOpts.flatten.map(_._2)))
+				}
+			  // TODO Handle empty sets
 			  .filter(!_._2.equals(Types.Unknown))
 			  .toList
 		val additionalLiterals = getStringLiterals(examples)
