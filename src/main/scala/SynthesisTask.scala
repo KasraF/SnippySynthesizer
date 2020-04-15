@@ -138,7 +138,7 @@ object PythonPBETask
 
 	private def vocabFactory(variables: List[(String, Types.Value)], additionalLiterals: List[String]): VocabFactory =
 	{
-		val defaultStringLiterals = List(" ","")
+		val defaultStringLiterals = List(" ")
 		val stringLiterals = (defaultStringLiterals ++ additionalLiterals).distinct
 
 		val vocab: List[VocabMaker] =
