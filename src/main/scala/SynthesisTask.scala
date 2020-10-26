@@ -97,7 +97,7 @@ object PythonPBETask
 	{
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarName: String = input("varName").asInstanceOf[String]
-		val examples = input("env").asInstanceOf[List[Map[String,Any]]]
+		val examples = input("envs").asInstanceOf[List[Map[String,Any]]]
 		  .map(cleanupInputs)
   		  .map(env => Example(env.filter(_._1 != outputVarName), env(outputVarName)))
 

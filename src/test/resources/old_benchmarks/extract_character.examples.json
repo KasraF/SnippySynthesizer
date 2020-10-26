@@ -1,6 +1,6 @@
 {
   "varName": "rs",
-  "env": [
+  "envs": [
     {
       "idx": "2",
       "s": "'abcd'",

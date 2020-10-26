@@ -1,6 +1,6 @@
 {
   "varName": "rs",
-  "env": [
+  "envs": [
     {
       "s": "'Visual Studio Code'",
       "rs": "'visual-studio-code'"

@@ -1,6 +1,6 @@
 {
   "varName": "rs",
-  "env": [
+  "envs": [
     {
       "s": "'Hello, world!'",
       "rs": "'world'"

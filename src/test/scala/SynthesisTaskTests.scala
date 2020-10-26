@@ -9,7 +9,7 @@ class SynthesisTaskTests  extends JUnitSuite{
     val task = PythonPBETask.fromString(
       """{
         |  "varName": "l",
-        |  "env": [
+        |  "envs": [
         |    {
         |      "l": "[]"
         |    },
@@ -23,7 +23,7 @@ class SynthesisTaskTests  extends JUnitSuite{
     val task2 = PythonPBETask.fromString(
       """{
         |  "varName": "l",
-        |  "env": [
+        |  "envs": [
         |    {
         |      "l": "[]"
         |    },
@@ -38,7 +38,7 @@ class SynthesisTaskTests  extends JUnitSuite{
   @Test def listMapMismatchShouldFail: Unit = {
     val task = PythonPBETask.fromString("""{
                                           |  "varName": "filters",
-                                          |  "env": [
+                                          |  "envs": [
                                           |    {
                                           |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
                                           |      "filters": "[]",
@@ -56,7 +56,7 @@ class SynthesisTaskTests  extends JUnitSuite{
   @Test def inferEmptyMapTypeFromOtherExamples: Unit = {
     val task = PythonPBETask.fromString("""{
                                           |  "varName": "filters",
-                                          |  "env": [
+                                          |  "envs": [
                                           |    {
                                           |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
                                           |      "filters": "{}",
@@ -77,7 +77,7 @@ class SynthesisTaskTests  extends JUnitSuite{
     val task = PythonPBETask.fromString(
       """{
         |  "varName": "l",
-        |  "env": [
+        |  "envs": [
         |    {
         |      "l": "[]"
         |    }
@@ -89,7 +89,7 @@ class SynthesisTaskTests  extends JUnitSuite{
   @Test def onlyEmptyMap: Unit = {
     val task = PythonPBETask.fromString("""{
                                           |  "varName": "filters",
-                                          |  "env": [
+                                          |  "envs": [
                                           |    {
                                           |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
                                           |      "filters": "{}",
@@ -104,7 +104,7 @@ class SynthesisTaskTests  extends JUnitSuite{
   @Test def emptyMapInInputVal: Unit = {
     val task = PythonPBETask.fromString("""{
                                           |  "varName": "filters",
-                                          |  "env": [
+                                          |  "envs": [
                                           |    {
                                           |      "counts": "{}",
                                           |      "filters": "{'a': 2, 'b': 2}",
@@ -124,7 +124,7 @@ class SynthesisTaskTests  extends JUnitSuite{
   @Test def emptyListInInputVal: Unit = {
     val task = PythonPBETask.fromString("""{
                                           |  "varName": "filters",
-                                          |  "env": [
+                                          |  "envs": [
                                           |    {
                                           |      "counts": "[]",
                                           |      "filters": "{'a': 2, 'b': 2}",
@@ -142,7 +142,7 @@ class SynthesisTaskTests  extends JUnitSuite{
   @Test def onlyEmptyListInInputVal: Unit = {
     val task = PythonPBETask.fromString("""{
                                           |  "varName": "filters",
-                                          |  "env": [
+                                          |  "envs": [
                                           |    {
                                           |      "counts": "[]",
                                           |      "filters": "{'a': 2, 'b': 2}",
