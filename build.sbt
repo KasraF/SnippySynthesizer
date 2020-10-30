@@ -1,4 +1,4 @@
-name := "PythonSynthesizer"
+name := "SnippySynthesizer"
 
 version := "0.1"
 
