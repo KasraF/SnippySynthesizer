@@ -1,7 +1,11 @@
 package edu.ucsd.snippy
 
+import edu.ucsd.snippy.parser.Python3Parser._
+import edu.ucsd.snippy.parser._
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams}
+
+import scala.jdk.CollectionConverters.ListHasAsScala
 
 class InputParser extends Python3BaseVisitor[Option[Any]]
 {
@@ -78,7 +82,7 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 
 
 		if (rs.nonEmpty) {
-			val typ = rs(0).getClass
+			val typ = rs.head.getClass
 
 			// TODO Print a better error message?
 			if (rs.exists(!_.getClass.equals(typ))) return None

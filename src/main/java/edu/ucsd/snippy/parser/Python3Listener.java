@@ -1,5 +1,5 @@
 // Generated from ../src/main/java/Python3.g4 by ANTLR 4.7.2
-package edu.ucsd.snippy;
+package edu.ucsd.snippy.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
 /**

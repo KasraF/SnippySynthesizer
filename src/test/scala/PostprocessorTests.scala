@@ -1,8 +1,9 @@
-import ast._
+import edu.ucsd.snippy.PostProcessor
+import edu.ucsd.snippy.ast._
 import org.junit.Test
 import org.junit.Assert._
 import org.scalatestplus.junit.JUnitSuite
-import sygus.PostProcessor
+
 
 class PostprocessorTests  extends JUnitSuite{
   @Test def constantFoldIntOperation: Unit = {

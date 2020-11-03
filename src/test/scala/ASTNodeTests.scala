@@ -1,4 +1,4 @@
-import ast._
+import edu.ucsd.snippy.ast._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._

@@ -1,8 +1,8 @@
-import ast.Types
+import edu.ucsd.snippy.PythonPBETask
+import edu.ucsd.snippy.ast.Types
+import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
-import org.junit.Assert._
-import sygus.PythonPBETask
 
 class SynthesisTaskTests  extends JUnitSuite{
   @Test def inferEmptyListTypeFromOtherExamples: Unit = {

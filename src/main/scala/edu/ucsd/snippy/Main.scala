@@ -47,7 +47,7 @@ object Main extends App
 					if (results.forall(identity)) {
 						if (program.usesVariables) {
 							rs = Some(
-								(task.asInstanceOf[sygus.PythonPBETask].outputVar + " = " + PostProcessor.clean(program).code,
+								(task.asInstanceOf[PythonPBETask].outputVar + " = " + PostProcessor.clean(program).code,
 									timeout * 1000 - deadline.timeLeft.toMillis.toInt))
 							break
 						}

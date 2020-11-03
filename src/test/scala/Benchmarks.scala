@@ -1,6 +1,6 @@
 import java.io.File
 
-import sygus.Main
+import edu.ucsd.snippy.Main
 
 object Benchmarks extends App
 {
