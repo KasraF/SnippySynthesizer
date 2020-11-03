@@ -1,6 +1,6 @@
 import java.io.File
 
-import edu.ucsd.snippy.Main
+import edu.ucsd.snippy.Snippy
 
 object Benchmarks extends App
 {
@@ -36,7 +36,7 @@ object Benchmarks extends App
 				  print(f"($index%2d)  [$name%18s] ")
 
 				  try {
-					  Main.synthesize(file.getAbsolutePath) match {
+					  Snippy.synthesize(file.getAbsolutePath) match {
 						  case None => println("Timeout")
 						  case Some((program: String, time: Int)) => println(f"[${time / 1000.0}%1.3f] $program")
 					  }

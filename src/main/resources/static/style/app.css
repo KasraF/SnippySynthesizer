@@ -1,0 +1,13 @@
+.bg-dark.text-white .active {
+    border-color: rgba(0, 0, 0, .125);
+    background-color: rgba(0, 0, 0, .125);
+    color: #f8f9fa !important
+}
+
+.bg-dark.text-white textarea {
+    border: solid 1px rgba(0, 0, 0, .125);
+}
+
+.monaco-hover pre {
+    color: #cccccc;
+}

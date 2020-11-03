@@ -4,13 +4,12 @@ import java.io.{BufferedWriter, FileWriter}
 
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.enumeration.InputsValuesManager
-import trace.DebugPrints.dprintln
 
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
 import scala.util.control.Breaks._
 
-object Main extends App
+object Snippy extends App
 {
 	case class RankedProgram(program: ASTNode, rank: Double) extends Ordered[RankedProgram]
 	{
@@ -59,7 +58,7 @@ object Main extends App
 
 				if (trace.DebugPrints.debug) {
 					val p = PostProcessor.clean(program)
-					dprintln(s"[$i] (${program.height}) ${p.code}")
+					// dprintln(s"[$i] (${program.height}) ${p.code}")
 				}
 			}
 		}
