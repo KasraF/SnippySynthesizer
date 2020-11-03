@@ -97,42 +97,82 @@ object PythonPBETask
 	{
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarName: String = input("varName").asInstanceOf[String]
-		val examples = input("envs").asInstanceOf[List[Map[String,Any]]]
+		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
+
+		// Loops!
+		// Check if we have consecutive iterations of the loop
+		val loopy = envs.head("#").asInstanceOf[String].nonEmpty &&
+		  envs.tail.foldLeft(envs.head("#").asInstanceOf[String].toInt)((currIndex, env) => {
+			  if (currIndex >= 0 && env("#").asInstanceOf[String].toInt == currIndex + 1) {
+				  currIndex + 1
+			  } else {
+				  -1
+			  }
+		  }) != -1
+
+		val environments: List[Map[String, Any]] = input("envs")
+		  .asInstanceOf[List[Map[String, Any]]]
 		  .map(cleanupInputs)
-  		  .map(env => Example(env.filter(_._1 != outputVarName), env(outputVarName)))
+
+		val examples = if (loopy) {
+			// We are in a loop!
+			val previousEnv: Map[String, Any] =
+				cleanupInputs(input("previous_env").asInstanceOf[Map[String, Any]])
+
+			// If we are in a loop, and modifying a variable defined outside the loop, we can
+			// reuse its existing value.
+
+			// TODO How to tell if variable was indeed defined outside the loop?
+			// Just add the "previous_env" by adding the env of the line right above this one!!
+
+			environments
+			  .zip(previousEnv :: environments.slice(0, environments.length - 1))
+			  .map {
+				  case (curr_env, prev_env) =>
+					  Example(
+						  curr_env.filter(_._1 != outputVarName).filter(_._1 != "#") + (outputVarName -> prev_env(outputVarName)),
+						  curr_env(outputVarName))
+			  }
+		} else {
+			// Not in a loop. Do the usual.
+			environments.map(env => Example(env.filter(_._1 != outputVarName).filter(_._1 != "#"), env(outputVarName)))
+		}
 
 		val returnType = getTypeOfAll(examples.map(_.output))
 		val parameters =
 			examples.head.input
-			  .map{inputVar =>
-					val varValueOpts = examples.map(ex => ex.input.find(kv => kv._1 == inputVar._1))
-					(inputVar._1, if (varValueOpts.exists(_.isEmpty)) Types.Unknown else getTypeOfAll(varValueOpts.flatten.map(_._2)))
-				}
+			  .map { inputVar =>
+				  val varValueOpts = examples.map(ex => ex.input.find(kv => kv._1 == inputVar._1))
+				  (inputVar._1, if (varValueOpts.exists(_.isEmpty)) Types.Unknown else getTypeOfAll(varValueOpts.flatten.map(_._2)))
+			  }
 			  // TODO Handle empty sets
 			  .filter(!_._2.equals(Types.Unknown))
 			  .toList
-		val additionalLiterals = getStringLiterals(examples)
-		val vocab = PythonPBETask.vocabFactory(parameters,additionalLiterals)
+		val additionalLiterals = getStringLiterals(examples, outputVarName)
+		val vocab = PythonPBETask.vocabFactory(parameters, additionalLiterals)
 
 		val rs = new PythonPBETask(returnType, parameters, vocab, examples, outputVarName)
-		trace.DebugPrints.dprintln(s"Solving Python PBE Task:\n\n$rs")
+		// trace.DebugPrints.dprintln(s"Solving Python PBE Task:\n\n$rs")
 		rs
 	}
 
-	private def getStringLiterals(examples: List[Example]): List[String] = {
+	private def getStringLiterals(examples: List[Example], outputName: String): List[String] =
+	{
 		if (examples.exists(ex => Types.typeof(ex.output) != Types.String)) //this is only for strings
+		{
 			return Nil
-
-		val opts = examples.map{ex =>
-			val outputVal = ex.output.asInstanceOf[String]
-			val stringInputs = for ((_,inputVal) <- ex.input; if(Types.typeof(inputVal) == Types.String))
-				yield inputVal.asInstanceOf[String];
-			val chars : Iterable[String] =
-				for (char <- outputVal; if (stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper))))
-						yield char.toString
-			chars.toSet
 		}
-		val intersection = opts.reduce((a,b) => a.intersect(b))
+		val opts = examples.map {
+			ex =>
+				val outputVal = ex.output.asInstanceOf[String]
+				val stringInputs = for ((inputName, inputVal) <- ex.input; if Types.typeof(inputVal) == Types.String && inputName != outputName)
+					yield inputVal.asInstanceOf[String]
+				val chars: Iterable[String] =
+					for (char <- outputVal; if stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper)))
+						yield char.toString
+				chars.toSet
+		}
+		val intersection = opts.reduce((a, b) => a.intersect(b))
 		intersection.toList
 	}
 
