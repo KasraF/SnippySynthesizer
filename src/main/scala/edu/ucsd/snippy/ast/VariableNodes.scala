@@ -20,3 +20,11 @@ class IntVariable(val name: String, contexts: List[Map[String, Any]]) extends Va
 class BoolVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[Boolean](contexts) with BoolNode
 class ListVariable[T](val name: String, val contexts: List[Map[String,Any]], val childType: Types) extends VariableNode[List[T]](contexts) with ListNode[T]
 class MapVariable[K,V](val name: String, val contexts: List[Map[String, Any]], val keyType: Types, val valType: Types) extends VariableNode[Map[K,V]](contexts) with MapNode[K,V]
+
+class CompStringVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[String](contexts) with StringNode {
+	override lazy val usesVariables: Boolean = false
+}
+
+class CompIntVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[Int](contexts) with IntNode {
+	override lazy val usesVariables: Boolean = false
+}

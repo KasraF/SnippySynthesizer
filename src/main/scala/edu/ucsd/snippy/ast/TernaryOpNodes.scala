@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.ast
 
-import trace.DebugPrints.eprintln
+import edu.ucsd.snippy.DebugPrints
 
 trait TernaryOpNode[T] extends ASTNode
 {
@@ -22,7 +22,7 @@ trait TernaryOpNode[T] extends ASTNode
 	def includes(varName: String): Boolean = arg0.includes(varName) || arg1.includes(varName) || arg2.includes(varName)
 	override lazy val usesVariables: Boolean = arg0.usesVariables || arg1.usesVariables || arg2.usesVariables
 	protected def wrongType(l: Any, m: Any, r: Any) : Option[T] = {
-		eprintln(s"Wrong types: $l $m $r")
+		DebugPrints.eprintln(s"Wrong types: $l $m $r")
 		None
 	}
 }

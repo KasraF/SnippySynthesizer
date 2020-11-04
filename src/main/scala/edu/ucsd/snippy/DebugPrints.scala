@@ -1,7 +1,7 @@
-package trace
+package edu.ucsd.snippy
 
 object DebugPrints {
-  var debug = false
+  var debug = true
   var info = false
   def setDebug() = {
     debug = true

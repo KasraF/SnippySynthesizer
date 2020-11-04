@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.ast
 
-import trace.DebugPrints.eprintln
+import edu.ucsd.snippy.DebugPrints
 
 trait UnaryOpNode[T] extends ASTNode
 {
@@ -20,7 +20,7 @@ trait UnaryOpNode[T] extends ASTNode
 	override lazy val usesVariables: Boolean = arg.usesVariables
 	protected def wrongType(x: Any) : Option[T] =
 	{
-		eprintln(s"[${this.getClass.getSimpleName}] Wrong value type: $x")
+		DebugPrints.eprintln(s"[${this.getClass.getSimpleName}] Wrong value type: $x")
 		None
 	}
 }

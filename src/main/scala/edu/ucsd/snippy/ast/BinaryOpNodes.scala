@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.ast
 
-import trace.DebugPrints.eprintln
+import edu.ucsd.snippy.DebugPrints
 
 trait BinaryOpNode[T] extends ASTNode
 {
@@ -25,7 +25,7 @@ trait BinaryOpNode[T] extends ASTNode
 
 	protected def wrongType(l: Any, r: Any): Option[T] =
 	{
-		eprintln(s"[${this.getClass.getSimpleName}] Wrong value types: $l $r")
+		DebugPrints.eprintln(s"[${this.getClass.getSimpleName}] Wrong value types: $l $r")
 		None
 	}
 }

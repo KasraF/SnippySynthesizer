@@ -53,7 +53,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types) extends 
 				override val returnType: Types = Types.String
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					new CompStringVariable(varName, contexts)
 			}
 			case Types.List(Types.String) => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -61,7 +61,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types) extends 
 				override val returnType: Types = Types.String
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					new CompStringVariable(varName, contexts)
 			}
 			case Types.List(Types.Int) => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -69,7 +69,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types) extends 
 				override val returnType: Types = Types.Int
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(varName, contexts)
+					new CompIntVariable(varName, contexts)
 			}
 		}
 
@@ -105,16 +105,20 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types) extends 
 			if (!this.enumerator.hasNext) return
 
 			val value = this.enumerator.next()
-			if (value.height > this.childHeight) {
+
+			if (value.height > this.childHeight)
+			{
 				// We are out of map functions to synthesize for this list.
-				if (!this.nextList())
-				// We are also out of lists!
-				return
-			} else if (value.nodeType.eq(this.valueType) && value.includes(this.varName)) {
+
+				// Are we also out of lists?
+				if (!this.nextList()) return
+			}
+			else if (value.nodeType.eq(this.valueType) && value.includes(this.varName))
+			{
 				// next is a valid program
 				val node = this.makeNode(
 					this.currList,
-					new StringVariable(varName, this.enumerator.asInstanceOf[Enumerator].contexts),
+					new CompStringVariable(varName, this.enumerator.asInstanceOf[Enumerator].contexts),
 					value)
 				this.nextProg = Some(node)
 			}
@@ -191,7 +195,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types) extends V
 				override val returnType: Types = Types.String
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(keyName, contexts)
+					new CompStringVariable(keyName, contexts)
 			}
 			case Types.Int => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -199,7 +203,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types) extends V
 				override val returnType: Types = Types.Int
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(keyName, contexts)
+					new CompIntVariable(keyName, contexts)
 			}
 		}
 

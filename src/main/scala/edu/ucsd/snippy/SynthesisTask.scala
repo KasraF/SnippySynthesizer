@@ -62,7 +62,7 @@ object PythonPBETask
 		  .filter(_._2.isInstanceOf[String])
 		  .map(variable => parser.parse(variable._2.asInstanceOf[String]) match {
 			  case None =>
-				  trace.DebugPrints.eprintln(s"Input not recognized: $variable")
+				  DebugPrints.eprintln(s"Input not recognized: $variable")
 				  (variable._1, null)
 			  case Some(v) =>
 				  (variable._1, v)
@@ -98,27 +98,30 @@ object PythonPBETask
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarName: String = input("varName").asInstanceOf[String]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
+		val previousEnv: Map[String, Any] =
+			cleanupInputs(input("previous_env").asInstanceOf[Map[String, Any]])
+		val environments: List[Map[String, Any]] = envs
+		  .asInstanceOf[List[Map[String, Any]]]
+		  .map(cleanupInputs)
 
 		// Loops!
 		// Check if we have consecutive iterations of the loop
-		val loopy = envs.head("#").asInstanceOf[String].nonEmpty &&
+		val loopy = {
+		// Not in a loop, but reusing variable
+		envs.head("#").asInstanceOf[String].isEmpty && previousEnv.contains(outputVarName) ||
+		// In a loop
+		(envs.head("#").asInstanceOf[String].nonEmpty &&
 		  envs.tail.foldLeft(envs.head("#").asInstanceOf[String].toInt)((currIndex, env) => {
 			  if (currIndex >= 0 && env("#").asInstanceOf[String].toInt == currIndex + 1) {
 				  currIndex + 1
 			  } else {
 				  -1
 			  }
-		  }) != -1
-
-		val environments: List[Map[String, Any]] = input("envs")
-		  .asInstanceOf[List[Map[String, Any]]]
-		  .map(cleanupInputs)
+		  }) != -1)
+		}
 
 		val examples = if (loopy) {
 			// We are in a loop!
-			val previousEnv: Map[String, Any] =
-				cleanupInputs(input("previous_env").asInstanceOf[Map[String, Any]])
-
 			// If we are in a loop, and modifying a variable defined outside the loop, we can
 			// reuse its existing value.
 
@@ -488,7 +491,7 @@ object PythonPBETask
 			}
 		)
 
-		VocabFactory(vocab.appendedAll(
+		VocabFactory(
 			variables.
 			  map {
 				  case (name, Types.String) => new BasicVocabMaker
@@ -496,7 +499,7 @@ object PythonPBETask
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
 					  override val returnType: Types = Types.String
-					  
+
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new StringVariable(name, contexts)
 				  }
@@ -505,7 +508,7 @@ object PythonPBETask
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
 					  override val returnType: Types = Types.Int
-					  
+
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new IntVariable(name, contexts)
 				  }
@@ -514,11 +517,12 @@ object PythonPBETask
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
 					  override val returnType: Types = Types.Bool
-					  
+
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new BoolVariable(name, contexts)
 				  }
-				  case (name, Types.List(childType)) => new BasicVocabMaker {
+				  case (name, Types.List(childType)) => new BasicVocabMaker
+				  {
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
 					  override val returnType: Types = Types.List(childType)
@@ -526,7 +530,8 @@ object PythonPBETask
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new ListVariable(name, contexts, childType)
 				  }
-				  case (name, Types.Map(keyType, valType)) => new BasicVocabMaker {
+				  case (name, Types.Map(keyType, valType)) => new BasicVocabMaker
+				  {
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
 					  override val returnType: Types = Types.Map(keyType, valType)
@@ -537,7 +542,7 @@ object PythonPBETask
 				  case (name, typ) =>
 					  assert(assertion = false, s"Input type $typ not supported for input $name")
 					  null
-			  }
-			))
+			  } ++ vocab
+			)
 	}
 }

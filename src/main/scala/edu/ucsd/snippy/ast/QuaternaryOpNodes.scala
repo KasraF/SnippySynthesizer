@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.ast
 
-import trace.DebugPrints.eprintln
+import edu.ucsd.snippy.DebugPrints
 
 trait QuaternaryOpNode[T] extends ASTNode
 {
@@ -71,7 +71,7 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 
 			Some(rs)
 		case _ =>
-			eprintln(s"Wrong types: $arg0 $arg1 $arg2 $arg3")
+			DebugPrints.eprintln(s"Wrong types: $arg0 $arg1 $arg2 $arg3")
 			None
 	}
 
