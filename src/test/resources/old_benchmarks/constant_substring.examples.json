@@ -1,5 +1,7 @@
 {
   "varName": "rs",
+  "previous_env": {},
+  "previous_env": {},
   "envs": [
     {
       "s": "'Hello, world!'",

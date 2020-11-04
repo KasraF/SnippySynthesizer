@@ -1,5 +1,6 @@
 {
   "varName": "rs",
+  "previous_env": {},
   "envs": [
     {
       "c1": "'T'",
