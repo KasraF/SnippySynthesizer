@@ -55,16 +55,44 @@ object Types extends Enumeration
 	// TODO Is there a better way than hardcoding these?
 	val StringList: List = Types.List(String)
 	val IntList: List = Types.List(Int)
+	val BoolList: List = Types.List(Bool)
 	val StringSet: Set = Types.Set(String)
 	val IntSet: Set = Types.Set(Int)
 
-	def listOf(t: Types.Value) : Types.Value = Types.List(t)
+	val StringStringMap: Map = Map(String, String)
+	val StringIntMap: Map = Map(String, Int)
+	val IntStringMap: Map = Map(String, String)
+	val IntIntMap: Map = Map(Int, Int)
+
+	val AnyList: List = Types.List(Types.Any)
+	val AnyIterable: Iterable = Types.Iterable(Types.Any)
+
+	def listOf(t: Types.Value) : Types.Value = t match {
+		case Types.String => StringList
+		case Types.Int => IntList
+		case Types.Bool => BoolList
+		case _ =>
+			println("Could not determine type of " + t)
+			AnyList
+	}
+
+	def mapOf(k: Types.Value, v: Types.Value): Map = (k, v) match {
+		case (Int, Int) => IntIntMap
+		case (Int, String) => IntStringMap
+		case (String, Int) => StringIntMap
+		case (String, String) => StringStringMap
+		case _ =>
+			println(s"Could not determine type of ($k, $v)")
+			Map(Types.Any, Types.Any)
+	}
 
 	def childOf(t: Types.Types): Types.Types = t match {
 		case Types.List(t) => t
 		case Types.Set(t) => t
 		case Types.String => t
-		case _ => Unknown
+		case _ =>
+			println("Could not determine type of " + t)
+			Unknown
 	}
 
 	def isListType(t: Types.Value) : Boolean = t match {
@@ -80,20 +108,34 @@ object Types extends Enumeration
 			 case x: scala.List[_] if x.nonEmpty => x.head match {
 				 case _: String => StringList
 				 case _: Int    => IntList
-				 case (a, b) => Map(typeof(a), typeof(b))
-				 case _         => Unknown
+				 case (a, b) => (a, b) match {
+					 case (_: String, _: String) => StringStringMap
+					 case (_: String, _: Int) => StringIntMap
+					 case (_: Int, _: String) => IntStringMap
+					 case (_: Int, _: Int) => IntIntMap
+					 case _ =>
+						 println("Could not determine type of " + x)
+						 Unknown
+				 }
+				 case _ =>
+					 println("Could not determine type of " + x)
+					 Unknown
 			 }
 			 case x: scala.collection.Set[_] if x.nonEmpty => x.head match {
 				 case _: String => StringSet
 				 case _: Int    => IntSet
-				 case _         => Unknown
+				 case _         =>
+					 println("Could not determine type of " + x)
+					 Unknown
 			 }
 			 case x: scala.collection.Map[_,_] if x.nonEmpty => x.head match {
-				 case (_: String, _: String) => Map(String, String)
-				 case (_: String, _: Int)    => Map(String, Int)
-				 case (_: Int,    _: String) => Map(String, String)
-				 case (_: Int,    _: Int)    => Map(Int, Int)
-				 case _                      => Unknown
+				 case (_: String, _: String) => StringStringMap
+				 case (_: String, _: Int)    => StringIntMap
+				 case (_: Int,    _: String) => IntStringMap
+				 case (_: Int,    _: Int)    => IntIntMap
+				 case _                      =>
+					 println("Could not determine type of " + x)
+					 Unknown
 			 }
 			 case _ =>
 				 println("Could not determine type of " + x)

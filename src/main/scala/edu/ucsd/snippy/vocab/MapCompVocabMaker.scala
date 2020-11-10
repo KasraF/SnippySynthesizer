@@ -20,8 +20,8 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types) extends 
 	var nextProg: Option[ASTNode] = None
 
 	assert(iterableType.equals(Types.String) ||
-	         iterableType.equals(Types.List(Types.Int)) ||
-	         iterableType.equals(Types.List(Types.String)),
+	         iterableType.equals(Types.IntList) ||
+	         iterableType.equals(Types.StringList),
 	       s"List comprehension iterable type not supported: $iterableType")
 
 	assert(valueType.equals(Types.Int) || valueType.equals(Types.String),
@@ -177,7 +177,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types) extends V
 	  vocabFactory: VocabFactory,
 	  height: Int) : Iterator[ASTNode] =
 	{
-		this.mapIter = progs.filter(n => n.isInstanceOf[VariableNode[_]] && n.nodeType.equals(Types.Map(keyType, valueType))).iterator
+		this.mapIter = progs.filter(n => n.isInstanceOf[VariableNode[_]] && n.nodeType.equals(Types.mapOf(keyType, valueType))).iterator
 		this.childHeight = height - 1
 		this.keyName = "key"
 		this.contexts = contexts

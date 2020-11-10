@@ -51,7 +51,7 @@ trait BoolNode extends ASTNode
 trait ListNode[T] extends IterableNode {
 	val childType: Types
 	override val values: List[Iterable[T]]
-	override lazy val nodeType: Types = Types.List(childType)
+	override lazy val nodeType: Types = Types.listOf(childType)
 }
 
 trait StringListNode extends ListNode[String] { override val childType: Types = Types.String }
@@ -64,7 +64,7 @@ trait MapNode[K,V] extends IterableNode
 	val valType: Types
 
 	override val values: List[Map[K,V]]
-	override lazy val nodeType: Types = Types.Map(keyType, valType)
+	override lazy val nodeType: Types = Types.mapOf(keyType, valType)
 }
 
 trait StringStringMapNode extends MapNode[String,String]

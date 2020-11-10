@@ -73,18 +73,18 @@ object PythonPBETask
 	private def getTypeOfAll(values: List[Any]): Types = {
 		val (empty, nonempty) = values.partition(v => v.isInstanceOf[Iterable[_]] && v.asInstanceOf[Iterable[_]].isEmpty)
 		val neType = if (nonempty.isEmpty) Types.Unknown else nonempty.map(v => Types.typeof(v)).reduce((acc,t) => if (acc == t) t else Types.Unknown)
-		if (!empty.isEmpty) {
+		if (empty.nonEmpty) {
 			if (nonempty.isEmpty){
-				val defaultTypes: Set[Types] = empty.map( v => v match {
-					case l: List[_] => Types.StringList
-					case m: Map[_,_] => Types.Map(Types.String,Types.Int)
-				}).toSet
+				val defaultTypes: Set[Types] = empty.map {
+					case _: List[_] => Types.StringList
+					case _: Map[_, _] => Types.StringIntMap
+				}.toSet
 				return if (defaultTypes.size == 1) defaultTypes.head else Types.Unknown
 			}
 			else  for (v <- empty) {
 				if (neType match {
 					case Types.StringList | Types.IntList => !v.isInstanceOf[List[_]]
-					case Types.Map(kt, vt) => !v.isInstanceOf[Map[_, _]]
+					case Types.Map(_, _) => !v.isInstanceOf[Map[_, _]]
 					case _ => false //nonempties are not a list/map, fail.
 				}) return Types.Unknown
 			}
@@ -302,7 +302,7 @@ object PythonPBETask
 			new BasicVocabMaker
 			{
 				override val arity: Int = 1
-				override val childTypes: List[Types] = List(Types.Iterable(Types.Any))
+				override val childTypes: List[Types] = List(Types.AnyIterable)
 				override val returnType: Types = Types.Int
 				
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
@@ -458,7 +458,7 @@ object PythonPBETask
 			new BasicVocabMaker
 			{
 				override val arity: Int = 2
-				override val childTypes: List[Types] = List(Types.Map(Types.String, Types.Int), Types.String)
+				override val childTypes: List[Types] = List(Types.StringIntMap, Types.String)
 				override val returnType: Types = Types.Int
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
@@ -527,7 +527,7 @@ object PythonPBETask
 				  {
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
-					  override val returnType: Types = Types.List(childType)
+					  override val returnType: Types = Types.listOf(childType)
 
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new ListVariable(name, contexts, childType)
@@ -536,7 +536,7 @@ object PythonPBETask
 				  {
 					  override val arity: Int = 0
 					  override val childTypes: List[Types] = Nil
-					  override val returnType: Types = Types.Map(keyType, valType)
+					  override val returnType: Types = Types.mapOf(keyType, valType)
 
 					  override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						  new MapVariable(name, contexts, keyType, valType)
