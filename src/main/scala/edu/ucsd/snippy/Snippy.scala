@@ -25,6 +25,11 @@ object Snippy extends App
 
 	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 7) : Option[(String, Int)] =
 	{
+		// If the environment is empty, we might go into an infinite loop :/
+		if (!task.examples.exists(_.input.nonEmpty)) {
+			return Some("None", 0)
+		}
+
 		var rs: Option[(String, Int)] = None
 		val oeManager = new InputsValuesManager()
 		val enumerator = new enumeration.Enumerator(
