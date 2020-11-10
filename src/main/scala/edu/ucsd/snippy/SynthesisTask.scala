@@ -107,17 +107,19 @@ object PythonPBETask
 		// Loops!
 		// Check if we have consecutive iterations of the loop
 		val loopy = {
-		// Not in a loop, but reusing variable
-		envs.head("#").asInstanceOf[String].isEmpty && previousEnv.contains(outputVarName) ||
-		// In a loop
-		(envs.head("#").asInstanceOf[String].nonEmpty &&
-		  envs.tail.foldLeft(envs.head("#").asInstanceOf[String].toInt)((currIndex, env) => {
-			  if (currIndex >= 0 && env("#").asInstanceOf[String].toInt == currIndex + 1) {
-				  currIndex + 1
-			  } else {
-				  -1
-			  }
-		  }) != -1)
+			previousEnv.nonEmpty &&
+			envs.head.contains("#") &&
+			// Not in a loop, but reusing variable
+			(envs.head("#").asInstanceOf[String].isEmpty && previousEnv.contains(outputVarName) ||
+			// In a loop
+			(envs.head("#").asInstanceOf[String].nonEmpty &&
+			  envs.tail.foldLeft(envs.head("#").asInstanceOf[String].toInt)((currIndex, env) => {
+				  if (currIndex >= 0 && env("#").asInstanceOf[String].toInt == currIndex + 1) {
+					  currIndex + 1
+				  } else {
+					  -1
+				  }
+			  }) != -1))
 		}
 
 		val examples = if (loopy) {
