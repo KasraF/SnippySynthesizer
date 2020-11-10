@@ -2,6 +2,7 @@ package edu.ucsd.snippy.controller;
 
 import edu.ucsd.snippy.PythonPBETask;
 import edu.ucsd.snippy.Snippy;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -32,10 +33,12 @@ public class MainController
 		String rs;
 
 		try {
+			this.logger.debug(problem);
 			final PythonPBETask task = PythonPBETask.fromString(problem);
 			rs = Snippy.synthesizeFromTask(task, SYNTH_DURATION)
 					.map(Tuple2::_1)
 					.getOrElse(() -> "# Synthesis Failed");
+			this.logger.debug(rs);
 		} catch (Exception e) {
 			// Catch all to make sure the front-end is updated.
 			LoggerFactory.getLogger(this.getClass()).error("Synthesis failed.", e);
@@ -44,6 +47,8 @@ public class MainController
 
 		return rs;
 	}
+
+	private Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public static final int SYNTH_DURATION = 7;
 }

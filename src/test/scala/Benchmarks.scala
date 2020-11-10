@@ -1,6 +1,7 @@
 import java.io.File
 
-import edu.ucsd.snippy.Snippy
+import edu.ucsd.snippy.{DebugPrints, Snippy}
+import org.junit.platform.commons.logging.LoggerFactory
 
 object Benchmarks extends App
 {
@@ -41,7 +42,7 @@ object Benchmarks extends App
 						  case Some((program: String, time: Int)) => println(f"[${time / 1000.0}%1.3f] $program")
 					  }
 				  } catch {
-					  case e: Throwable => println(e.getMessage)
+					  case e: Throwable => println(e)
 				  }
 			  })
 		})
