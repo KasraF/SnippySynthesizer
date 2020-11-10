@@ -2,7 +2,6 @@ package edu.ucsd.snippy
 
 import java.io.{BufferedWriter, FileWriter}
 
-import edu.ucsd.snippy.DebugPrints._
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.enumeration.InputsValuesManager
 
@@ -64,7 +63,7 @@ object Snippy extends App
 
 				if (DebugPrints.debug) {
 					// val p = PostProcessor.clean(program)
-					dprintln(s"[$i] (${program.height}) ${program.code}")
+					//dprintln(s"[$i] (${program.height}) ${program.code}")
 				}
 			}
 		}
