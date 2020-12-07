@@ -108,6 +108,7 @@ object PythonPBETask
 		// Check if we have consecutive iterations of the loop
 		val loopy = {
 			previousEnv.nonEmpty &&
+			previousEnv.contains(outputVarName) &&
 			envs.head.contains("#") &&
 			// Not in a loop, but reusing variable
 			(envs.head("#").asInstanceOf[String].isEmpty && previousEnv.contains(outputVarName) ||
