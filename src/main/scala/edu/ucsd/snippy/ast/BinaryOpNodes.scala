@@ -161,7 +161,7 @@ class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] 
 	override def doOp(l: Any, r: Any): Option[Int] =
 		(l, r) match {
 			case (_: Int, 0) => None
-			case (l: Int, r: Int) => Some(l / r)
+			case (l: Int, r: Int) => Some(Math.floorDiv(l, r))
 			case _ => wrongType(l, r)
 		}
 

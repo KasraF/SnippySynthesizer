@@ -1004,11 +1004,18 @@ class ASTNodeTests extends JUnitSuite
 
 	// TODO Write the unit tests for other nodes
 	// Ternary Operations
+
+	@Test def intDivisionNode(): Unit = {
+		val node = new IntDivision(
+			new IntLiteral(-1, 1),
+			new IntLiteral(4, 1))
+		assertEquals(-1, node.values.head)
+	}
+
 	@Test def stringConcatNode(): Unit = ()
 	@Test def stringStepNode(): Unit = ()
 	@Test def intAdditionNode(): Unit = ()
 	@Test def intSubtractionNode(): Unit = ()
-	@Test def intDivisionNode(): Unit = ()
 	@Test def findNode(): Unit = ()
 	@Test def containsNode(): Unit = ()
 	@Test def stringReplaceNode(): Unit = ()
