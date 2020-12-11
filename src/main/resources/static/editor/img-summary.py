@@ -1,3 +1,4 @@
+import sys
 import ast
 import bdb
 import json
@@ -188,3 +189,6 @@ def main(file, line, varname):
 	l = ImgLogger(code, int(line), varname)
 	l.run(code)
 	l.recorder.finish(file + ".out")
+
+if __name__ == '__main__':
+	main(sys.argv[1], sys.argv[2], sys.argv[3])

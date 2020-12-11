@@ -476,3 +476,6 @@ def main(file):
 
 	if exception != None:
 		raise exception
+
+if __name__ == '__main__':
+	main(sys.argv[1])
