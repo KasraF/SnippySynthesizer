@@ -159,7 +159,19 @@ self.onmessage = function (msg) {
 				content = content.replace('"""', '\\"\\"\\"');
 			}
 
+			const clearEnv =
+				"for _k_ in list(sys.modules['__main__'].__dict__.keys()):\n" +
+				"\tif _k_ == '__start_env__': continue\n" +
+				"\tif _k_ not in __start_env__:\n" +
+				"\t\tdel sys.modules['__main__'].__dict__[_k_]\n" +
+				"\telse:\n" +
+				"\t\tsys.modules['__main__'].__dict__[_k_] = __start_env__[_k_]\n" +
+				"import sys\n";
+			const readStd = `sys.stdout.getvalue()`;
+			const readErr = `sys.stderr.getvalue()`;
 			const runPy =
+				`sys.stdout = io.StringIO()\n` +
+				`sys.stderr = io.StringIO()\n` +
 				`program = """${content}"""\n` +
 				`code = open("${name}", "w")\n` +
 				`code.write(program)\n` +
@@ -177,7 +189,17 @@ self.onmessage = function (msg) {
 				`if os.path.exists("${name}"):\n` +
 				`\tos.remove("${name}")`;
 
-			pyodide.runPythonAsync(runPy)
+			pyodide.runPythonAsync(clearEnv)
+				.then(() => {
+					return pyodide.runPythonAsync(runPy);
+				})
+				.then(() => {
+					// Read Stdout and Stderr in any order
+					return Promise.all([
+						pyodide.runPythonAsync(readStd).then((out) => self.postMessage(new RTVRunPy(id, ResponseType.STDOUT, out))),
+						pyodide.runPythonAsync(readErr).then((err) => self.postMessage(new RTVRunPy(id, ResponseType.STDERR, err))),
+					]);
+				})
 				.then(() => {
 					// Read output
 					return pyodide.runPythonAsync(readOut);
@@ -186,7 +208,16 @@ self.onmessage = function (msg) {
 					self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out));
 				})
 				.catch((err) => {
+					// Send the exception first
 					self.postMessage(new RTVRunPy(id, ResponseType.EXCEPTION, err.toString()));
+
+					// Then send the outputs
+					Promise
+						.all([
+							pyodide.runPythonAsync(readStd).then((out) => self.postMessage(new RTVRunPy(id, ResponseType.STDOUT, out))),
+							pyodide.runPythonAsync(readErr).then((err) => self.postMessage(new RTVRunPy(id, ResponseType.STDERR, err)))])
+						.then(() => pyodide.runPythonAsync(readOut))
+						.then((out) => self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out)));
 				})
 				.finally(() => {
 					return pyodide.runPythonAsync(cleanup);
