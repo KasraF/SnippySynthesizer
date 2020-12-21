@@ -4,7 +4,8 @@
 
 const RequestType = {
 	RUNPY: 1,
-	IMGSUM: 2
+	IMGSUM: 2,
+	SNIPPY: 3,
 }
 
 const ResponseType = {
@@ -40,7 +41,7 @@ languagePluginLoader
 		return pyodide.runPythonAsync('import pyodide\nimport os\n');
 	})
 	.then(() => {
-		console.log("Loading core.py, run.py, and img-summary.py");
+		console.log("Loading run.py, img-summary.py, and snippy.py");
 		const runpy = pyodide.runPythonAsync(
 			'import pyodide\n' +
 			'import os\n' +
@@ -55,7 +56,13 @@ languagePluginLoader
 			'img_summary = open("img-summary.py", "w")\n' +
 			'img_summary.write(pyodide.open_url("/editor/img-summary.py").getvalue())\n' +
 			'img_summary.close()');
-		return Promise.all([runpy, imgSummary]);
+		const snippy = pyodide.runPythonAsync(
+			'import pyodide\n' +
+			'import os\n' +
+			'snippy = open("snippy.py", "w")\n' +
+			'snippy.write(pyodide.open_url("/editor/snippy.py").getvalue())\n' +
+			'snippy.close()');
+		return Promise.all([runpy, imgSummary, snippy]);
 	})
 	.then(() => {
 		// Store the load environment to use later.
@@ -75,6 +82,12 @@ self.onmessage = function (msg) {
 		{
 			const name = msg.data.name;
 			let content = msg.data.content;
+			let values = msg.data.values;
+
+			console.log('calling run.py with content:');
+			console.log(content);
+			console.log('and values:');
+			console.log(values);
 
 			while (content.includes('"""')) {
 				content = content.replace('"""', '\\"\\"\\"');
@@ -89,15 +102,27 @@ self.onmessage = function (msg) {
 				"\t\tsys.modules['__main__'].__dict__[_k_] = __start_env__[_k_]\n" +
 				"import sys\n";
 
-			const runPy =
+			let runPy =
 				`sys.stdout = io.StringIO()\n` +
 				`sys.stderr = io.StringIO()\n` +
 				`program = """${content}\n"""\n` +
 				`code = open("${name}", "w")\n` +
 				`code.write(program)\n` +
 				`code.close()\n` +
-				`run = open("run.py", "r")\n` +
-				`pyodide.eval_code(run.read() + "\\nmain(\'${name}\')\\n", {})`;
+				`run = open("run.py", "r")\n`;
+
+			if (!values) {
+				runPy += `pyodide.eval_code(run.read() + "\\nmain(\'${name}\', None)\\n", {})`;
+			} else {
+				// We need to save the values to a file first.
+				const values_file = `values_${name}`;
+				runPy +=
+					`values = """${values}\n"""\n` +
+					`file = open("${values_file}", "w")\n` +
+					`file.write(values)\n` +
+					`file.close()\n` +
+					`pyodide.eval_code(run.read() + "\\nmain(\'${name}\', \'${values_file}\')\\n", {})`;
+			}
 
 			const readStd = `sys.stdout.getvalue()`;
 			const readErr = `sys.stderr.getvalue()`;
@@ -218,6 +243,82 @@ self.onmessage = function (msg) {
 							pyodide.runPythonAsync(readErr).then((err) => self.postMessage(new RTVRunPy(id, ResponseType.STDERR, err)))])
 						.then(() => pyodide.runPythonAsync(readOut))
 						.then((out) => self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out)));
+				})
+				.finally(() => {
+					return pyodide.runPythonAsync(cleanup);
+				});
+			}
+			break;
+		case RequestType.SNIPPY:
+		{
+			const action = msg.data.action;
+			const parameter = msg.data.parameter;
+
+			console.log('calling snippy.py with action:');
+			console.log(action);
+			console.log('and parameter:');
+			console.log(parameter);
+
+			// while (content.includes('"""')) {
+			// 	content = content.replace('"""', '\\"\\"\\"');
+			// }
+
+			const clearEnv =
+				"for _k_ in list(sys.modules['__main__'].__dict__.keys()):\n" +
+				"\tif _k_ == '__start_env__': continue\n" +
+				"\tif _k_ not in __start_env__:\n" +
+				"\t\tdel sys.modules['__main__'].__dict__[_k_]\n" +
+				"\telse:\n" +
+				"\t\tsys.modules['__main__'].__dict__[_k_] = __start_env__[_k_]\n" +
+				"import sys\n";
+
+			const snippy =
+				`sys.stdout = io.StringIO()\n` +
+				`sys.stderr = io.StringIO()\n` +
+				`run = open("snippy.py", "r")\n` +
+				`paramText = """${parameter}"""\n` +
+				`param = open('param.txt', 'w')\n` +
+				`param.write(paramText)\n` +
+				`param.close()\n` +
+ 				`pyodide.eval_code(run.read() + "\\nmain(\'${action}\', open(\'param.txt\').read())\\n", {})`;
+
+			const readStd = `sys.stdout.getvalue()`;
+			const readErr = `sys.stderr.getvalue()`;
+			const cleanup =
+				`if os.path.exists("${name}"):\n` +
+				`\tos.remove("${name}")`;
+
+			pyodide.runPythonAsync(clearEnv)
+				.then(() => {
+					return pyodide.runPythonAsync(snippy);
+				})
+				.then(() => {
+					// Read Stdout and Stderr in any order
+					return Promise.all([
+						pyodide.runPythonAsync(readStd).then((out) => self.postMessage(new RTVRunPy(id, ResponseType.STDOUT, out))),
+						pyodide.runPythonAsync(readErr).then((err) => self.postMessage(new RTVRunPy(id, ResponseType.STDERR, err))),
+					]);
+				})
+				.then(() => {
+					// Read the output
+					return pyodide.runPythonAsync(readOut);
+				})
+				.then((out) => {
+					self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out));
+				})
+				.catch((err) => {
+					// Send the exception first
+					self.postMessage(new RTVRunPy(id, ResponseType.EXCEPTION, err.toString()));
+
+					// Then send the output
+					// Unlike runpy and img-summary, the only output here is the stdout, so we send that twice.
+					// In theory, just sending stdout is enough, but the other thread's code uses RESULT to find
+					// out when a request has finished.
+					Promise
+						.all([
+							pyodide.runPythonAsync(readStd).then((out) => self.postMessage(new RTVRunPy(id, ResponseType.STDOUT, out))),
+							pyodide.runPythonAsync(readErr).then((err) => self.postMessage(new RTVRunPy(id, ResponseType.STDERR, err))),
+							pyodide.runPythonAsync(readStd).then((out) => self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out)))]);
 				})
 				.finally(() => {
 					return pyodide.runPythonAsync(cleanup);

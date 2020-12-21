@@ -156,15 +156,18 @@ class LoopInfo:
 		self.iter = 0
 
 class Logger(bdb.Bdb):
-	def __init__(self, lines):
+	def __init__(self, lines, values: {(int, int): {str: any}} = []):
 		bdb.Bdb.__init__(self)
 		self.lines = lines
-		self.time = 0
+		self.time: number = 0
 		self.prev_env = None
 		self.data = {}
 		self.active_loops = []
 		self.preexisting_locals = None
 		self.exception = None
+
+		# Optional dict from (lineno, time) to a dict of varname: value
+		self.values = values
 
 	def data_at(self, l):
 		if not(l in self.data):
@@ -195,6 +198,18 @@ class Logger(bdb.Bdb):
 		self.exception = None
 
 		adjusted_lineno = frame.f_lineno-1
+
+		line_time = "(%d,%d)" % (adjusted_lineno, self.time)
+		if line_time in self.values:
+			# Replace the current values with the given ones first
+			print("modifying values for: " + line_time)
+			env = self.values[line_time]
+			for varname in env:
+				if varname in self.preexisting_locals: continue
+				if varname in frame.f_locals:
+					print("\t'%s': '%s' -> '%s'" % (varname, repr(frame.f_locals[varname]), repr(env[varname])))
+					frame.f_locals[varname] = eval(env[varname])
+
 		self.record_loop_end(frame, adjusted_lineno)
 		self.record_env(frame, adjusted_lineno)
 		self.record_loop_begin(frame, adjusted_lineno)
@@ -405,12 +420,12 @@ def compute_writes(lines):
 		writes = write_collector.data
 	return (writes, exception)
 
-def compute_runtime_data(lines):
+def compute_runtime_data(lines, values):
 	exception = None
 	if len(lines) == 0:
 		return ({}, exception)
 	code = "".join(lines)
-	l = Logger(lines)
+	l = Logger(lines, values)
 	try:
 		l.run(code)
 	except Exception as e:
@@ -456,8 +471,12 @@ def remove_frame_data(data):
 			if "frame" in env:
 				del env["frame"]
 
-def main(file):
+def main(file, values_file):
 	lines = load_code_lines(file)
+	values = []
+
+	if values_file:
+		values = json.load(open(values_file))
 
 	return_code = 0
 	run_time_data = {}
@@ -467,7 +486,7 @@ def main(file):
 	if exception != None:
 		return_code = 1
 	else:
-		(run_time_data, exception) = compute_runtime_data(lines)
+		(run_time_data, exception) = compute_runtime_data(lines, values)
 		if (exception != None):
 			return_code = 2
 
@@ -478,4 +497,7 @@ def main(file):
 		raise exception
 
 if __name__ == '__main__':
-	main(sys.argv[1])
+	if len(sys.argv) > 2:
+		main(sys.argv[1], sys.argv[2])
+	else:
+		main(sys.argv[1], None)

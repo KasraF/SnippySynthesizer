@@ -38,8 +38,6 @@ def validate(expr) -> str:
 
 def main(action, arg):
 	# We do many things!
-	if not len(sys.argv): return
-
 	if action == 'validate':
 		msg = validate(arg)
 		if msg:
@@ -48,5 +46,4 @@ def main(action, arg):
 		print('Action not recognized: %s' % action)
 
 if __name__ == '__main__':
-	if len(sys.argv) >= 3:
-		main(sys.argv[1], sys.argv[2])
+	main(sys.argv[1], sys.argv[2])
