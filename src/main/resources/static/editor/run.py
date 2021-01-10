@@ -213,8 +213,6 @@ class Logger(bdb.Bdb):
 					frame.f_locals.update({ varname: new_value })
 					ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
 
-			frame.f_locals.clear()
-
 		self.record_loop_end(frame, adjusted_lineno)
 		self.record_env(frame, adjusted_lineno)
 		self.record_loop_begin(frame, adjusted_lineno)
@@ -431,10 +429,12 @@ def compute_runtime_data(lines, values):
 		return ({}, exception)
 	code = "".join(lines)
 	l = Logger(lines, values)
+
 	try:
 		l.run(code)
 	except Exception as e:
 		exception = e
+
 	l.data = adjust_to_next_time_step(l.data, l.lines)
 	remove_frame_data(l.data)
 	return (l.data, exception)
