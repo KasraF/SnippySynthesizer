@@ -175,6 +175,23 @@ class Logger(bdb.Bdb):
 			self.data[l] = []
 		return self.data[l]
 
+	def update_values(self, frame, lineno: int):
+		line_time = "(%s,%d)" % (lineno, self.time)
+		print("Looking for values at '%s' for line '%s'" % (line_time, frame.f_lineno))
+		if line_time in self.values:
+			# Replace the current values with the given ones first
+			env = self.values[line_time]
+
+			print("Updating values at '%s'" % line_time)
+
+			for varname in frame.f_locals:
+				# if varname in self.preexisting_locals: continue
+				if varname in env:
+					new_value = eval(env[varname])
+					print("\t'%s': '%s' -> '%s'" % (varname, repr(frame.f_locals[varname]), repr(new_value)))
+					frame.f_locals.update({ varname: new_value })
+					ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
+
 	def user_line(self, frame):
 		# print("user_line ============================================")
 		# print(frame.f_code.co_name)
@@ -200,19 +217,7 @@ class Logger(bdb.Bdb):
 
 		adjusted_lineno = frame.f_lineno-1
 
-		line_time = "(%d,%d)" % (adjusted_lineno, self.time)
-		if line_time in self.values:
-			# Replace the current values with the given ones first
-			env = self.values[line_time]
-
-			for varname in frame.f_locals:
-				# if varname in self.preexisting_locals: continue
-				if varname in env:
-					new_value = eval(env[varname])
-					print("\t'%s': '%s' -> '%s'" % (varname, repr(frame.f_locals[varname]), repr(new_value)))
-					frame.f_locals.update({ varname: new_value })
-					ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
-
+		self.update_values(frame, str(adjusted_lineno))
 		self.record_loop_end(frame, adjusted_lineno)
 		self.record_env(frame, adjusted_lineno)
 		self.record_loop_begin(frame, adjusted_lineno)
@@ -339,6 +344,7 @@ class Logger(bdb.Bdb):
 
 		adjusted_lineno = frame.f_lineno-1
 
+		self.update_values(frame, "R" + str(adjusted_lineno))
 		self.record_env(frame, "R" + str(adjusted_lineno))
 		if self.exception == None:
 			r = self.compute_repr(rv)
