@@ -1,6 +1,5 @@
 {
-  "varName": "mult",
-  "previous_env": {},
+  "varNames": ["mult"],
   "previous_env": {},
   "envs": [
     {

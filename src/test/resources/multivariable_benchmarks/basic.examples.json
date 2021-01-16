@@ -1,0 +1,17 @@
+{
+	"varNames": ["x", "y"],
+	"previous_env": {},
+	"envs": [
+		{
+			"time": 10,
+			"#": "",
+			"$": "",
+			"z": "1",
+			"x": "2",
+			"y": "3",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": "R3"
+		}
+	]
+}

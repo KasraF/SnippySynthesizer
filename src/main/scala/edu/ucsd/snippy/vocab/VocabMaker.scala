@@ -24,5 +24,5 @@ object VocabFactory
 trait VocabMaker
 {
 	val arity: Int
-	def init(progs: List[ASTNode], contexts : List[Map[String, Any]], vocabFactory: VocabFactory, height: Int) : Iterator[ASTNode]
+	def init(progs: List[ASTNode], contexts: List[Map[String, Any]], vocabFactory: VocabFactory, height: Int) : Iterator[ASTNode]
 }

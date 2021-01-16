@@ -1,5 +1,5 @@
 {
-  "varName": "rv",
+  "varNames": ["rv"],
   "previous_env": {},
   "envs": [
     {

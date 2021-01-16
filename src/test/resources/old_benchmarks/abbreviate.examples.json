@@ -1,6 +1,5 @@
 {
-  "varName": "rs",
-  "previous_env": {},
+  "varNames": ["rs"],
   "previous_env": {},
   "envs": [
     {

@@ -1,10 +1,9 @@
 package edu.ucsd.snippy
 
-import java.io.{BufferedWriter, FileWriter}
-
 import edu.ucsd.snippy.ast.ASTNode
-import edu.ucsd.snippy.enumeration.InputsValuesManager
 
+import java.io.{BufferedWriter, FileWriter}
+import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
 import scala.util.control.Breaks._
@@ -18,52 +17,47 @@ object Snippy extends App
 
 	def synthesize(filename: String) : Option[(String, Int)] =
 	{
-		val task: SynthesisTask = PythonPBETask.fromString(fromFile(filename).mkString)
+		val task: SynthesisTask = SynthesisTask.fromString(fromFile(filename).mkString)
 		synthesizeFromTask(task)
 	}
 
 	def synthesizeFromTask(task: SynthesisTask, timeout: Int = 7) : Option[(String, Int)] =
 	{
 		// If the environment is empty, we might go into an infinite loop :/
-		if (!task.examples.exists(_.input.nonEmpty)) {
+		if (!task.contexts.exists(_.nonEmpty)) {
 			return Some("None", 0)
 		}
 
+		val programs: collection.mutable.Map[String, Option[ASTNode]] = new mutable.HashMap[String, Option[ASTNode]]().addAll(task.predicates.keys.map(name => name -> None))
 		var rs: Option[(String, Int)] = None
-		val oeManager = new InputsValuesManager()
-		val enumerator = new enumeration.Enumerator(
-			task.vocab,
-			oeManager,
-			task.examples.map(_.input))
 		val deadline = timeout.seconds.fromNow
 
 		breakable {
-			for ((program, i) <- enumerator.zipWithIndex) {
-				if (!deadline.hasTimeLeft || program.height > 3) {
+			// for ((program, i) <- task.enumerator.zipWithIndex) {
+			for (program <- task.enumerator) {
+				if (!deadline.hasTimeLeft) {
 					rs = Some(("None", timeout * 1000 - deadline.timeLeft.toMillis.toInt))
 					break
 				}
 
-				if (program.nodeType == task.returnType) {
-					val results = task.examples
-					                  .zip(program.values)
-					                  .map(pair => pair._1.output == pair._2)
-					if (results.forall(identity)) {
-						if (program.usesVariables) {
-							rs = Some(
-								(task.asInstanceOf[PythonPBETask].outputVar + " = " + PostProcessor.clean(program).code,
-									timeout * 1000 - deadline.timeLeft.toMillis.toInt))
-							break
-						}
-						else {
-							oeManager.classValues.remove(program.values)
-						}
-					}
-				}
+//				if (program.height == 4) {
+//					rs = Some((program.code, timeout * 1000 - deadline.timeLeft.toMillis.toInt))
+//					break
+//				}
 
-				if (DebugPrints.debug) {
-					// val p = PostProcessor.clean(program)
-					//dprintln(s"[$i] (${program.height}) ${program.code}")
+				// Update the programs
+				task.predicates
+					.filter(entry => programs(entry._1).isEmpty)
+					.filter(entry => entry._2.evaluate(program, task))
+					.foreach(entry => programs(entry._1) = Some(program))
+
+				if (programs.forall(_._2.isDefined)) {
+					// We are done!
+					val programList = programs.map(entry => entry._1 -> entry._2.head).toList
+					val lhs = programList.map(_._1).mkString(", ")
+					val rhs = programList.map(_._2).map(PostProcessor.clean).map(_.code).mkString(", ")
+					rs = Some(lhs + " = " + rhs, timeout * 1000 - deadline.timeLeft.toMillis.toInt)
+					break
 				}
 			}
 		}

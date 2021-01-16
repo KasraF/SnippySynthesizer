@@ -1,5 +1,5 @@
 {
-  "varName": "rs",
+  "varNames": ["rs"],
   "previous_env": {
     "time": 2,
     "#": "0",

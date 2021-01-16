@@ -1,7 +1,7 @@
 package edu.ucsd.snippy.controller;
 
-import edu.ucsd.snippy.PythonPBETask;
 import edu.ucsd.snippy.Snippy;
+import edu.ucsd.snippy.SynthesisTask;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Controller;
@@ -34,7 +34,7 @@ public class MainController
 
 		try {
 			this.logger.debug(problem);
-			final PythonPBETask task = PythonPBETask.fromString(problem);
+			final SynthesisTask task = SynthesisTask.fromString(problem);
 			rs = Snippy.synthesizeFromTask(task, SYNTH_DURATION)
 					.map(Tuple2::_1)
 					.getOrElse(() -> "# Synthesis Failed");
