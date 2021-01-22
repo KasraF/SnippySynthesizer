@@ -3,6 +3,8 @@ import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 import org.junit.Assert._
 
+import scala.collection.immutable.ArraySeq
+
 class ASTNodeTests extends JUnitSuite
 {
 	@Test def stringLiteralNode(): Unit =
@@ -146,6 +148,36 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals(2, node.height)
 		assertEquals(2, node.terms)
 		assertEquals(node.children.size, 1)
+	}
+
+	@Test def unarySplitNode(): Unit = {
+		var node = new UnarySplit(new StringLiteral("abc", 1))
+		assertEquals(1, node.values.length)
+		assertEquals(List("abc"), node.values.head)
+		assertEquals(Types.Iterable(Types.String), node.nodeType)
+		assertEquals("\"abc\".split()", node.code)
+		assertEquals(1, node.height)
+
+		node = new UnarySplit(new StringLiteral("abc def", 1))
+		assertEquals(1, node.values.length)
+		assertEquals(List("abc", "def"), node.values.head)
+		assertEquals(Types.Iterable(Types.String), node.nodeType)
+		assertEquals("\"abc def\".split()", node.code)
+		assertEquals(1, node.height)
+
+		node = new UnarySplit(new StringLiteral("abc\tdef", 1))
+		assertEquals(1, node.values.length)
+		assertEquals(List("abc", "def"), node.values.head)
+		assertEquals(Types.Iterable(Types.String), node.nodeType)
+		assertEquals("\"abc\\tdef\".split()", node.code)
+		assertEquals(1, node.height)
+
+		node = new UnarySplit(new StringLiteral("abc\ndef", 1))
+		assertEquals(1, node.values.length)
+		assertEquals(List("abc", "def"), node.values.head)
+		assertEquals(Types.Iterable(Types.String), node.nodeType)
+		assertEquals("\"abc\\ndef\".split()", node.code)
+		assertEquals(1, node.height)
 	}
 
 	// Binary Operations

@@ -171,7 +171,7 @@ object SynthesisTask
 
 	private def vocabFactory(variables: List[(String, Types.Value)], additionalLiterals: List[String]): VocabFactory =
 	{
-		val defaultStringLiterals = List(" ")
+		val defaultStringLiterals = List()
 		val stringLiterals = (defaultStringLiterals ++ additionalLiterals).distinct
 
 		val vocab: List[VocabMaker] =
@@ -213,6 +213,14 @@ object SynthesisTask
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						new IntLiteral(-1, contexts.length)
+				},
+				new BasicVocabMaker {
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.String)
+					override val returnType: Types = Types.StringList
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						new UnarySplit(children.head.asInstanceOf[StringNode])
 				},
 				// Binary Ops
 				new BasicVocabMaker

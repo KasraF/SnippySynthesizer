@@ -26,6 +26,11 @@ object PostProcessor
 
 			(lhs, rhs) match {
 				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value - b.value, a.values.length)
+				case (a: IntLiteral, b) => if (a.value == 0) {
+					new Negate(b)
+				} else {
+					new IntSubtraction(lhs, rhs)
+				}
 				case _ => new IntSubtraction(lhs, rhs)
 			}
 		case sub: IntDivision =>

@@ -25,6 +25,20 @@ trait UnaryOpNode[T] extends ASTNode
 	}
 }
 
+class Negate(val arg: IntNode) extends UnaryOpNode[Int] with IntNode
+{
+	override protected val parenless: Boolean = true
+	override lazy val code: String = "-" + arg.code
+
+	override def doOp(x: Any): Option[Int] = x match {
+		case x: Int => Some(-x)
+		case _ => wrongType(x)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Int] =
+		new Negate(x.asInstanceOf[IntNode])
+}
+
 class IntToString(val arg: IntNode) extends UnaryOpNode[String] with StringNode
 {
 	override protected val parenless: Boolean = true
@@ -128,4 +142,18 @@ class SortedStringList(val arg: ListNode[String]) extends UnaryOpNode[Iterable[S
 
 	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
 		new SortedStringList(x.asInstanceOf[ListNode[String]])
+}
+
+class UnarySplit(val arg: StringNode) extends UnaryOpNode[Iterable[String]] with StringListNode
+{
+	override protected val parenless: Boolean = true
+	override lazy val code: String = arg.code + ".split()"
+
+	override def doOp(arg: Any): Option[Iterable[String]] = arg match {
+		case str: String => Some(str.split("\\s").toList)
+		case _ => wrongType(arg)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
+		new UnarySplit(x.asInstanceOf[StringNode])
 }
