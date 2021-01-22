@@ -19,8 +19,8 @@ object Benchmarks extends App
 
 				try {
 					Snippy.synthesize(file.getAbsolutePath) match {
-						case None => println("Timeout")
-						case Some((program: String, time: Int)) => println(f"[${time / 1000.0}%1.3f] $program")
+						case (None, _) => println("Timeout")
+						case (Some(program: String), time: Int) => println(f"[${time / 1000.0}%1.3f] $program")
 					}
 				} catch {
 					case e: Throwable => println(e)

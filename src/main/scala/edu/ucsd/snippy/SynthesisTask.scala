@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
-import edu.ucsd.snippy.utils.{EqualityPredicate, Predicate}
+import edu.ucsd.snippy.utils.{MultivariablePredicate, Predicate, Utils}
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.json.JsonParser
@@ -11,22 +11,28 @@ import net.liftweb.json.JsonParser
 class SynthesisTask(
 	// Problem definition
 	val parameters: List[(String, ast.Types.Value)],
+	val outputVariables: List[String],
 	val vocab     : VocabFactory,
 	val contexts: List[Map[String, Any]],
-	val predicates: Map[String, Predicate],
 
 	// Synthesizer state
 	val oeManager : OEValuesManager,
-	val enumerator: Enumerator
-)
+	val enumerator: Enumerator,
+
+	// Extra information for building the predicate
+	processedEnvs: List[Map[String, Any]])
 {
+	val predicate: Predicate = outputVariables match {
+		case single :: Nil => Predicate.getPredicate(single, processedEnvs, this)
+		case multiple => new MultivariablePredicate(multiple.map(varName => varName -> Predicate.getPredicate(varName, processedEnvs, this)).toMap)
+	}
 
 	override def toString: String =
 	{
 		s"\tparameters: $parameters\n" +
 			"\tvocab: [...]\n" +
 			s"\tcontexts: $contexts" +
-			s"\tpredicates: $predicates"
+			s"\tpredicate: $predicate"
 	}
 }
 
@@ -53,36 +59,6 @@ object SynthesisTask
 			.filter(v => v._2 != null)
 	}
 
-	private def getTypeOfAll(values: List[Any]): Types =
-	{
-		val (empty, nonempty) = values.partition(v => v.isInstanceOf[Iterable[_]] && v.asInstanceOf[Iterable[_]].isEmpty)
-		val neType = if (nonempty.isEmpty) Types.Unknown else nonempty.map(v => Types.typeof(v)).reduce((acc, t) => if (acc == t) t else Types.Unknown)
-		if (empty.nonEmpty) {
-			if (nonempty.isEmpty) {
-				val defaultTypes: Set[Types] = empty.map {
-					case _: List[_] => Types.StringList
-					case _: Map[_, _] => Types.StringIntMap
-				}.toSet
-				return if (defaultTypes.size == 1) defaultTypes.head else Types.Unknown
-			}
-			else {
-				for (v <- empty) {
-					if (neType match {
-						case Types.StringList | Types.IntList => !v.isInstanceOf[List[_]]
-						case Types.Map(_, _) => !v.isInstanceOf[Map[_, _]]
-						case _ => false //nonempties are not a list/map, fail.
-					}) {
-						return Types.Unknown
-					}
-				}
-			}
-			neType
-		}
-		else {
-			neType
-		}
-	}
-
 	/**
 	 * Checks whether we can use the output variables' previous values in the environment. To do so
 	 * we need:
@@ -97,7 +73,7 @@ object SynthesisTask
 	 */
 	def isLoopy(
 		previousEnv   : Map[String, Any],
-		outputVarNames: Set[String],
+		outputVarNames: List[String],
 		envs          : List[Map[String, Any]]
 	): Boolean =
 	{
@@ -120,7 +96,7 @@ object SynthesisTask
 	def fromString(jsonString: String): SynthesisTask =
 	{
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
-		val outputVarNames: Set[String] = input("varNames").asInstanceOf[List[String]].toSet
+		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
 		val previousEnv: Map[String, Any] =
 			cleanupInputs(input("previous_env").asInstanceOf[Map[String, Any]])
@@ -143,18 +119,11 @@ object SynthesisTask
 			processedEnvs.map(env => env.filter(entry => !outputVarNames.contains(entry._1)).filter(_._1 != "#"))
 		}
 
-		val predicates = outputVarNames
-			.map(varName => {
-				val values = processedEnvs.flatMap(map => map.filter(_._1 == varName).values)
-				val predicate = new EqualityPredicate(this.getTypeOfAll(values), values)
-				varName -> predicate
-			}).toMap
-
 		val parameters =
 			contexts.head
 				.map { inputVar =>
 					val varValueOpts = contexts.map(ex => ex.find(kv => kv._1 == inputVar._1))
-					(inputVar._1, if (varValueOpts.exists(_.isEmpty)) Types.Unknown else getTypeOfAll(varValueOpts.flatten.map(_._2)))
+					(inputVar._1, if (varValueOpts.exists(_.isEmpty)) Types.Unknown else Utils.getTypeOfAll(varValueOpts.flatten.map(_._2)))
 				}
 				// TODO Handle empty sets
 				.filter(!_._2.equals(Types.Unknown))
@@ -164,17 +133,17 @@ object SynthesisTask
 		val oeManager = new InputsValuesManager
 		val enumerator = new Enumerator(vocab, oeManager, contexts)
 
-		// TODO Add predicates
 		new SynthesisTask(
 			parameters,
+			outputVarNames,
 			vocab,
 			contexts,
-			predicates,
 			oeManager,
-			enumerator)
+			enumerator,
+			processedEnvs)
 	}
 
-	private def getStringLiterals(examples: List[Map[String, Any]], outputNames: Set[String]): List[String] =
+	private def getStringLiterals(examples: List[Map[String, Any]], outputNames: List[String]): List[String] =
 	{
 		if (outputNames
 			.flatMap(outputName => examples.map(entry => entry(outputName)))

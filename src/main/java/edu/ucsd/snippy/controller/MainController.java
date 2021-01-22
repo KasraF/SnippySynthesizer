@@ -36,7 +36,7 @@ public class MainController
 			this.logger.debug(problem);
 			final SynthesisTask task = SynthesisTask.fromString(problem);
 			rs = Snippy.synthesizeFromTask(task, SYNTH_DURATION)
-					.map(Tuple2::_1)
+					._1
 					.getOrElse(() -> "# Synthesis Failed");
 			this.logger.debug(rs);
 		} catch (Exception e) {

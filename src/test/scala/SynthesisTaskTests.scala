@@ -1,6 +1,6 @@
 import edu.ucsd.snippy.SynthesisTask
 import edu.ucsd.snippy.ast.Types
-import edu.ucsd.snippy.utils.EqualityPredicate
+import edu.ucsd.snippy.utils.SingleVariablePredicate
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
@@ -22,11 +22,9 @@ class SynthesisTaskTests extends JUnitSuite
 			  |    }
 			  |  ]
 			  |}""".stripMargin)
-		assertTrue(task1.predicates.size == 1)
-		assertTrue(task1.predicates.contains("l"))
 		assertEquals(
 			Types.IntList,
-			task1.predicates("l").asInstanceOf[EqualityPredicate].retType)
+			task1.predicate.asInstanceOf[SingleVariablePredicate].retType)
 
 		val task2 = SynthesisTask.fromString(
 			"""{
@@ -41,11 +39,9 @@ class SynthesisTaskTests extends JUnitSuite
 			  |    }
 			  |  ]
 			  |}""".stripMargin)
-		assertTrue(task2.predicates.size == 1)
-		assertTrue(task2.predicates.contains("l"))
 		assertEquals(
 			Types.StringList,
-			task2.predicates("l").asInstanceOf[EqualityPredicate].retType)
+			task2.predicate.asInstanceOf[SingleVariablePredicate].retType)
 	}
 
 	@Test def listMapMismatchShouldFail: Unit =
@@ -67,11 +63,9 @@ class SynthesisTaskTests extends JUnitSuite
 			  |  ]
 			  |}""".stripMargin)
 
-		assertTrue(task.predicates.size == 1)
-		assertTrue(task.predicates.contains("filters"))
 		assertEquals(
 			Types.Unknown,
-			task.predicates("filters").asInstanceOf[EqualityPredicate].retType)
+			task.predicate.asInstanceOf[SingleVariablePredicate].retType)
 	}
 
 	@Test def inferEmptyMapTypeFromOtherExamples: Unit =
@@ -92,10 +86,8 @@ class SynthesisTaskTests extends JUnitSuite
 			  |
 			  |  ]
 			  |}""".stripMargin)
-		assertTrue(task.predicates.size == 1)
-		assertTrue(task.predicates.contains("filters"))
 
-		val returnType = task.predicates("filters").asInstanceOf[EqualityPredicate].retType
+		val returnType = task.predicate.asInstanceOf[SingleVariablePredicate].retType
 		assertTrue(returnType.isInstanceOf[Types.Map])
 		assertEquals(Types.String, returnType.asInstanceOf[Types.Map].keyType)
 		assertEquals(Types.Int, returnType.asInstanceOf[Types.Map].valType)
@@ -113,12 +105,9 @@ class SynthesisTaskTests extends JUnitSuite
 			  |    }
 			  |  ]
 			  |}""".stripMargin)
-		assertTrue(task.predicates.size == 1)
-		assertTrue(task.predicates.contains("l"))
-
 		assertEquals(
 			Types.StringList,
-			task.predicates("l").asInstanceOf[EqualityPredicate].retType)
+			task.predicate.asInstanceOf[SingleVariablePredicate].retType)
 	}
 
 	@Test def onlyEmptyMap: Unit =
@@ -134,10 +123,7 @@ class SynthesisTaskTests extends JUnitSuite
 			  |    }
 			  |  ]
 			  |}""".stripMargin)
-		assertTrue(task.predicates.size == 1)
-		assertTrue(task.predicates.contains("filters"))
-
-		val returnType = task.predicates("filters").asInstanceOf[EqualityPredicate].retType
+		val returnType = task.predicate.asInstanceOf[SingleVariablePredicate].retType
 		assertTrue(returnType.isInstanceOf[Types.Map])
 		assertEquals(Types.String, returnType.asInstanceOf[Types.Map].keyType)
 		assertEquals(Types.Int, returnType.asInstanceOf[Types.Map].valType)
