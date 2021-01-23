@@ -4,7 +4,7 @@ import edu.ucsd.snippy.{PostProcessor, SynthesisTask}
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
 
-import scala.util.control.Breaks.{break, breakable}
+import scala.collection.mutable
 
 object Predicate {
 	def getPredicate(
@@ -54,8 +54,7 @@ class SingleVariablePredicate(
 	}
 }
 
-class MultivariablePredicate(val predicates: Map[String, SingleVariablePredicate]) extends Predicate {
-
+class BasicMultivariablePredicate(val predicates: Map[String, SingleVariablePredicate]) extends Predicate {
 	override def evaluate(program: ASTNode): Option[String] = {
 		this.predicates.foreachEntry((_, pred) => pred.evaluate(program))
 
@@ -68,4 +67,124 @@ class MultivariablePredicate(val predicates: Map[String, SingleVariablePredicate
 			None
 		}
 	}
+}
+
+class MultilineMultivariablePredicate(val graphStart: Node) extends Predicate {
+	override def evaluate (program: ASTNode): Option[String] = {
+		// Update the graph
+		if (this.graphStart.update(program)) {
+			// The graph was changed. See if we have a complete path to the end now
+			this.traverse(graphStart) match {
+				case None => None
+				case Some(lst) => Some(lst.mkString("\n"))
+			}
+		} else {
+			None
+		}
+	}
+
+	private def traverse(node: Node): Option[List[String]] =
+	{
+		if (node.isEnd) {
+			Some(Nil)
+		} else {
+			for (edge <- node.edges) {
+				if (edge.isComplete) {
+					(edge, traverse(edge.child)) match {
+						case (_, None) => ()
+						case (edge: SingleEdge, Some(assignments)) =>
+							return Some(edge.variable + " = " + PostProcessor.clean(edge.program.get).code :: assignments)
+						case (edge: MultiEdge, Some(assignments)) =>
+							return Some(
+								{
+									val orderedPrograms = edge.programs.toList
+									val variables = orderedPrograms.map(_._1).mkString(", ")
+									val programs = orderedPrograms.map(_._2.get).map(PostProcessor.clean).mkString(", ")
+									variables + " = " + programs
+								} :: assignments)
+					}
+				}
+			}
+
+			None
+		}
+	}
+}
+
+abstract sealed class Edge(
+	val parent: Node,
+	val child: Node,
+) {
+	def isComplete: Boolean
+}
+
+case class SingleEdge(
+	var program: Option[ASTNode],
+	variable: String,
+	override val parent: Node,
+	override val child: Node,
+) extends Edge(parent, child) {
+	override def isComplete: Boolean = program.isDefined
+}
+
+case class MultiEdge(
+	var programs: mutable.Map[String, Option[ASTNode]],
+	override val parent: Node,
+	override val child: Node,
+) extends Edge(parent, child) {
+	override def isComplete: Boolean = this.programs.values.forall(_.isDefined)
+}
+
+class Node(
+	val state: List[Map[String, Any]],
+	val edges: List[Edge],
+	val valueIndices: List[Int],
+	val isEnd: Boolean)
+{
+	def update(program: ASTNode): Boolean = {
+		if (!program.usesVariables) return false
+		var graphChanged = false
+
+		// Check, for this starting state, what the final values of the program are:
+		val values: List[Any] = program.values
+			.zipWithIndex
+			.filter(tup => this.valueIndices.contains(tup._2))
+			.map(_._1)
+
+		// Now, values contains the output of this program in this state.
+		// We need to check if assigning this program to any of the "old" variables will
+		// take us to another node, and if so, add that as the edge between them.
+
+		for (edge <- this.edges) {
+			edge match {
+				case edge: SingleEdge =>
+					if (edge.program.isEmpty &&
+						edge.child.state
+							.map(_ (edge.variable))
+							.zip(values)
+							.forall(tup => tup._1 == tup._2)) {
+						edge.program = Some(program)
+						graphChanged = true
+					}
+				case edge: MultiEdge =>
+					// We need to check each variable
+					for ((variable, programOpt) <- edge.programs) {
+						if (programOpt.isEmpty &&
+							edge.child.state
+								.map(_ (variable))
+								.zip(values)
+								.forall(tup => tup._1 == tup._2)) {
+							edge.programs.update(variable, Some(program))
+							graphChanged = true
+						}
+					}
+			}
+
+			// Propagate the program through the rest of the graph
+			graphChanged |= edge.child.update(program)
+		}
+
+		graphChanged
+	}
+
 }

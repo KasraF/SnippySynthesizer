@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
-import edu.ucsd.snippy.utils.{MultivariablePredicate, Predicate, Utils}
+import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, MultilineMultivariablePredicate, Predicate, Utils, Node}
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.json.JsonParser
@@ -20,11 +20,13 @@ class SynthesisTask(
 	val enumerator: Enumerator,
 
 	// Extra information for building the predicate
+	pred: Option[Predicate],
 	processedEnvs: List[Map[String, Any]])
 {
-	val predicate: Predicate = outputVariables match {
-		case single :: Nil => Predicate.getPredicate(single, processedEnvs, this)
-		case multiple => new MultivariablePredicate(multiple.map(varName => varName -> Predicate.getPredicate(varName, processedEnvs, this)).toMap)
+	val predicate: Predicate = (pred, outputVariables) match {
+		case (Some(pred), _) => pred
+		case (None, single :: Nil) => Predicate.getPredicate(single, processedEnvs, this)
+		case (None, multiple) => new BasicMultivariablePredicate(multiple.map(varName => varName -> Predicate.getPredicate(varName, processedEnvs, this)).toMap)
 	}
 
 	override def toString: String =
@@ -103,8 +105,9 @@ object SynthesisTask
 		val processedEnvs: List[Map[String, Any]] = envs
 			.asInstanceOf[List[Map[String, Any]]]
 			.map(cleanupInputs)
+		val loopy = isLoopy(previousEnv, outputVarNames, envs)
 
-		val contexts: List[Context] = if (isLoopy(previousEnv, outputVarNames, envs)) {
+		val contexts: List[Context] = if (loopy) {
 			processedEnvs
 				.zip(previousEnv :: processedEnvs.slice(0, processedEnvs.length - 1))
 				.map {
@@ -133,6 +136,25 @@ object SynthesisTask
 		val oeManager = new InputsValuesManager
 		val enumerator = new Enumerator(vocab, oeManager, contexts)
 
+		if (loopy && outputVarNames.size > 1) {
+			// We can support multiline assignments, so let's build the graph
+			// Start by building a map of the output variables' old and new values
+
+			// Notes:
+			// contexts:      has the old values
+			// processedEnvs: has the new values
+			val values: List[List[(Any, Any)]] = outputVarNames.map(varName =>
+				contexts
+					.zip(processedEnvs)
+					.map(tup => (tup._1(varName), tup._2(varName))))
+
+			// We start with a node with all the variables having their old values
+			val startNode = new Node(contexts,
+			val edges: List[Edge],
+			val valueIndices: List[Int],
+			val isEnd: Boolean))
+		}
+
 		new SynthesisTask(
 			parameters,
 			outputVarNames,
@@ -140,6 +162,7 @@ object SynthesisTask
 			contexts,
 			oeManager,
 			enumerator,
+			None,
 			processedEnvs)
 	}
 
