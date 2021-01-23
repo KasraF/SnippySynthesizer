@@ -137,9 +137,9 @@ case class MultiEdge(
 
 class Node(
 	val state: List[Map[String, Any]],
-	val edges: List[Edge],
+	var edges: List[Edge],
 	val valueIndices: List[Int],
-	val isEnd: Boolean)
+	var isEnd: Boolean)
 {
 	def update(program: ASTNode): Boolean = {
 		if (!program.usesVariables) return false

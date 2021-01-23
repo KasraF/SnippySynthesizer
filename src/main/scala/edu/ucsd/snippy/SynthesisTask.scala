@@ -3,10 +3,12 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
-import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, MultilineMultivariablePredicate, Predicate, Utils, Node}
+import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, Edge, MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge, Utils}
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.json.JsonParser
+
+import scala.collection.mutable
 
 class SynthesisTask(
 	// Problem definition
@@ -44,23 +46,6 @@ object SynthesisTask
 	val reserved_names: Set[String] =
 		Set("time", "#", "$", "lineno", "prev_lineno", "next_lineno", "__run_py__")
 
-	private def cleanupInputs(input: Map[String, Any]): Map[String, Any] =
-	{
-		val parser = new InputParser
-		input
-			.filter(v => !reserved_names.contains(v._1))
-			// TODO Is there a cleaner way to do this?
-			.filter(_._2.isInstanceOf[String])
-			.map(variable => parser.parse(variable._2.asInstanceOf[String]) match {
-				case None =>
-					DebugPrints.eprintln(s"Input not recognized: $variable")
-					(variable._1, null)
-				case Some(v) =>
-					(variable._1, v)
-			})
-			.filter(v => v._2 != null)
-	}
-
 	/**
 	 * Checks whether we can use the output variables' previous values in the environment. To do so
 	 * we need:
@@ -95,8 +80,7 @@ object SynthesisTask
 					}) != -1))
 	}
 
-	def fromString(jsonString: String): SynthesisTask =
-	{
+	def fromString(jsonString: String): SynthesisTask = {
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
@@ -107,7 +91,7 @@ object SynthesisTask
 			.map(cleanupInputs)
 		val loopy = isLoopy(previousEnv, outputVarNames, envs)
 
-		val contexts: List[Context] = if (loopy) {
+		var contexts: List[Context] = if (loopy) {
 			processedEnvs
 				.zip(previousEnv :: processedEnvs.slice(0, processedEnvs.length - 1))
 				.map {
@@ -120,6 +104,69 @@ object SynthesisTask
 		} else {
 			// Not in a loop. Do the usual.
 			processedEnvs.map(env => env.filter(entry => !outputVarNames.contains(entry._1)).filter(_._1 != "#"))
+		}
+
+		val predicate = if (loopy && outputVarNames.size > 1) {
+			// We can support multiline assignments, so let's build the graph
+			// We start with enumerating all the possible environments
+			val environments = this.enumerateEnvs(outputVarNames, contexts, processedEnvs)
+
+			// enviornments.head := Same as "contexts", the environment with all old values -> The starting node
+			// environment.last := processedEnvs, the environment with all the new values -> The end node
+
+			// We need to all all but the above to the evaluation context, both to preserve completeness under OE, and
+			// because the MultilineMultivariablePredicate uses them to determine when Synthesis is complete.
+			// We also need to keep track of their indices in the final context, since the context is a flatmap of them,
+			// while the predicate needs to be able to extract only the relevant values from synthesized ASTNodes.
+
+			// TODO We can actually just overwrite `context` here, since the original context is represented by the
+			//  first graph node.
+
+			val nodes = environments
+				.map { case (_, envs) =>
+					contexts = contexts ++ envs
+					(envs, Range(contexts.length - envs.length, contexts.length).toList)
+				}
+				.map { case (env, indices) => new Node(env, Nil, indices, false) }
+
+			// Set the final node
+			nodes.last.isEnd = true
+
+			// Note: There's a dependency here between the order of nodes, and the order of the `environments`, which
+			// we use below to find the nodes that should have a variable in-between.
+
+			// Now we need to create the edges and set them in the nodes
+			val edges: List[Edge] = environments.zipWithIndex.flatMap{ case ((thisVars, _), thisIdx) =>
+				val nodeEdges: List[Edge] = Range(thisIdx + 1, environments.length).map(thatIdx => {
+					val thatVars = environments(thatIdx)._1
+					if (thatVars.size > thisVars.size && thisVars.forall(thatVars.contains)) {
+						// We need to create an edge between the two
+						val newVars = thatVars -- thisVars
+						val parent = nodes(thisIdx)
+						val child = nodes(thatIdx)
+
+						if (newVars.size == 1) {
+							Some(SingleEdge(None, newVars.head, parent, child))
+						} else {
+							Some(MultiEdge(mutable.Map.from(newVars.map(_ -> None)), parent, child))
+						}
+					} else {
+						// There is no edge between these nodes
+						None
+					}
+				})
+				.filter(_.isDefined)
+				.map(_.get)
+				.toList
+
+				nodes(thisIdx).edges = nodeEdges
+
+				nodeEdges
+			}
+
+			Some(new MultilineMultivariablePredicate(nodes.head))
+		} else {
+			None
 		}
 
 		val parameters =
@@ -136,25 +183,6 @@ object SynthesisTask
 		val oeManager = new InputsValuesManager
 		val enumerator = new Enumerator(vocab, oeManager, contexts)
 
-		if (loopy && outputVarNames.size > 1) {
-			// We can support multiline assignments, so let's build the graph
-			// Start by building a map of the output variables' old and new values
-
-			// Notes:
-			// contexts:      has the old values
-			// processedEnvs: has the new values
-			val values: List[List[(Any, Any)]] = outputVarNames.map(varName =>
-				contexts
-					.zip(processedEnvs)
-					.map(tup => (tup._1(varName), tup._2(varName))))
-
-			// We start with a node with all the variables having their old values
-			val startNode = new Node(contexts,
-			val edges: List[Edge],
-			val valueIndices: List[Int],
-			val isEnd: Boolean))
-		}
-
 		new SynthesisTask(
 			parameters,
 			outputVarNames,
@@ -162,8 +190,43 @@ object SynthesisTask
 			contexts,
 			oeManager,
 			enumerator,
-			None,
+			predicate,
 			processedEnvs)
+	}
+
+	private def cleanupInputs(input: Map[String, Any]): Map[String, Any] =
+	{
+		val parser = new InputParser
+		input
+			.filter(v => !reserved_names.contains(v._1))
+			// TODO Is there a cleaner way to do this?
+			.filter(_._2.isInstanceOf[String])
+			.map(variable => parser.parse(variable._2.asInstanceOf[String]) match {
+				case None =>
+					DebugPrints.eprintln(s"Input not recognized: $variable")
+					(variable._1, null)
+				case Some(v) =>
+					(variable._1, v)
+			})
+			.filter(v => v._2 != null)
+	}
+
+	private def enumerateEnvs(
+		outputVariables: List[String],
+		startingEnvs: List[Map[String, Any]],
+		endingEnvs: List[Map[String, Any]]): List[(Set[String], List[Map[String, Any]])] = {
+		outputVariables match {
+			case last :: Nil => List(
+				(Set(), startingEnvs),
+				(Set(last), startingEnvs.zip(endingEnvs).map(envs => envs._1 + (last -> envs._2(last)))))
+			case first :: rest =>
+				enumerateEnvs(rest, startingEnvs, endingEnvs) ++
+				enumerateEnvs(
+					rest,
+					startingEnvs.zip(endingEnvs).map(envs => envs._1 + (first -> envs._2(first))),
+					endingEnvs)
+					.map(tup => (tup._1 + first, tup._2))
+		}
 	}
 
 	private def getStringLiterals(examples: List[Map[String, Any]], outputNames: List[String]): List[String] =
