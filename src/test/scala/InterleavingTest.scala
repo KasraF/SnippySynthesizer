@@ -89,8 +89,8 @@ object InterleavingTest extends App {
 	println("----")
 	println("All at once:")
 	val task2 = SynthesisTask.fromString(jsonString)
-	val r2 = Snippy.synthesizeFromTask(task2)
-	println(r2._1.get)
+	val r2 = Snippy.synthesize(task2, 7)
+	println(r2._1.getOrElse("None"))
 	println("Programs seen:")
 	println(task2.enumerator.oeManager.asInstanceOf[InputsValuesManager].classValues.size)
 }
