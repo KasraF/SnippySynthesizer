@@ -83,7 +83,7 @@ class MultilineMultivariablePredicate(val graphStart: Node) extends Predicate {
 		}
 	}
 
-	private def traverse(node: Node): Option[List[String]] =
+	def traverse(node: Node): Option[List[String]] =
 	{
 		if (node.isEnd) {
 			Some(Nil)
