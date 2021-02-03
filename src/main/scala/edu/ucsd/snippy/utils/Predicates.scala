@@ -71,6 +71,8 @@ class BasicMultivariablePredicate(val predicates: Map[String, SingleVariablePred
 
 class MultilineMultivariablePredicate(val graphStart: Node) extends Predicate {
 	override def evaluate (program: ASTNode): Option[String] = {
+		if (!program.usesVariables) return None
+
 		// Update the graph
 		if (this.graphStart.update(program)) {
 			// The graph was changed. See if we have a complete path to the end now
@@ -121,6 +123,7 @@ abstract sealed class Edge(
 case class SingleEdge(
 	var program: Option[ASTNode],
 	variable: String,
+	outputType: Types,
 	override val parent: Node,
 	override val child: Node,
 ) extends Edge(parent, child) {
@@ -129,6 +132,7 @@ case class SingleEdge(
 
 case class MultiEdge(
 	var programs: mutable.Map[String, Option[ASTNode]],
+	var outputTypes: Map[String, Types],
 	override val parent: Node,
 	override val child: Node,
 ) extends Edge(parent, child) {
@@ -142,7 +146,7 @@ class Node(
 	var isEnd: Boolean)
 {
 	def update(program: ASTNode): Boolean = {
-		if (!program.usesVariables) return false
+
 		var graphChanged = false
 
 		// Check, for this starting state, what the final values of the program are:
@@ -159,6 +163,7 @@ class Node(
 			edge match {
 				case edge: SingleEdge =>
 					if (edge.program.isEmpty &&
+						edge.outputType == program.nodeType &&
 						edge.child.state
 							.map(_ (edge.variable))
 							.zip(values)
@@ -170,6 +175,7 @@ class Node(
 					// We need to check each variable
 					for ((variable, programOpt) <- edge.programs) {
 						if (programOpt.isEmpty &&
+							edge.outputTypes(variable) == program.nodeType &&
 							edge.child.state
 								.map(_ (variable))
 								.zip(values)
