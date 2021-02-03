@@ -1,0 +1,25 @@
+{
+	"varNames": ["lst", "size"],
+	"previous_env": {
+		"time": 10,
+		"name": "'Augusta Ada King'",
+		"lst": "[]",
+		"size": "0",
+		"lineno": 3,
+		"prev_lineno": 2,
+		"next_lineno": "R3"
+	},
+	"envs": [
+		{
+			"time": 10,
+			"#": "1",
+			"$": "",
+			"name": "'Augusta Ada King'",
+			"lst": "['Augusta', 'Ada', 'King']",
+			"size": "3",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": "R3"
+		}
+	]
+}
