@@ -48,7 +48,7 @@ class PostprocessorTests  extends JUnitSuite{
       ), new IntLiteral(8, 1)
     )
     val postProcessed = PostProcessor.clean(expr)
-    assertEquals("0 - x + 8",postProcessed.code)
+    assertEquals("-x + 8",postProcessed.code)
   }
   @Test def constantFoldIntOperationOneVar4: Unit = {
     val x = new IntVariable("x",Map("x" -> 2) :: Nil)

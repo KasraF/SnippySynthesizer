@@ -53,9 +53,15 @@ class PredicateTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["x", "y"],
-			  |  "previous_env": {},
+			  |  "previous_env": {
+			  |    "#": "",
+			  |    "z": "1",
+			  |    "x": "0",
+			  |    "y": "0"
+			  |  },
 			  |  "envs": [
 			  |    {
+			  |      "#": "0",
 			  |      "z": "1",
 			  |      "x": "2",
 			  |      "y": "3"
@@ -74,7 +80,7 @@ class PredicateTests extends JUnitSuite
 
 		assertEquals(3, graphStart.edges.length)
 		assertEquals(graphStart.isEnd, false)
-		assertEquals(List(Map("z" -> 1)), graphStart.state)
+		assertEquals(List(Map("z" -> 1, "x" -> 0, "y" -> 0)), graphStart.state)
 
 		graphStart.edges.foreach(edge => {
 			assertEquals(false, edge.isComplete)
@@ -127,7 +133,7 @@ class PredicateTests extends JUnitSuite
 		assert(solution._1.isDefined)
 
 		// This is optional, as long as we get a correct solution
-		assertEquals("y = z + z + z\nx = z + z", solution._1.get)
+		// assertEquals("y = z + z + z\nx = z + z", solution._1.get)
 	}
 
 	@Test
