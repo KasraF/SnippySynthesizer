@@ -106,6 +106,8 @@ object SynthesisTask
 			processedEnvs.map(env => env.filter(entry => !outputVarNames.contains(entry._1)).filter(_._1 != "#"))
 		}
 
+		val additionalLiterals = getStringLiterals(processedEnvs, outputVarNames)
+
 		val predicate = if (loopy && outputVarNames.size > 1) {
 			// We can support multiline assignments, so let's build the graph
 			// We start with enumerating all the possible environments
@@ -129,6 +131,9 @@ object SynthesisTask
 				}
 				.map { case (env, indices) => new Node(env, Nil, indices, false) }
 
+			// We never evaluate in the final env, so can we pop that?
+			contexts = contexts.dropRight(1)
+
 			// Set the final node
 			nodes.last.isEnd = true
 
@@ -146,9 +151,15 @@ object SynthesisTask
 						val child = nodes(thatIdx)
 
 						if (newVars.size == 1) {
-							Some(SingleEdge(None, newVars.head, parent, child))
+							val values = processedEnvs.flatMap(map => map.filter(_._1 == newVars.head).values)
+							Some(SingleEdge(None, newVars.head, Utils.getTypeOfAll(values), parent, child))
 						} else {
-							Some(MultiEdge(mutable.Map.from(newVars.map(_ -> None)), parent, child))
+
+							Some(MultiEdge(
+								mutable.Map.from(newVars.map(_ -> None)),
+								newVars.map(varName => varName -> Utils.getTypeOfAll(processedEnvs.flatMap(map => map.filter(_._1 == varName).values))).toMap,
+								parent,
+								child))
 						}
 					} else {
 						// There is no edge between these nodes
@@ -178,8 +189,7 @@ object SynthesisTask
 				// TODO Handle empty sets
 				.filter(!_._2.equals(Types.Unknown))
 				.toList
-		val additionalLiterals = getStringLiterals(processedEnvs, outputVarNames)
-		val vocab = SynthesisTask.vocabFactory(parameters, additionalLiterals)
+		val vocab = SynthesisTask.vocabFactory(parameters, additionalLiterals.toList)
 		val oeManager = new InputsValuesManager
 		val enumerator = new Enumerator(vocab, oeManager, contexts)
 
@@ -229,30 +239,27 @@ object SynthesisTask
 		}
 	}
 
-	private def getStringLiterals(examples: List[Map[String, Any]], outputNames: List[String]): List[String] =
+	private def getStringLiterals(
+		startingContexts: List[Map[String, Any]],
+		outputNames: List[String]): Set[String] =
 	{
-		if (outputNames
-			.flatMap(outputName => examples.map(entry => entry(outputName)))
-			.exists(value => Types.typeof(value) != Types.String)) //this is only for strings
-		{
-			return Nil
-		}
-
-		val opts =
-			examples.map {
-				ex =>
-					val outputValues = ex.filter(entry => outputNames.contains(entry._1)).values.asInstanceOf[Iterable[String]]
-					val stringInputs = for ((inputName, inputVal) <- ex; if Types.typeof(inputVal) == Types.String && !outputNames.contains(inputName))
-						yield inputVal.asInstanceOf[String]
-					val chars: Iterable[String] = outputValues.flatMap(
-						outputVal =>
-							for (char <- outputVal; if stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper)))
-								yield char.toString
-						)
-					chars.toSet
-			}
-		val intersection = opts.reduce((a, b) => a.intersect(b))
-		intersection.toList
+		outputNames
+			.filter(name => startingContexts.map(_(name)).exists(Types.typeof(_) == Types.String))
+			.flatMap(outputName =>
+			{
+				startingContexts.flatMap {
+						ex =>
+							val stringInputs = ex
+								.filter { case (name, value) => !outputNames.contains(name) && Types.typeof(value) == Types.String }
+								.map(_._2.asInstanceOf[String])
+							ex(outputName)
+								.asInstanceOf[String]
+								.filter(char => stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper)))
+								.map(_.toString)
+								.toSet
+					}
+			})
+		.toSet
 	}
 
 	private def vocabFactory(variables: List[(String, Types.Value)], additionalLiterals: List[String]): VocabFactory =
