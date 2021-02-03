@@ -1,6 +1,7 @@
 import edu.ucsd.snippy.SynthesisTask
 import edu.ucsd.snippy.ast.Types
 import edu.ucsd.snippy.utils.SingleVariablePredicate
+import edu.ucsd.snippy.vocab.BasicVocabMaker
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
@@ -192,5 +193,87 @@ class SynthesisTaskTests extends JUnitSuite
 			  |  ]
 			  |}""".stripMargin)
 		assertEquals(Types.StringList, task.parameters.find(kv => kv._1 == "counts").get._2)
+	}
+
+	@Test def stringLiteralsTest: Unit =
+	{
+		val task = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["x"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |      "x": "'x'",
+			  |    },
+			  |    {
+			  |      "x": "'y'",
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+
+		assertTrue(task.vocab.leaves().exists(
+			maker => maker.arity == 0 &&
+				maker.isInstanceOf[BasicVocabMaker] &&
+				maker.asInstanceOf[BasicVocabMaker]
+					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
+					.values == List("x")))
+		assertTrue(task.vocab.leaves().exists(
+			maker => maker.arity == 0 &&
+				maker.isInstanceOf[BasicVocabMaker] &&
+				maker.asInstanceOf[BasicVocabMaker]
+					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
+					.values == List("y")))
+	}
+
+	@Test def multivariableStringLiteralsTest: Unit =
+	{
+		val task = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["x", "y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |      "x": "'x'",
+			  |      "y": "'x'"
+			  |    },
+			  |    {
+			  |      "x": "'y'",
+			  |      "y": "'y'",
+			  |    },
+			  |    {
+			  |      "x": "'a'",
+			  |      "y": "'b'"
+			  |    },
+			  |    {
+			  |      "x": "'b'",
+			  |      "y": "'a'"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+
+		assertTrue(task.vocab.leaves().exists(
+			maker => maker.arity == 0 &&
+				maker.isInstanceOf[BasicVocabMaker] &&
+				maker.asInstanceOf[BasicVocabMaker]
+					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
+					.values == List("x")))
+		assertTrue(task.vocab.leaves().exists(
+			maker => maker.arity == 0 &&
+				maker.isInstanceOf[BasicVocabMaker] &&
+				maker.asInstanceOf[BasicVocabMaker]
+					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
+					.values == List("y")))
+		assertTrue(task.vocab.leaves().exists(
+			maker => maker.arity == 0 &&
+				maker.isInstanceOf[BasicVocabMaker] &&
+				maker.asInstanceOf[BasicVocabMaker]
+					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
+					.values == List("a")))
+		assertTrue(task.vocab.leaves().exists(
+			maker => maker.arity == 0 &&
+				maker.isInstanceOf[BasicVocabMaker] &&
+				maker.asInstanceOf[BasicVocabMaker]
+					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
+					.values == List("b")))
 	}
 }
