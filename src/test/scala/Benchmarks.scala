@@ -5,7 +5,7 @@ import java.io.File
 object Benchmarks extends App
 {
 	def runBenchmark(dir: File): Unit = {
-		println("----- -------------------- --------------------------------------")
+		println("----- ------------------- ------- ---------- --------------------------------------")
 		dir.listFiles()
 			.filter(_.getName.contains(".examples.json"))
 			.filter(!_.getName.contains(".out"))
@@ -15,12 +15,18 @@ object Benchmarks extends App
 				val file = benchmark._1
 				val index = benchmark._2 + 1
 				val name: String = file.getName.substring(0, file.getName.indexOf('.'))
-				print(f"($index%2d)  [$name%18s] ")
+				print(f"($index%2d)  [$name%17s] ")
 
 				try {
-					Snippy.synthesize(file.getAbsolutePath) match {
-						case (None, _) => println("Timeout")
-						case (Some(program: String), time: Int) => println(f"[${time / 1000.0}%1.3f] $program")
+					Snippy.synthesize(file) match {
+						case (None, time: Int, count: Int) => println(f"[${time / 1000.0}%.3f] [$count%8d] Timeout") // println(f"[$count%d] Timeout")
+						case (Some(program: String), time: Int, count: Int) =>
+							val str = if (program.contains('\n')) {
+								program.split('\n').mkString('\n' + " ".repeat(45))
+							} else {
+								program
+							}
+							println(f"[${time / 1000.0}%.3f] [$count%8d] $str")
 					}
 				} catch {
 					case e: Throwable => println(e)
@@ -42,7 +48,7 @@ object Benchmarks extends App
 			"-------------------------------------------\n" +
 			"| Python Synthesizer for Projection Boxes |\n" +
 			"-------------------------------------------\n")
-	println("Index Name                 Program")
+	println("Index Name                Time    Count      Program")
 
 	val benchmarks = new File("src/test/resources")
 	assert(benchmarks.isDirectory)
