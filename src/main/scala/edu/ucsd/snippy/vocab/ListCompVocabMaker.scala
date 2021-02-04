@@ -51,7 +51,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 				override val returnType: Types = Types.String
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					new CompStringVariable(varName, contexts)
 			}
 			case Types.Int => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -59,7 +59,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) e
 				override val returnType: Types = Types.Int
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(varName, contexts)
+					new CompIntVariable(varName, contexts)
 			}
 		}
 
