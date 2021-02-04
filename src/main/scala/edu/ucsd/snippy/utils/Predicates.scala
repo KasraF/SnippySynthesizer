@@ -101,7 +101,7 @@ class MultilineMultivariablePredicate(val graphStart: Node) extends Predicate {
 								{
 									val orderedPrograms = edge.programs.toList
 									val variables = orderedPrograms.map(_._1).mkString(", ")
-									val programs = orderedPrograms.map(_._2.get).map(PostProcessor.clean).mkString(", ")
+									val programs = orderedPrograms.map(_._2.get).map(PostProcessor.clean).map(_.code).mkString(", ")
 									variables + " = " + programs
 								} :: assignments)
 					}
