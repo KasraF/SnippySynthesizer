@@ -1,1 +1,54 @@
-{"varNames":["x","y"],"previous_env":{"time":4,"#":"0","$":"2","x":"1","y":"1","i":"0","lineno":3,"prev_lineno":2,"next_lineno":2},"envs":[{"time":5,"#":"0","$":"2","x":"2","y":"1","i":"0","lineno":2,"prev_lineno":3,"next_lineno":3},{"time":7,"#":"1","$":"2","x":"3","y":"2","i":"1","lineno":2,"prev_lineno":3,"next_lineno":3},{"time":9,"#":"2","$":"2","x":"5","y":"3","i":"2","lineno":2,"prev_lineno":3,"next_lineno":3}],"program":"def f():\n    x = y = 1\n    for i in range(5):\n        x, y = x, y\nf()","line_no":4}
+{
+	"varNames": [
+		"x",
+		"y"
+	],
+	"previous_env": {
+		"time": 4,
+		"#": "0",
+		"$": "2",
+		"x": "1",
+		"y": "1",
+		"i": "0",
+		"lineno": 3,
+		"prev_lineno": 2,
+		"next_lineno": 2
+	},
+	"envs": [
+		{
+			"time": 5,
+			"#": "0",
+			"$": "2",
+			"x": "2",
+			"y": "1",
+			"i": "0",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 7,
+			"#": "1",
+			"$": "2",
+			"x": "3",
+			"y": "2",
+			"i": "1",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 9,
+			"#": "2",
+			"$": "2",
+			"x": "5",
+			"y": "3",
+			"i": "2",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		}
+	],
+	"program": "def f():\n    x = y = 1\n    for i in range(5):\n        x, y = x, y\nf()",
+	"line_no": 4
+}

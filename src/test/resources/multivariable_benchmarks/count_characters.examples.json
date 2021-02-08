@@ -1,0 +1,28 @@
+{
+	"varNames": [
+		"chars",
+		"duplicates",
+		"rs"
+	],
+	"previous_env": {
+		"#": "",
+		"inp": "'aabbcde'",
+		"chars": "{}",
+		"duplicates": "{}",
+		"rs": "0"
+	},
+	"envs": [
+		{
+			"time": 1,
+			"#": "0",
+			"$": "",
+			"inp": "'aabbcde'",
+			"chars": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+			"duplicates": "{'a': 2, 'b': 2}",
+			"rs": "2",
+			"lineno": 2,
+			"prev_lineno": 1,
+			"next_lineno": "R2"
+		}
+	]
+}
