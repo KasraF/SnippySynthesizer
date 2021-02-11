@@ -10,21 +10,21 @@ trait QuaternaryOpNode[T] extends ASTNode
 	val arg3: ASTNode
 
 	lazy val values: List[T] = arg0.values
-	  .zip(arg1.values)
-	  .zip(arg2.values)
-	  .zip(arg3.values)
-	  .map(tup => doOp(tup._1._1._1, tup._1._1._2, tup._1._2, tup._2)) match {
+		.zip(arg1.values)
+		.zip(arg2.values)
+		.zip(arg3.values)
+		.map(tup => doOp(tup._1._1._1, tup._1._1._2, tup._1._2, tup._2)) match {
 		case l if l.forall(_.isDefined) => l.map(_.get)
 		case _ => Nil
 	}
 
 	override val height: Int = 1 + Math.max(arg0.height, Math.max(arg1.height, Math.max(arg2.height, arg3.height)))
-	override val terms : Int = 1 + arg0.terms + arg1.terms + arg2.terms + arg3.terms
+	override val terms: Int = 1 + arg0.terms + arg1.terms + arg2.terms + arg3.terms
 	override val children: Iterable[ASTNode] = Iterable(arg0, arg1, arg2, arg3)
 
 	assert(arg0.values.length == arg1.values.length &&
-	  arg1.values.length == arg2.values.length &&
-	  arg2.values.length == arg3.values.length)
+		       arg1.values.length == arg2.values.length &&
+		       arg2.values.length == arg3.values.length)
 
 	def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[T]
 
@@ -32,13 +32,15 @@ trait QuaternaryOpNode[T] extends ASTNode
 
 	def includes(varName: String): Boolean =
 		arg0.includes(varName) ||
-		  arg1.includes(varName) ||
-		  arg2.includes(varName) ||
-		  arg3.includes(varName)
+			arg1.includes(varName) ||
+			arg2.includes(varName) ||
+			arg3.includes(varName)
 
 	override lazy val usesVariables: Boolean =
 		arg0.usesVariables || arg1.usesVariables ||
-		arg2.usesVariables || arg3.usesVariables
+			arg2.usesVariables || arg3.usesVariables
+
+	override def updateValues = null
 }
 
 // TODO Test is extensively before adding it
@@ -46,7 +48,7 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 {
 	override protected val parenless: Boolean = false
 	override lazy val code: String =
-		arg0.parensIfNeeded + "[" + arg1.code + ":" + arg2.code + ":"  + arg3.code + "]"
+		arg0.parensIfNeeded + "[" + arg1.code + ":" + arg2.code + ":" + arg3.code + "]"
 
 	override def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[String] = (a0, a1, a2, a3) match {
 		case (_, _, _, 0) => None

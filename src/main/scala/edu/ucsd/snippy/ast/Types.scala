@@ -4,37 +4,47 @@ object Types extends Enumeration
 {
 	type Types = Value
 
-	case class Iterable(childType: Types) extends super.Val {
+	case class Iterable(childType: Types) extends super.Val
+	{
 		override def canEqual(that: Any): Boolean = this.equals(that)
+
 		override def equals(that: Any): Boolean =
 			that match {
 				case String => this.childType.equals(String)
 				case List(t) => this.childType.equals(t)
 				case Set(t) => this.childType.equals(t)
 				case Iterable(t) => this.childType.equals(t)
-				case Map(t,_) => this.childType.equals(t)
+				case Map(t, _) => this.childType.equals(t)
 				case _ => false
 			}
 
 		override def toString(): String = s"Iterable[$childType]"
 	}
 
-	case class List(childType: Types) extends super.Val {
+	case class List(childType: Types) extends super.Val
+	{
 		override def canEqual(that: Any): Boolean = this.equals(that)
+
 		override def equals(that: Any): Boolean =
 			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].childType.equals(this.childType)
+
 		override def toString(): String = s"List[$childType]"
 	}
 
-	case class Set(childType: Types) extends super.Val {
+	case class Set(childType: Types) extends super.Val
+	{
 		override def canEqual(that: Any): Boolean = this.equals(that)
+
 		override def equals(that: Any): Boolean =
 			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].childType.equals(this.childType)
+
 		override def toString(): String = s"Set[$childType]"
 	}
 
-	case class Map(keyType: Types, valType: Types) extends super.Val {
+	case class Map(keyType: Types, valType: Types) extends super.Val
+	{
 		override def canEqual(that: Any): Boolean = this.equals(that)
+
 		override def equals(that: Any): Boolean =
 			that match {
 				case that: Types.Map => that.keyType.equals(this.keyType) && that.valType.equals(this.valType)
@@ -44,9 +54,12 @@ object Types extends Enumeration
 		override def toString(): String = s"Map[$keyType,$valType]"
 	}
 
-	case object Any extends super.Val {
+	case object Any extends super.Val
+	{
 		override def canEqual(that: Any): Boolean = this.equals(that)
+
 		override def equals(that: Any): Boolean = true
+
 		override def toString(): String = "Any"
 	}
 
@@ -67,7 +80,7 @@ object Types extends Enumeration
 	val AnyList: List = Types.List(Types.Any)
 	val AnyIterable: Iterable = Types.Iterable(Types.Any)
 
-	def listOf(t: Types.Value) : Types.Value = t match {
+	def listOf(t: Types.Value): Types.Value = t match {
 		case Types.String => StringList
 		case Types.Int => IntList
 		case Types.Bool => BoolList
@@ -95,51 +108,52 @@ object Types extends Enumeration
 			Unknown
 	}
 
-	def isListType(t: Types.Value) : Boolean = t match {
+	def isListType(t: Types.Value): Boolean = t match {
 		case Types.List(_) => true
 		case _ => false
 	}
 
-	def typeof(x: Any) : Types.Value = {
-		 x match {
-			 case _: String => String
-			 case _: Int => Int
-			 case _: Boolean => Bool
-			 case x: scala.List[_] if x.nonEmpty => x.head match {
-				 case _: String => StringList
-				 case _: Int    => IntList
-				 case (a, b) => (a, b) match {
-					 case (_: String, _: String) => StringStringMap
-					 case (_: String, _: Int) => StringIntMap
-					 case (_: Int, _: String) => IntStringMap
-					 case (_: Int, _: Int) => IntIntMap
-					 case _ =>
-						 println("Could not determine type of " + x)
-						 Unknown
-				 }
-				 case _ =>
-					 println("Could not determine type of " + x)
-					 Unknown
-			 }
-			 case x: scala.collection.Set[_] if x.nonEmpty => x.head match {
-				 case _: String => StringSet
-				 case _: Int    => IntSet
-				 case _         =>
-					 println("Could not determine type of " + x)
-					 Unknown
-			 }
-			 case x: scala.collection.Map[_,_] if x.nonEmpty => x.head match {
-				 case (_: String, _: String) => StringStringMap
-				 case (_: String, _: Int)    => StringIntMap
-				 case (_: Int,    _: String) => IntStringMap
-				 case (_: Int,    _: Int)    => IntIntMap
-				 case _                      =>
-					 println("Could not determine type of " + x)
-					 Unknown
-			 }
-			 case _ =>
-				 println("Could not determine type of " + x)
-				 Unknown
-		 }
+	def typeof(x: Any): Types.Value =
+	{
+		x match {
+			case _: String => String
+			case _: Int => Int
+			case _: Boolean => Bool
+			case x: scala.List[_] if x.nonEmpty => x.head match {
+				case _: String => StringList
+				case _: Int => IntList
+				case (a, b) => (a, b) match {
+					case (_: String, _: String) => StringStringMap
+					case (_: String, _: Int) => StringIntMap
+					case (_: Int, _: String) => IntStringMap
+					case (_: Int, _: Int) => IntIntMap
+					case _ =>
+						println("Could not determine type of " + x)
+						Unknown
+				}
+				case _ =>
+					println("Could not determine type of " + x)
+					Unknown
+			}
+			case x: scala.collection.Set[_] if x.nonEmpty => x.head match {
+				case _: String => StringSet
+				case _: Int => IntSet
+				case _ =>
+					println("Could not determine type of " + x)
+					Unknown
+			}
+			case x: scala.collection.Map[_, _] if x.nonEmpty => x.head match {
+				case (_: String, _: String) => StringStringMap
+				case (_: String, _: Int) => StringIntMap
+				case (_: Int, _: String) => IntStringMap
+				case (_: Int, _: Int) => IntIntMap
+				case _ =>
+					println("Could not determine type of " + x)
+					Unknown
+			}
+			case _ =>
+				println("Could not determine type of " + x)
+				Unknown
+		}
 	}
 }

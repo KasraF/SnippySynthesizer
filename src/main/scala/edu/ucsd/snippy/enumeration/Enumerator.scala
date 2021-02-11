@@ -6,22 +6,22 @@ import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 import scala.collection.mutable
 
 class Enumerator(
-  val vocab    : VocabFactory,
-  val oeManager: OEValuesManager,
-  val contexts : List[Map[String, Any]])
-  extends Iterator[ASTNode]
+	val vocab: VocabFactory,
+	val oeManager: OEValuesManager,
+	val contexts: List[Map[String, Any]]) extends Iterator[ASTNode]
 {
 	override def toString(): String = "enumeration.Enumerator"
 
-	var currIter: Iterator[VocabMaker] = vocab.leaves()
-	// TODO Bug: This is not init()-ed
+	var nextProgram: Option[ASTNode] = None
+	var currIter: Iterator[VocabMaker] = vocab.leaves
 	var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
 	var currLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
-	var nextProgram: Option[ASTNode] = None
 	var height = 0
-
 	var rootMaker: Iterator[ASTNode] =
 		currIter.next().init(currLevelProgs.toList, contexts, vocab, height)
+
+	ProbUpdate.probMap = ProbUpdate.createProbMap(vocab)
+	ProbUpdate.priors = ProbUpdate.createPrior(vocab)
 
 	override def hasNext: Boolean =
 		if (nextProgram.isDefined) {
@@ -33,7 +33,9 @@ class Enumerator(
 
 	override def next(): ASTNode =
 	{
-		if (nextProgram.isEmpty) nextProgram = getNextProgram
+		if (nextProgram.isEmpty) {
+			nextProgram = getNextProgram
+		}
 		val res = nextProgram.get
 		nextProgram = None
 		res
@@ -42,6 +44,7 @@ class Enumerator(
 	/**
 	 * This method moves the rootMaker to the next possible non-leaf. Note that this does not
 	 * change the level/height of generated programs.
+	 *
 	 * @return False if we have exhausted all non-leaf AST nodes.
 	 */
 	def advanceRoot(): Boolean =
@@ -60,6 +63,7 @@ class Enumerator(
 
 	/**
 	 * This method resets the variables to begin enumerating the next level (taller) trees.
+	 *
 	 * @return False if the current level failed to generate any new programs.
 	 */
 	def changeLevel(): Boolean =

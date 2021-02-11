@@ -14,6 +14,10 @@ trait OEValuesManager
 	 */
 	def isRepresentative(program: ASTNode): Boolean
 
+	def irrelevant(program: ASTNode): Boolean
+
+	def clear(): Unit
+
 	/**
 	 * Removes the class of programs if it was previously seen.
 	 * @param program An instance of the class of programs to remove.
@@ -35,6 +39,14 @@ class InputsValuesManager extends OEValuesManager
 			case _: Exception => false
 		}
 	}
+
+	override def irrelevant(program: ASTNode): Boolean =
+	{
+		val results: List[Any] = program.values
+		program.includes("var") && program.terms > 1 && results.length > 1 && results.tail.forall(_ == results.head)
+	}
+
+	override def clear(): Unit = classValues.clear()
 
 	override def remove(program: ASTNode): Boolean =
 		this.classValues.remove(program.values)

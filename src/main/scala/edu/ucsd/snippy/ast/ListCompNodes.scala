@@ -13,7 +13,7 @@ trait ListCompNode[T] extends ListNode[T]
 		var rs: List[List[_]] = Nil;
 		var start = 0;
 		for (delta <- list.values.map(_.asInstanceOf[List[_]].length)) {
-			rs = rs :+ map.values.slice(start, start+delta)
+			rs = rs :+ map.values.slice(start, start + delta)
 			start += delta
 		}
 		rs.asInstanceOf[List[List[T]]]
@@ -26,6 +26,7 @@ trait ListCompNode[T] extends ListNode[T]
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
 	override lazy val usesVariables: Boolean = list.usesVariables || map.usesVariables
+	override def updateValues: ASTNode = null
 }
 
 class StringToStringListCompNode(val list: ListNode[String], val map: StringNode, val varName: String) extends ListCompNode[String]

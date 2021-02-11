@@ -22,7 +22,7 @@ object Snippy extends App
 
 	def synthesize(taskStr: String, timeout: Int): (Option[String], Int, Int) =
 	{
-		synthesize(SynthesisTask.fromString(taskStr), timeout)
+		synthesize(SynthesisTask.fromString(taskStr, size = true), timeout)
 	}
 
 	def synthesize(task: SynthesisTask, timeout: Int) : (Option[String], Int, Int) =

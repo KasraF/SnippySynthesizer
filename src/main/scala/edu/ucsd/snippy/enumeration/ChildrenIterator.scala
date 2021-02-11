@@ -4,12 +4,10 @@ import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
 
 class ChildrenIterator(
-  val childrenCandidates: List[ASTNode],
-  val childTypes: List[Types],
-  val currHeight: Int)
-  extends Iterator[List[ASTNode]]
+	val childrenCandidates: List[ASTNode],
+	val childTypes: List[Types],
+	val currHeight: Int) extends Iterator[List[ASTNode]]
 {
-	// TODO Handle cases where none of the children match the parent
 	val childrenLists: List[List[ASTNode]] = childTypes.map(t => childrenCandidates.filter(c => t.equals(c.nodeType)))
 	val candidates: Array[Iterator[ASTNode]] = childrenLists.map(l => l.iterator).toArray
 	val allExceptLast: Array[ASTNode] = candidates.dropRight(1).map(_.next())
