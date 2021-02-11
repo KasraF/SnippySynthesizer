@@ -213,7 +213,7 @@ object SynthesisTask
 			.filter(_._2.isInstanceOf[String])
 			.map(variable => parser.parse(variable._2.asInstanceOf[String]) match {
 				case None =>
-					DebugPrints.eprintln(s"Input not recognized: $variable")
+					DebugPrints.dprintln(s"Input not recognized: $variable")
 					(variable._1, null)
 				case Some(v) =>
 					(variable._1, v)

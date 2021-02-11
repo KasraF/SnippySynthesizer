@@ -8,9 +8,9 @@ object DebugPrints
 	val debug: Boolean = this.logger.isDebugEnabled
 	val info: Boolean = this.logger.isInfoEnabled
 
-	def dprintln(msg: String, args: Any*) = this.logger.debug(msg, args: _*)
+	def dprintln(msg: String, args: Any*) = () //this.logger.debug(msg, args: _*)
 
-	def iprintln(msg: String, args: Any*) = this.logger.info(msg, args: _*)
+	def iprintln(msg: String, args: Any*) = () //this.logger.info(msg, args: _*)
 
 	def eprintln(msg: String, args: Any*) = this.logger.error(msg, args: _*)
 

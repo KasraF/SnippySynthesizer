@@ -1,12 +1,21 @@
 package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast.ASTNode
+import net.liftweb.json
+import net.liftweb.json.JsonAST.JObject
+import net.liftweb.json.JsonParser
 
-import java.io.{BufferedWriter, FileWriter}
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
+import scala.io.StdIn
 import scala.tools.nsc.io.JFile
 import scala.util.control.Breaks._
+import edu.ucsd.snippy.utils.SingleVariablePredicate
+
+class SynthResult(
+	val program: Option[String],
+	val done: Boolean,
+) {}
 
 object Snippy extends App
 {
@@ -38,7 +47,8 @@ object Snippy extends App
 
 		breakable {
 			for ((program, i) <- task.enumerator.zipWithIndex) {
-			// for (program <- task.enumerator) {
+
+//			for (program <- task.enumerator) {
 //				if (program.height == 4) {
 //					rs = Some((program.code, timeout * 1000 - deadline.timeLeft.toMillis.toInt))
 //					break
@@ -63,21 +73,38 @@ object Snippy extends App
 		rs
 	}
 
+	def synthesizeIO(task: SynthesisTask, timeout: Int): Unit =
+	{
+		// If the environment is empty, we might go into an infinite loop :/
+		if (!task.contexts.exists(_.nonEmpty)) {
+			sys.exit(1)
+		}
+
+		val varName = task.predicate.asInstanceOf[SingleVariablePredicate].varName
+		val retType = task.predicate.asInstanceOf[SingleVariablePredicate].retType
+		val stdout = scala.sys.process.stdout
+		val stdin = scala.sys.process.stdin
+
+		for (program <- task.enumerator) {
+			task.predicate.evaluate(program) match {
+				case Some(code) =>
+					val done = true // task.predicate.isInstanceOf[PartialOutputPredicate]
+					stdout.println(json.Serialization.write(new SynthResult(Some(code), done))(json.DefaultFormats))
+					stdout.flush()
+					if (done) return
+				case None => ()
+			}
+		}
+	}
+
 	case class ExpectedEOFException() extends Exception
 
-	// trace.DebugPrints.setDebug()
-	val rs = args match {
-		case Array(task) => synthesize(new JFile(task))
-		case Array(task, timeout) => synthesize(new JFile(task), timeout.toInt)
+	args match {
+		case Array(taskFile) =>
+			val task = SynthesisTask.fromString(fromFile(new JFile(taskFile)).mkString)
+			synthesizeIO(task, 7)
+		case Array(taskFile, timeout) =>
+			val task = SynthesisTask.fromString(fromFile(new JFile(taskFile)).mkString)
+			synthesizeIO(task, timeout.toInt)
 	}
-
-	val (program, time, count) = rs match {
-		case (None, time, count) => ("None", time, count)
-		case (Some(program), time, count) => (program, time, count)
-	}
-
-	val writer = new BufferedWriter(new FileWriter(args.head + ".out"))
-	writer.write(program)
-	println(f"[$count%d] [${time / 1000.0}%1.3f] $program")
-	writer.close()
 }
