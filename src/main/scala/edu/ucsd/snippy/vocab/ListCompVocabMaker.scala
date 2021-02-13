@@ -238,12 +238,10 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 					val nestedCost = if (this.miniBank.contains((this.nodeType, this.currList)))
 						this.miniBank((this.nodeType, this.currList)).keys.last else 0
 
-
 					new ProbEnumerator(
 						this.mapVocab,
 						oeValuesManager,
 						newContexts,
-						false,
 						true,
 						nestedCost,
 						mainBank,

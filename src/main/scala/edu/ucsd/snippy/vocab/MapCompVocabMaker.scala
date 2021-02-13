@@ -283,7 +283,6 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 						this.mapVocab,
 						oeValuesManager,
 						newContexts,
-						false,
 						true,
 						nestedCost,
 						mainBank,
@@ -537,8 +536,14 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 					val nestedCost = if (this.varBank.contains((this.nodeType, this.currMap)))
 						this.varBank((this.nodeType, this.currMap)).keys.last else 0
 
-					new ProbEnumerator(this.filterVocab, oeValuesManager, newContexts, false, true, nestedCost, mainBank,
-					                     varBank)
+					new ProbEnumerator(
+						this.filterVocab,
+						oeValuesManager,
+						newContexts,
+						true,
+						nestedCost,
+						mainBank,
+						varBank)
 				}
 				done = true
 			}

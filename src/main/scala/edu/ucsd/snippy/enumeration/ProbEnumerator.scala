@@ -11,7 +11,7 @@ class ProbEnumerator(
 	val vocab: VocabFactory,
 	val oeManager: OEValuesManager,
 	val contexts: List[Map[String, Any]],
-	val probBased: Boolean, var nested: Boolean,
+	var nested: Boolean,
 	var initCost: Int,
 	var mainBank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
 	var vars: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) extends Iterator[ASTNode]

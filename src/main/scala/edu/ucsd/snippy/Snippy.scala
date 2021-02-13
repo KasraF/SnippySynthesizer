@@ -1,8 +1,10 @@
 package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast.ASTNode
+import edu.ucsd.snippy.enumeration.InputsValuesManager
 
 import java.io.{BufferedWriter, FileWriter}
+import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
 import scala.tools.nsc.io.JFile
@@ -32,12 +34,25 @@ object Snippy extends App
 			return (Some("None"), 0, 0)
 		}
 
+		val size = true //TODO: for size-based
 		var solution: Option[String] = None
 		var rs: (Option[String], Int, Int) = (None, -1, 0)
+		val oeManager = new InputsValuesManager()
 		val deadline = timeout.seconds.fromNow
+		var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+		var mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 
+		val enumerator = if (!size) new enumeration.Enumerator(task.vocab, oeManager, task.contexts)
+		else new enumeration.ProbEnumerator(
+								task.vocab,
+								oeManager,
+								task.contexts,
+						false,
+						0,
+								bank,
+								mini)
 		breakable {
-			for ((program, i) <- task.enumerator.zipWithIndex) {
+			for ((program, i) <- enumerator.zipWithIndex) {
 			// for (program <- task.enumerator) {
 //				if (program.height == 4) {
 //					rs = Some((program.code, timeout * 1000 - deadline.timeLeft.toMillis.toInt))
@@ -80,4 +95,5 @@ object Snippy extends App
 	writer.write(program)
 	println(f"[$count%d] [${time / 1000.0}%1.3f] $program")
 	writer.close()
+
 }

@@ -22,13 +22,14 @@ trait BasicVocabMaker extends VocabMaker with Iterator[ASTNode]
 	override def next: ASTNode =
 		this (this.childIterator.next(), this.contexts)
 
-	override def rootCost: Int = if (nodeType == classOf[IntLiteral] || nodeType == classOf[StringLiteral]
-		|| nodeType == classOf[BoolLiteral] || nodeType == classOf[StringVariable]
-		|| nodeType == classOf[BoolVariable] || nodeType == classOf[IntVariable]) {
-		ProbUpdate.priors(nodeType, Some(head))
-	} else {
+	override def rootCost: Int = //if
+		//(nodeType == classOf[IntLiteral] || nodeType == classOf[StringLiteral]
+		//|| nodeType == classOf[BoolLiteral] || nodeType == classOf[StringVariable]
+		//|| nodeType == classOf[BoolVariable] || nodeType == classOf[IntVariable]) {
+		//ProbUpdate.priors(nodeType, Some(head))
+	//} else {
 		ProbUpdate.priors(nodeType, None)
-	}
+	//}
 
 	override def init(programs: List[ASTNode], contexts: List[Map[String, Any]], vocabFactory: VocabFactory, height: Int): Iterator[ASTNode] =
 	{

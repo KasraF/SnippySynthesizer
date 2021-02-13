@@ -1,0 +1,13 @@
+{
+	"varNames": ["rs"],
+	"previous_env": {},
+	"envs": [
+    {
+      "#": "",
+      "$": "",
+      "inp1": "'Welcome to USA. usa is awesome!'",
+      "inp2": "'USA'",
+      "rs": "2"
+    }
+  ]
+}

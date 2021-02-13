@@ -66,7 +66,7 @@ class NestedEnumerator extends JUnitSuite {
     val oeManager = new InputsValuesManager()
     val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
     val enumerator =
-	    new ProbEnumerator(task.vocab, oeManager, task.contexts, false, false, 0, bank, bank)
+	    new ProbEnumerator(task.vocab, oeManager, task.contexts, false, 0, bank, bank)
     assertEquals(enumerator.hasNext, true)
     assertEquals(5,task.vocab.leavesMakers.size)
     assertEquals(task.vocab.nodeMakers.size,30)
