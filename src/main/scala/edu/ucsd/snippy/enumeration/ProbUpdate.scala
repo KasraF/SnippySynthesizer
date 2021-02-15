@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.enumeration
 
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolVariable, IntLiteral, IntVariable, StringLiteral, StringVariable}
+import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.vocab.VocabFactory
 
 import scala.collection.mutable

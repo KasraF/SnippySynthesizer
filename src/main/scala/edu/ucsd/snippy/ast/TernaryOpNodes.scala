@@ -31,7 +31,7 @@ trait TernaryOpNode[T] extends ASTNode
 	}
 }
 
-case class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: StringNode) extends TernaryOpNode[String] with StringNode
+case class StringReplace(arg0: StringNode, arg1: StringNode, arg2: StringNode) extends TernaryOpNode[String] with StringNode
 {
 	override protected val parenless: Boolean = false
 	override lazy val code: String =
@@ -46,13 +46,13 @@ case class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: S
 	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
 		StringReplace(a0.asInstanceOf[StringNode], a1.asInstanceOf[StringNode], a2.asInstanceOf[StringNode])
 
-	override def updateValues(contexts: Contexts) = copy(
+	override def updateValues(contexts: Contexts): StringReplace = copy(
 		arg0.updateValues(contexts).asInstanceOf[StringNode],
 		arg1.updateValues(contexts).asInstanceOf[StringNode],
 		arg2.updateValues(contexts).asInstanceOf[StringNode])
 }
 
-case class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[String] with StringNode
+case class TernarySubstring(arg0: StringNode, arg1: IntNode, arg2: IntNode) extends TernaryOpNode[String] with StringNode
 {
 	override protected val parenless: Boolean = true
 	override lazy val code: String =
@@ -76,7 +76,7 @@ case class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: I
 	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
 		TernarySubstring(a0.asInstanceOf[StringNode], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
 
-	override def updateValues(contexts: Contexts) = copy(
+	override def updateValues(contexts: Contexts): TernarySubstring = copy(
 		arg0.updateValues(contexts).asInstanceOf[StringNode],
 		arg1.updateValues(contexts).asInstanceOf[IntNode],
 		arg2.updateValues(contexts).asInstanceOf[IntNode])

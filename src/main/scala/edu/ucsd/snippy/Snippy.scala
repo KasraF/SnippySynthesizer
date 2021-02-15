@@ -74,5 +74,4 @@ object Snippy extends App
 	writer.write(program)
 	println(f"[$count%d] [${time / 1000.0}%1.3f] $program")
 	writer.close()
-
 }

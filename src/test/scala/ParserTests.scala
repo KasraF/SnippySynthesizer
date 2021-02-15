@@ -1,7 +1,7 @@
+import edu.ucsd.snippy.InputParser
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
-import edu.ucsd.snippy.InputParser
 
 class ParserTests extends JUnitSuite
 {

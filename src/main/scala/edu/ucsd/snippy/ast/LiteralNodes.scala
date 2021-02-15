@@ -11,12 +11,12 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 	val value: T
 	override val values: List[T] = List.fill(numContexts)(value)
 	override val children: Iterable[ASTNode] = Iterable.empty
+	override lazy val usesVariables: Boolean = false
 
 	def includes(varName: String): Boolean = false
-	override lazy val usesVariables: Boolean = false
 }
 
-case class StringLiteral(val value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode
+case class StringLiteral(value: String, numContexts: Int) extends LiteralNode[String](numContexts) with StringNode
 {
 	override protected val parenless: Boolean = true
 	override val code: String = '"' + value.flatMap(c => if (c.toInt >= 32 && c.toInt <= 127 && c != '\\' && c != '"') {
@@ -36,21 +36,21 @@ case class StringLiteral(val value: String, numContexts: Int) extends LiteralNod
 		}
 	}) + '"'
 
-	override def updateValues(contexts: Contexts) = copy(value, numContexts = contexts.contextLen)
+	override def updateValues(contexts: Contexts): ASTNode = copy(value, numContexts = contexts.contextLen)
 }
 
-case class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode
+case class IntLiteral(value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode
 {
 	override protected val parenless: Boolean = true
 	override val code: String = value.toString
 
-	override def updateValues(contexts: Contexts) = copy(value, numContexts = contexts.contextLen)
+	override def updateValues(contexts: Contexts): ASTNode = copy(value, numContexts = contexts.contextLen)
 }
 
-case class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode
+case class BoolLiteral(value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode
 {
 	override protected val parenless: Boolean = true
 	override val code: String = value.toString.capitalize
 
-	override def updateValues(contexts: Contexts) = copy(value, numContexts = contexts.contextLen)
+	override def updateValues(contexts: Contexts): ASTNode = copy(value, numContexts = contexts.contextLen)
 }

@@ -12,11 +12,11 @@ object DebugPrints
 		this.debug = false
 		this.info = false
 
-	def dprintln(msg: String, args: Any*) = if (this.debug) this.logger.debug(msg, args: _*)
+	def dprintln(msg: String, args: Any*): Unit = if (this.debug) this.logger.debug(msg, args: _*)
 
-	def iprintln(msg: String, args: Any*) = if (this.info) this.logger.info(msg, args: _*)
+	def iprintln(msg: String, args: Any*): Unit = if (this.info) this.logger.info(msg, args: _*)
 
-	def eprintln(msg: String, args: Any*) = this.logger.error(msg, args: _*)
+	def eprintln(msg: String, args: Any*): Unit = this.logger.error(msg, args: _*)
 
-	def eprintln(msg: String, error: Throwable) = this.logger.error(msg, error: Throwable)
+	def eprintln(msg: String, error: Throwable): Unit = this.logger.error(msg, error: Throwable)
 }

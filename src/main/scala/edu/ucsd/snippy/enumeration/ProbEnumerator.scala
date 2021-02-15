@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.enumeration
 
-import edu.ucsd.snippy.ast.{ASTNode, IntIntFilteredMapNode, IntIntMapCompNode, IntStringFilteredMapNode, IntStringMapCompNode, IntToIntListCompNode, IntToStringListCompNode, StringIntFilteredMapNode, StringIntMapCompNode, StringListIntMapCompNode, StringListStringMapCompNode, StringStringFilteredMapNode, StringStringMapCompNode, StringToIntListCompNode, StringToStringListCompNode}
+import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 
 import java.io.FileOutputStream
@@ -27,25 +27,25 @@ class ProbEnumerator(
 		if (nextProgram.isDefined) {
 			true
 		} else {
-			nextProgram = getNextProgram()
+			nextProgram = getNextProgram
 			nextProgram.isDefined
 		}
 
 	override def next(): ASTNode =
 	{
 		if (nextProgram.isEmpty) {
-			nextProgram = getNextProgram()
+			nextProgram = getNextProgram
 		}
 		val res = nextProgram.get
 		nextProgram = None
 		res
 	}
 
-	var costLevel = initCost
+	var costLevel: Int = initCost
 	var currIterator: Iterator[VocabMaker] = _
 	var currLevelPrograms: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
-	var varBank = mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]]()
-	val totalLeaves = vocab.leaves().toList.distinct ++ vocab.nonLeaves().toList.distinct
+	var varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, ArrayBuffer[ASTNode]]] = mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]]()
+	val totalLeaves: List[VocabMaker] = vocab.leaves().toList.distinct ++ vocab.nonLeaves().toList.distinct
 	var size_log = new FileOutputStream("output.txt", true)
 
 	ProbUpdate.probMap = ProbUpdate.createProbMap(vocab)
@@ -131,7 +131,7 @@ class ProbEnumerator(
 	}
 
 
-	def getNextProgram(): Option[ASTNode] =
+	def getNextProgram: Option[ASTNode] =
 	{
 		var res: Option[ASTNode] = None
 		// Iterate while no non-equivalent program is found

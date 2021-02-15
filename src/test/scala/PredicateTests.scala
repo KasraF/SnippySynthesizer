@@ -133,7 +133,7 @@ class PredicateTests extends JUnitSuite
 		assert(solution._1.isDefined)
 
 		// This is optional, as long as we get a correct solution
-		// assertEquals("y = z + z + z\nx = z + z", solution._1.get)
+		assertEquals("y = x + 3\nx = y - 1", solution._1.get)
 	}
 
 	@Test

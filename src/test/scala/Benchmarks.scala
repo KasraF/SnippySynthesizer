@@ -1,4 +1,4 @@
-import edu.ucsd.snippy.Snippy
+import edu.ucsd.snippy.{DebugPrints, Snippy}
 
 import java.io.File
 
@@ -37,21 +37,24 @@ object Benchmarks extends App
 	}
 
 	println(
-		"       _____            ______      \n" +
-			"      /  ___|           | ___ \\     \n" +
-			"      \\ `--. _   _ _ __ | |_/ /   _ \n" +
-			"       `--. \\ | | | '_ \\|  __/ | | |\n" +
-			"      /\\__/ / |_| | | | | |  | |_| |\n" +
-			"      \\____/ \\__, |_| |_\\_|   \\__, |\n" +
-			"              __/ |            __/ |\n" +
-			"             |___/            |___/ \n" +
-			"-------------------------------------------\n" +
-			"| Python Synthesizer for Projection Boxes |\n" +
-			"-------------------------------------------\n")
+		" _____       _      ______      \n" +
+		"/  ___|     (_)     | ___ \\     \n" +
+		"\\ `--. _ __  _ _ __ | |_/ /   _ \n" +
+		" `--. \\ '_ \\| | '_ \\|  __/ | | |\n" +
+		"/\\__/ / | | | | |_) | |  | |_| |\n" +
+		"\\____/|_| |_|_| .__/\\_|   \\__, |\n" +
+		"              | |          __/ |\n" +
+		"              |_|         |___/ \n" +
+		"+------------------------------+\n" +
+		"| Snippet synthesis for Python |\n" +
+		"+------------------------------+")
 	println("Index Name                Time    Count      Program")
 
 	val benchmarks = new File("src/test/resources")
 	assert(benchmarks.isDirectory)
+
+	DebugPrints.debug = false
+	DebugPrints.info = false
 
 	if (args.nonEmpty) {
 		benchmarks.listFiles()

@@ -3,7 +3,7 @@ package edu.ucsd.snippy.vocab
 import edu.ucsd.snippy.DebugPrints
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{BasicEnumerator, Contexts, Enumerator, InputsValuesManager, ProbEnumerator}
+import edu.ucsd.snippy.enumeration._
 
 import java.io.FileOutputStream
 import scala.collection.mutable

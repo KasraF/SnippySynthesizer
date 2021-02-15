@@ -41,7 +41,7 @@ trait QuaternaryOpNode[T] extends ASTNode
 		arg0.usesVariables || arg1.usesVariables ||
 			arg2.usesVariables || arg3.usesVariables
 
-	override def updateValues(contexts: Contexts) = null
+	override def updateValues(contexts: Contexts) = ???
 }
 
 // TODO Test is extensively before adding it

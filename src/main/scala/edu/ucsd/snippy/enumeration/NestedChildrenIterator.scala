@@ -149,7 +149,7 @@ class NestedChildrenIterator(
 	}
 
 	var next_child: Option[List[ASTNode]] = None
-	val costsIterator = costs.iterator
+	val costsIterator: Iterator[Array[Int]] = costs.iterator
 
 	def getNextChild(): Option[List[ASTNode]] =
 	{

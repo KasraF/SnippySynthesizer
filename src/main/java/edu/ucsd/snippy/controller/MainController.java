@@ -45,7 +45,7 @@ public class MainController
 		return rs;
 	}
 
-	private Logger logger = LoggerFactory.getLogger(this.getClass());
+	private final Logger logger = LoggerFactory.getLogger(this.getClass());
 
 	public static final int SYNTH_DURATION = 7;
 }

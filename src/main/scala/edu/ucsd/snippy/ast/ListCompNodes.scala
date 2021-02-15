@@ -24,9 +24,10 @@ trait ListCompNode[T] extends ListNode[T]
 	override val children: Iterable[ASTNode] = List(list, map)
 	override val code: String = s"[${map.code} for $varName in ${list.code}]"
 	override protected val parenless: Boolean = true
+	override lazy val usesVariables: Boolean = list.usesVariables || map.usesVariables
+
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
-	override lazy val usesVariables: Boolean = list.usesVariables || map.usesVariables
 	override def updateValues(contexts: Contexts): ASTNode = null
 }
 

@@ -1,9 +1,7 @@
 package edu.ucsd.snippy.enumeration
 
 import edu.ucsd.snippy.ast.ASTNode
-import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
-
-import scala.collection.mutable
+import edu.ucsd.snippy.vocab.VocabFactory
 
 trait Enumerator extends Iterator[ASTNode]
 {

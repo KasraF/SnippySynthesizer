@@ -6,15 +6,15 @@ import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
 
 import scala.collection.mutable
+import scala.collection.mutable.ArrayBuffer
 
 class NestedEnumerator extends JUnitSuite
 {
-
-	@Test def enumerateVocabNoOE: Unit =
+	@Test def enumerateVocabNoOE(): Unit =
 	{
 		val stringLiteral: StringNode = StringLiteral("abc", 1)
 		assertEquals(1, stringLiteral.values.length)
-		assertEquals("abc", stringLiteral.values(0))
+		assertEquals("abc", stringLiteral.values.head)
 		assertEquals(Types.String, stringLiteral.nodeType)
 		var contexts = new Contexts(List(Map(), Map(), Map(), Map()))
 		assertEquals(stringLiteral.updateValues(contexts).values, List("abc", "abc", "abc", "abc"))
@@ -29,11 +29,12 @@ class NestedEnumerator extends JUnitSuite
 
 		val x = StringVariable("x", Map("x" -> "abcde") :: Map("x" -> "a") :: Map("x" -> "ab") :: Nil)
 		assertEquals(x.values, List("abcde", "a", "ab"))
-		contexts = new Contexts(Map("x" -> "abcde") ::
-			                            Map("x" -> "abcde") ::
-			                            Map("x" -> "abcde") ::
-			                            Map("x" -> "a") ::
-			                            Map("x" -> "ab") :: Nil)
+		contexts = new Contexts(
+			Map("x" -> "abcde") ::
+				Map("x" -> "abcde") ::
+				Map("x" -> "abcde") ::
+				Map("x" -> "a") ::
+				Map("x" -> "ab") :: Nil)
 		assertEquals(x.updateValues(contexts).values, List("abcde", "abcde", "abcde", "a", "ab"))
 
 		val literal: IntLiteral = IntLiteral(42, 2)
@@ -42,7 +43,7 @@ class NestedEnumerator extends JUnitSuite
 		assertEquals(literal.updateValues(contexts).values, List(42, 42, 42, 42))
 	}
 
-	val task = SynthesisTask.fromString(
+	val task: SynthesisTask = SynthesisTask.fromString(
 		"""{
 		  |  "varName": "rs",
 		  |  "env": [
@@ -65,9 +66,9 @@ class NestedEnumerator extends JUnitSuite
 		  |      "rs": "'t'"
 		  |    }
 		  |  ]
-		  |}""".stripMargin, true)
+		  |}""".stripMargin)
 	val oeManager = new InputsValuesManager()
-	val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+	val bank: mutable.Map[Int, ArrayBuffer[ASTNode]] = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 	val enumerator =
 		new ProbEnumerator(task.vocab, oeManager, task.contexts, false, 0, bank, bank)
 	assertEquals(enumerator.hasNext, true)
@@ -96,10 +97,10 @@ class NestedEnumerator extends JUnitSuite
 	assertEquals(enumerator.next().code, "str(len(s))")
 	assertEquals(enumerator.next().code, "\" \".split(\" \")")
 	assertEquals(enumerator.next().code, "\" \".split(s)")
-	val ast2 = enumerator.next()
+	val ast2: ASTNode = enumerator.next()
 	assertEquals(ast2.code, "s.split(\" \")")
 	assertEquals(ast2.cost, 3)
-	val ast1 = enumerator.next()
+	val ast1: ASTNode = enumerator.next()
 	assertEquals(enumerator.nested, false)
 	assertEquals(ast1.code, "{var: var for var in \" \"}")
 	assertEquals(ast1.cost, 3)
@@ -107,7 +108,7 @@ class NestedEnumerator extends JUnitSuite
 
 	assertEquals(enumerator.next().code, "{var: var for var in s}")
 
-	val ast4 = enumerator.next()
+	val ast4: ASTNode = enumerator.next()
 	assertEquals(ast4.code, "-1 + -1")
 	assertEquals(ast4.cost, 3)
 	assertEquals("\" \" + str(0)", enumerator.next().code)
@@ -202,5 +203,4 @@ class NestedEnumerator extends JUnitSuite
 	assertEquals("str(len(s)).split(\" \")", enumerator.next().code)
 	assertEquals("str(-1).split(str(1))", enumerator.next().code)
 	assertEquals("{var: var + var for var in \" \"}", enumerator.next().code)
-
 }

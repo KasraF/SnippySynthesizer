@@ -3,15 +3,16 @@
 #  Licensed under the MIT License. See License.txt in the project root for license information.
 # ---------------------------------------------------------------------------------------------
 
-import ctypes
-import sys
 import ast
+import base64
 import bdb
+import ctypes
+import io
 import json
 import re
+import sys
 import types
-import io
-import base64
+
 import numpy as np
 from PIL import Image
 

@@ -1,4 +1,4 @@
-import edu.ucsd.snippy.ast.{ASTNode, IntAddition, IntLiteral, IntNode, IntVariable, StringLiteral, StringVariable, Types}
+import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{ChildrenIterator, Contexts, NestedChildrenIterator}
 import org.junit.Assert._
 import org.junit.Test

@@ -1165,7 +1165,7 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals(List(0, 0, 0, 2, 0), count2.values)
 	}
 
-	@Test def printingNodes() =
+	@Test def printingNodes(): Unit =
 	{
 		assertEquals("2", IntLiteral(2, 1).code)
 		val inp = StringVariable("inp", Map("inp" -> "'abc'") :: Nil)

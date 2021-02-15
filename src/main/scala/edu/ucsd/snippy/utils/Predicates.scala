@@ -1,8 +1,8 @@
 package edu.ucsd.snippy.utils
 
-import edu.ucsd.snippy.{PostProcessor, SynthesisTask}
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
+import edu.ucsd.snippy.{PostProcessor, SynthesisTask}
 
 import scala.collection.mutable
 
@@ -192,5 +192,4 @@ class Node(
 
 		graphChanged
 	}
-
 }
