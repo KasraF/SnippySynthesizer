@@ -9,11 +9,16 @@ import scala.collection.mutable
 object Predicate {
 	def getPredicate(
 		varName: String,
+		poppy: Boolean,
 		envs: List[Map[String, Any]],
-		task: SynthesisTask): SingleVariablePredicate =
+		task: SynthesisTask): Predicate =
 	{
 		val values = envs.flatMap(map => map.filter(_._1 == varName).values)
-		new SingleVariablePredicate(task, varName, Utils.getTypeOfAll(values), values)
+		if (poppy) {
+			new PartialOutputPredicate(task, varName, Utils.getTypeOfAll(values), values)
+		} else {
+			new SingleVariablePredicate(task, varName, Utils.getTypeOfAll(values), values)
+		}
 	}
 }
 
@@ -37,6 +42,55 @@ class SingleVariablePredicate(
 			val results = values
 				.zip(program.values)
 				.map(pair => pair._1 == pair._2)
+
+			if (results.forall(identity)) {
+				if (program.usesVariables) {
+					this.program = Some(program)
+					Some(this.varName + " = " + PostProcessor.clean(program).code)
+				}
+				else {
+					this.task.oeManager.remove(program)
+					None
+				}
+			} else {
+				None
+			}
+		}
+	}
+}
+
+class PartialOutputPredicate(
+    val task: SynthesisTask,
+    val varName: String,
+    val retType: Types,
+    val values: List[Any],
+) extends Predicate {
+	// TODO: might have to clean this up later, lots of repetitive code from SingleVariablePredicate
+	var program: Option[ASTNode] = None
+
+	override def evaluate(program: ASTNode): Option[String] = {
+		if (this.program.isDefined || program.nodeType != this.retType) {
+			None
+		} else {
+			// TODO: Allow for multiple `...` identifiers?
+			val results = values
+				.zip(program.values)
+				.map(pair => pair._1 match {
+					case _: String =>  if (pair._1.asInstanceOf[String].contains("...")){
+						pair._1.asInstanceOf[String].split("...") match {
+							// ... at the end
+							case Array(s) => pair._2.asInstanceOf[String].startsWith(s)
+							// ... at the beginning
+							case Array("", s) => pair._2.asInstanceOf[String].endsWith(s)
+							// ... in the middle
+							case Array(s1, s2) => pair._2.asInstanceOf[String].startsWith(s1) &&
+													pair._2.asInstanceOf[String].endsWith(s2)
+							// TODO: not sure what to do with the edge cases
+							case _ => false
+						}
+					} else pair._1 == pair._2
+					case _ => pair._1 == pair._2
+				})
 
 			if (results.forall(identity)) {
 				if (program.usesVariables) {

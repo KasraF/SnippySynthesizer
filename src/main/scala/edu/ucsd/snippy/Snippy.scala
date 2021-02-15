@@ -10,7 +10,7 @@ import scala.io.Source.fromFile
 import scala.io.StdIn
 import scala.tools.nsc.io.JFile
 import scala.util.control.Breaks._
-import edu.ucsd.snippy.utils.SingleVariablePredicate
+import edu.ucsd.snippy.utils.{SingleVariablePredicate, PartialOutputPredicate}
 
 class SynthResult(
 	val program: Option[String],
@@ -88,7 +88,7 @@ object Snippy extends App
 		for (program <- task.enumerator) {
 			task.predicate.evaluate(program) match {
 				case Some(code) =>
-					val done = true // task.predicate.isInstanceOf[PartialOutputPredicate]
+					val done = !task.predicate.isInstanceOf[PartialOutputPredicate]
 					stdout.println(json.Serialization.write(new SynthResult(Some(code), done))(json.DefaultFormats))
 					stdout.flush()
 					if (done) return

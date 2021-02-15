@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
-import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, Edge, MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge, Utils}
+import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, Edge, MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge, SingleVariablePredicate, Utils}
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.json.JsonParser
@@ -23,12 +23,15 @@ class SynthesisTask(
 
 	// Extra information for building the predicate
 	pred: Option[Predicate],
-	processedEnvs: List[Map[String, Any]])
+	processedEnvs: List[Map[String, Any]],
+	poppy: Boolean)
 {
 	val predicate: Predicate = (pred, outputVariables) match {
 		case (Some(pred), _) => pred
-		case (None, single :: Nil) => Predicate.getPredicate(single, processedEnvs, this)
-		case (None, multiple) => new BasicMultivariablePredicate(multiple.map(varName => varName -> Predicate.getPredicate(varName, processedEnvs, this)).toMap)
+		case (None, single :: Nil) => Predicate.getPredicate(single, poppy, processedEnvs, this)
+		// Assume partial specs only apply to one single output var
+		case (None, multiple) => new BasicMultivariablePredicate(multiple.map(varName =>
+			varName -> Predicate.getPredicate(varName, poppy=false, processedEnvs, this).asInstanceOf[SingleVariablePredicate]).toMap)
 	}
 
 	override def toString: String =
@@ -45,6 +48,33 @@ object SynthesisTask
 	type Context = Map[String, Any]
 	val reserved_names: Set[String] =
 		Set("time", "#", "$", "lineno", "prev_lineno", "next_lineno", "__run_py__")
+
+	/**
+	 * Checks the any partial specs exists in the environment.
+	 *
+	 * @param outputVarNames The names of the output variables.
+	 * @param envs           The environments we are going to use as synthesis spec.
+	 * @return whether PopPy is enabled.
+	 */
+	def isPoppy(outputVarNames : List[String],
+				envs          : List[Map[String, Any]]
+			   ): Boolean =
+	{
+		// Currently only works for non-loopy statements
+
+		!envs.head.contains("#") && outputVarNames.exists(varName =>
+			envs.foldLeft(false)((curr, box) => {
+				val boxContainsPartial = box.get(varName) match {
+					case Some(p) => Types.typeof(p) == Types.String && p.asInstanceOf[String].contains("...")
+					case None => false
+				}
+				curr || boxContainsPartial
+				}
+			)
+		)
+
+
+	}
 
 	/**
 	 * Checks whether we can use the output variables' previous values in the environment. To do so
@@ -90,6 +120,7 @@ object SynthesisTask
 			.asInstanceOf[List[Map[String, Any]]]
 			.map(cleanupInputs)
 		val loopy = isLoopy(previousEnv, outputVarNames, envs)
+		val poppy = isPoppy(outputVarNames, envs)
 
 		var contexts: List[Context] = if (loopy) {
 			processedEnvs
@@ -201,7 +232,9 @@ object SynthesisTask
 			oeManager,
 			enumerator,
 			predicate,
-			processedEnvs)
+			processedEnvs,
+			poppy
+		)
 	}
 
 	private def cleanupInputs(input: Map[String, Any]): Map[String, Any] =
@@ -254,6 +287,8 @@ object SynthesisTask
 								.map(_._2.asInstanceOf[String])
 							ex(outputName)
 								.asInstanceOf[String]
+    							.split("...")
+    							.mkString("") // filter out the `...` identifier
 								.filter(char => stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper)))
 								.map(_.toString)
 								.toSet

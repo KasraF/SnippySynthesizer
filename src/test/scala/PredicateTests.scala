@@ -323,4 +323,34 @@ class PredicateTests extends JUnitSuite
 		// This is optional, as long as we get a correct solution
 		assertEquals("x = x + x\nz = x + x\ny = x + y", solution._1.get)
 	}
+
+//	@Test
+//	def partialPredicateTest(): Unit =
+//	{
+//		val task = SynthesisTask.fromString(
+//			"""{
+//			  |  "varNames": ["x"],
+//			  |  "previous_env": {},
+//			  |  "envs": [
+//			  |    {
+//			  |      "x": "'HNY...'",
+//			  |      "y": "'Happy New Year Everyone'"
+//			  |    }
+//			  |  ]
+//			  |}""".stripMargin)
+//		val pred = task.predicate
+//
+//		assertEquals("PartialOutputPredicate", pred.getClass.getSimpleName)
+//		assertEquals(Some("x"), getField(pred, "varName"))
+//		assertEquals(Some(Types.String), getField(pred, "retType"))
+//		assertEquals(Some(List("HNY...")), getField(pred, "values"))
+//
+//		val solution = Snippy.synthesize(task, 7)
+//
+//		assert(solution._1.isDefined)
+//
+//		// This is optional, as long as we get a correct solution
+//		assertEquals("y[0:0].join([var[0] for var in y.split()])", solution._1.get)
+//	}
+
 }
