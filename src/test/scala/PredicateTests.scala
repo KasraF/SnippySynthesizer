@@ -44,7 +44,7 @@ class PredicateTests extends JUnitSuite
 		assert(solution._1.isDefined)
 
 		// This is optional, as long as we get a correct solution
-		assertEquals("x = y - 1", solution._1.get)
+		assertEquals("x = len(str(y))", solution._1.get)
 	}
 
 	@Test

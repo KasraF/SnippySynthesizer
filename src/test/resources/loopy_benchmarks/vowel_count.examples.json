@@ -1,0 +1,42 @@
+{
+	"varNames": [
+		"count"
+	],
+	"previous_env": {
+		"#": "",
+		"s": "'aaeeeio'",
+		"vowels": "'aeiouAEIOU'",
+		"count": "0",
+		"v": "''"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"s": "'aaeeeio'",
+			"vowels": "'aeiouAEIOU'",
+			"count": "2",
+			"v": "'a'"
+		},
+		{
+			"#": "1",
+			"s": "'aaeeeio'",
+			"vowels": "'aeiouAEIOU'",
+			"count": "5",
+			"v": "'e'"
+		},
+		{
+			"#": "2",
+			"s": "'aaeeeio'",
+			"vowels": "'aeiouAEIOU'",
+			"count": "6",
+			"v": "'i'"
+		},
+		{
+			"#": "3",
+			"s": "'aaeeeio'",
+			"vowels": "'aeiouAEIOU'",
+			"count": "7",
+			"v": "'o'"
+		}
+	]
+}

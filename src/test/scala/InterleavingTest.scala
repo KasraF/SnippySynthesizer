@@ -1,13 +1,15 @@
-import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager}
+import edu.ucsd.snippy.ast.ASTNode
+import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, ProbEnumerator}
 import edu.ucsd.snippy.utils.{MultiEdge, MultilineMultivariablePredicate, Node, SingleEdge}
 import edu.ucsd.snippy.{Snippy, SynthesisTask}
-import scala.concurrent.duration._
 
+import scala.collection.mutable
+import scala.concurrent.duration._
 import scala.tools.nsc.io.JFile
 
 object InterleavingTest extends App {
 	def runTest(jsonString: String): Unit = {
-		val task = SynthesisTask.fromString(jsonString, true)
+		val task = SynthesisTask.fromString(jsonString)
 
 		if (!task.predicate.isInstanceOf[MultilineMultivariablePredicate]) {
 			println("Task was not an instance of multiline multivariable synthesis.")
@@ -25,9 +27,19 @@ object InterleavingTest extends App {
 
 		val nodes = collectNodes(predicate.graphStart)
 		val enumerators = nodes.map{n =>
-			//rediculously dirty, here we go:
-			val newtask = SynthesisTask.fromString(jsonString, true)
-			(n,new Enumerator(newtask.vocab,new InputsValuesManager,n.state))
+			// ridiculously dirty, here we go:
+			val newtask = SynthesisTask.fromString(jsonString, size = false)
+			val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+			val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+			val enumerator = new ProbEnumerator(
+				task.vocab,
+				new InputsValuesManager,
+				n.state,
+				false,
+				0,
+				bank,
+				mini)
+			(n, enumerator)
 		}
 
 		def nextOnNode(node: Node, enumerator: Enumerator): Boolean = {
@@ -92,21 +104,20 @@ object InterleavingTest extends App {
 		val time = (timeout * 1000.0 - deadline.timeLeft.toMillis) / 1000.0
 
 		res match {
-			case Some(rs) => println(rs.mkString("\n"))
-			case None => println("None")
+			case Some(rs) => println("| " + rs.mkString("\n| "))
+			case None => println("| None")
 		}
 		printf("Time: %.2f\n", time)
-		println("Programs seen:")
+		print("Programs seen: ")
 		val sizes = enumerators.map(enumerator => enumerator._2.oeManager.asInstanceOf[InputsValuesManager].classValues.size)
-		println(sizes.mkString("+")+ "=" + sizes.sum)
+		println(sizes.mkString(" + ")+ " = " + sizes.sum)
 		println("----")
 		println("All at once:")
 		val task2 = SynthesisTask.fromString(jsonString, true)
 		val r2 = Snippy.synthesize(task2, timeout)
-		println(r2._1.getOrElse("None"))
+		println("| " + r2._1.getOrElse("None").replace("\n", "\n| "))
 		printf("Time: %.2f\n", r2._2 / 1000.0)
-		println("Programs seen:")
-		//println(task2.enumerator.oeManager.asInstanceOf[InputsValuesManager].classValues.size)
+		printf("Programs seen: %s\n", task2.enumerator.oeManager.asInstanceOf[InputsValuesManager].classValues.size)
 
 		System.gc()
 	}

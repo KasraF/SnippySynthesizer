@@ -1,10 +1,8 @@
 package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast.ASTNode
-import edu.ucsd.snippy.enumeration.InputsValuesManager
 
 import java.io.{BufferedWriter, FileWriter}
-import scala.collection.mutable
 import scala.concurrent.duration._
 import scala.io.Source.fromFile
 import scala.tools.nsc.io.JFile
@@ -24,7 +22,7 @@ object Snippy extends App
 
 	def synthesize(taskStr: String, timeout: Int): (Option[String], Int, Int) =
 	{
-		synthesize(SynthesisTask.fromString(taskStr, size = true), timeout)
+		synthesize(SynthesisTask.fromString(taskStr), timeout)
 	}
 
 	def synthesize(task: SynthesisTask, timeout: Int) : (Option[String], Int, Int) =
@@ -34,30 +32,12 @@ object Snippy extends App
 			return (Some("None"), 0, 0)
 		}
 
-		val size = true //TODO: for size-based
 		var solution: Option[String] = None
 		var rs: (Option[String], Int, Int) = (None, -1, 0)
 		val deadline = timeout.seconds.fromNow
-		val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-		val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 
-		val enumerator = if (!size) new enumeration.Enumerator(task.vocab, task.oeManager, task.contexts)
-		else new enumeration.ProbEnumerator(
-								task.vocab,
-								task.oeManager,
-								task.contexts,
-						false,
-						0,
-								bank,
-								mini)
 		breakable {
-			for ((program, i) <- enumerator.zipWithIndex) {
-			// for (program <- task.enumerator) {
-//				if (program.height == 4) {
-//					rs = Some((program.code, timeout * 1000 - deadline.timeLeft.toMillis.toInt))
-//					break
-//				}
-
+			for ((program, i) <- task.enumerator.zipWithIndex) {
 				// Update the programs
 				task.predicate.evaluate(program) match {
 					case Some(code) =>

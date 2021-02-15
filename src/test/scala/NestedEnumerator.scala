@@ -13,7 +13,7 @@ import scala.io.Source.fromFile
 class NestedEnumerator extends JUnitSuite {
 
   @Test def enumerateVocabNoOE: Unit = {
-      val stringLiteral: StringNode = new StringLiteral("abc", 1)
+      val stringLiteral: StringNode = StringLiteral("abc", 1)
       assertEquals(1, stringLiteral.values.length)
       assertEquals("abc", stringLiteral.values(0))
       assertEquals(Types.String, stringLiteral.nodeType)

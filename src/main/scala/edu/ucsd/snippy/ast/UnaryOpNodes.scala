@@ -40,7 +40,7 @@ case class IntToString(val arg: IntNode) extends UnaryOpNode[String] with String
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[String] =
-		new IntToString(x.asInstanceOf[IntNode])
+		IntToString(x.asInstanceOf[IntNode])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[IntNode])
 }
@@ -61,7 +61,7 @@ case class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNod
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new StringToInt(x.asInstanceOf[StringNode])
+		StringToInt(x.asInstanceOf[StringNode])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
 }
@@ -79,7 +79,7 @@ case class Length(val arg: IterableNode) extends UnaryOpNode[Int] with IntNode
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new Length(x.asInstanceOf[IterableNode])
+		Length(x.asInstanceOf[IterableNode])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[IterableNode])
 }
@@ -95,7 +95,7 @@ case class StringLower(val arg: StringNode) extends UnaryOpNode[String] with Str
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[String] =
-		new StringLower(x.asInstanceOf[StringNode])
+		StringLower(x.asInstanceOf[StringNode])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
 }
@@ -111,7 +111,7 @@ case class StringUpper(val arg: StringNode) extends UnaryOpNode[String] with Str
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[String] =
-		new StringUpper(x.asInstanceOf[StringNode])
+		StringUpper(x.asInstanceOf[StringNode])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
 }
@@ -127,7 +127,7 @@ case class Max(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new Max(x.asInstanceOf[ListNode[Int]])
+		Max(x.asInstanceOf[ListNode[Int]])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[ListNode[Int]])
 }
@@ -143,7 +143,7 @@ case class Min(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new Min(x.asInstanceOf[ListNode[Int]])
+		Min(x.asInstanceOf[ListNode[Int]])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[ListNode[Int]])
 }
@@ -159,7 +159,7 @@ case class IsAlpha(val arg: StringNode) extends UnaryOpNode[Boolean] with BoolNo
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Boolean] =
-		new IsAlpha(x.asInstanceOf[StringNode])
+		IsAlpha(x.asInstanceOf[StringNode])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
 
@@ -176,7 +176,7 @@ case class IsNumeric(val arg: StringNode) extends UnaryOpNode[Boolean] with Bool
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Boolean] =
-		new IsNumeric(x.asInstanceOf[StringNode])
+		IsNumeric(x.asInstanceOf[StringNode])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
 
@@ -193,7 +193,7 @@ case class SortedStringList(val arg: ListNode[String]) extends UnaryOpNode[Itera
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
-		new SortedStringList(x.asInstanceOf[ListNode[String]])
+		SortedStringList(x.asInstanceOf[ListNode[String]])
 
 	override def updateValues = copy(arg.updateValues.asInstanceOf[ListNode[String]])
 }
@@ -209,7 +209,7 @@ case class UnarySplit(val arg: StringNode) extends UnaryOpNode[Iterable[String]]
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
-		new UnarySplit(x.asInstanceOf[StringNode])
+		UnarySplit(x.asInstanceOf[StringNode])
 
 	override def updateValues: UnarySplit = copy(arg.updateValues.asInstanceOf[StringNode])
 }
@@ -225,7 +225,7 @@ case class Negate(val arg: IntNode) extends UnaryOpNode[Int] with IntNode
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		new Negate(x.asInstanceOf[IntNode])
+		Negate(x.asInstanceOf[IntNode])
 
 	override def updateValues: Negate = copy(arg.updateValues.asInstanceOf[IntNode])
 }

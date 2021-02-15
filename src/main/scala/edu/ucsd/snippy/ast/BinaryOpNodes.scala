@@ -44,7 +44,7 @@ case class LessThanEq(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[B
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new LessThanEq(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+		LessThanEq(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[IntNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -60,7 +60,7 @@ case class GreaterThan(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new GreaterThan(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+		GreaterThan(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[IntNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -76,7 +76,7 @@ case class StringConcat(val lhs: StringNode, val rhs: StringNode) extends Binary
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
-		new StringConcat(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+		StringConcat(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[StringNode])
 }
@@ -92,7 +92,7 @@ case class MapGet(val lhs: MapNode[String, Int], val rhs: StringNode) extends Bi
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new MapGet(l.asInstanceOf[MapNode[String, Int]], r.asInstanceOf[StringNode])
+		MapGet(l.asInstanceOf[MapNode[String, Int]], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs, rhs)
 }
@@ -108,7 +108,7 @@ case class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new IntAddition(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+		IntAddition(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[IntNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -124,7 +124,7 @@ case class IntMultiply(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new IntMultiply(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+		IntMultiply(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[IntNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -140,7 +140,7 @@ case class StringMultiply(val lhs: StringNode, val rhs: IntNode) extends BinaryO
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
-		new StringMultiply(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
+		StringMultiply(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -156,7 +156,7 @@ case class IntSubtraction(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNo
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new IntSubtraction(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+		IntSubtraction(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[IntNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -175,7 +175,7 @@ case class IntDivision(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[
 		}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new IntDivision(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
+		IntDivision(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[IntNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -191,7 +191,7 @@ case class Find(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[I
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new Find(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+		Find(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[StringNode])
 }
@@ -207,7 +207,7 @@ case class Contains(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNo
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new Contains(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+		Contains(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[StringNode])
 }
@@ -224,7 +224,7 @@ case class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryO
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] =
-		new StringSplit(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+		StringSplit(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[StringNode])
 }
@@ -240,7 +240,7 @@ case class StringJoin(val lhs: StringNode, val rhs: ListNode[String]) extends Bi
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
-		new StringJoin(l.asInstanceOf[StringNode], r.asInstanceOf[ListNode[String]])
+		StringJoin(l.asInstanceOf[StringNode], r.asInstanceOf[ListNode[String]])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[ListNode[String]])
 }
@@ -272,7 +272,7 @@ case class Count(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode[
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		new Count(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+		Count(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[StringNode])
 }
@@ -293,7 +293,7 @@ case class BinarySubstring(val lhs: StringNode, val rhs: IntNode) extends Binary
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
-		new BinarySubstring(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
+		BinarySubstring(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[IntNode])
 }
@@ -309,7 +309,7 @@ case class StartsWith(val lhs: StringNode, val rhs: StringNode) extends BinaryOp
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new StartsWith(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+		StartsWith(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[StringNode])
 
@@ -326,7 +326,7 @@ case class EndsWith(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNo
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		new EndsWith(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+		EndsWith(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[StringNode])
 }
@@ -351,7 +351,7 @@ case class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNod
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
-		new StringStep(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
+		StringStep(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 
 	override def updateValues = copy(lhs.updateValues.asInstanceOf[StringNode], rhs.updateValues.asInstanceOf[IntNode])
 }

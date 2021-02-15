@@ -3,7 +3,7 @@ package edu.ucsd.snippy.vocab
 import edu.ucsd.snippy.DebugPrints
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{Contexts, Enumerator, InputsValuesManager, ProbEnumerator}
+import edu.ucsd.snippy.enumeration.{BasicEnumerator, Contexts, Enumerator, InputsValuesManager, ProbEnumerator}
 
 import java.io.FileOutputStream
 import scala.collection.mutable
@@ -65,7 +65,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override val nodeType: Class[_ <: ASTNode] = classOf[StringVariable]
 				override val head: String = ""
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					StringVariable(varName, contexts)
 			}
 			case Types.List(Types.String) => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -74,7 +74,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override val nodeType: Class[_ <: ASTNode] = classOf[StringVariable]
 				override val head: String = ""
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					StringVariable(varName, contexts)
 			}
 			case Types.List(Types.Int) => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -83,7 +83,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override val nodeType: Class[_ <: ASTNode] = classOf[IntVariable]
 				override val head: String = ""
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(varName, contexts)
+					IntVariable(varName, contexts)
 			}
 		}
 
@@ -131,7 +131,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					StringVariable(varName, contexts)
 			}
 			case Types.List(Types.String) => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -141,7 +141,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					StringVariable(varName, contexts)
 			}
 			case Types.List(Types.Int) => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -151,7 +151,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(varName, contexts)
+					IntVariable(varName, contexts)
 			}
 		}
 
@@ -210,7 +210,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				// next is a valid program
 				val node = this.makeNode(
 					this.currList,
-					new StringVariable(varName, this.enumerator.asInstanceOf[Enumerator].contexts),
+					StringVariable(varName, this.enumerator.asInstanceOf[Enumerator].contexts),
 					value)
 				this.nextProg = Some(node)
 			}
@@ -241,7 +241,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				// next is a valid program
 				val node = this.makeNode(
 					this.currList,
-					new StringVariable(varName, this.enumerator.asInstanceOf[ProbEnumerator].contexts),
+					StringVariable(varName, this.enumerator.asInstanceOf[ProbEnumerator].contexts),
 					value)
 				this.nextProg = Some(node)
 			}
@@ -263,7 +263,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 						.map(value => context._1 + (this.varName -> value)))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
-					new Enumerator(this.mapVocab, oeValuesManager, newContexts)
+					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts)
 				} else {
 
 					Contexts.contextLen = newContexts.length //TODO: If context changes, recompute the values
@@ -348,7 +348,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(keyName, contexts)
+					StringVariable(keyName, contexts)
 			}
 			case Types.Int => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -358,7 +358,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(keyName, contexts)
+					IntVariable(keyName, contexts)
 			}
 		}
 
@@ -402,7 +402,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(keyName, contexts)
+					StringVariable(keyName, contexts)
 			}
 			case Types.Int => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -412,7 +412,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(keyName, contexts)
+					IntVariable(keyName, contexts)
 			}
 		}
 
@@ -522,7 +522,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 								.map(key => context._1 + (this.keyName -> key)))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
-					new Enumerator(this.filterVocab, oeValuesManager, newContexts) }
+					new BasicEnumerator(this.filterVocab, oeValuesManager, newContexts) }
 
 				else {
 					Contexts.contextLen = newContexts.length //TODO: If context changes, recompute the values

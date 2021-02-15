@@ -8,15 +8,14 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class ProbEnumerator(
-	val vocab: VocabFactory,
-	val oeManager: OEValuesManager,
-	val contexts: List[Map[String, Any]],
+	override val vocab: VocabFactory,
+	override val oeManager: OEValuesManager,
+	override val contexts: List[Map[String, Any]],
 	var nested: Boolean,
 	var initCost: Int,
 	var mainBank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
-	var vars: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) extends Iterator[ASTNode]
+	var vars: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) extends Enumerator
 {
-
 	override def toString(): String = "enumeration.Enumerator"
 
 	var nextProgram: Option[ASTNode] = None

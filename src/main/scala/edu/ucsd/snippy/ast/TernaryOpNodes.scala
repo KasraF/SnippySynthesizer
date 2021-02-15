@@ -43,7 +43,7 @@ case class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: S
 	}
 
 	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
-		new StringReplace(a0.asInstanceOf[StringNode], a1.asInstanceOf[StringNode], a2.asInstanceOf[StringNode])
+		StringReplace(a0.asInstanceOf[StringNode], a1.asInstanceOf[StringNode], a2.asInstanceOf[StringNode])
 
 	override def updateValues = copy(
 		arg0.updateValues.asInstanceOf[StringNode],
@@ -73,7 +73,7 @@ case class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: I
 	}
 
 	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
-		new TernarySubstring(a0.asInstanceOf[StringNode], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
+		TernarySubstring(a0.asInstanceOf[StringNode], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
 
 	override def updateValues = copy(
 		arg0.updateValues.asInstanceOf[StringNode],

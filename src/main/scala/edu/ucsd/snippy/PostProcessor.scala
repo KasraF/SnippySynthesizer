@@ -6,9 +6,9 @@ object PostProcessor
 {
 	def clean(node: ASTNode): ASTNode = if (!node.usesVariables && node.values.toSet.size == 1) //second check is a tad redundant but just to be safe
 		Types.typeof(node.values.head) match {
-			case Types.String => new StringLiteral(node.values(0).asInstanceOf[String], node.values.length)
-			case Types.Bool => new BoolLiteral(node.values(0).asInstanceOf[Boolean], node.values.length)
-			case Types.Int => new IntLiteral(node.values(0).asInstanceOf[Int], node.values.length)
+			case Types.String => StringLiteral(node.values(0).asInstanceOf[String], node.values.length)
+			case Types.Bool => BoolLiteral(node.values(0).asInstanceOf[Boolean], node.values.length)
+			case Types.Int => IntLiteral(node.values(0).asInstanceOf[Int], node.values.length)
 			case _ => node
 		}
 	else node match {
@@ -17,38 +17,38 @@ object PostProcessor
 			val rhs: IntNode = clean(add.rhs).asInstanceOf[IntNode]
 
 			(lhs, rhs) match {
-				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value + b.value, a.values.length)
-				case (a, b: Negate) => new IntSubtraction(a, b.arg)
-				case (a, b: IntLiteral) if b.value < 0 => new IntSubtraction(a, new IntLiteral(-b.value, b.values.length))
-				case _ => new IntAddition(lhs, rhs)
+				case (a: IntLiteral, b: IntLiteral) => IntLiteral(a.value + b.value, a.values.length)
+				case (a, b: Negate) => IntSubtraction(a, b.arg)
+				case (a, b: IntLiteral) if b.value < 0 => IntSubtraction(a, IntLiteral(-b.value, b.values.length))
+				case _ => IntAddition(lhs, rhs)
 			}
 		case sub: IntSubtraction =>
 			val lhs: IntNode = clean(sub.lhs).asInstanceOf[IntNode]
 			val rhs: IntNode = clean(sub.rhs).asInstanceOf[IntNode]
 
 			(lhs, rhs) match {
-				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value - b.value, a.values.length)
+				case (a: IntLiteral, b: IntLiteral) => IntLiteral(a.value - b.value, a.values.length)
 				case (a: IntLiteral, b) => if (a.value == 0) {
-					new Negate(b)
+					Negate(b)
 				} else {
-					new IntSubtraction(lhs, rhs)
+					IntSubtraction(lhs, rhs)
 				}
-				case _ => new IntSubtraction(lhs, rhs)
+				case _ => IntSubtraction(lhs, rhs)
 			}
 		case sub: IntDivision =>
 			val lhs: IntNode = clean(sub.lhs).asInstanceOf[IntNode]
 			val rhs: IntNode = clean(sub.rhs).asInstanceOf[IntNode]
 
 			(lhs, rhs) match {
-				case (a: IntLiteral, b: IntLiteral) => new IntLiteral(a.value / b.value, a.values.length)
-				case _ => new IntDivision(lhs, rhs)
+				case (a: IntLiteral, b: IntLiteral) => IntLiteral(a.value / b.value, a.values.length)
+				case _ => IntDivision(lhs, rhs)
 			}
 		case concat: StringConcat =>
 			val lhs: StringNode = clean(concat.lhs).asInstanceOf[StringNode]
 			val rhs: StringNode = clean(concat.rhs).asInstanceOf[StringNode]
 			(lhs, rhs) match {
-				case (a: StringLiteral, b: StringLiteral) => new StringLiteral(a.value + b.value, a.values.length)
-				case _ => new StringConcat(lhs, rhs)
+				case (a: StringLiteral, b: StringLiteral) => StringLiteral(a.value + b.value, a.values.length)
+				case _ => StringConcat(lhs, rhs)
 			}
 		case uni: UnaryOpNode[_] =>
 			val arg = clean(uni.arg)

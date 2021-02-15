@@ -2,7 +2,7 @@ package edu.ucsd.snippy.vocab
 
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{Contexts, Enumerator, InputsValuesManager, ProbEnumerator}
+import edu.ucsd.snippy.enumeration.{BasicEnumerator, Contexts, Enumerator, InputsValuesManager, ProbEnumerator}
 
 import java.io.FileOutputStream
 import scala.collection.mutable
@@ -58,7 +58,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					StringVariable(varName, contexts)
 			}
 			case Types.Int => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -68,7 +68,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(varName, contexts)
+					IntVariable(varName, contexts)
 			}
 		}
 
@@ -112,7 +112,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new StringVariable(varName, contexts)
+					StringVariable(varName, contexts)
 			}
 			case Types.Int => new BasicVocabMaker {
 				override val arity: Int = 0
@@ -122,7 +122,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 				override val head: String = ""
 
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-					new IntVariable(varName, contexts)
+					IntVariable(varName, contexts)
 			}
 		}
 
@@ -224,7 +224,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 						.map(value => context._1 + (this.varName -> value)))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
-					new Enumerator(this.mapVocab, oeValuesManager, newContexts)
+					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts)
 				} else {
 
 					Contexts.contextLen = newContexts.length //TODO: If context changes, recompute the values

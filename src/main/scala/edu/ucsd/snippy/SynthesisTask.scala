@@ -2,7 +2,7 @@ package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{InputsValuesManager, OEValuesManager}
+import edu.ucsd.snippy.enumeration.{BasicEnumerator, Enumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, Edge, MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge, Utils}
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -19,7 +19,7 @@ class SynthesisTask(
 
 	// Synthesizer state
 	val oeManager : OEValuesManager,
-	//val enumerator: ProbEnumerator,
+	val enumerator: Enumerator,
 
 	// Extra information for building the predicate
 	pred: Option[Predicate],
@@ -116,13 +116,13 @@ object SynthesisTask
 			// enviornments.head := Same as "contexts", the environment with all old values -> The starting node
 			// environment.last := processedEnvs, the environment with all the new values -> The end node
 
-			// We need to all all but the above to the evaluation context, both to preserve completeness under OE, and
+			// We need to add all but the above to the evaluation context, both to preserve completeness under OE, and
 			// because the MultilineMultivariablePredicate uses them to determine when Synthesis is complete.
 			// We also need to keep track of their indices in the final context, since the context is a flatmap of them,
 			// while the predicate needs to be able to extract only the relevant values from synthesized ASTNodes.
 
-			// TODO We can actually just overwrite `context` here, since the original context is represented by the
-			//  first graph node.
+			// We can actually just overwrite `context` here, since the original context is represented by the
+			// first graph node.
 
 			val nodes = environments
 				.map { case (_, envs) =>
@@ -131,7 +131,7 @@ object SynthesisTask
 				}
 				.map { case (env, indices) => new Node(env, Nil, indices, false) }
 
-			// We never evaluate in the final env, so can we pop that?
+			// We never evaluate in the final env, so can we pop that from context.
 			contexts = contexts.dropRight(1)
 
 			// Set the final node
@@ -141,7 +141,7 @@ object SynthesisTask
 			// we use below to find the nodes that should have a variable in-between.
 
 			// Now we need to create the edges and set them in the nodes
-			val edges: List[Edge] = environments.zipWithIndex.flatMap{ case ((thisVars, _), thisIdx) =>
+			environments.zipWithIndex.foreach{ case ((thisVars, _), thisIdx) =>
 				val nodeEdges: List[Edge] = Range(thisIdx + 1, environments.length).map(thatIdx => {
 					val thatVars = environments(thatIdx)._1
 					if (thatVars.size > thisVars.size && thisVars.forall(thatVars.contains)) {
@@ -154,7 +154,6 @@ object SynthesisTask
 							val values = processedEnvs.flatMap(map => map.filter(_._1 == newVars.head).values)
 							Some(SingleEdge(None, newVars.head, Utils.getTypeOfAll(values), parent, child))
 						} else {
-
 							Some(MultiEdge(
 								mutable.Map.from(newVars.map(_ -> None)),
 								newVars.map(varName => varName -> Utils.getTypeOfAll(processedEnvs.flatMap(map => map.filter(_._1 == varName).values))).toMap,
@@ -171,8 +170,6 @@ object SynthesisTask
 				.toList
 
 				nodes(thisIdx).edges = nodeEdges
-
-				nodeEdges
 			}
 
 			Some(new MultilineMultivariablePredicate(nodes.head))
@@ -191,7 +188,21 @@ object SynthesisTask
 				.toList
 		val vocab = SynthesisTask.vocabFactory(parameters, additionalLiterals.toList, size)
 		val oeManager = new InputsValuesManager
-		//val enumerator = new ProbEnumerator(vocab, oeManager, contexts, false, 0, mainBank, vars)
+
+		val enumerator = if (!size) {
+			new BasicEnumerator(vocab, oeManager, contexts)
+		} else {
+			val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+			val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+			new enumeration.ProbEnumerator(
+				vocab,
+				oeManager,
+				contexts,
+				false,
+				0,
+				bank,
+				mini)
+		}
 
 		new SynthesisTask(
 			parameters,
@@ -199,7 +210,7 @@ object SynthesisTask
 			vocab,
 			contexts,
 			oeManager,
-			//enumerator,
+			enumerator,
 			predicate,
 			processedEnvs)
 	}
@@ -728,66 +739,63 @@ object SynthesisTask
 				}
 				)
 
-		VocabFactory(vocab.appendedAll(
-			variables.
-				map {
-					case (name, Types.String) => new BasicVocabMaker
-					{
-						override val arity: Int = 0
-						override val childTypes: List[Types] = Nil
-						override val returnType: Types = Types.String
-						override val nodeType: Class[_ <: ASTNode] = classOf[StringVariable]
-						override val head: String = ""
+		VocabFactory(variables.map {
+			case (name, Types.String) => new BasicVocabMaker
+			{
+				override val arity: Int = 0
+				override val childTypes: List[Types] = Nil
+				override val returnType: Types = Types.String
+				override val nodeType: Class[_ <: ASTNode] = classOf[StringVariable]
+				override val head: String = ""
 
-						override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-							StringVariable(name, contexts)
-					}
-					case (name, Types.Int) => new BasicVocabMaker
-					{
-						override val arity: Int = 0
-						override val childTypes: List[Types] = Nil
-						override val returnType: Types = Types.Int
-						override val nodeType: Class[_ <: ASTNode] = classOf[IntVariable]
-						override val head: String = ""
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					StringVariable(name, contexts)
+			}
+			case (name, Types.Int) => new BasicVocabMaker
+			{
+				override val arity: Int = 0
+				override val childTypes: List[Types] = Nil
+				override val returnType: Types = Types.Int
+				override val nodeType: Class[_ <: ASTNode] = classOf[IntVariable]
+				override val head: String = ""
 
-						override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-							IntVariable(name, contexts)
-					}
-					case (name, Types.Bool) => new BasicVocabMaker
-					{
-						override val arity: Int = 0
-						override val childTypes: List[Types] = Nil
-						override val returnType: Types = Types.Bool
-						override val nodeType: Class[_ <: ASTNode] = classOf[BoolVariable]
-						override val head: String = ""
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					IntVariable(name, contexts)
+			}
+			case (name, Types.Bool) => new BasicVocabMaker
+			{
+				override val arity: Int = 0
+				override val childTypes: List[Types] = Nil
+				override val returnType: Types = Types.Bool
+				override val nodeType: Class[_ <: ASTNode] = classOf[BoolVariable]
+				override val head: String = ""
 
-						override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-							BoolVariable(name, contexts)
-					}
-					case (name, Types.List(childType)) => new BasicVocabMaker {
-						override val arity: Int = 0
-						override val childTypes: List[Types] = Nil
-						override val returnType: Types = Types.List(childType)
-						override val nodeType: Class[_ <: ASTNode] = classOf[ListVariable[Any]]
-						override val head: String = ""
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					BoolVariable(name, contexts)
+			}
+			case (name, Types.List(childType)) => new BasicVocabMaker {
+				override val arity: Int = 0
+				override val childTypes: List[Types] = Nil
+				override val returnType: Types = Types.List(childType)
+				override val nodeType: Class[_ <: ASTNode] = classOf[ListVariable[Any]]
+				override val head: String = ""
 
-						override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-							ListVariable(name, contexts, childType)
-					}
-					case (name, Types.Map(keyType, valType)) => new BasicVocabMaker {
-						override val arity: Int = 0
-						override val childTypes: List[Types] = Nil
-						override val returnType: Types = Types.Map(keyType, valType)
-						override val nodeType: Class[_ <: ASTNode] = classOf[MapVariable[Any,Any]]
-						override val head: String = ""
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					ListVariable(name, contexts, childType)
+			}
+			case (name, Types.Map(keyType, valType)) => new BasicVocabMaker {
+				override val arity: Int = 0
+				override val childTypes: List[Types] = Nil
+				override val returnType: Types = Types.Map(keyType, valType)
+				override val nodeType: Class[_ <: ASTNode] = classOf[MapVariable[Any,Any]]
+				override val head: String = ""
 
-						override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-							MapVariable(name, contexts, keyType, valType)
-					}
-					case (name, typ) =>
-						assert(assertion = false, s"Input type $typ not supported for input $name")
-						null
-				}
-			))
+				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+					MapVariable(name, contexts, keyType, valType)
+			}
+			case (name, typ) =>
+				assert(assertion = false, s"Input type $typ not supported for input $name")
+				null
+		} ++ vocab)
 	}
 }
