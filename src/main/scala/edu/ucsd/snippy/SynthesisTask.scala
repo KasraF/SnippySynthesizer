@@ -2,7 +2,7 @@ package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
+import edu.ucsd.snippy.enumeration.{InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, Edge, MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge, Utils}
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -19,7 +19,7 @@ class SynthesisTask(
 
 	// Synthesizer state
 	val oeManager : OEValuesManager,
-	val enumerator: Enumerator,
+	//val enumerator: ProbEnumerator,
 
 	// Extra information for building the predicate
 	pred: Option[Predicate],
@@ -191,7 +191,7 @@ object SynthesisTask
 				.toList
 		val vocab = SynthesisTask.vocabFactory(parameters, additionalLiterals.toList, size)
 		val oeManager = new InputsValuesManager
-		val enumerator = new Enumerator(vocab, oeManager, contexts)
+		//val enumerator = new ProbEnumerator(vocab, oeManager, contexts, false, 0, mainBank, vars)
 
 		new SynthesisTask(
 			parameters,
@@ -199,7 +199,7 @@ object SynthesisTask
 			vocab,
 			contexts,
 			oeManager,
-			enumerator,
+			//enumerator,
 			predicate,
 			processedEnvs)
 	}

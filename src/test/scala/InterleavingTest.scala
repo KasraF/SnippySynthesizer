@@ -106,7 +106,7 @@ object InterleavingTest extends App {
 		println(r2._1.getOrElse("None"))
 		printf("Time: %.2f\n", r2._2 / 1000.0)
 		println("Programs seen:")
-		println(task2.enumerator.oeManager.asInstanceOf[InputsValuesManager].classValues.size)
+		//println(task2.enumerator.oeManager.asInstanceOf[InputsValuesManager].classValues.size)
 
 		System.gc()
 	}

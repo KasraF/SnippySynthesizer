@@ -37,15 +37,14 @@ object Snippy extends App
 		val size = true //TODO: for size-based
 		var solution: Option[String] = None
 		var rs: (Option[String], Int, Int) = (None, -1, 0)
-		val oeManager = new InputsValuesManager()
 		val deadline = timeout.seconds.fromNow
-		var bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-		var mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+		val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+		val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 
-		val enumerator = if (!size) new enumeration.Enumerator(task.vocab, oeManager, task.contexts)
+		val enumerator = if (!size) new enumeration.Enumerator(task.vocab, task.oeManager, task.contexts)
 		else new enumeration.ProbEnumerator(
 								task.vocab,
-								oeManager,
+								task.oeManager,
 								task.contexts,
 						false,
 						0,
