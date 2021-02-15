@@ -1,4 +1,5 @@
 import edu.ucsd.snippy.ast._
+import edu.ucsd.snippy.enumeration.Contexts
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
@@ -174,7 +175,7 @@ class ASTNodeTests extends JUnitSuite
 
 			override lazy val usesVariables: Boolean = false
 
-			override def updateValues: ASTNode = null
+			override def updateValues(contexts: Contexts): ASTNode = null
 		})
 		assertEquals(1, node.values.length)
 		assertEquals(2, node.values.head)
@@ -200,7 +201,7 @@ class ASTNodeTests extends JUnitSuite
 
 			override lazy val usesVariables: Boolean = false
 
-			override def updateValues: ASTNode = null
+			override def updateValues(contexts: Contexts): ASTNode = null
 		})
 		assertEquals(1, node.values.length)
 		assertEquals(-1123, node.values.head)

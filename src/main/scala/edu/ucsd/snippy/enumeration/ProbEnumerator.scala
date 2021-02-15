@@ -18,6 +18,9 @@ class ProbEnumerator(
 {
 	override def toString(): String = "enumeration.Enumerator"
 
+	// TODO Terrible name :/
+	val contextsObj = new Contexts(contexts)
+
 	var nextProgram: Option[ASTNode] = None
 
 	override def hasNext: Boolean =
@@ -48,16 +51,14 @@ class ProbEnumerator(
 	ProbUpdate.probMap = ProbUpdate.createProbMap(vocab)
 	ProbUpdate.priors = ProbUpdate.createPrior(vocab)
 	resetEnumeration()
-	Contexts.contextLen = this.contexts.length
-	Contexts.contexts = this.contexts
 
 	mainBank
 		.map(n => (n._1, n._2.filter(c => !c.includes("key") && !c.includes("var"))))
 		.values
 		.flatten
 		.toList
-		.map(p => if (p.values.length != Contexts.contextLen) {
-			oeManager.isRepresentative(p.updateValues)
+		.map(p => if (p.values.length != this.contexts.length) {
+			oeManager.isRepresentative(p.updateValues(this.contextsObj))
 		} else {
 			oeManager.isRepresentative(p)
 		}) // OE
@@ -137,9 +138,10 @@ class ProbEnumerator(
 		while (res.isEmpty) {
 			if (rootMaker.hasNext) {
 				val program = rootMaker.next
-				if (program.values.nonEmpty && oeManager.isRepresentative(program)
-					&& !oeManager.irrelevant(program)
-				) {
+				if (program.values.nonEmpty &&
+					oeManager.isRepresentative(program) &&
+					!oeManager.irrelevant(program))
+				{
 					res = Some(program)
 				}
 			}

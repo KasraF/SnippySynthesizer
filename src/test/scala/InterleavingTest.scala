@@ -28,11 +28,11 @@ object InterleavingTest extends App {
 		val nodes = collectNodes(predicate.graphStart)
 		val enumerators = nodes.map{n =>
 			// ridiculously dirty, here we go:
-			val newtask = SynthesisTask.fromString(jsonString, size = false)
+			val newtask = SynthesisTask.fromString(jsonString)
 			val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 			val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 			val enumerator = new ProbEnumerator(
-				task.vocab,
+				newtask.vocab,
 				new InputsValuesManager,
 				n.state,
 				false,

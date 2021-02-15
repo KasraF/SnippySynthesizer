@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.DebugPrints
+import edu.ucsd.snippy.enumeration.Contexts
 
 trait QuaternaryOpNode[T] extends ASTNode
 {
@@ -40,7 +41,7 @@ trait QuaternaryOpNode[T] extends ASTNode
 		arg0.usesVariables || arg1.usesVariables ||
 			arg2.usesVariables || arg3.usesVariables
 
-	override def updateValues = null
+	override def updateValues(contexts: Contexts) = null
 }
 
 // TODO Test is extensively before adding it

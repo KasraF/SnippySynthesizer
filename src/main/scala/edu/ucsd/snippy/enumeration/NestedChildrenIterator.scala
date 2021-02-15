@@ -8,6 +8,7 @@ import scala.collection.mutable
 class NestedChildrenIterator(
 	val childTypes: List[Types],
 	val childrenCost: Int,
+	val contexts: Contexts,
 	var mainBank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
 	var miniBank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]])
 	extends Iterator[List[ASTNode]]
@@ -42,13 +43,13 @@ class NestedChildrenIterator(
 				mainBank(cost(1))
 					.filter(c => childTypes(1).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) { c.updateValues } else { c }))
+					.map(c => if (c.values.length != contexts.contextLen) { c.updateValues(contexts) } else { c }))
 		} else if (childTypes.length == 2 && combinationCounter == 1) {
 			childrenLists = List(
 				mainBank(cost.head)
 					.filter(c => childTypes(0).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c),
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
 				miniBank.getOrElse(cost(1), Nil)
 					.filter(c => childTypes(1).equals(c.nodeType))
 					.toList)
@@ -60,36 +61,36 @@ class NestedChildrenIterator(
 				mainBank(cost(1))
 					.filter(c => childTypes(1).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c),
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
 				mainBank(cost(2))
 					.filter(c => childTypes(2).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c)
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c)
 				)
 		} else if (childTypes.length == 3 && combinationCounter == 5) {
 			childrenLists = List(
 				mainBank(cost(0))
 					.filter(c => childTypes(0).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c),
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
 				miniBank.getOrElse(cost(1), Nil)
 					.filter(c => childTypes(1).equals(c.nodeType))
 					.toList,
 				mainBank(cost(2))
 					.filter(c => childTypes(2).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c)
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c)
 				)
 		} else if (childTypes.length == 3 && combinationCounter == 4) {
 			childrenLists = List(
 				mainBank(cost(0))
 					.filter(c => childTypes(0).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c),
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
 				mainBank(cost(1))
 					.filter(c => childTypes(1).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c),
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
 				miniBank.getOrElse(cost(2), Nil)
 					.filter(c => childTypes(2).equals(c.nodeType))
 					.toList)
@@ -104,14 +105,14 @@ class NestedChildrenIterator(
 				mainBank(cost(2))
 					.filter(c => childTypes(2).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c)
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c)
 				)
 		} else if (childTypes.length == 3 && combinationCounter == 2) {
 			childrenLists = List(
 				mainBank(cost(0))
 					.filter(c => childTypes(0).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c),
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
 				miniBank.getOrElse(cost(1), Nil)
 					.filter(c => childTypes(1).equals(c.nodeType))
 					.toList,
@@ -126,7 +127,7 @@ class NestedChildrenIterator(
 				mainBank(cost(1))
 					.filter(c => childTypes(1).equals(c.nodeType))
 					.toList
-					.map(c => if (c.values.length != Contexts.contextLen) c.updateValues else c),
+					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
 				miniBank.getOrElse(cost(2), Nil)
 					.filter(c => childTypes(2).equals(c.nodeType))
 					.toList)

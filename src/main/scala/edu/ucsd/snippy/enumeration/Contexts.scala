@@ -1,7 +1,6 @@
 package edu.ucsd.snippy.enumeration
 
-object Contexts
+class Contexts(val contexts: List[Map[String, Any]])
 {
-	var contextLen: Int = 0
-	var contexts: List[Map[String, Any]] = List[Map[String, Any]]()
+	val contextLen: Int = contexts.length
 }

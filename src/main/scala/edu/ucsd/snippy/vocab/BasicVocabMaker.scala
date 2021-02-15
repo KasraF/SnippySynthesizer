@@ -2,7 +2,7 @@ package edu.ucsd.snippy.vocab
 
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{ChildrenIterator, NestedChildrenIterator, ProbChildrenIterator, ProbUpdate}
+import edu.ucsd.snippy.enumeration._
 
 import java.io.FileOutputStream
 import scala.collection.mutable
@@ -46,33 +46,30 @@ trait BasicVocabMaker extends VocabMaker with Iterator[ASTNode]
 		this
 	}
 
-	def probe_init(vocabFactory: VocabFactory,
-	               costLevel   : Int,
-	               contexts    : List[Map[String, Any]],
-	               bank        : mutable.Map[Int, ArrayBuffer[ASTNode]],
-	               nested      : Boolean,
-	               miniBank    : mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]],
-	               mini        : mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]): Iterator[ASTNode] =
+	def probe_init(
+		vocabFactory: VocabFactory,
+		costLevel: Int,
+		contexts: List[Map[String, Any]],
+		bank: mutable.Map[Int, ArrayBuffer[ASTNode]],
+		nested: Boolean,
+		miniBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]],
+		mini: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]): Iterator[ASTNode] =
 	{
-
 		this.contexts = contexts
 		this.childIterator = if (this.arity == 0 && this.rootCost == costLevel) {
 			// No children needed, but we still return 1 value
 			Iterator.single(Nil)
-		}
-		else if (mini == null && nested) {
+		} else if (mini == null && nested) {
 			Iterator.empty
 		} else if (this.rootCost < costLevel && !nested) { //TODO: add condition (arity != 0)
 			val childrenCost = costLevel - this.rootCost
 			val children = new ProbChildrenIterator(this.childTypes, childrenCost, bank)
 			children
-		}
-		else if (this.rootCost < costLevel && nested) { //TODO: add condition (arity != 0)
+		} else if (this.rootCost < costLevel && nested) { //TODO: add condition (arity != 0)
 			val childrenCost = costLevel - this.rootCost
-			val children = new NestedChildrenIterator(this.childTypes, childrenCost, bank, mini)
+			val children = new NestedChildrenIterator(this.childTypes, childrenCost, new Contexts(contexts), bank, mini)
 			children
-		}
-		else {
+		} else {
 			Iterator.empty
 		}
 		this

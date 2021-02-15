@@ -1,5 +1,5 @@
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.ChildrenIterator
+import edu.ucsd.snippy.enumeration.{ChildrenIterator, Contexts}
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
@@ -65,7 +65,7 @@ class ChildrenIteratorsTests extends JUnitSuite
 
 				override def includes(varName: String): Boolean = false
 
-				override def updateValues: ASTNode = null
+				override def updateValues(contexts: Contexts): ASTNode = null
 
 				override def cost: Int = 1
 			}, new IntNode
@@ -81,7 +81,7 @@ class ChildrenIteratorsTests extends JUnitSuite
 
 				override def includes(varName: String): Boolean = false
 
-				override def updateValues: ASTNode = null
+				override def updateValues(contexts: Contexts): ASTNode = null
 
 				override def cost: Int = 1
 
@@ -100,7 +100,7 @@ class ChildrenIteratorsTests extends JUnitSuite
 
 				override def cost: Int = 1
 
-				override def updateValues: ASTNode = null
+				override def updateValues(contexts: Contexts): ASTNode = null
 			})
 	}
 }

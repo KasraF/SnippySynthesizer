@@ -20,25 +20,25 @@ abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 
 case class StringVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[String](contexts) with StringNode
 {
-	override def updateValues = copy(name, contexts = Contexts.contexts)
+	override def updateValues(contexts: Contexts) = copy(name, contexts = contexts.contexts)
 }
 
 case class IntVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[Int](contexts) with IntNode
 {
-	override def updateValues = copy(name, contexts = Contexts.contexts)
+	override def updateValues(contexts: Contexts) = copy(name, contexts = contexts.contexts)
 }
 
 case class BoolVariable(val name: String, contexts: List[Map[String, Any]]) extends VariableNode[Boolean](contexts) with BoolNode
 {
-	override def updateValues = copy(name, contexts = Contexts.contexts)
+	override def updateValues(contexts: Contexts) = copy(name, contexts = contexts.contexts)
 }
 
 case class ListVariable[T](val name: String, val contexts: List[Map[String, Any]], val childType: Types) extends VariableNode[List[T]](contexts) with ListNode[T]
 {
-	override def updateValues = copy(name, contexts = Contexts.contexts)
+	override def updateValues(contexts: Contexts) = copy(name, contexts = contexts.contexts)
 }
 
 case class MapVariable[K, V](val name: String, val contexts: List[Map[String, Any]], val keyType: Types, val valType: Types) extends VariableNode[Map[K, V]](contexts) with MapNode[K, V]
 {
-	override def updateValues = copy(name, contexts = Contexts.contexts)
+	override def updateValues(contexts: Contexts) = copy(name, contexts = contexts.contexts)
 }

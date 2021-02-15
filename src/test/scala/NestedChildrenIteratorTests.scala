@@ -13,13 +13,15 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 	{
 		var main = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 		var mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+		val contexts = new Contexts(List(
+			Map("name" -> "Sorin Lerner", "var" -> "Sorin Lerner"),
+			Map("name" -> "Nadia", "var" -> "Nadia")))
 		main += (1 -> ArrayBuffer(IntLiteral(0, 2)))
 		mini += (1 -> ArrayBuffer(
-			StringVariable("name", List(Map("name" -> "Sorin Lerner"), Map("name" -> "Nadia"))),
-			StringVariable("var", List(Map("var" -> "Sorin Lerner"), Map("var" -> "Nadia")))))
+			StringVariable("name", contexts.contexts),
+			StringVariable("var", contexts.contexts)))
 
-		val chit = new NestedChildrenIterator(List(Types.Iterable(Types.Any)), 1,
-		                                      main, mini)
+		val chit = new NestedChildrenIterator(List(Types.Iterable(Types.Any)), 1, contexts, main, mini)
 		assertTrue(chit.hasNext)
 		assertEquals(List("name"), chit.next().map(_.code))
 		assertEquals(List("var"), chit.next().map(_.code))
@@ -30,12 +32,14 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 	{
 		var main = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 		var mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-		Contexts.contextLen = 3
+		val contexts = new Contexts(List(
+			Map("name" -> "SL", "var" -> "SL"),
+			Map("name" -> "N", "var" -> "N"),
+			Map("name" -> "SB", "var" -> "SB")))
+
 		main += (1 -> ArrayBuffer(StringLiteral("s", 3), IntLiteral(0, 3)))
-		mini += (1 -> ArrayBuffer(
-			StringVariable("name", List(Map("name" -> "SL"), Map("name" -> "N"), Map("name" -> "SB"))),
-			StringVariable("var", List(Map("var" -> "SL"), Map("var" -> "N"), Map("var" -> "SB")))))
-		val chit = new NestedChildrenIterator(List(Types.String, Types.String), 2, main, mini)
+		mini += (1 -> ArrayBuffer(StringVariable("name", contexts.contexts), StringVariable("var", contexts.contexts)))
+		val chit = new NestedChildrenIterator(List(Types.String, Types.String), 2, contexts, main, mini)
 		assertTrue(chit.hasNext)
 		assertEquals(List("name", "name"), chit.next().map(_.code))
 		assertEquals(List("name", "var"), chit.next().map(_.code))
@@ -104,7 +108,7 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 
 				override def includes(varName: String): Boolean = false
 
-				override def updateValues: ASTNode = null
+				override def updateValues(contexts: Contexts): ASTNode = null
 
 				override def cost: Int = 1
 			}, new IntNode
@@ -120,7 +124,7 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 
 				override def includes(varName: String): Boolean = false
 
-				override def updateValues: ASTNode = null
+				override def updateValues(contexts: Contexts): ASTNode = null
 
 				override def cost: Int = 1
 
@@ -139,7 +143,7 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 
 				override def cost: Int = 1
 
-				override def updateValues: ASTNode = null
+				override def updateValues(contexts: Contexts): ASTNode = null
 			})
 	}
 }

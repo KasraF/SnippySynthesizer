@@ -36,7 +36,7 @@ case class StringLiteral(val value: String, numContexts: Int) extends LiteralNod
 		}
 	}) + '"'
 
-	override def updateValues = copy(value, numContexts = Contexts.contextLen)
+	override def updateValues(contexts: Contexts) = copy(value, numContexts = contexts.contextLen)
 }
 
 case class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode
@@ -44,7 +44,7 @@ case class IntLiteral(val value: Int, numContexts: Int) extends LiteralNode[Int]
 	override protected val parenless: Boolean = true
 	override val code: String = value.toString
 
-	override def updateValues = copy(value, numContexts = Contexts.contextLen)
+	override def updateValues(contexts: Contexts) = copy(value, numContexts = contexts.contextLen)
 }
 
 case class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode
@@ -52,5 +52,5 @@ case class BoolLiteral(val value: Boolean, numContexts: Int) extends LiteralNode
 	override protected val parenless: Boolean = true
 	override val code: String = value.toString.capitalize
 
-	override def updateValues = copy(value, numContexts = Contexts.contextLen)
+	override def updateValues(contexts: Contexts) = copy(value, numContexts = contexts.contextLen)
 }

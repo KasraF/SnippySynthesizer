@@ -219,29 +219,34 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 
 			if (lst.values.head.asInstanceOf[List[_]].nonEmpty) {
 				this.currList = lst
-				val newContexts = this.contexts.zipWithIndex
-					.flatMap(context => this.currList.values(context._2).asInstanceOf[List[Any]]
-						.map(value => context._1 + (this.varName -> value)))
+				val newContexts = new Contexts(this.contexts.zipWithIndex.flatMap(
+					context =>
+						this.currList.values(context._2)
+							.asInstanceOf[List[Any]]
+							.map(value => context._1 + (this.varName -> value))))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
-					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts)
+					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts.contexts)
 				} else {
-
-					Contexts.contextLen = newContexts.length //TODO: If context changes, recompute the values
-					Contexts.contexts = newContexts
 					val bankCost = this.costLevel - this.currList.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
 
-					val miniBank = if (this.miniBank.contains((this.nodeType, this.currList)))
-						this.miniBank((this.nodeType, this.currList)).take(bankCost) else null
+					val miniBank = if (this.miniBank.contains((this.nodeType, this.currList))) {
+						this.miniBank((this.nodeType, this.currList)).take(bankCost)
+					} else {
+						null
+					}
 
-					val nestedCost = if (this.miniBank.contains((this.nodeType, this.currList)))
-						this.miniBank((this.nodeType, this.currList)).keys.last else 0
+					val nestedCost = if (this.miniBank.contains((this.nodeType, this.currList))) {
+						this.miniBank((this.nodeType, this.currList)).keys.last
+					} else {
+						0
+					}
 
 					new ProbEnumerator(
 						this.mapVocab,
 						oeValuesManager,
-						newContexts,
+						newContexts.contexts,
 						true,
 						nestedCost,
 						mainBank,
@@ -250,7 +255,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 				done = true
 			}
 		}
-		done
 
+		done
 	}
 }

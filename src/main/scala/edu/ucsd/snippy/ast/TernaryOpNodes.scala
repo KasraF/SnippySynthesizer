@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.DebugPrints
+import edu.ucsd.snippy.enumeration.Contexts
 
 trait TernaryOpNode[T] extends ASTNode
 {
@@ -45,10 +46,10 @@ case class StringReplace(val arg0: StringNode, val arg1: StringNode, val arg2: S
 	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
 		StringReplace(a0.asInstanceOf[StringNode], a1.asInstanceOf[StringNode], a2.asInstanceOf[StringNode])
 
-	override def updateValues = copy(
-		arg0.updateValues.asInstanceOf[StringNode],
-		arg1.updateValues.asInstanceOf[StringNode],
-		arg2.updateValues.asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts) = copy(
+		arg0.updateValues(contexts).asInstanceOf[StringNode],
+		arg1.updateValues(contexts).asInstanceOf[StringNode],
+		arg2.updateValues(contexts).asInstanceOf[StringNode])
 }
 
 case class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: IntNode) extends TernaryOpNode[String] with StringNode
@@ -75,8 +76,8 @@ case class TernarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: I
 	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[String] =
 		TernarySubstring(a0.asInstanceOf[StringNode], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
 
-	override def updateValues = copy(
-		arg0.updateValues.asInstanceOf[StringNode],
-		arg1.updateValues.asInstanceOf[IntNode],
-		arg2.updateValues.asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts) = copy(
+		arg0.updateValues(contexts).asInstanceOf[StringNode],
+		arg1.updateValues(contexts).asInstanceOf[IntNode],
+		arg2.updateValues(contexts).asInstanceOf[IntNode])
 }

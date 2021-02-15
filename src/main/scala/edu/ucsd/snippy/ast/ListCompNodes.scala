@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.ast.Types.Types
+import edu.ucsd.snippy.enumeration.Contexts
 
 trait ListCompNode[T] extends ListNode[T]
 {
@@ -26,7 +27,7 @@ trait ListCompNode[T] extends ListNode[T]
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
 	override lazy val usesVariables: Boolean = list.usesVariables || map.usesVariables
-	override def updateValues: ASTNode = null
+	override def updateValues(contexts: Contexts): ASTNode = null
 }
 
 class StringToStringListCompNode(val list: ListNode[String], val map: StringNode, val varName: String) extends ListCompNode[String]

@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.DebugPrints
+import edu.ucsd.snippy.enumeration.Contexts
 
 trait UnaryOpNode[T] extends ASTNode
 {
@@ -42,7 +43,7 @@ case class IntToString(val arg: IntNode) extends UnaryOpNode[String] with String
 	override def make(x: ASTNode): UnaryOpNode[String] =
 		IntToString(x.asInstanceOf[IntNode])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[IntNode])
 }
 
 case class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNode
@@ -63,7 +64,7 @@ case class StringToInt(val arg: StringNode) extends UnaryOpNode[Int] with IntNod
 	override def make(x: ASTNode): UnaryOpNode[Int] =
 		StringToInt(x.asInstanceOf[StringNode])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
 case class Length(val arg: IterableNode) extends UnaryOpNode[Int] with IntNode
@@ -81,7 +82,7 @@ case class Length(val arg: IterableNode) extends UnaryOpNode[Int] with IntNode
 	override def make(x: ASTNode): UnaryOpNode[Int] =
 		Length(x.asInstanceOf[IterableNode])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[IterableNode])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[IterableNode])
 }
 
 case class StringLower(val arg: StringNode) extends UnaryOpNode[String] with StringNode
@@ -97,7 +98,7 @@ case class StringLower(val arg: StringNode) extends UnaryOpNode[String] with Str
 	override def make(x: ASTNode): UnaryOpNode[String] =
 		StringLower(x.asInstanceOf[StringNode])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
 case class StringUpper(val arg: StringNode) extends UnaryOpNode[String] with StringNode
@@ -113,7 +114,7 @@ case class StringUpper(val arg: StringNode) extends UnaryOpNode[String] with Str
 	override def make(x: ASTNode): UnaryOpNode[String] =
 		StringUpper(x.asInstanceOf[StringNode])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
 case class Max(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
@@ -129,7 +130,7 @@ case class Max(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 	override def make(x: ASTNode): UnaryOpNode[Int] =
 		Max(x.asInstanceOf[ListNode[Int]])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[ListNode[Int]])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[ListNode[Int]])
 }
 
 case class Min(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
@@ -145,7 +146,7 @@ case class Min(val arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 	override def make(x: ASTNode): UnaryOpNode[Int] =
 		Min(x.asInstanceOf[ListNode[Int]])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[ListNode[Int]])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[ListNode[Int]])
 }
 
 case class IsAlpha(val arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
@@ -161,7 +162,7 @@ case class IsAlpha(val arg: StringNode) extends UnaryOpNode[Boolean] with BoolNo
 	override def make(x: ASTNode): UnaryOpNode[Boolean] =
 		IsAlpha(x.asInstanceOf[StringNode])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 
 }
 
@@ -178,7 +179,7 @@ case class IsNumeric(val arg: StringNode) extends UnaryOpNode[Boolean] with Bool
 	override def make(x: ASTNode): UnaryOpNode[Boolean] =
 		IsNumeric(x.asInstanceOf[StringNode])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 
 }
 
@@ -195,7 +196,7 @@ case class SortedStringList(val arg: ListNode[String]) extends UnaryOpNode[Itera
 	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
 		SortedStringList(x.asInstanceOf[ListNode[String]])
 
-	override def updateValues = copy(arg.updateValues.asInstanceOf[ListNode[String]])
+	override def updateValues(contexts: Contexts) = copy(arg.updateValues(contexts).asInstanceOf[ListNode[String]])
 }
 
 case class UnarySplit(val arg: StringNode) extends UnaryOpNode[Iterable[String]] with StringListNode
@@ -211,7 +212,7 @@ case class UnarySplit(val arg: StringNode) extends UnaryOpNode[Iterable[String]]
 	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] =
 		UnarySplit(x.asInstanceOf[StringNode])
 
-	override def updateValues: UnarySplit = copy(arg.updateValues.asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts): UnarySplit = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
 case class Negate(val arg: IntNode) extends UnaryOpNode[Int] with IntNode
@@ -227,5 +228,5 @@ case class Negate(val arg: IntNode) extends UnaryOpNode[Int] with IntNode
 	override def make(x: ASTNode): UnaryOpNode[Int] =
 		Negate(x.asInstanceOf[IntNode])
 
-	override def updateValues: Negate = copy(arg.updateValues.asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts): Negate = copy(arg.updateValues(contexts).asInstanceOf[IntNode])
 }

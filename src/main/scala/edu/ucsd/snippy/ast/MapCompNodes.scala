@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.ast.Types.Types
+import edu.ucsd.snippy.enumeration.Contexts
 
 import scala.collection.immutable.WrappedString
 
@@ -44,7 +45,7 @@ trait MapCompNode[K, V] extends MapNode[K, V]
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || key.includes(varName) || value.includes(varName)
 	override lazy val usesVariables: Boolean = list.usesVariables || key.usesVariables || value.usesVariables
-	override def updateValues = ???
+	override def updateValues(contexts: Contexts) = ???
 }
 
 trait FilteredMapNode[K, V] extends MapNode[K, V]
@@ -101,7 +102,7 @@ trait FilteredMapNode[K, V] extends MapNode[K, V]
 			})
 	}
 
-	override def updateValues = ???
+	override def updateValues(contexts: Contexts) = ???
 }
 
 class StringStringMapCompNode(val list: StringNode, val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String, String]

@@ -20,7 +20,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 	var mapVocab: VocabFactory = _
 	var contexts: List[Map[String, Any]] = _
 
-	var enumerator: Iterator[ASTNode] = _
+	var enumerator: Enumerator = _
 	var currList: ASTNode = _
 	var costLevel: Int = _
 	var childHeight: Int = _
@@ -99,7 +99,8 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 	}
 
 	override def probe_init(vocabFactory: VocabFactory,
-	                        costLevel: Int, contexts: List[Map[String,Any]],
+	                        costLevel: Int,
+	                        contexts: List[Map[String,Any]],
 	                        bank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
 	                        nested: Boolean,
 	                        varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]],
@@ -210,7 +211,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				// next is a valid program
 				val node = this.makeNode(
 					this.currList,
-					StringVariable(varName, this.enumerator.asInstanceOf[Enumerator].contexts),
+					StringVariable(varName, this.enumerator.contexts),
 					value)
 				this.nextProg = Some(node)
 			}
@@ -241,7 +242,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				// next is a valid program
 				val node = this.makeNode(
 					this.currList,
-					StringVariable(varName, this.enumerator.asInstanceOf[ProbEnumerator].contexts),
+					StringVariable(varName, this.enumerator.contexts),
 					value)
 				this.nextProg = Some(node)
 			}
@@ -265,15 +266,19 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				this.enumerator = if (!size) {
 					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts)
 				} else {
-
-					Contexts.contextLen = newContexts.length //TODO: If context changes, recompute the values
-					Contexts.contexts = newContexts
-
+					val contexts = new Contexts(newContexts)
 					val bankCost = this.costLevel - this.currList.cost
-					val mainBank = this.mainBank.take(bankCost - 1)
+					var mainBank = this.mainBank
+						.take(bankCost - 1)
+						.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(contexts)))
 
-					val varBank = if (this.varBank.contains((this.nodeType, this.currList)))
-						this.varBank((this.nodeType, this.currList)).take(bankCost) else null
+					val varBank = if (this.varBank.contains((this.nodeType, this.currList))) {
+						this.varBank((this.nodeType, this.currList))
+							.take(bankCost)
+							.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(contexts)))
+					} else {
+						null
+					}
 
 					val nestedCost = if (this.varBank.contains((this.nodeType, this.currList)))
 						this.varBank((this.nodeType, this.currList)).keys.last else 0
@@ -525,8 +530,6 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 					new BasicEnumerator(this.filterVocab, oeValuesManager, newContexts) }
 
 				else {
-					Contexts.contextLen = newContexts.length //TODO: If context changes, recompute the values
-					Contexts.contexts = newContexts
 					val bankCost = this.costLevel - this.currMap.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
 

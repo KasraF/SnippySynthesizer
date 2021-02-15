@@ -1,7 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.ast.Types.Types
-import edu.ucsd.snippy.enumeration.ProbUpdate
+import edu.ucsd.snippy.enumeration.{Contexts, ProbUpdate}
 
 trait ASTNode
 {
@@ -33,7 +33,7 @@ trait ASTNode
 		_cost = Some(ProbUpdate.getRootPrior(this) + children.map(c => c.cost).sum)
 	}
 
-	def updateValues: ASTNode
+	def updateValues(contexts: Contexts): ASTNode
 }
 
 trait IterableNode extends ASTNode
