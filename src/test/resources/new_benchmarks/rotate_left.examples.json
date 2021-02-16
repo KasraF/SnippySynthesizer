@@ -1,0 +1,21 @@
+{
+	"varNames": ["rs"],
+  "previous_env": {},
+  "envs": [
+    {
+      "#": "",
+      "$": "",
+      "s": "'qwertyu'",
+      "count": "1",
+      "rs": "'wertyuq'"
+    },
+    {
+      "time": 4,
+      "#": "",
+      "$": "",
+      "s": "'qwertyu'",
+      "count": "2",
+      "rs": "'ertyuqw'"
+    }
+  ]
+}

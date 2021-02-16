@@ -1,0 +1,17 @@
+{
+	"varNames": ["words", "caps"],
+	"previous_env": {
+		"#": "",
+		"name": "'alison heck'",
+		"words": "[' ']",
+		"caps": "' '"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"name": "'alison heck'",
+			"words": "['alison', 'heck']",
+			"caps": "'Alison Heck'"
+		}
+	]
+}

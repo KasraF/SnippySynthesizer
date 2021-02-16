@@ -132,6 +132,13 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals(false, isAlpha4.values.head)
 	}
 
+	@Test def capitalize(): Unit =
+	{
+		val caps1 = Capitalize(StringLiteral("abc", 1))
+		assertEquals("Abc", caps1.values.head)
+
+	}
+
 	@Test def numeric(): Unit =
 	{
 		val isNumeric1 = IsNumeric(StringLiteral("abc123", 1))

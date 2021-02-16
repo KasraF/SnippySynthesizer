@@ -268,7 +268,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				} else {
 					val contexts = new Contexts(newContexts)
 					val bankCost = this.costLevel - this.currList.cost
-					var mainBank = this.mainBank
+					val mainBank = this.mainBank
 						.take(bankCost - 1)
 						.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(contexts)))
 

@@ -498,6 +498,18 @@ object SynthesisTask
 				{
 					override val arity: Int = 1
 					override val childTypes: List[Types] = List(Types.String)
+					override val returnType: Types = Types.String
+					override val nodeType: Class[_ <: ASTNode] = classOf[Capitalize]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						Capitalize(children.head.asInstanceOf[StringNode])
+				},
+
+				new BasicVocabMaker
+				{
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.String)
 					override val returnType: Types = Types.Bool
 					override val nodeType: Class[_ <: ASTNode] = classOf[IsNumeric]
 					override val head: String = ""
