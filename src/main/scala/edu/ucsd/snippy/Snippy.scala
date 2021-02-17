@@ -80,8 +80,6 @@ object Snippy extends App
 			sys.exit(1)
 		}
 
-		val varName = task.predicate.asInstanceOf[SingleVariablePredicate].varName
-		val retType = task.predicate.asInstanceOf[SingleVariablePredicate].retType
 		val stdout = scala.sys.process.stdout
 		val stdin = scala.sys.process.stdin
 
@@ -93,6 +91,10 @@ object Snippy extends App
 					stdout.flush()
 					if (done) return
 				case None => ()
+			}
+
+			if (program.height >= 5 || stdin.available() != 0) {
+				return
 			}
 		}
 	}

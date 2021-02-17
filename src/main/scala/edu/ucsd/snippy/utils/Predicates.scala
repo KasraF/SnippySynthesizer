@@ -1,5 +1,6 @@
 package edu.ucsd.snippy.utils
 
+import scala.util.matching.Regex
 import edu.ucsd.snippy.{PostProcessor, SynthesisTask}
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
@@ -60,41 +61,35 @@ class SingleVariablePredicate(
 }
 
 class PartialOutputPredicate(
-    val task: SynthesisTask,
-    val varName: String,
-    val retType: Types,
-    val values: List[Any],
-) extends Predicate {
-	// TODO: might have to clean this up later, lots of repetitive code from SingleVariablePredicate
-	var program: Option[ASTNode] = None
+	val task: SynthesisTask,
+	val varName: String,
+	val retType: Types,
+	originalValues: List[Any]) extends Predicate {
+	val values: List[Any] = originalValues.map {
+		case s: String if s.contains("...") =>
+			("^" +
+			s.split("\\.\\.\\.", -1)
+				.map(s => if (s.isBlank) s else Regex.quote(s))
+				.mkString(".+") +
+			"$").r
+		case s => s
+	}
 
+	// TODO: might have to clean this up later, lots of repetitive code from SingleVariablePredicate
 	override def evaluate(program: ASTNode): Option[String] = {
-		if (this.program.isDefined || program.nodeType != this.retType) {
+		if (program.nodeType != this.retType) {
 			None
 		} else {
 			// TODO: Allow for multiple `...` identifiers?
-			val results = values
+			val result = values
 				.zip(program.values)
-				.map(pair => pair._1 match {
-					case _: String =>  if (pair._1.asInstanceOf[String].contains("...")){
-						pair._1.asInstanceOf[String].split("...") match {
-							// ... at the end
-							case Array(s) => pair._2.asInstanceOf[String].startsWith(s)
-							// ... at the beginning
-							case Array("", s) => pair._2.asInstanceOf[String].endsWith(s)
-							// ... in the middle
-							case Array(s1, s2) => pair._2.asInstanceOf[String].startsWith(s1) &&
-													pair._2.asInstanceOf[String].endsWith(s2)
-							// TODO: not sure what to do with the edge cases
-							case _ => false
-						}
-					} else pair._1 == pair._2
-					case _ => pair._1 == pair._2
-				})
+				.forall {
+					case (pattern: Regex, got: String) => pattern.matches(got)
+					case (expected, got) => expected == got
+				}
 
-			if (results.forall(identity)) {
+			if (result) {
 				if (program.usesVariables) {
-					this.program = Some(program)
 					Some(this.varName + " = " + PostProcessor.clean(program).code)
 				}
 				else {
