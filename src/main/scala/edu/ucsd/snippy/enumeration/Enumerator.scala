@@ -6,9 +6,9 @@ import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 import scala.collection.mutable
 
 class Enumerator(
-  val vocab    : VocabFactory,
+  val vocab: VocabFactory,
   val oeManager: OEValuesManager,
-  val contexts : List[Map[String, Any]])
+  val contexts: List[Map[String, Any]])
   extends Iterator[ASTNode]
 {
 	override def toString(): String = "enumeration.Enumerator"

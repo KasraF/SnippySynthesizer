@@ -14,7 +14,7 @@ class SynthesisTask(
 	// Problem definition
 	val parameters: List[(String, ast.Types.Value)],
 	val outputVariables: List[String],
-	val vocab     : VocabFactory,
+	val vocab: VocabFactory,
 	val contexts: List[Map[String, Any]],
 
 	// Synthesizer state
@@ -56,9 +56,9 @@ object SynthesisTask
 	 * @param envs           The environments we are going to use as synthesis spec.
 	 * @return whether PopPy is enabled.
 	 */
-	def isPoppy(outputVarNames : List[String],
-				envs          : List[Map[String, Any]]
-			   ): Boolean =
+	def isPoppy(
+		outputVarNames : List[String],
+		envs: List[Map[String, Any]]): Boolean =
 	{
 		// Currently only works for non-loopy statements
 
@@ -69,11 +69,7 @@ object SynthesisTask
 					case None => false
 				}
 				curr || boxContainsPartial
-				}
-			)
-		)
-
-
+			}))
 	}
 
 	/**
@@ -89,10 +85,9 @@ object SynthesisTask
 	 * @return whether LooPy is enabled.
 	 */
 	def isLoopy(
-		previousEnv   : Map[String, Any],
+		previousEnv: Map[String, Any],
 		outputVarNames: List[String],
-		envs          : List[Map[String, Any]]
-	): Boolean =
+		envs: List[Map[String, Any]]): Boolean =
 	{
 		previousEnv.nonEmpty &&
 			outputVarNames.forall(varName => previousEnv.contains(varName)) &&
@@ -120,7 +115,7 @@ object SynthesisTask
 			.asInstanceOf[List[Map[String, Any]]]
 			.map(cleanupInputs)
 		val loopy = isLoopy(previousEnv, outputVarNames, envs)
-		val poppy = isPoppy(outputVarNames, envs)
+		val poppy = isPoppy(outputVarNames, processedEnvs)
 
 		var contexts: List[Context] = if (loopy) {
 			processedEnvs
