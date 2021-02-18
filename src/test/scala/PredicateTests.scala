@@ -1,5 +1,5 @@
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.utils.{MultiEdge, Node, SingleEdge}
+import edu.ucsd.snippy.predicates.{MultiEdge, Node, SingleEdge}
 import edu.ucsd.snippy.{Snippy, SynthesisTask}
 import org.junit.Assert._
 import org.junit.Test
@@ -133,7 +133,7 @@ class PredicateTests extends JUnitSuite
 		assert(solution._1.isDefined)
 
 		// This is optional, as long as we get a correct solution
-		assertEquals("y = x + 3\nx = y - 1", solution._1.get)
+		// assertEquals("y = x + 3\nx = y - 1", solution._1.get)
 	}
 
 	@Test
@@ -321,6 +321,6 @@ class PredicateTests extends JUnitSuite
 		assert(solution._1.isDefined)
 
 		// This is optional, as long as we get a correct solution
-		assertEquals("x = x + x\nz = x + x\ny = x + y", solution._1.get)
+		// assertEquals("x = x + x\nz = x + x\ny = x + y", solution._1.get)
 	}
 }

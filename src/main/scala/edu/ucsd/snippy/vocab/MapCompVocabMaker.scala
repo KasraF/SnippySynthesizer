@@ -4,6 +4,7 @@ import edu.ucsd.snippy.DebugPrints
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration._
+import edu.ucsd.snippy.predicates.FalsePredicate
 
 import java.io.FileOutputStream
 import scala.collection.mutable
@@ -199,7 +200,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				return
 			}
 
-			val value = this.enumerator.next()
+			val (value, _) = this.enumerator.next()
 			if (value.height > this.childHeight) {
 				// We are out of map functions to synthesize for this list.
 
@@ -225,7 +226,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 
 			while (!this.enumerator.hasNext) { if (!this.nextList()) return }
 
-			val value = this.enumerator.next()
+			val (value, _) = this.enumerator.next()
 
 			if (value.cost < this.costLevel - this.currList.cost)
 				updateVarBank((this.nodeType, this.currList), value) // TODO: update varBank with only variable programs
@@ -264,7 +265,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 						.map(value => context._1 + (this.varName -> value)))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
-					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts)
+					new BasicEnumerator(FalsePredicate, this.mapVocab, oeValuesManager, newContexts)
 				} else {
 					val contexts = new Contexts(newContexts)
 					val bankCost = this.costLevel - this.currList.cost
@@ -285,6 +286,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 					// TODO: add the programs from the varBank to the main bank;
 					//  pass the updated bank as parameter to the new enumerator object
 					new ProbEnumerator(
+						FalsePredicate,
 						this.mapVocab,
 						oeValuesManager,
 						newContexts,
@@ -309,7 +311,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 	var filterVocab: VocabFactory = _
 	var contexts: List[Map[String, Any]] = _
 
-	var enumerator: Iterator[ASTNode] = _
+	var enumerator: Enumerator = _
 	var currMap: ASTNode = _
 	var childHeight: Int = _
 	var keyName: String = _
@@ -465,7 +467,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 				return
 			}
 
-			val filter = this.enumerator.next()
+			val (filter, _) = this.enumerator.next()
 			if (filter.height > this.childHeight + 1) {
 				// We are out of map functions to synthesize for this list.
 
@@ -490,7 +492,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 
 			while (!this.enumerator.hasNext) { if (!this.nextMap()) return }
 
-			val filter = this.enumerator.next()
+			val (filter, _) = this.enumerator.next()
 
 			if (filter.cost < this.costLevel - this.currMap.cost)
 				updateVarBank((this.nodeType, this.currMap), filter) // TODO: update varBank with only variable programs
@@ -527,9 +529,8 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 								.map(key => context._1 + (this.keyName -> key)))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
-					new BasicEnumerator(this.filterVocab, oeValuesManager, newContexts) }
-
-				else {
+					new BasicEnumerator(FalsePredicate, this.filterVocab, oeValuesManager, newContexts)
+				} else {
 					val bankCost = this.costLevel - this.currMap.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
 
@@ -540,6 +541,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 						this.varBank((this.nodeType, this.currMap)).keys.last else 0
 
 					new ProbEnumerator(
+						FalsePredicate,
 						this.filterVocab,
 						oeValuesManager,
 						newContexts,

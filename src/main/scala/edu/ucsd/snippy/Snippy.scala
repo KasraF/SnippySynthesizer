@@ -32,23 +32,20 @@ object Snippy extends App
 			return (Some("None"), 0, 0)
 		}
 
-		var solution: Option[String] = None
 		var rs: (Option[String], Int, Int) = (None, -1, 0)
 		val deadline = timeout.seconds.fromNow
 
 		breakable {
-			for ((program, i) <- task.enumerator.zipWithIndex) {
-				// Update the programs
-				task.predicate.evaluate(program) match {
-					case Some(code) =>
-						solution = Some(code)
+			for ((solution, i) <- task.enumerator.zipWithIndex) {
+				solution match {
+					case (_, Some(code)) =>
 						rs = (Some(code), timeout * 1000 - deadline.timeLeft.toMillis.toInt, i)
 						break
-					case None => ()
+					case _ => ()
 				}
 
 				if (!deadline.hasTimeLeft) {
-					rs = (solution, timeout * 1000 - deadline.timeLeft.toMillis.toInt, i)
+					rs = (None, timeout * 1000 - deadline.timeLeft.toMillis.toInt, i)
 					break
 				}
 			}

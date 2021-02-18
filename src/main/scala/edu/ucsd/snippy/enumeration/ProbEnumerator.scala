@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.enumeration
 
 import edu.ucsd.snippy.ast._
+import edu.ucsd.snippy.predicates.Predicate
 import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 
 import java.io.FileOutputStream
@@ -8,6 +9,7 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class ProbEnumerator(
+	override val predicate: Predicate,
 	override val vocab: VocabFactory,
 	override val oeManager: OEValuesManager,
 	override val contexts: List[Map[String, Any]],
@@ -31,14 +33,12 @@ class ProbEnumerator(
 			nextProgram.isDefined
 		}
 
-	override def next(): ASTNode =
+	override def next(): (ASTNode, Option[String]) =
 	{
-		if (nextProgram.isEmpty) {
-			nextProgram = getNextProgram
-		}
+		if (nextProgram.isEmpty) nextProgram = getNextProgram
 		val res = nextProgram.get
 		nextProgram = None
-		res
+		(res, this.predicate.evaluate(res))
 	}
 
 	var costLevel: Int = initCost

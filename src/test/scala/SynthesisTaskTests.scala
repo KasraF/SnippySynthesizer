@@ -1,6 +1,6 @@
 import edu.ucsd.snippy.SynthesisTask
 import edu.ucsd.snippy.ast.Types
-import edu.ucsd.snippy.utils.SingleVariablePredicate
+import edu.ucsd.snippy.predicates.SingleVariablePredicate
 import edu.ucsd.snippy.vocab.BasicVocabMaker
 import org.junit.Assert._
 import org.junit.Test

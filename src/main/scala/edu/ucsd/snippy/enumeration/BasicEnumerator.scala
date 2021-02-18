@@ -1,11 +1,13 @@
 package edu.ucsd.snippy.enumeration
 
 import edu.ucsd.snippy.ast.ASTNode
+import edu.ucsd.snippy.predicates.Predicate
 import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 
 import scala.collection.mutable
 
 class BasicEnumerator(
+	override val predicate: Predicate,
 	override val vocab: VocabFactory,
 	override val oeManager: OEValuesManager,
 	override val contexts: List[Map[String, Any]]) extends Enumerator
@@ -20,8 +22,9 @@ class BasicEnumerator(
 	var rootMaker: Iterator[ASTNode] =
 		currIter.next().init(currLevelProgs.toList, contexts, vocab, height)
 
-	ProbUpdate.probMap = ProbUpdate.createProbMap(vocab)
-	ProbUpdate.priors = ProbUpdate.createPrior(vocab)
+	// TODO We don't use this rn
+	// ProbUpdate.probMap = ProbUpdate.createProbMap(vocab)
+	// ProbUpdate.priors = ProbUpdate.createPrior(vocab)
 
 	override def hasNext: Boolean =
 		if (nextProgram.isDefined) {
@@ -31,14 +34,12 @@ class BasicEnumerator(
 			nextProgram.isDefined
 		}
 
-	override def next(): ASTNode =
+	override def next(): (ASTNode, Option[String]) =
 	{
-		if (nextProgram.isEmpty) {
-			nextProgram = getNextProgram
-		}
+		if (nextProgram.isEmpty) nextProgram = getNextProgram
 		val res = nextProgram.get
 		nextProgram = None
-		res
+		(res, this.predicate.evaluate(res))
 	}
 
 	/**

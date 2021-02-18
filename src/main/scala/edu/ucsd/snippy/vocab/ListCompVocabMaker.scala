@@ -2,7 +2,8 @@ package edu.ucsd.snippy.vocab
 
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{BasicEnumerator, Contexts, InputsValuesManager, ProbEnumerator}
+import edu.ucsd.snippy.enumeration._
+import edu.ucsd.snippy.predicates.FalsePredicate
 
 import java.io.FileOutputStream
 import scala.collection.mutable
@@ -20,7 +21,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 	var contexts: List[Map[String, Any]] = _
 
 	var costLevel: Int = _
-	var enumerator: Iterator[ASTNode] = _
+	var enumerator: Enumerator = _
 	var currList: ASTNode = _
 	var childHeight: Int = _
 	var varName: String = _
@@ -158,7 +159,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 		while (this.nextProg.isEmpty) {
 			if (!this.enumerator.hasNext) return
 
-			val next = this.enumerator.next()
+			val (next, _) = this.enumerator.next()
 			if (next.height > this.childHeight) {
 				// We are out of map functions to synthesize for this list.
 				if (!this.nextList()) {
@@ -181,7 +182,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 
 			while (!this.enumerator.hasNext) { if (!this.nextList()) return }
 
-			val next = this.enumerator.next()
+			val (next, _) = this.enumerator.next()
 
 			if (next.cost < this.costLevel - this.currList.cost) {
 				updateMiniBank((this.nodeType, this.currList), next) // TODO: update miniBank with only variable program
@@ -226,7 +227,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 							.map(value => context._1 + (this.varName -> value))))
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
-					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts.contexts)
+					new BasicEnumerator(FalsePredicate, this.mapVocab, oeValuesManager, newContexts.contexts)
 				} else {
 					val bankCost = this.costLevel - this.currList.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
@@ -244,6 +245,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 					}
 
 					new ProbEnumerator(
+						FalsePredicate,
 						this.mapVocab,
 						oeValuesManager,
 						newContexts.contexts,
