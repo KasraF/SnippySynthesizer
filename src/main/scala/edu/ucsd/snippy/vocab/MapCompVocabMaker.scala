@@ -284,6 +284,8 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 						this.varBank((this.nodeType, this.currList)).keys.last else 0
 					// TODO: add the programs from the varBank to the main bank;
 					//  pass the updated bank as parameter to the new enumerator object
+					val endCost = this.costLevel - this.currList.cost
+
 					new ProbEnumerator(
 						this.mapVocab,
 						oeValuesManager,
@@ -291,7 +293,8 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 						true,
 						nestedCost,
 						mainBank,
-						varBank)
+						varBank,
+						endCost)
 				}
 				done = true
 			}
@@ -530,15 +533,21 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 					new BasicEnumerator(this.filterVocab, oeValuesManager, newContexts) }
 
 				else {
+					val contexts = new Contexts(newContexts)
 					val bankCost = this.costLevel - this.currMap.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
 
-					val varBank = if (this.varBank.contains((this.nodeType, this.currMap)))
-						this.varBank((this.nodeType, this.currMap)).take(bankCost) else null
+					val varBank = if (this.varBank.contains((this.nodeType, this.currMap))) {
+						this.varBank((this.nodeType, this.currMap))
+							.take(bankCost)
+					} else {
+						null
+					}
 
 					val nestedCost = if (this.varBank.contains((this.nodeType, this.currMap)))
 						this.varBank((this.nodeType, this.currMap)).keys.last else 0
 
+					val endCost = this.costLevel - this.currMap.cost
 					new ProbEnumerator(
 						this.filterVocab,
 						oeValuesManager,
@@ -546,7 +555,8 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 						true,
 						nestedCost,
 						mainBank,
-						varBank)
+						varBank,
+						endCost)
 				}
 				done = true
 			}

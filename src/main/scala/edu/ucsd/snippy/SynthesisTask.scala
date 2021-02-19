@@ -201,7 +201,7 @@ object SynthesisTask
 				false,
 				0,
 				bank,
-				mini)
+				mini,100)
 		}
 
 		new SynthesisTask(

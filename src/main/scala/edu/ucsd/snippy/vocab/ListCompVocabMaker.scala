@@ -230,9 +230,11 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 				} else {
 					val bankCost = this.costLevel - this.currList.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
+						.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(newContexts)))
 
 					val miniBank = if (this.miniBank.contains((this.nodeType, this.currList))) {
 						this.miniBank((this.nodeType, this.currList)).take(bankCost)
+							.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(newContexts)))
 					} else {
 						null
 					}
@@ -243,6 +245,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 						0
 					}
 
+					val endCost = this.costLevel - this.currList.cost
 					new ProbEnumerator(
 						this.mapVocab,
 						oeValuesManager,
@@ -250,8 +253,11 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 						true,
 						nestedCost,
 						mainBank,
-						miniBank)
+						miniBank,
+						endCost)
+
 				}
+
 				done = true
 			}
 		}

@@ -38,7 +38,7 @@ object InterleavingTest extends App {
 				false,
 				0,
 				bank,
-				mini)
+				mini,100)
 			(n, enumerator)
 		}
 
