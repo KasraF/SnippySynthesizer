@@ -142,9 +142,7 @@ class ProbEnumerator(
 			if (rootMaker.hasNext) {
 				val program = rootMaker.next
 				if (program.values.nonEmpty &&
-					oeManager.isRepresentative(program) &&
-					!oeManager.irrelevant(program))
-				{
+					oeManager.isRepresentative(program)) {
 					res = Some(program)
 				}
 			}
