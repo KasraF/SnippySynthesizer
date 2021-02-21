@@ -282,7 +282,7 @@ object SynthesisTask
 								.map(_._2.asInstanceOf[String])
 							ex(outputName)
 								.asInstanceOf[String]
-    							.split("...")
+    							.split("\\.\\.\\.")
     							.mkString("") // filter out the `...` identifier
 								.filter(char => stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper)))
 								.map(_.toString)
@@ -294,7 +294,7 @@ object SynthesisTask
 
 	private def vocabFactory(variables: List[(String, Types.Value)], additionalLiterals: List[String]): VocabFactory =
 	{
-		val defaultStringLiterals = List()
+		val defaultStringLiterals = List(" ")
 		val stringLiterals = (defaultStringLiterals ++ additionalLiterals).distinct
 
 		val vocab: List[VocabMaker] =
