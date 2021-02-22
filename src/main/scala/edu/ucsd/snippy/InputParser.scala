@@ -82,10 +82,20 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 
 
 		if (rs.nonEmpty) {
-			val typ = rs.head.getClass
+			//val ellipsis = (new Ellipsis).getClass
+			val head = rs.head
+			val typ = head match {
+				case _ : Ellipsis => rs match {
+					// avoid cases of [...]
+					case _ :: Nil => return None
+					// If `...` is at the beginning of the list, set the type of the list to be the next element (assuming non-ellipsis type)
+					case multiple => multiple(1).getClass
+				}
+				case _ => head.getClass
+			}
 
 			// TODO Print a better error message?
-			if (rs.exists(!_.getClass.equals(typ))) return None
+			if (rs.exists(r => !r.getClass.equals(typ) && !r.isInstanceOf[Ellipsis])) return None
 		}
 
 		Some(rs)
@@ -144,7 +154,18 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 			case Python3Lexer.FALSE => Some(false)
 			case Python3Lexer.NUMBER =>
 				Some(node.getText.toInt)
+			case Python3Lexer.ELLIPSIS => Some(new Ellipsis)
 			case _ => None
 		}
+	}
+}
+
+class Ellipsis {
+	override def toString : String = {
+		"..."
+	}
+
+	override def equals(obj: Any): Boolean = {
+		this.getClass.equals(obj.getClass)
 	}
 }

@@ -65,7 +65,10 @@ object SynthesisTask
 		!envs.head.contains("#") && outputVarNames.exists(varName =>
 			envs.foldLeft(false)((curr, box) => {
 				val boxContainsPartial = box.get(varName) match {
-					case Some(p) => Types.typeof(p) == Types.String && p.asInstanceOf[String].contains("...")
+					//case Some(p) => Types.typeof(p) == Types.String && p.asInstanceOf[String].contains("...")
+					case Some(p : String) => p.asInstanceOf[String].contains("...")
+					case Some(p : List[Any]) => p.exists(x => x.isInstanceOf[Ellipsis])
+					case Some(_) => false
 					case None => false
 				}
 				curr || boxContainsPartial

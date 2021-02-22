@@ -1,7 +1,7 @@
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
-import edu.ucsd.snippy.InputParser
+import edu.ucsd.snippy.{InputParser, Ellipsis}
 
 class ParserTests extends JUnitSuite
 {
@@ -32,6 +32,11 @@ class ParserTests extends JUnitSuite
 	@Test def parseExtraSpaceList1(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse("[1,2,-3]"))
 	@Test def parseExtraSpaceList2(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse("[1 , 2 , -3]"))
 	@Test def parseExtraSpaceList3(): Unit = assertEquals(Some(List(1, 2, -3)), parser.parse(" [ 1 , 2 , -3 ] "))
+	@Test def parseListWithEllipsis1(): Unit = assertEquals(Some(List(1, new Ellipsis, 3)), parser.parse(" [ 1 , ..., 3 ] "))
+	@Test def parseListWithEllipsis2(): Unit = assertEquals(Some(List(new Ellipsis, 2, 3)), parser.parse(" [ ... , 2, 3 ] "))
+	@Test def parseListWithEllipsis3(): Unit = assertEquals(Some(List(1, 2, new Ellipsis)), parser.parse(" [ 1 , 2, ...] "))
+	@Test def parseListWithEllipsis4(): Unit = assertEquals(Some(List("HP", "R...", new Ellipsis)), parser.parse("['HP', 'R...', ...]"))
+	@Test def parseListWithEllipsis5(): Unit = assertEquals(None, parser.parse("[...]"))
 
 	// Maps
 	@Test def parseStrStrMap(): Unit = assertEquals(Some(Map("a" -> "a", "b" -> "b")), parser.parse("{'a': 'a', 'b': 'b'}"))
