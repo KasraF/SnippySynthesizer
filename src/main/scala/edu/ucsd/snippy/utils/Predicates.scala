@@ -1,7 +1,7 @@
 package edu.ucsd.snippy.utils
 
 import scala.util.matching.Regex
-import edu.ucsd.snippy.{PostProcessor, SynthesisTask}
+import edu.ucsd.snippy.{Ellipsis, PostProcessor, SynthesisTask}
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
 
@@ -75,16 +75,28 @@ class PartialOutputPredicate(
 		case s => s
 	}
 
+	def comparePartialWithSol(spec: List[Any], sol: List[Any]): Boolean = {
+		(spec, sol) match {
+			// cases of [...] have already been handled; here are the base cases
+			case ((h1 : Ellipsis) :: Nil, _) => true
+			case ((h1 : Ellipsis) :: t1, l2) => comparePartialWithSol(t1, l2)
+			case (h1 :: t1, h2 :: t2) => h1 == h2 && comparePartialWithSol(t1, t2)
+		}
+	}
+
 	// TODO: might have to clean this up later, lots of repetitive code from SingleVariablePredicate
 	override def evaluate(program: ASTNode): Option[String] = {
 		if (program.nodeType != this.retType) {
 			None
 		} else {
-			// TODO: Allow for multiple `...` identifiers?
 			val result = values
 				.zip(program.values)
 				.forall {
 					case (pattern: Regex, got: String) => pattern.matches(got)
+					case (list: List[Any], got: List[Any]) =>
+						if (!list.exists(p => p.isInstanceOf[Ellipsis]))
+							list == got
+						else this.comparePartialWithSol(list, got)
 					case (expected, got) => expected == got
 				}
 

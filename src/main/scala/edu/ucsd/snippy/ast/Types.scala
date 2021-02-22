@@ -1,5 +1,7 @@
 package edu.ucsd.snippy.ast
 
+import edu.ucsd.snippy.Ellipsis
+
 object Types extends Enumeration
 {
 	type Types = Value
@@ -50,7 +52,7 @@ object Types extends Enumeration
 		override def toString(): String = "Any"
 	}
 
-	val String, Int, Bool, Unknown = Value
+	val String, Int, Bool, Ellipsis, Unknown = Value
 
 	// TODO Is there a better way than hardcoding these?
 	val StringList: List = Types.List(String)
@@ -105,9 +107,24 @@ object Types extends Enumeration
 			 case _: String => String
 			 case _: Int => Int
 			 case _: Boolean => Bool
+			 case _: Ellipsis => Ellipsis
 			 case x: scala.List[_] if x.nonEmpty => x.head match {
 				 case _: String => StringList
 				 case _: Int    => IntList
+				 case _: Boolean => BoolList
+				 case _: Ellipsis => x match {
+					 case _ :: Nil =>
+						 println("Could not determine type of " + x)
+						 Unknown
+					 case _ :: next :: _ => next match {
+						 case _: String => StringList
+						 case _: Int => IntList
+						 case _: Boolean => BoolList
+						 case _ =>
+							 println("Could not determine type of " + x)
+							 Unknown
+					 }
+				 }
 				 case (a, b) => (a, b) match {
 					 case (_: String, _: String) => StringStringMap
 					 case (_: String, _: Int) => StringIntMap

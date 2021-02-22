@@ -1,6 +1,6 @@
 import edu.ucsd.snippy.SynthesisTask
 import edu.ucsd.snippy.ast.Types
-import edu.ucsd.snippy.utils.SingleVariablePredicate
+import edu.ucsd.snippy.utils.{PartialOutputPredicate, SingleVariablePredicate}
 import edu.ucsd.snippy.vocab.BasicVocabMaker
 import org.junit.Assert._
 import org.junit.Test
@@ -276,4 +276,147 @@ class SynthesisTaskTests extends JUnitSuite
 					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
 					.values == List("b")))
 	}
+
+	@Test def partialSpecStringTest: Unit =
+	{
+		val task1 = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |		 "x": "'hello'",
+			  |   	 "y": "''"
+			  |    },
+			  |    {
+			  |      "x": "'hello'",
+			  |		 "y": "'olle...'"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+		assertEquals(Types.String, task1.predicate.asInstanceOf[PartialOutputPredicate].retType)
+
+		val task2 = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |		 "x": "'hello'",
+			  |   	 "y": "''"
+			  |    },
+			  |    {
+			  |      "x": "'hello'",
+			  |		 "y": "'...lleh'"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+		assertEquals(Types.String, task2.predicate.asInstanceOf[PartialOutputPredicate].retType)
+
+		val task3 = SynthesisTask.fromString(
+		"""{
+		  |  "varNames": ["y"],
+		  |  "previous_env": {},
+		  |  "envs": [
+		  |    {
+		  |		 "x": "'hello'",
+		  |   	 "y": "''"
+		  |    },
+		  |    {
+		  |      "x": "'hello'",
+		  |		 "y": "'o...eh'"
+		  |    }
+		  |  ]
+		  |}""".stripMargin)
+		assertEquals(Types.String, task3.predicate.asInstanceOf[PartialOutputPredicate].retType)
+
+		val task4 = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |		 "x": "'hello'",
+			  |   	 "y": "''"
+			  |    },
+			  |    {
+			  |      "x": "'hello'",
+			  |		 "y": "'ol...e...'"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+		assertEquals(Types.String, task4.predicate.asInstanceOf[PartialOutputPredicate].retType)
+	}
+
+	@Test def partialSpecListTest: Unit =
+	{
+		val task1 = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |		 "x": "[1,2,3,4,5]",
+			  |   	 "y": "[]"
+			  |    },
+			  |    {
+			  |      "x": "[1,2,3,4,5]",
+			  |		 "y": "[5,4,...]"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+		assertEquals(Types.IntList, task1.predicate.asInstanceOf[PartialOutputPredicate].retType)
+
+		val task2 = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |		 "x": "[1,2,3,4,5]",
+			  |   	 "y": "[]"
+			  |    },
+			  |    {
+			  |      "x": "[1,2,3,4,5]",
+			  |		 "y": "[5,4,...,1]"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+		assertEquals(Types.IntList, task2.predicate.asInstanceOf[PartialOutputPredicate].retType)
+
+		val task3 = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |		 "x": "[1,2,3,4,5]",
+			  |   	 "y": "[]"
+			  |    },
+			  |    {
+			  |      "x": "[1,2,3,4,5]",
+			  |		 "y": "[...,2,1]"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+		assertEquals(Types.IntList, task3.predicate.asInstanceOf[PartialOutputPredicate].retType)
+
+		val task4 = SynthesisTask.fromString(
+			"""{
+			  |  "varNames": ["y"],
+			  |  "previous_env": {},
+			  |  "envs": [
+			  |    {
+			  |		 "x": "[1,2,3,4,5]",
+			  |   	 "y": "[]"
+			  |    },
+			  |    {
+			  |      "x": "[1,2,3,4,5]",
+			  |		 "y": "[5,...,3,...,1]"
+			  |    }
+			  |  ]
+			  |}""".stripMargin)
+		assertEquals(Types.IntList, task4.predicate.asInstanceOf[PartialOutputPredicate].retType)
+	}
+
 }
