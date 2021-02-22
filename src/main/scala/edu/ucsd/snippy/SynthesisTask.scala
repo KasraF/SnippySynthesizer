@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, OEValuesManager}
-import edu.ucsd.snippy.utils.{BasicMultivariablePredicate, Edge, MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge, SingleVariablePredicate, Utils}
+import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
 import net.liftweb.json.JsonParser
@@ -63,15 +63,10 @@ object SynthesisTask
 		// Currently only works for non-loopy statements
 
 		!envs.head.contains("#") && outputVarNames.exists(varName =>
-			envs.foldLeft(false)((curr, box) => {
-				val boxContainsPartial = box.get(varName) match {
-					//case Some(p) => Types.typeof(p) == Types.String && p.asInstanceOf[String].contains("...")
-					case Some(p : String) => p.asInstanceOf[String].contains("...")
-					case Some(p : List[Any]) => p.exists(x => x.isInstanceOf[Ellipsis])
-					case Some(_) => false
-					case None => false
-				}
-				curr || boxContainsPartial
+			envs.exists(_(varName) match {
+				case p : String => p.contains("...")
+				case p : List[Any] => p.contains(Ellipsis)
+				case _ => false
 			}))
 	}
 
@@ -285,8 +280,8 @@ object SynthesisTask
 								.map(_._2.asInstanceOf[String])
 							ex(outputName)
 								.asInstanceOf[String]
-    							.split("\\.\\.\\.")
-    							.mkString("") // filter out the `...` identifier
+								.split("\\.\\.\\.")
+								.mkString("") // filter out the `...` identifier
 								.filter(char => stringInputs.forall(inputVal => !inputVal.contains(char.toLower) && !inputVal.contains(char.toUpper)))
 								.map(_.toString)
 								.toSet

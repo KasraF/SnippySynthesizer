@@ -1,7 +1,7 @@
 package edu.ucsd.snippy.utils
 
 import scala.util.matching.Regex
-import edu.ucsd.snippy.{Ellipsis, PostProcessor, SynthesisTask}
+import edu.ucsd.snippy.{PostProcessor, SynthesisTask}
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
 
@@ -65,24 +65,45 @@ class PartialOutputPredicate(
 	val varName: String,
 	val retType: Types,
 	originalValues: List[Any]) extends Predicate {
-	val values: List[Any] = originalValues.map {
+
+	def valuesToSpec(s: Any): Any = s match {
 		case s: String if s.contains("...") =>
 			("^" +
 			s.split("\\.\\.\\.", -1)
 				.map(s => if (s.isBlank) s else Regex.quote(s))
 				.mkString(".+") +
 			"$").r
+		case l: List[Any] => l.map(valuesToSpec)
 		case s => s
 	}
 
-	def comparePartialWithSol(spec: List[Any], sol: List[Any]): Boolean = {
-		(spec, sol) match {
-			// cases of [...] have already been handled; here are the base cases
-			case (Nil, Nil) => true
-			case ((_ : Ellipsis) :: t1, _ :: t2) => comparePartialWithSol(t1, t2) || comparePartialWithSol(spec, t2)
-			case (h1 :: t1, h2 :: t2) => h1 == h2 && comparePartialWithSol(t1, t2)
-			case _ => false
-		}
+	val specs: List[Any] = originalValues.map(valuesToSpec)
+
+	/**
+	 * compare function for lists specifically. Factored this out of compare(Any, Any) to keep it
+	 * clean.
+	 * @param spec The specification to check against
+	 * @param sol The solution to check
+	 * @return whether the solution matches the spec
+	 */
+	def compare(spec: List[Any], sol: List[Any]): Boolean = (spec, sol) match {
+		// cases of [...] have already been handled; here are the base cases
+		case (Ellipsis :: t1, _ :: t2) => compare(t1, t2) || compare(spec, t2)
+		case (h1 :: t1, h2 :: t2) => compare(h1, h2) && compare(t1, t2)
+		case (Nil, Nil) => true
+		case _ => false
+	}
+
+	/**
+	 * Use types to match everything!
+	 * @param spec The specification to check against
+	 * @param sol The solution to check
+	 * @return whether the solution matches the spec
+	 */
+	def compare(spec: Any, sol: Any): Boolean = (spec, sol) match {
+		case (spec: List[Any], sol: List[Any]) => compare(spec, sol)
+		case (spec: Regex, sol: String) => spec.matches(sol)
+		case _ => spec == sol
 	}
 
 	// TODO: might have to clean this up later, lots of repetitive code from SingleVariablePredicate
@@ -90,16 +111,9 @@ class PartialOutputPredicate(
 		if (program.nodeType != this.retType) {
 			None
 		} else {
-			val result = values
+			val result = specs
 				.zip(program.values)
-				.forall {
-					case (pattern: Regex, got: String) => pattern.matches(got)
-					case (list: List[Any], got: List[Any]) =>
-						if (!list.exists(p => p.isInstanceOf[Ellipsis]))
-							list == got
-						else this.comparePartialWithSol(list, got)
-					case (expected, got) => expected == got
-				}
+				.forall { case (spec, sol) => compare(spec, sol) }
 
 			if (result) {
 				if (program.usesVariables) {

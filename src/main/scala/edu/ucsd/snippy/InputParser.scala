@@ -2,6 +2,7 @@ package edu.ucsd.snippy
 
 import edu.ucsd.snippy.parser.Python3Parser._
 import edu.ucsd.snippy.parser._
+import edu.ucsd.snippy.utils.Ellipsis
 import org.antlr.v4.runtime.tree.TerminalNode
 import org.antlr.v4.runtime.{BailErrorStrategy, BufferedTokenStream, CharStreams}
 
@@ -80,22 +81,14 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 		  .map(_.get)
 		  .toList
 
-
 		if (rs.nonEmpty) {
-			//val ellipsis = (new Ellipsis).getClass
-			val head = rs.head
-			val typ = head match {
-				case _ : Ellipsis => rs match {
-					// avoid cases of [...]
-					case _ :: Nil => return None
-					// If `...` is at the beginning of the list, set the type of the list to be the next element (assuming non-ellipsis type)
-					case multiple => multiple(1).getClass
-				}
-				case _ => head.getClass
+			val typ = rs.find(_ != Ellipsis) match {
+				case Some(e) => e.getClass
+				case None => return None
 			}
 
 			// TODO Print a better error message?
-			if (rs.exists(r => !r.getClass.equals(typ) && !r.isInstanceOf[Ellipsis])) return None
+			if (rs.exists(r => r != Ellipsis && !r.getClass.equals(typ))) return None
 		}
 
 		Some(rs)
@@ -152,20 +145,9 @@ class InputParser extends Python3BaseVisitor[Option[Any]]
 		node.getSymbol.getType match {
 			case Python3Lexer.TRUE => Some(true)
 			case Python3Lexer.FALSE => Some(false)
-			case Python3Lexer.NUMBER =>
-				Some(node.getText.toInt)
-			case Python3Lexer.ELLIPSIS => Some(new Ellipsis)
+			case Python3Lexer.NUMBER => Some(node.getText.toInt)
+			case Python3Lexer.ELLIPSIS => Some(Ellipsis)
 			case _ => None
 		}
-	}
-}
-
-class Ellipsis {
-	override def toString : String = {
-		"..."
-	}
-
-	override def equals(obj: Any): Boolean = {
-		this.getClass.equals(obj.getClass)
 	}
 }

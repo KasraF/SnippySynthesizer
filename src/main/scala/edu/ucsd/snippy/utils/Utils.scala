@@ -3,12 +3,23 @@ package edu.ucsd.snippy.utils
 import edu.ucsd.snippy.ast.Types
 import edu.ucsd.snippy.ast.Types.Types
 
+/**
+ * Ellipsis object used in partial list specs
+ */
+object Ellipsis
+
 object Utils
 {
 	def getTypeOfAll(values: List[Any]): Types =
 	{
 		val (empty, nonempty) = values.partition(v => v.isInstanceOf[Iterable[_]] && v.asInstanceOf[Iterable[_]].isEmpty)
-		val neType = if (nonempty.isEmpty) Types.Unknown else nonempty.map(v => Types.typeof(v)).reduce((acc, t) => if (acc == t) t else Types.Unknown)
+		val neType = if (nonempty.isEmpty) {
+			Types.Unknown
+		} else {
+			// Make sure all non-empty values have the same type
+			nonempty.map(v => Types.typeof(v)).reduce((acc, t) => if (acc == t) t else Types.Unknown)
+		}
+
 		if (empty.nonEmpty) {
 			if (nonempty.isEmpty) {
 				val defaultTypes: Set[Types] = empty.map {
