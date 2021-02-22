@@ -78,9 +78,10 @@ class PartialOutputPredicate(
 	def comparePartialWithSol(spec: List[Any], sol: List[Any]): Boolean = {
 		(spec, sol) match {
 			// cases of [...] have already been handled; here are the base cases
-			case ((h1 : Ellipsis) :: Nil, _) => true
-			case ((h1 : Ellipsis) :: t1, l2) => comparePartialWithSol(t1, l2)
+			case (Nil, Nil) => true
+			case ((_ : Ellipsis) :: t1, _ :: t2) => comparePartialWithSol(t1, t2) || comparePartialWithSol(spec, t2)
 			case (h1 :: t1, h2 :: t2) => h1 == h2 && comparePartialWithSol(t1, t2)
+			case _ => false
 		}
 	}
 
