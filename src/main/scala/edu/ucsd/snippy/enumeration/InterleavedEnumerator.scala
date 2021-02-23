@@ -31,7 +31,8 @@ class InterleavedEnumerator(
 			false,
 			0,
 			mutable.Map[Int, mutable.ArrayBuffer[ASTNode]](),
-			mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]())
+			mutable.Map[Int, mutable.ArrayBuffer[ASTNode]](),
+			100)
 		node -> enumerator
 	})
 	var nextProgram: Option[(ASTNode, Option[String])] = None

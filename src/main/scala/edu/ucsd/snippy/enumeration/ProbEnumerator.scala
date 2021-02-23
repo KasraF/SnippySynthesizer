@@ -16,13 +16,13 @@ class ProbEnumerator(
 	var nested: Boolean,
 	var initCost: Int,
 	var mainBank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
-	var vars: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) extends Enumerator
+	var vars: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
+	var endCost: Int) extends Enumerator
 {
 	override def toString(): String = "enumeration.Enumerator"
 
 	// TODO Terrible name :/
 	val contextsObj = new Contexts(contexts)
-
 	var nextProgram: Option[ASTNode] = None
 
 	override def hasNext: Boolean =
@@ -136,26 +136,26 @@ class ProbEnumerator(
 		var res: Option[ASTNode] = None
 		// Iterate while no non-equivalent program is found
 		while (res.isEmpty) {
+
+			if (costLevel > endCost) return None
+
 			if (rootMaker.hasNext) {
 				val program = rootMaker.next
 				if (program.values.nonEmpty &&
-					oeManager.isRepresentative(program) &&
-					!oeManager.irrelevant(program))
-				{
+					oeManager.isRepresentative(program)) {
 					res = Some(program)
 				}
 			}
 			else if (currIterator.hasNext) {
-				if (!advanceRoot()) {
-					if (!changeLevel()) return None
-				}
+				if (!advanceRoot())
+					changeLevel()
 			}
 			else if (!changeLevel()) {
-				return None
+				changeLevel()
 			}
 		}
 		currLevelPrograms += res.get
-		//Console.withOut(size_log) { println(nested, currLevelPrograms.takeRight(1).map(c => (c.code, c.values))) }
+		//Console.withOut(size_log) { println(nested, currLevelPrograms.takeRight(1).map(c => (c.code, c.values, c.cost))) }
 		res
 	}
 }
