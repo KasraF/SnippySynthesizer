@@ -392,6 +392,15 @@ object SynthesisTask
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.StringList, Types.Int)
+					override val returnType: Types = Types.StringList
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						new StringListStep(children.head.asInstanceOf[ListNode[String]], children(1).asInstanceOf[IntNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
 					override val childTypes: List[Types] = List(Types.String, Types.String)
 					override val returnType: Types = Types.Int
 
@@ -494,15 +503,15 @@ object SynthesisTask
 				//						children(1).asInstanceOf[StringNode],
 				//						children(2).asInstanceOf[StringNode])
 				//			},
-				new BasicVocabMaker
-				{
-					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.String, Types.String)
-					override val returnType: Types = Types.StringList
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						new StringSplit(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[StringNode])
-				},
+//				new BasicVocabMaker
+//				{
+//					override val arity: Int = 2
+//					override val childTypes: List[Types] = List(Types.String, Types.String)
+//					override val returnType: Types = Types.StringList
+//
+//					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+//						new StringSplit(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[StringNode])
+//				},
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2

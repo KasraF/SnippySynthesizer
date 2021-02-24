@@ -147,7 +147,7 @@ class SortedStringList(val arg: ListNode[String]) extends UnaryOpNode[Iterable[S
 class UnarySplit(val arg: StringNode) extends UnaryOpNode[Iterable[String]] with StringListNode
 {
 	override protected val parenless: Boolean = true
-	override lazy val code: String = arg.code + ".split()"
+	override lazy val code: String = arg.parensIfNeeded + ".split()"
 
 	override def doOp(arg: Any): Option[Iterable[String]] = arg match {
 		case str: String => Some(str.split("\\s").toList)

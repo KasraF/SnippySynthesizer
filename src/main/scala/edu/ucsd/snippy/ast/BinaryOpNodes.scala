@@ -2,6 +2,9 @@ package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.DebugPrints
 
+import scala.collection.mutable
+import scala.collection.mutable.ListBuffer
+
 trait BinaryOpNode[T] extends ASTNode
 {
 	lazy val values: List[T] = lhs.values.zip(rhs.values).map(pair => doOp(pair._1, pair._2)) match {
@@ -124,6 +127,31 @@ class StringStep(val lhs: StringNode, val rhs: IntNode) extends BinaryOpNode[Str
 		new StringStep(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 }
 
+abstract class ListStep[T](val lhs: ListNode[T], val rhs: IntNode) extends BinaryOpNode[List[T]] with ListNode[T]
+{
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + "[::" + rhs.code + "]"
+
+	override def doOp(l: Any, r: Any): Option[List[T]] = (l, r) match {
+		case (_, _: 0) => None
+		case (lst: List[T], step: Int) =>
+			val rs = new mutable.ArrayBuffer[T](Math.abs(lst.length / step) + 1)
+			var idx = if (step > 0) 0 else lst.length - 1
+			while (idx >= 0 && idx < lst.length) {
+				rs.append(lst(idx))
+				idx += step
+			}
+			Some(rs.toList)
+		case _ => wrongType(l, r)
+	}
+}
+
+class StringListStep(override val lhs: ListNode[String], override val rhs: IntNode) extends ListStep[String](lhs, rhs) with StringListNode
+{
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[List[String]] =
+		new StringListStep(l.asInstanceOf[ListNode[String]], r.asInstanceOf[IntNode])
+}
+
 class IntAddition(val lhs: IntNode, val rhs: IntNode) extends BinaryOpNode[Int] with IntNode
 {
 	override protected val parenless: Boolean = false
@@ -242,7 +270,7 @@ class StringSplit(val lhs: StringNode, val rhs: StringNode) extends BinaryOpNode
 
 class StringJoin(val lhs: StringNode, val rhs: ListNode[String]) extends BinaryOpNode[String] with StringNode
 {
-	override protected val parenless: Boolean = false
+	override protected val parenless: Boolean = true
 	override lazy val code: String = lhs.parensIfNeeded + ".join(" + rhs.code + ")"
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
