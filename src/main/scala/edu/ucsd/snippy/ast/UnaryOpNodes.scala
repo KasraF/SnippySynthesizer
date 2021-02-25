@@ -150,7 +150,7 @@ class UnarySplit(val arg: StringNode) extends UnaryOpNode[Iterable[String]] with
 	override lazy val code: String = arg.parensIfNeeded + ".split()"
 
 	override def doOp(arg: Any): Option[Iterable[String]] = arg match {
-		case str: String => Some(str.split("\\s").toList)
+		case str: String => Some(str.split("\\s+").toList)
 		case _ => wrongType(arg)
 	}
 
