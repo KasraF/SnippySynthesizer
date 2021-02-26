@@ -1,5 +1,7 @@
 package edu.ucsd.snippy.enumeration
 
+import scala.collection.mutable.ArrayBuffer
+
 object ProbCosts
 {
 	def getCosts(childrenCost: Double, childrenCosts: Array[Int], childrenArity: Int): Array[Array[Int]] =
@@ -17,4 +19,9 @@ object ProbCosts
 			List.fill(times)(x)
 		)
 	}
+
+	def getIndices(childrenArity: Int): Array[ArrayBuffer[Int]] = {
+		Array.range(1, childrenArity + 1).map(c => ArrayBuffer.range(0, childrenArity).combinations(c)).flatten
+	}
+
 }
