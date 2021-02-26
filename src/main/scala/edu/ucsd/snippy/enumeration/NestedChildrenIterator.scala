@@ -4,6 +4,7 @@ import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
 
 import scala.collection.mutable
+import scala.collection.mutable.{ArrayBuffer}
 
 class NestedChildrenIterator(
 	val childTypes: List[Types],
@@ -16,7 +17,8 @@ class NestedChildrenIterator(
 	val childrenCosts: Array[Int] = mainBank.keys.toArray
 	val arity: Int = childTypes.length
 	val costs: Array[Array[Int]] = ProbCosts.getCosts(childrenCost, childrenCosts, childTypes.size)
-	var childrenLists: List[List[ASTNode]] = Nil
+	var indices: Array[ArrayBuffer[Int]] = ProbCosts.getIndices(arity)
+	var childrenLists = List[List[ASTNode]]()
 	var combinationCounter = 0
 	var candidates: Array[Iterator[ASTNode]] = Array[Iterator[ASTNode]]()
 	var allExceptLast: Array[ASTNode] = Array.empty
@@ -24,120 +26,32 @@ class NestedChildrenIterator(
 	mainBank = mainBank.map(n => (n._1, n._2.filter(c => (!c.includes("key") && !c.includes("var")))))
 	//TODO: alternate to filtering the mainBank
 
-	def resetCounter(arity: Int): Unit =
+	def resetIndices(arity: Int): Unit =
 	{
-		if (arity == 1) combinationCounter = 1
-		else if (arity == 2) combinationCounter = 3
-		else if (arity == 3) combinationCounter = 6
+		indices = ProbCosts.getIndices(arity)
+		indicesIterator = indices.iterator
 	}
 
-	def newChildrenIterator(cost: Array[Int]): Unit =
-	{
-		if (miniBank == null) {
-			childrenLists = Nil
-		} else if (childTypes.length == 1 || (childTypes.length == 2 && combinationCounter == 3)) {
-			childrenLists = childTypes.zip(cost).map { case (t, c) => miniBank.getOrElse(c, Nil).view.filter(c => t.equals(c.nodeType)).toList }
-		} else if (childTypes.length == 2 && combinationCounter == 2) {
-			childrenLists = List(
-				miniBank.getOrElse(cost(0), Nil).filter(c => childTypes(0).equals(c.nodeType)).toList,
-				mainBank(cost(1))
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) { c.updateValues(contexts) } else { c }))
-		} else if (childTypes.length == 2 && combinationCounter == 1) {
-			childrenLists = List(
-				mainBank(cost.head)
-					.filter(c => childTypes(0).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
-				miniBank.getOrElse(cost(1), Nil)
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList)
-		} else if (childTypes.length == 3 && combinationCounter == 6) {
-			childrenLists = List(
-				miniBank.getOrElse(cost(0), Nil)
-					.filter(c => childTypes(0).equals(c.nodeType))
-					.toList,
-				mainBank(cost(1))
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
-				mainBank(cost(2))
-					.filter(c => childTypes(2).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c)
-				)
-		} else if (childTypes.length == 3 && combinationCounter == 5) {
-			childrenLists = List(
-				mainBank(cost(0))
-					.filter(c => childTypes(0).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
-				miniBank.getOrElse(cost(1), Nil)
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList,
-				mainBank(cost(2))
-					.filter(c => childTypes(2).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c)
-				)
-		} else if (childTypes.length == 3 && combinationCounter == 4) {
-			childrenLists = List(
-				mainBank(cost(0))
-					.filter(c => childTypes(0).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
-				mainBank(cost(1))
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
-				miniBank.getOrElse(cost(2), Nil)
-					.filter(c => childTypes(2).equals(c.nodeType))
-					.toList)
-		} else if (childTypes.length == 3 && combinationCounter == 3) {
-			childrenLists = List(
-				miniBank.getOrElse(cost(0), Nil)
-					.filter(c => childTypes(0).equals(c.nodeType))
-					.toList,
-				miniBank.getOrElse(cost(1), Nil)
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList,
-				mainBank(cost(2))
-					.filter(c => childTypes(2).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c)
-				)
-		} else if (childTypes.length == 3 && combinationCounter == 2) {
-			childrenLists = List(
-				mainBank(cost(0))
-					.filter(c => childTypes(0).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
-				miniBank.getOrElse(cost(1), Nil)
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList,
-				miniBank.getOrElse(cost(2), Nil)
-					.filter(c => childTypes(2).equals(c.nodeType))
-					.toList)
-		} else if (childTypes.length == 3 && combinationCounter == 1) {
-			childrenLists = List(
-				miniBank.getOrElse(cost(0), Nil)
-					.filter(c => childTypes(0).equals(c.nodeType))
-					.toList,
-				mainBank(cost(1))
-					.filter(c => childTypes(1).equals(c.nodeType))
-					.toList
-					.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c),
-				miniBank.getOrElse(cost(2), Nil)
-					.filter(c => childTypes(2).equals(c.nodeType))
-					.toList)
-		}
-		combinationCounter = combinationCounter - 1
+	def newChildrenIterator(cost: Array[Int]): Unit = {
+		val varBankIndex = indicesIterator.next()
+		val mainBankIndex = ArrayBuffer.range(0, arity) --= (varBankIndex)
+		var elements: mutable.Map[Int, List[ASTNode]] = mutable.Map[Int, List[ASTNode]]()
+
+		varBankIndex.foreach(c => elements += (c -> miniBank.getOrElse(cost(c), Nil)
+			.filter(d => childTypes(c).equals(d.nodeType)).toList))
+
+		mainBankIndex.foreach(c => elements += (c -> mainBank.getOrElse(cost(c), Nil)
+			.filter(d => childTypes(c).equals(d.nodeType)).toList
+			.map(c => if (c.values.length != contexts.contextLen) c.updateValues(contexts) else c)))
+
+		val sortedElem = mutable.Map(elements.toList.sortBy(_._1):_*)
+		childrenLists = sortedElem.toList.map(_._2)
 	}
 
-	def resetIterators(cost: Array[Int]): Unit =
-	{
+	def resetIterators(cost: Array[Int]): Unit = {
+
 		newChildrenIterator(cost)
+
 		candidates = if (childrenLists.exists(l => l.isEmpty)) {
 			childrenLists.map(_ => Iterator.empty).toArray
 		} else {
@@ -150,6 +64,7 @@ class NestedChildrenIterator(
 
 	var next_child: Option[List[ASTNode]] = None
 	val costsIterator: Iterator[Array[Int]] = costs.iterator
+	var indicesIterator = Iterator[ArrayBuffer[Int]]()
 
 	def getNextChild(): Option[List[ASTNode]] =
 	{
@@ -157,7 +72,6 @@ class NestedChildrenIterator(
 			while (true) {
 				if (candidates.last.hasNext) {
 					val children = allExceptLast.toList :+ candidates.last.next()
-					//TODO: maybe recompute the updated values over here?
 					return Some(children)
 				}
 				else { //roll
@@ -185,17 +99,17 @@ class NestedChildrenIterator(
 		while (next_child.isEmpty) {
 			next_child = getNextChild()
 			if (next_child.isEmpty) {
-				if (!costsIterator.hasNext && combinationCounter == 0) {
+				if (!costsIterator.hasNext && !indicesIterator.hasNext) {
 					return
 				} // No more costs combinations available
 
-				else if (combinationCounter != 0) {
+				else if (indicesIterator.hasNext) {
 					resetIterators(newCost) // Same cost, different children combinations
 				}
 
-				else if (combinationCounter == 0 && costsIterator.hasNext) {
+				else if (!indicesIterator.hasNext && costsIterator.hasNext) {
 					// Different cost combination, explored all children combinations for that cost
-					resetCounter(childTypes.length)
+					resetIndices(childTypes.length)
 					newCost = costsIterator.next()
 					resetIterators(newCost)
 				}
