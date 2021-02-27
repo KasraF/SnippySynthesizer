@@ -189,7 +189,7 @@ object SynthesisTask
 			case _ if size =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-				new enumeration.ProbEnumerator(predicate, vocab, oeManager, contexts, false, 0, bank, mini)
+				new enumeration.ProbEnumerator(predicate, vocab, oeManager, contexts, false, 0, bank, mini, 100)
 			case _ =>
 				new BasicEnumerator(predicate, vocab, oeManager, contexts)
 		}

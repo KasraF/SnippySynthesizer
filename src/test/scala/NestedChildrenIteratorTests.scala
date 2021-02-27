@@ -1,5 +1,5 @@
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{ChildrenIterator, Contexts, NestedChildrenIterator}
+import edu.ucsd.snippy.enumeration.{ChildrenIterator, Contexts, NestedChildrenIterator, ProbCosts}
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
@@ -9,7 +9,7 @@ import scala.collection.mutable.ArrayBuffer
 
 class NestedChildrenIteratorsTests extends JUnitSuite
 {
-	@Test def nestedIterator1(): Unit =
+	@Test def nestedIterator1(): Unit = {
 	{
 		var main = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 		var mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
@@ -27,6 +27,17 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 		assertEquals(List("var"), chit.next().map(_.code))
 		assertFalse(chit.hasNext)
 	}
+	}
+
+	@Test def indicesTest(): Unit = {
+		val indices1 = ProbCosts.getIndices(1).toList.map(c => c.toList)
+		val indices2 = ProbCosts.getIndices(2).toList.map(c => c.toList)
+		val indices3 = ProbCosts.getIndices(3).toList.map(c => c.toList)
+
+		assertEquals(indices1, List(List(0)))
+		assertEquals(indices2, List(List(0), List(1), List(0,1)))
+		assertEquals(indices3, List(List(0), List(1), List(2), List(0,1), List(0,2), List(1,2), List(0,1,2)))
+	}
 
 	@Test def nestedIterator2(): Unit =
 	{
@@ -41,19 +52,64 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 		mini += (1 -> ArrayBuffer(StringVariable("name", contexts.contexts), StringVariable("var", contexts.contexts)))
 		val chit = new NestedChildrenIterator(List(Types.String, Types.String), 2, contexts, main, mini)
 		assertTrue(chit.hasNext)
-		assertEquals(List("name", "name"), chit.next().map(_.code))
-		assertEquals(List("name", "var"), chit.next().map(_.code))
-		assertEquals(List("var", "name"), chit.next().map(_.code))
-		assertEquals(List("var", "var"), chit.next().map(_.code))
 		assertEquals(List("name", "\"s\""), chit.next().map(_.code))
 		assertEquals(List("var", "\"s\""), chit.next().map(_.code))
 		assertEquals(List("\"s\"", "name"), chit.next().map(_.code))
 		val child = chit.next()
 		assertEquals(List("\"s\"", "var"), child.map(_.code))
 		assertEquals(List(List("s", "s", "s"), List("SL", "N", "SB")), child.map(_.values))
+		assertEquals(List("name", "name"), chit.next().map(_.code))
+		assertEquals(List("name", "var"), chit.next().map(_.code))
+		assertEquals(List("var", "name"), chit.next().map(_.code))
+		assertEquals(List("var", "var"), chit.next().map(_.code))
 
 		assertFalse(chit.hasNext)
 	}
+
+	@Test def nestedIterator3(): Unit =
+	{
+		var main = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+		var mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+		val contexts = new Contexts(List(
+			Map("name" -> "SL", "var" -> "SL"),
+			Map("name" -> "N", "var" -> "N"),
+			Map("name" -> "SB", "var" -> "SB")))
+
+		main += (1 -> ArrayBuffer(StringLiteral("s", 3), IntLiteral(0, 3)))
+		mini += (1 -> ArrayBuffer(StringVariable("name", contexts.contexts), StringVariable("var", contexts.contexts)))
+		val chit = new NestedChildrenIterator(List(Types.String, Types.String, Types.String), 3, contexts, main, mini)
+		assertTrue(chit.hasNext)
+		assertEquals(List("name", "\"s\"", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("var", "\"s\"", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "name", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "var", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "\"s\"", "name"), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "\"s\"", "var"), chit.next().map(_.code))
+		assertEquals(List("name", "name", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("name", "var", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("var", "name", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("var", "var", "\"s\""), chit.next().map(_.code))
+		assertEquals(List("name", "\"s\"", "name"), chit.next().map(_.code))
+		assertEquals(List("name", "\"s\"", "var"), chit.next().map(_.code))
+		assertEquals(List("var", "\"s\"", "name"), chit.next().map(_.code))
+		assertEquals(List("var", "\"s\"", "var"), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "name", "name"), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "name", "var"), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "var", "name"), chit.next().map(_.code))
+		assertEquals(List("\"s\"", "var", "var"), chit.next().map(_.code))
+
+		assertEquals(List("name", "name", "name"), chit.next().map(_.code))
+		assertEquals(List("name", "name", "var"), chit.next().map(_.code))
+		assertEquals(List("name", "var", "name"), chit.next().map(_.code))
+		assertEquals(List("name", "var", "var"), chit.next().map(_.code))
+		assertEquals(List("var", "name", "name"), chit.next().map(_.code))
+		assertEquals(List("var", "name", "var"), chit.next().map(_.code))
+		assertEquals(List("var", "var", "name"), chit.next().map(_.code))
+		assertEquals(List("var", "var", "var"), chit.next().map(_.code))
+		assertFalse(chit.hasNext)
+	}
+
+
 
 	@Test def onesIterator(): Unit =
 	{
