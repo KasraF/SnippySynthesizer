@@ -38,8 +38,8 @@ object Snippy extends App
 		breakable {
 			for ((solution, i) <- task.enumerator.zipWithIndex) {
 				solution match {
-					case (_, Some(code)) =>
-						rs = (Some(code), timeout * 1000 - deadline.timeLeft.toMillis.toInt, i)
+					case Some(assignment) =>
+						rs = (Some(assignment.code), timeout * 1000 - deadline.timeLeft.toMillis.toInt, i)
 						break
 					case _ => ()
 				}

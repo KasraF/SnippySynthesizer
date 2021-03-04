@@ -3,12 +3,12 @@ package edu.ucsd.snippy.predicates
 import edu.ucsd.snippy.PostProcessor
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
+import edu.ucsd.snippy.utils.{Assignment, BasicMultivariableAssignment, MultilineMultivariableAssignment, SingleAssignment}
 
-import scala.::
 import scala.collection.mutable
 
 class MultilineMultivariablePredicate(val graphStart: Node) extends Predicate {
-	override def evaluate (program: ASTNode): Option[String] = {
+	override def evaluate (program: ASTNode): Option[MultilineMultivariableAssignment] = {
 		if (!program.usesVariables) return None
 
 		// Update the graph
@@ -16,14 +16,14 @@ class MultilineMultivariablePredicate(val graphStart: Node) extends Predicate {
 			// The graph was changed. See if we have a complete path to the end now
 			this.traverse(graphStart) match {
 				case None => None
-				case Some(lst) => Some(lst.mkString("\n"))
+				case Some(lst) => Some(MultilineMultivariableAssignment(lst))
 			}
 		} else {
 			None
 		}
 	}
 
-	def traverse(node: Node): Option[List[String]] =
+	def traverse(node: Node): Option[List[Assignment]] =
 	{
 		if (node.isEnd) {
 			Some(Nil)
@@ -33,15 +33,10 @@ class MultilineMultivariablePredicate(val graphStart: Node) extends Predicate {
 					(edge, traverse(edge.child)) match {
 						case (_, None) => ()
 						case (edge: SingleEdge, Some(assignments)) =>
-							return Some(edge.variable + " = " + PostProcessor.clean(edge.program.get).code :: assignments)
+							return Some(SingleAssignment(edge.variable, edge.program.get) :: assignments)
 						case (edge: MultiEdge, Some(assignments)) =>
-							return Some(
-								{
-									val orderedPrograms = edge.programs.toList
-									val variables = orderedPrograms.map(_._1).mkString(", ")
-									val programs = orderedPrograms.map(_._2.get).map(PostProcessor.clean).map(_.code).mkString(", ")
-									variables + " = " + programs
-								} :: assignments)
+							val orderedPrograms = edge.programs.toList
+							return Some(BasicMultivariableAssignment(orderedPrograms.map(_._1), orderedPrograms.map(_._2.get)) :: assignments)
 					}
 				}
 			}

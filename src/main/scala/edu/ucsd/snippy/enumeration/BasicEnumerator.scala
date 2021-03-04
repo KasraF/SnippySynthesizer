@@ -2,12 +2,12 @@ package edu.ucsd.snippy.enumeration
 
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.predicates.Predicate
+import edu.ucsd.snippy.utils.Assignment
 import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 
 import scala.collection.mutable
 
 class BasicEnumerator(
-	override val predicate: Predicate,
 	override val vocab: VocabFactory,
 	override val oeManager: OEValuesManager,
 	override val contexts: List[Map[String, Any]]) extends Enumerator
@@ -34,12 +34,12 @@ class BasicEnumerator(
 			nextProgram.isDefined
 		}
 
-	override def next(): (ASTNode, Option[String]) =
+	override def next(): ASTNode =
 	{
 		if (nextProgram.isEmpty) nextProgram = getNextProgram
 		val res = nextProgram.get
 		nextProgram = None
-		(res, this.predicate.evaluate(res))
+		res
 	}
 
 	/**

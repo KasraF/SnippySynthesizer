@@ -9,7 +9,6 @@ import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 class ProbEnumerator(
-	override val predicate: Predicate,
 	override val vocab: VocabFactory,
 	override val oeManager: OEValuesManager,
 	override val contexts: List[Map[String, Any]],
@@ -33,12 +32,12 @@ class ProbEnumerator(
 			nextProgram.isDefined
 		}
 
-	override def next(): (ASTNode, Option[String]) =
+	override def next(): ASTNode =
 	{
 		if (nextProgram.isEmpty) nextProgram = getNextProgram
 		val res = nextProgram.get
 		nextProgram = None
-		(res, this.predicate.evaluate(res))
+		res
 	}
 
 	var costLevel: Int = initCost

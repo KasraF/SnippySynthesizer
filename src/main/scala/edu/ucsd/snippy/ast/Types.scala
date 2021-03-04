@@ -65,7 +65,7 @@ object Types extends Enumeration
 		override def toString(): String = "Any"
 	}
 
-	val String, Int, Bool, Unknown = Value
+	val String, Int, Bool, Void, Unknown = Value
 
 	// TODO Is there a better way than hardcoding these?
 	val StringList: List = Types.List(String)

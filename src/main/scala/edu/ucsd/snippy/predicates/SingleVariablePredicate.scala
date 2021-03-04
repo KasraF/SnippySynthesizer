@@ -1,19 +1,18 @@
 package edu.ucsd.snippy.predicates
 
-import edu.ucsd.snippy.PostProcessor
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.OEValuesManager
+import edu.ucsd.snippy.utils.SingleAssignment
 
 class SingleVariablePredicate(
 	val oeManager: OEValuesManager,
 	val varName: String,
 	val retType: Types,
 	val values: List[Any]) extends Predicate {
-	var program: Option[ASTNode] = None
 
-	override def evaluate(program: ASTNode): Option[String] = {
-		if (this.program.isDefined || program.nodeType != this.retType) {
+	override def evaluate(program: ASTNode): Option[SingleAssignment] = {
+		if (program.nodeType != this.retType) {
 			None
 		} else {
 			val results = values
@@ -22,8 +21,7 @@ class SingleVariablePredicate(
 
 			if (results.forall(identity)) {
 				if (program.usesVariables) {
-					this.program = Some(program)
-					Some(this.varName + " = " + PostProcessor.clean(program).code)
+					Some(SingleAssignment(this.varName, program))
 				}
 				else {
 					this.oeManager.remove(program)

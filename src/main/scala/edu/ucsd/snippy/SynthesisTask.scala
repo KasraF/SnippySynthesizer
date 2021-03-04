@@ -1,8 +1,8 @@
 package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.enumeration.{BasicEnumerator, Enumerator, InputsValuesManager, InterleavedEnumerator, OEValuesManager}
-import edu.ucsd.snippy.predicates.{BasicMultivariablePredicate, Edge, MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge}
+import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
+import edu.ucsd.snippy.predicates._
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -20,7 +20,7 @@ class SynthesisTask(
 
 	// Synthesizer state
 	val oeManager : OEValuesManager,
-	val enumerator: Enumerator)
+	val enumerator: SolutionEnumerator)
 {
 	override def toString: String =
 	{
@@ -183,15 +183,17 @@ object SynthesisTask
 				.toList
 		val vocab: VocabFactory = VocabFactory(parameters, additionalLiterals, size)
 
-		val enumerator = predicate match {
+		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
-				new InterleavedEnumerator(pred, vocab, oeManager, contexts, size, parameters, additionalLiterals)
+				new InterleavedSolutionEnumerator(pred, size, parameters, additionalLiterals)
 			case _ if size =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
-				new enumeration.ProbEnumerator(predicate, vocab, oeManager, contexts, false, 0, bank, mini, 100)
+				val enumerator = new enumeration.ProbEnumerator(vocab, oeManager, contexts, false, 0, bank, mini, 100)
+				new BasicSolutionEnumerator(predicate, enumerator)
 			case _ =>
-				new BasicEnumerator(predicate, vocab, oeManager, contexts)
+				val enumerator = new BasicEnumerator(vocab, oeManager, contexts)
+				new BasicSolutionEnumerator(predicate, enumerator)
 		}
 
 		new SynthesisTask(

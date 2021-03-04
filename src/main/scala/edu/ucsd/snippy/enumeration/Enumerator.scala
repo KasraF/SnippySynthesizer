@@ -2,6 +2,7 @@ package edu.ucsd.snippy.enumeration
 
 import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.predicates.Predicate
+import edu.ucsd.snippy.utils.Assignment
 import edu.ucsd.snippy.vocab.VocabFactory
 
 /**
@@ -12,9 +13,8 @@ import edu.ucsd.snippy.vocab.VocabFactory
  * but they only have access to any full solutions rather than every program it
  * enumerates.
  */
-trait Enumerator extends Iterator[(ASTNode, Option[String])]
+trait Enumerator extends Iterator[ASTNode]
 {
-	val predicate: Predicate
 	val vocab: VocabFactory
 	val oeManager: OEValuesManager
 	val contexts: List[Map[String, Any]]
