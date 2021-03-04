@@ -1,34 +1,12 @@
-package edu.ucsd.snippy
+package edu.ucsd.snippy.solution
 
 import edu.ucsd.snippy.ast.{ASTNode, Types}
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, ProbEnumerator}
-import edu.ucsd.snippy.predicates.{MultiEdge, MultilineMultivariablePredicate, Node, Predicate, SingleEdge}
+import edu.ucsd.snippy.predicates.{MultiEdge, MultilineMultivariablePredicate, Node, SingleEdge}
 import edu.ucsd.snippy.utils.{Assignment, MultilineMultivariableAssignment}
 import edu.ucsd.snippy.vocab.VocabFactory
 
 import scala.collection.mutable
-
-trait SolutionEnumerator extends Iterator[Option[Assignment]] {
-	def step(): Unit
-	def solution: Option[Assignment]
-
-	override def hasNext: Boolean = true
-
-	override def next(): Option[Assignment] =
-	{
-		step()
-		solution
-	}
-}
-
-class BasicSolutionEnumerator(val predicate: Predicate, val enumerator: Enumerator) extends SolutionEnumerator
-{
-	var solution: Option[Assignment] = None
-
-	override def step(): Unit =
-		if (solution.isEmpty && enumerator.hasNext)
-			this.solution = predicate.evaluate(enumerator.next)
-}
 
 class InterleavedSolutionEnumerator(
 	val predicate: MultilineMultivariablePredicate,
@@ -102,5 +80,4 @@ class InterleavedSolutionEnumerator(
 		}
 	}
 }
-
 
