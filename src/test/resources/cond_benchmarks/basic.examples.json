@@ -1,0 +1,14 @@
+{
+	"varNames": ["rs"],
+	"previous_env": {},
+	"envs": [
+		{
+			"name": "'Kasra Ferdowsi Fard'",
+			"rs": "'KFF'"
+		},
+		{
+			"name": "'Hello There'",
+			"rs": "'ht'"
+		}
+	]
+}

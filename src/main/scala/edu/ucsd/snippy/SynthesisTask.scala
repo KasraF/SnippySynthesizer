@@ -3,6 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.predicates._
+import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSolutionEnumerator, InterleavedSolutionEnumerator, SolutionEnumerator}
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -100,76 +101,13 @@ object SynthesisTask
 		val oeManager = new InputsValuesManager
 		val additionalLiterals = getStringLiterals(processedEnvs, outputVarNames)
 
-		val predicate: Predicate = if (loopy && outputVarNames.size > 1) {
-			// We can support multiline assignments, so let's build the graph
-			// We start with enumerating all the possible environments
-			val environments = this.enumerateEnvs(outputVarNames, contexts, processedEnvs)
-
-			// enviornments.head := Same as "contexts", the environment with all old values -> The starting node
-			// environment.last := processedEnvs, the environment with all the new values -> The end node
-
-			// We need to add all but the above to the evaluation context, both to preserve completeness under OE, and
-			// because the MultilineMultivariablePredicate uses them to determine when Synthesis is complete.
-			// We also need to keep track of their indices in the final context, since the context is a flatmap of them,
-			// while the predicate needs to be able to extract only the relevant values from synthesized ASTNodes.
-
-			// We can actually just overwrite `context` here, since the original context is represented by the
-			// first graph node.
-
-			val nodes = environments
-				.map { case (_, envs) =>
-					contexts = contexts ++ envs
-					(envs, Range(contexts.length - envs.length, contexts.length).toList)
-				}
-				.map { case (env, indices) => new Node(env, Nil, indices, false) }
-
-			// We never evaluate in the final env, so can we pop that from context.
-			contexts = contexts.dropRight(1)
-
-			// Set the final node
-			nodes.last.isEnd = true
-
-			// Note: There's a dependency here between the order of nodes, and the order of the `environments`, which
-			// we use below to find the nodes that should have a variable in-between.
-
-			// Now we need to create the edges and set them in the nodes
-			environments.zipWithIndex.foreach{ case ((thisVars, _), thisIdx) =>
-				val nodeEdges: List[Edge] = Range(thisIdx + 1, environments.length).map(thatIdx => {
-					val thatVars = environments(thatIdx)._1
-					if (thatVars.size > thisVars.size && thisVars.forall(thatVars.contains)) {
-						// We need to create an edge between the two
-						val newVars = thatVars -- thisVars
-						val parent = nodes(thisIdx)
-						val child = nodes(thatIdx)
-
-						if (newVars.size == 1) {
-							val values = processedEnvs.flatMap(map => map.filter(_._1 == newVars.head).values)
-							Some(SingleEdge(None, newVars.head, Utils.getTypeOfAll(values), parent, child))
-						} else {
-							Some(MultiEdge(
-								mutable.Map.from(newVars.map(_ -> None)),
-								newVars.map(varName => varName -> Utils.getTypeOfAll(processedEnvs.flatMap(map => map.filter(_._1 == varName).values))).toMap,
-								parent,
-								child))
-						}
-					} else {
-						// There is no edge between these nodes
-						None
-					}
-				})
-				.filter(_.isDefined)
-				.map(_.get)
-				.toList
-
-				nodes(thisIdx).edges = nodeEdges
-			}
-
-			new MultilineMultivariablePredicate(nodes.head)
-		} else {
-			outputVarNames match {
-				case single :: Nil => Predicate.getPredicate(single, processedEnvs, oeManager)
-				case multiple => new BasicMultivariablePredicate(multiple.map(varName => varName -> Predicate.getPredicate(varName, processedEnvs, oeManager)).toMap)
-			}
+		val predicate: Predicate = outputVarNames match {
+			case single :: Nil => Predicate.getPredicate(single, processedEnvs, oeManager)
+			case multiple if loopy =>
+				val (newContexts, pred) = this.mulitvariablePredicate(multiple, contexts, processedEnvs)
+				contexts = newContexts
+				pred
+			case multiple => new BasicMultivariablePredicate(multiple.map(varName => varName -> Predicate.getPredicate(varName, processedEnvs, oeManager)).toMap)
 		}
 
 		val parameters =
@@ -186,6 +124,11 @@ object SynthesisTask
 		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
 				new InterleavedSolutionEnumerator(pred, size, parameters, additionalLiterals)
+			case _ if size && outputVarNames.length == 1 => {
+				val varName = outputVarNames.head
+				val values = processedEnvs.flatMap(map => map.filter(_._1 == varName).values)
+				new ConditionalSolutionEnumerator(parameters, contexts, values, parameters, additionalLiterals)
+			}
 			case _ if size =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
@@ -204,6 +147,80 @@ object SynthesisTask
 			predicate,
 			oeManager,
 			enumerator)
+	}
+
+
+	def mulitvariablePredicate(
+		outputVarNames: List[String],
+		inputContexts: List[Context],
+		outputEnvs: List[Map[String, Any]]
+	): (List[Context], MultilineMultivariablePredicate) = {
+		var contexts = inputContexts
+
+		// We can support multiline assignments, so let's build the graph
+		// We start with enumerating all the possible environments
+		val environments = this.enumerateEnvs(outputVarNames, contexts, outputEnvs)
+
+		// enviornments.head := Same as "contexts", the environment with all old values -> The starting node
+		// environment.last := processedEnvs, the environment with all the new values -> The end node
+
+		// We need to add all but the above to the evaluation context, both to preserve completeness under OE, and
+		// because the MultilineMultivariablePredicate uses them to determine when Synthesis is complete.
+		// We also need to keep track of their indices in the final context, since the context is a flatmap of them,
+		// while the predicate needs to be able to extract only the relevant values from synthesized ASTNodes.
+
+		// We can actually just overwrite `context` here, since the original context is represented by the
+		// first graph node.
+
+		val nodes = environments
+			.map { case (_, envs) =>
+				contexts = contexts ++ envs
+				(envs, Range(contexts.length - envs.length, contexts.length).toList)
+			}
+			.map { case (env, indices) => new Node(env, Nil, indices, false) }
+
+		// We never evaluate in the final env, so can we pop that from context.
+		contexts = contexts.dropRight(1)
+
+		// Set the final node
+		nodes.last.isEnd = true
+
+		// Note: There's a dependency here between the order of nodes, and the order of the `environments`, which
+		// we use below to find the nodes that should have a variable in-between.
+
+		// Now we need to create the edges and set them in the nodes
+		environments.zipWithIndex.foreach{ case ((thisVars, _), thisIdx) =>
+			val nodeEdges: List[Edge] = Range(thisIdx + 1, environments.length).map(thatIdx => {
+				val thatVars = environments(thatIdx)._1
+				if (thatVars.size > thisVars.size && thisVars.forall(thatVars.contains)) {
+					// We need to create an edge between the two
+					val newVars = thatVars -- thisVars
+					val parent = nodes(thisIdx)
+					val child = nodes(thatIdx)
+
+					if (newVars.size == 1) {
+						val values = outputEnvs.flatMap(map => map.filter(_._1 == newVars.head).values)
+						Some(SingleEdge(None, newVars.head, Utils.getTypeOfAll(values), parent, child))
+					} else {
+						Some(MultiEdge(
+							mutable.Map.from(newVars.map(_ -> None)),
+							newVars.map(varName => varName -> Utils.getTypeOfAll(outputEnvs.flatMap(map => map.filter(_._1 == varName).values))).toMap,
+							parent,
+							child))
+					}
+				} else {
+					// There is no edge between these nodes
+					None
+				}
+			})
+				.filter(_.isDefined)
+				.map(_.get)
+				.toList
+
+			nodes(thisIdx).edges = nodeEdges
+		}
+
+		(contexts, new MultilineMultivariablePredicate(nodes.head))
 	}
 
 	private def cleanupInputs(input: Map[String, Any]): Map[String, Any] =

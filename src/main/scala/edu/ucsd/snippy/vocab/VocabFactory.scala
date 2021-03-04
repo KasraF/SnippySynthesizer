@@ -9,6 +9,7 @@ class VocabFactory(
 {
 	def leaves(): Iterator[VocabMaker] = leavesMakers.iterator
 	def nonLeaves(): Iterator[VocabMaker] = nodeMakers.iterator
+	def all(): Iterator[VocabMaker] = leaves() ++ nonLeaves()
 }
 
 object VocabFactory
@@ -20,8 +21,8 @@ object VocabFactory
 	}
 
 	def apply(variables: List[(String, Types.Value)],
-			  additionalLiterals: Iterable[String],
-			  size: Boolean): VocabFactory =
+		additionalLiterals: Iterable[String],
+		size: Boolean): VocabFactory =
 	{
 		val defaultStringLiterals = List(" ")
 		val stringLiterals = (defaultStringLiterals ++ additionalLiterals).distinct
