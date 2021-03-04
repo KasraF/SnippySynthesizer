@@ -1,7 +1,6 @@
 package edu.ucsd.snippy.enumeration
 
 import edu.ucsd.snippy.ast._
-import edu.ucsd.snippy.predicates.Predicate
 import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 
 import java.io.FileOutputStream
@@ -45,7 +44,9 @@ class ProbEnumerator(
 	var currLevelPrograms: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
 	var varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, ArrayBuffer[ASTNode]]] = mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]]()
 	val totalLeaves: List[VocabMaker] = vocab.leaves().toList.distinct ++ vocab.nonLeaves().toList.distinct
-	var size_log = new FileOutputStream("output.txt", true)
+
+	// Causes "Too many open files" error :/
+	// var size_log = new FileOutputStream("output.txt", true)
 
 	ProbUpdate.probMap = ProbUpdate.createProbMap(vocab)
 	ProbUpdate.priors = ProbUpdate.createPrior(vocab)

@@ -100,6 +100,7 @@ object SynthesisTask
 
 		val oeManager = new InputsValuesManager
 		val additionalLiterals = getStringLiterals(processedEnvs, outputVarNames)
+		val originalContexts = contexts
 
 		val predicate: Predicate = outputVarNames match {
 			case single :: Nil => Predicate.getPredicate(single, processedEnvs, oeManager)
@@ -123,12 +124,12 @@ object SynthesisTask
 
 		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
-				new InterleavedSolutionEnumerator(pred, size, parameters, additionalLiterals)
-			case _ if size && outputVarNames.length == 1 => {
-				val varName = outputVarNames.head
-				val values = processedEnvs.flatMap(map => map.filter(_._1 == varName).values)
-				new ConditionalSolutionEnumerator(parameters, contexts, values, parameters, additionalLiterals)
-			}
+				// new InterleavedSolutionEnumerator(pred, size, parameters, additionalLiterals)
+				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_(name)))).toList
+				new ConditionalSolutionEnumerator(outputVariables, originalContexts, processedEnvs, parameters, additionalLiterals)
+			case _ if size && outputVarNames.length == 1 =>
+				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_(name)))).toList
+				new ConditionalSolutionEnumerator(outputVariables, originalContexts, processedEnvs, parameters, additionalLiterals)
 			case _ if size =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()

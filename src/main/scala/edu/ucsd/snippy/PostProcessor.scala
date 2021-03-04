@@ -18,7 +18,7 @@ object PostProcessor
 
 			(lhs, rhs) match {
 				case (a: IntLiteral, b: IntLiteral) => IntLiteral(a.value + b.value, a.values.length)
-				case (a, b: Negate) => IntSubtraction(a, b.arg)
+				case (a, b: NegateInt) => IntSubtraction(a, b.arg)
 				case (a, b: IntLiteral) if b.value < 0 => IntSubtraction(a, IntLiteral(-b.value, b.values.length))
 				case _ => IntAddition(lhs, rhs)
 			}
@@ -29,7 +29,7 @@ object PostProcessor
 			(lhs, rhs) match {
 				case (a: IntLiteral, b: IntLiteral) => IntLiteral(a.value - b.value, a.values.length)
 				case (a: IntLiteral, b) => if (a.value == 0) {
-					Negate(b)
+					NegateInt(b)
 				} else {
 					IntSubtraction(lhs, rhs)
 				}

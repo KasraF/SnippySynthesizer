@@ -5,13 +5,13 @@ import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration._
 
-import java.io.FileOutputStream
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Boolean) extends VocabMaker with Iterator[ASTNode]
 {
-	var size_log = new FileOutputStream("output.txt", true)
+	// Causes "Too many open files" error :/
+	// var size_log = new FileOutputStream("output.txt", true)
 
 	override val arity: Int = 3
 	def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = null
@@ -320,7 +320,9 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 	var varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]] = _
 	var mainBank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]] = _
 	var nextProg: Option[ASTNode] = None
-	var size_log = new FileOutputStream("output.txt", true)
+
+	// Causes "Too many open files" error :/
+	// var size_log = new FileOutputStream("output.txt", true)
 
 
 	assert(keyType.equals(Types.Int) || keyType.equals(Types.String),

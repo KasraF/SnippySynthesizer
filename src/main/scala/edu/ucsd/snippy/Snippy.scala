@@ -17,7 +17,10 @@ object Snippy extends App
 
 	def synthesize(file: JFile, timeout: Int = 7) : (Option[String], Int, Int) =
 	{
-		synthesize(fromFile(file).mkString, timeout)
+		val buff = fromFile(file)
+		val rs = synthesize(buff.mkString, timeout)
+		buff.close()
+		rs
 	}
 
 	def synthesize(taskStr: String, timeout: Int): (Option[String], Int, Int) =

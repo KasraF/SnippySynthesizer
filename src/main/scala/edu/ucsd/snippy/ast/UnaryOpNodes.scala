@@ -214,9 +214,9 @@ case class UnarySplit(arg: StringNode) extends UnaryOpNode[Iterable[String]] wit
 	override def updateValues(contexts: Contexts): UnarySplit = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
-case class Negate(arg: IntNode) extends UnaryOpNode[Int] with IntNode
+case class NegateInt(arg: IntNode) extends UnaryOpNode[Int] with IntNode
 {
-	override lazy val code: String = "-" + arg.code
+	override lazy val code: String = "-" + arg.parensIfNeeded
 
 	override def doOp(x: Any): Option[Int] = x match {
 		case x: Int => Some(-x)
@@ -224,7 +224,22 @@ case class Negate(arg: IntNode) extends UnaryOpNode[Int] with IntNode
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Int] =
-		Negate(x.asInstanceOf[IntNode])
+		NegateInt(x.asInstanceOf[IntNode])
 
-	override def updateValues(contexts: Contexts): Negate = copy(arg.updateValues(contexts).asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts): NegateInt = copy(arg.updateValues(contexts).asInstanceOf[IntNode])
+}
+
+case class NegateBool(arg: BoolNode) extends UnaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = "not " + arg.parensIfNeeded
+	override val parenless: Boolean = false
+
+	override def doOp(x: Any): Option[Boolean] = x match {
+		case x: Boolean => Some(!x)
+		case _ =>wrongType(x)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Boolean] = NegateBool(x.asInstanceOf[BoolNode])
+
+	override def updateValues(contexts: Contexts): NegateBool = copy(arg.updateValues(contexts).asInstanceOf[BoolNode])
 }

@@ -4,13 +4,13 @@ import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration._
 
-import java.io.FileOutputStream
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
 abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, size: Boolean) extends VocabMaker with Iterator[ASTNode]
 {
-	var size_log = new FileOutputStream("output.txt", true)
+	// Causes "Too many open files" error :/
+	// var size_log = new FileOutputStream("output.txt", true)
 
 	override val arity: Int = 2
 	def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = null

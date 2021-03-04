@@ -11,20 +11,19 @@ import edu.ucsd.snippy.vocab.VocabFactory
 import scala.collection.mutable
 
 class ConditionalSolutionEnumerator(
-	val parameters: List[(String, Types.Value)],
+	val outputVariables: List[(String, Types.Value)],
 	val inputContexts: List[Context],
-	// val outputEnvs: List[Map[String, Any]],
-	val outputValues: List[Any],
+	val outputEnvs: List[Map[String, Any]],
 	variables: List[(String, Types.Value)],
 	additionalLiterals: Iterable[String]) extends SolutionEnumerator
 {
 	private val partitions: Map[(Set[Int], Set[Int]), Partition] =
-		getBinaryPartitions(inputContexts, 0)
+		getBinaryPartitions(inputContexts)
 			.map { case (thenIndices, elseIndices) =>
-				parameters match {
+				outputVariables match {
 					case (varName, typ) :: Nil =>
 						// Just a single variable
-						// val outputValues = outputEnvs.map(_(varName))
+						val outputValues = outputEnvs.flatMap(map => map.filter(_._1 == varName).values)
 
 						if (elseIndices.isEmpty) {
 							val predicate = new SingleVariablePredicate(
@@ -79,26 +78,26 @@ class ConditionalSolutionEnumerator(
 								new BasicSolutionEnumerator(thenPredicate, thenEnum),
 								new BasicSolutionEnumerator(elsePredicate, elseEnum))
 						}
-					case multiple => ???
-//						if (elseIndices.isEmpty) {
-//							val (_, pred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), inputContexts, outputEnvs)
-//							val enum = new InterleavedSolutionEnumerator(pred, true, variables, additionalLiterals)
-//							(thenIndices, elseIndices) -> UnaryPartition(enum)
-//						} else {
-//							// Then case
-//							val thenInputContexts = this.filterByIndices(inputContexts, thenIndices)
-//							val thenOutputEnvs = this.filterByIndices(outputEnvs, thenIndices)
-//							val (_, thenPred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), thenInputContexts, thenOutputEnvs)
-//							val thenEnum = new InterleavedSolutionEnumerator(thenPred, true, variables, additionalLiterals)
-//
-//							// Else case
-//							val elseInputContexts = this.filterByIndices(inputContexts, elseIndices)
-//							val elseOutputEnvs = this.filterByIndices(outputEnvs, elseIndices)
-//							val (_, elsePred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), elseInputContexts, elseOutputEnvs)
-//							val elseEnum = new InterleavedSolutionEnumerator(elsePred, true, variables, additionalLiterals)
-//
-//							(thenIndices, elseIndices) -> BinaryPartition(thenEnum, elseEnum)
-//						}
+					case multiple =>
+						if (elseIndices.isEmpty) {
+							val (_, pred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), inputContexts, outputEnvs)
+							val enum = new InterleavedSolutionEnumerator(pred, true, variables, additionalLiterals)
+							(thenIndices, elseIndices) -> UnaryPartition(enum)
+						} else {
+							// Then case
+							val thenInputContexts = this.filterByIndices(inputContexts, thenIndices)
+							val thenOutputEnvs = this.filterByIndices(outputEnvs, thenIndices)
+							val (_, thenPred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), thenInputContexts, thenOutputEnvs)
+							val thenEnum = new InterleavedSolutionEnumerator(thenPred, true, variables, additionalLiterals)
+
+							// Else case
+							val elseInputContexts = this.filterByIndices(inputContexts, elseIndices)
+							val elseOutputEnvs = this.filterByIndices(outputEnvs, elseIndices)
+							val (_, elsePred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), elseInputContexts, elseOutputEnvs)
+							val elseEnum = new InterleavedSolutionEnumerator(elsePred, true, variables, additionalLiterals)
+
+							(thenIndices, elseIndices) -> BinaryPartition(thenEnum, elseEnum)
+						}
 				}
 			}.toMap
 	val condEnumerator = new ProbEnumerator(
@@ -120,34 +119,33 @@ class ConditionalSolutionEnumerator(
 
 		// Else if at least one of the partitions is complete,
 		//   enumerate conditions and see if we have a complete tuple
-		for (next <- condEnumerator) {
-			if (next.nodeType == Types.Bool) {
-				val key = next.values.asInstanceOf[List[Boolean]].zipWithIndex.foldLeft((Set[Int](), Set[Int]())) {
-					case ((thenIdxs, elseIdxs), (cond, idx)) => if (cond) {
-						(thenIdxs + idx, elseIdxs)
-					}else {
-						(thenIdxs, elseIdxs + idx)
-					}
-				}
-				val part = if (this.partitions.contains(key)) {
-					this.partitions(key)
-				} else {
-					this.partitions((key._2, key._1))
-				}
+		val nextCond = condEnumerator.next()
 
-				part.condition = Some(next.asInstanceOf[BoolNode])
-				part match {
-					case part: UnaryPartition => if (part.program.isDefined) {
-						this.solution = part.program
-					}
-					case part: BinaryPartition =>
-						(part.thenProgram, part.elseProgram, part.condition) match {
-							case (Some(thenCase), Some(elseCase), Some(condition)) =>
-								this.solution = Some(ConditionalAssignment(condition, thenCase, elseCase))
-							case _ => ()
-						}
+		if (nextCond.nodeType == Types.Bool) {
+			val key = nextCond.values.asInstanceOf[List[Boolean]].zipWithIndex.foldLeft((Set[Int](), Set[Int]())) {
+				case ((thenIdxs, elseIdxs), (cond, idx)) => if (cond) {
+					(thenIdxs + idx, elseIdxs)
+				}else {
+					(thenIdxs, elseIdxs + idx)
 				}
-				return
+			}
+			val part = if (this.partitions.contains(key)) {
+				this.partitions(key)
+			} else {
+				this.partitions((key._2, key._1))
+			}
+
+			part.condition = Some(nextCond.asInstanceOf[BoolNode])
+			part match {
+				case part: UnaryPartition => if (part.program.isDefined) {
+					this.solution = part.program
+				}
+				case part: BinaryPartition =>
+					(part.thenProgram, part.elseProgram, part.condition) match {
+						case (Some(thenCase), Some(elseCase), Some(condition)) =>
+							this.solution = Some(ConditionalAssignment(condition, thenCase, elseCase))
+						case _ => ()
+					}
 			}
 		}
 	}
@@ -155,7 +153,7 @@ class ConditionalSolutionEnumerator(
 	private def filterByIndices[T](lst: List[T], indices: Set[Int]): List[T] =
 		lst.zipWithIndex.filter(tup => indices.contains(tup._2)).map(_._1)
 
-	private def getBinaryPartitions[T](lst: List[T], startingIdx: Int): List[(Set[Int], Set[Int])] = lst match {
+	private def getBinaryPartitions[T](lst: List[T], startingIdx: Int = 0): List[(Set[Int], Set[Int])] = lst match {
 		case Nil => List((Set(), Set()))
 		case _ :: Nil => List((Set(startingIdx), Set()))
 		case _ :: tail =>

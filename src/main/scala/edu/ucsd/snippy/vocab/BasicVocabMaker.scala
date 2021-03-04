@@ -4,7 +4,6 @@ import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration._
 
-import java.io.FileOutputStream
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
@@ -13,7 +12,9 @@ trait BasicVocabMaker extends VocabMaker with Iterator[ASTNode]
 	val returnType: Types
 	var childIterator: Iterator[List[ASTNode]] = _
 	var contexts: List[Map[String, Any]] = _
-	var size_log = new FileOutputStream("output.txt", true)
+
+	// Causes "Too many open files" error :/
+	// var size_log = new FileOutputStream("output.txt", true)
 
 	override def hasNext: Boolean = childIterator != null && childIterator.hasNext
 
