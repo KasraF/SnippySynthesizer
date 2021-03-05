@@ -32,8 +32,8 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 	var nextProg: Option[ASTNode] = None
 
 	assert(iterableType.equals(Types.String) ||
-		       iterableType.equals(Types.List(Types.Int)) ||
-		       iterableType.equals(Types.List(Types.String)),
+		       iterableType.equals(Types.IntList) ||
+		       iterableType.equals(Types.StringList),
 	       s"List comprehension iterable type not supported: $iterableType")
 
 	assert(valueType.equals(Types.Int) || valueType.equals(Types.String),
@@ -67,7 +67,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					StringVariable(varName, contexts)
 			}
-			case Types.List(Types.String) => new BasicVocabMaker {
+			case Types.StringList => new BasicVocabMaker {
 				override val arity: Int = 0
 				override val childTypes: List[Types] = Nil
 				override val returnType: Types = Types.String
@@ -76,7 +76,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					StringVariable(varName, contexts)
 			}
-			case Types.List(Types.Int) => new BasicVocabMaker {
+			case Types.IntList => new BasicVocabMaker {
 				override val arity: Int = 0
 				override val childTypes: List[Types] = Nil
 				override val returnType: Types = Types.Int
@@ -134,7 +134,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					StringVariable(varName, contexts)
 			}
-			case Types.List(Types.String) => new BasicVocabMaker {
+			case Types.StringList => new BasicVocabMaker {
 				override val arity: Int = 0
 				override val childTypes: List[Types] = Nil
 				override val returnType: Types = Types.String
@@ -144,7 +144,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 				override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 					StringVariable(varName, contexts)
 			}
-			case Types.List(Types.Int) => new BasicVocabMaker {
+			case Types.IntList => new BasicVocabMaker {
 				override val arity: Int = 0
 				override val childTypes: List[Types] = Nil
 				override val returnType: Types = Types.Int
@@ -336,7 +336,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 	                  vocabFactory: VocabFactory,
 	                  height: Int) : Iterator[ASTNode] =
 	{
-		this.mapIter = progs.filter(n => n.isInstanceOf[VariableNode[_]] && n.nodeType.equals(Types.Map(keyType, valueType))).iterator
+		this.mapIter = progs.filter(n => n.isInstanceOf[VariableNode[_]] && n.nodeType.equals(Types.mapOf(keyType, valueType))).iterator
 		this.childHeight = height - 1
 		this.keyName = "key"
 		this.contexts = contexts
@@ -389,7 +389,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 
 		this.mainBank = bank.map(n => (n._1, n._2.filter(c => !c.includes(this.keyName))))
 		this.mapIter = this.mainBank.dropRight(1).values.flatten.toList.
-			filter(n => n.isInstanceOf[VariableNode[_]] && n.nodeType.equals(Types.Map(keyType, valueType))).iterator
+			filter(n => n.isInstanceOf[VariableNode[_]] && n.nodeType.equals(Types.mapOf(keyType, valueType))).iterator
 
 		this.keyName = "key"
 		this.contexts = contexts

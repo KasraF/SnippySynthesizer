@@ -82,7 +82,7 @@ object Types extends Enumeration
 	val AnyList: List = Types.List(Types.Any)
 	val AnyIterable: Iterable = Types.Iterable(Types.Any)
 
-	def listOf(t: Types.Value): Types.Value = t match {
+	@inline def listOf(t: Types.Value): Types.Value = t match {
 		case Types.String => StringList
 		case Types.Int => IntList
 		case Types.Bool => BoolList
@@ -91,7 +91,7 @@ object Types extends Enumeration
 			AnyList
 	}
 
-	def mapOf(k: Types.Value, v: Types.Value): Map = (k, v) match {
+	@inline def mapOf(k: Types.Value, v: Types.Value): Map = (k, v) match {
 		case (Int, Int) => IntIntMap
 		case (Int, String) => IntStringMap
 		case (String, Int) => StringIntMap
@@ -101,7 +101,7 @@ object Types extends Enumeration
 			Map(Types.Any, Types.Any)
 	}
 
-	def childOf(t: Types.Types): Types.Types = t match {
+	@inline def childOf(t: Types.Types): Types.Types = t match {
 		case Types.List(t) => t
 		case Types.Set(t) => t
 		case Types.String => t
@@ -110,7 +110,7 @@ object Types extends Enumeration
 			Unknown
 	}
 
-	def isListType(t: Types.Value): Boolean = t match {
+	@inline def isListType(t: Types.Value): Boolean = t match {
 		case Types.List(_) => true
 		case _ => false
 	}
