@@ -147,6 +147,10 @@
 				<version>3.3.2</version>
 				<configuration>
 					<sourceDir>src/main/scala</sourceDir>
+					<args>
+						<arg>-opt:l:method</arg>
+						<arg>-opt:l:inline</arg>
+					</args>
 				</configuration>
 				<executions>
 					<execution>

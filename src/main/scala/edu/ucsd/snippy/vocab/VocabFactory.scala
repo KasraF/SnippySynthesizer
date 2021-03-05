@@ -66,7 +66,7 @@ object VocabFactory
 				case (name, Types.List(childType)) => new BasicVocabMaker {
 					override val arity: Int = 0
 					override val childTypes: List[Types] = Nil
-					override val returnType: Types = Types.List(childType)
+					override val returnType: Types = Types.listOf(childType)
 					override val nodeType: Class[_ <: ASTNode] = classOf[ListVariable[Any]]
 					override val head: String = ""
 
@@ -76,7 +76,7 @@ object VocabFactory
 				case (name, Types.Map(keyType, valType)) => new BasicVocabMaker {
 					override val arity: Int = 0
 					override val childTypes: List[Types] = Nil
-					override val returnType: Types = Types.Map(keyType, valType)
+					override val returnType: Types = Types.mapOf(keyType, valType)
 					override val nodeType: Class[_ <: ASTNode] = classOf[MapVariable[Any,Any]]
 					override val head: String = ""
 
@@ -504,7 +504,7 @@ object VocabFactory
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.Map(Types.String, Types.Int), Types.String)
+					override val childTypes: List[Types] = List(Types.StringIntMap, Types.String)
 					override val returnType: Types = Types.Int
 					override val nodeType: Class[_ <: ASTNode] = classOf[MapGet]
 					override val head: String = ""

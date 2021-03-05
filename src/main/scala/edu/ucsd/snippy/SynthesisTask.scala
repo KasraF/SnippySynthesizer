@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.predicates._
-import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSolutionEnumerator, InterleavedSolutionEnumerator, SolutionEnumerator}
+import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, InterleavedSolutionEnumerator, SolutionEnumerator}
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
