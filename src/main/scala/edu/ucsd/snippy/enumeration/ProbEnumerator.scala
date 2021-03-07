@@ -141,14 +141,12 @@ class ProbEnumerator(
 
 			if (rootMaker.hasNext) {
 				val program = rootMaker.next
-				if (program.values.nonEmpty &&
-					oeManager.isRepresentative(program)) {
+				if (oeManager.isRepresentative(program)) {
 					res = Some(program)
 				}
 			}
 			else if (currIterator.hasNext) {
-				if (!advanceRoot())
-					changeLevel()
+				if (!advanceRoot()) changeLevel()
 			}
 			else if (!changeLevel()) {
 				changeLevel()

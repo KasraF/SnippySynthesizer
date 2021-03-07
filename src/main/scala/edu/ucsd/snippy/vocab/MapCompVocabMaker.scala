@@ -256,12 +256,14 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 		while (!done && listIter.hasNext) {
 			val lst = listIter.next()
 
-			if (lst.values.head.asInstanceOf[String].nonEmpty) {
+			if (lst.values.exists(_.isDefined) && lst.values.filter(_.isDefined).forall(_.get.asInstanceOf[String].nonEmpty)) {
 				this.currList = lst
 				val newContexts = this.contexts.zipWithIndex
-					.flatMap(context => this.currList.values(context._2).asInstanceOf[String]
-						.map(c => c.toString)
-						.map(value => context._1 + (this.varName -> value)))
+					.flatMap(context =>
+					this.currList.values(context._2) match {
+						case Some(s: String) => s.map(c => c.toString).map(value => context._1 + (this.varName -> value))
+						case None => Nil
+					})
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
 					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts)
@@ -522,14 +524,15 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 		while (!done && mapIter.hasNext) {
 			val map = mapIter.next()
 
-			if (map.values.head.asInstanceOf[Map[_,_]].nonEmpty) {
+			if (map.values.exists(_.isDefined) && map.values.filter(_.isDefined).forall(_.get.asInstanceOf[Map[_,_]].nonEmpty)) {
 				this.currMap = map
 				val newContexts = this.contexts.zipWithIndex
 					.flatMap(
 						context =>
-							this.currMap.values(context._2)
-								.asInstanceOf[Map[String, Int]].keys
-								.map(key => context._1 + (this.keyName -> key)))
+							this.currMap.values(context._2) match {
+								case Some(map: Map[String, Int]) => map.keys.map(key => context._1 + (this.keyName -> key))
+								case None => Nil
+							})
 				val oeValuesManager = new InputsValuesManager()
 				this.enumerator = if (!size) {
 					new BasicEnumerator(this.filterVocab, oeValuesManager, newContexts)

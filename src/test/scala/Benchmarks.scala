@@ -4,7 +4,7 @@ import java.io.File
 
 object Benchmarks extends App
 {
-	def runBenchmark(dir: File): Unit = {
+	def runBenchmark(dir: File, timeout: Int = 7): Unit = {
 		println("----- ------------------- ------- ---------- --------------------------------------")
 		dir.listFiles()
 			.filter(_.getName.contains(".examples.json"))
@@ -18,7 +18,7 @@ object Benchmarks extends App
 				print(f"($index%2d)  [$name%17s] ")
 
 				try {
-					Snippy.synthesize(file) match {
+					Snippy.synthesize(file, timeout) match {
 						case (None, time: Int, count: Int) => println(f"[${time / 1000.0}%.3f] [$count%8d] Timeout") // println(f"[$count%d] Timeout")
 						case (Some(program: String), time: Int, count: Int) =>
 							val str = if (program.contains('\n')) {
@@ -57,14 +57,19 @@ object Benchmarks extends App
 	DebugPrints.info = false
 
 	if (args.nonEmpty) {
+		val timeout = args.last.toIntOption match {
+			case Some(t) => t
+			case _ => 7
+		}
+
 		benchmarks.listFiles()
 			.filter(_.isDirectory)
 			.filter(dir => args.contains(dir.getName))
-			.foreach(this.runBenchmark)
+			.foreach(this.runBenchmark(_, timeout))
 	} else {
 		benchmarks.listFiles()
 			.filter(_.isDirectory)
 			.sortBy(_.getName)(Ordering.String)
-			.foreach(this.runBenchmark)
+			.foreach(this.runBenchmark(_))
 	}
 }

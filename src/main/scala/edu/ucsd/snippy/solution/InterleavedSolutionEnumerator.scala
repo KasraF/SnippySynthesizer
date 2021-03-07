@@ -33,8 +33,8 @@ class InterleavedSolutionEnumerator(
 			if (enumerator.hasNext) {
 				val program = enumerator.next()
 
-				if (program.usesVariables) {
-					val values: List[Any] = program.values
+				if (program.usesVariables && program.values.forall(_.isDefined)) {
+					val values: List[Any] = program.values.map(_.get)
 					var graphChanged = false
 
 					for (edge <- node.edges) {
@@ -42,7 +42,7 @@ class InterleavedSolutionEnumerator(
 							case edge: SingleEdge =>
 								if (edge.program.isEmpty &&
 									edge.child.state
-										.map(_ (edge.variable))
+										.map(_(edge.variable))
 										.zip(values)
 										.forall(tup => tup._1 == tup._2)) {
 									edge.program = Some(program)

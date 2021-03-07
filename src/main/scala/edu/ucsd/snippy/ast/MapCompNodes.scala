@@ -17,23 +17,38 @@ trait MapCompNode[K, V] extends MapNode[K, V]
 	override val keyType: Types = Types.childOf(list.nodeType)
 	override val valType: Types = value.nodeType
 
-	override val values: List[Map[K, V]] = {
-		if (list.values.isEmpty) {
-			Nil
-		} else {
-			val entries: Iterable[(K, V)] = key.values.zip(value.values).asInstanceOf[Iterable[(K, V)]]
+	override val values: List[Option[Map[K, V]]] = {
+//		val entries: Iterable[(Option[K], Option[V])] = key
+//			.values
+//			.zip(value.values)
+//			.asInstanceOf[Iterable[(Option[K], Option[V])]]
 
-			list.values.head match {
-				case _: String => splitByIterable(list.values.asInstanceOf[List[String]].map(new WrappedString(_)), entries).map(_.toMap)
-				case _: Iterable[_] => splitByIterable(list.values.asInstanceOf[List[Iterable[_]]], entries).map(_.toMap)
-				case _ => list.values
-					.indices
-					.map(i => entries.slice(
-						i * entries.size / list.values.length,
-						(i + 1) * entries.size / list.values.length))
-					.map(_.toMap)
-					.toList
-			}
+		var idx = 0
+
+		list.values.map {
+			case None => None
+			case Some(value: String) =>
+				// First collect the tuples matching this value
+				val keys: List[Option[K]] = this.key.values.slice(idx, idx + value.length).asInstanceOf[List[Option[K]]]
+				val vals: List[Option[V]] = this.value.values.slice(idx, idx + value.length).asInstanceOf[List[Option[V]]]
+				idx += value.length
+
+				if (keys.contains(None) || vals.contains(None)) {
+					None
+				} else {
+					Some(keys.map(_.get).zip(vals.map(_.get)).toMap)
+				}
+			case Some(value: Iterable[_]) =>
+				// First collect the tuples matching this value
+				val keys: List[Option[K]] = this.key.values.slice(idx, idx + value.size).asInstanceOf[List[Option[K]]]
+				val vals: List[Option[V]] = this.value.values.slice(idx, idx + value.size).asInstanceOf[List[Option[V]]]
+				idx += value.size
+
+				if (keys.contains(None) || vals.contains(None)) {
+					None
+				} else {
+					Some(keys.map(_.get).zip(vals.map(_.get)).toMap)
+				}
 		}
 	}
 
@@ -57,7 +72,7 @@ trait FilteredMapNode[K, V] extends MapNode[K, V]
 	override val keyType: Types = map.keyType
 	override val valType: Types = map.valType
 
-	override val values: List[Map[K, V]] = filterOp(map, filter)
+	override val values: List[Option[Map[K, V]]] = filterOp(map, filter)
 	override val height: Int = 1 + Math.max(map.height, filter.height)
 	override val terms: Int = 1 + map.terms + filter.terms
 	override val children: Iterable[ASTNode] = List(map, filter)
@@ -87,18 +102,27 @@ trait FilteredMapNode[K, V] extends MapNode[K, V]
 		}
 	}
 
-	def filterOp(map: MapNode[K, V], filter: BoolNode): List[Map[K, V]] =
+	def filterOp(map: MapNode[K, V], filter: BoolNode): List[Option[Map[K, V]]] =
 	{
-		val keyNode: VariableNode[Boolean] = findKeyVar(filter.children).get.asInstanceOf[VariableNode[Boolean]]
-		val filterValues = splitByIterable(map.values, filter.values)
-		val keyValues = splitByIterable(map.values, keyNode.values)
+		val keyNode: VariableNode[K] = findKeyVar(filter.children).get.asInstanceOf[VariableNode[K]]
+
+		// Create the key map
+		val filterValues: List[Option[List[Boolean]]] = splitByIterable(map.values, filter.values)
+		val keyValues: List[Option[List[K]]] = splitByIterable(map.values, keyNode.values)
+		val keyMap: List[Option[List[(K, Boolean)]]] =
+			keyValues.zip(filterValues).map {
+				case (Some(k), Some(b)) => Some(k.zip(b))
+				case _ => None
+			}
+
 		map.values
-			.zip(keyValues.zip(filterValues).map(tup => tup._1.zip(tup._2)))
+			.zip(keyMap)
 			.map({
-				case (valMap: Map[K, V], keyMap: Iterable[(K, Boolean)]) =>
-					valMap.filter({
+				case (Some(valMap: Map[K, V]), Some(keyMap: List[(K, Boolean)])) =>
+					Some(valMap.filter({
 						case (k: K, _: V) => keyMap.find(_._1.equals(k)).get._2
-					})
+					}))
+				case _ => None
 			})
 	}
 

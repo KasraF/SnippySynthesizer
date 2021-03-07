@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.predicates._
-import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, InterleavedSolutionEnumerator, SolutionEnumerator}
+import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSolutionEnumerator, SolutionEnumerator}
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -125,10 +125,10 @@ object SynthesisTask
 		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
 				// new InterleavedSolutionEnumerator(pred, size, parameters, additionalLiterals)
-				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_(name)))).toList
+				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_ (name))))
 				new ConditionalSolutionEnumerator(outputVariables, originalContexts, processedEnvs, parameters, additionalLiterals)
 			case _ if size && outputVarNames.length == 1 =>
-				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_(name)))).toList
+				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_ (name))))
 				new ConditionalSolutionEnumerator(outputVariables, originalContexts, processedEnvs, parameters, additionalLiterals)
 			case _ if size =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()

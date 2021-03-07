@@ -12,7 +12,7 @@ abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 
 	val terms = 1
 	val name: String
-	val values: List[T] = contexts.map { context => context(name).asInstanceOf[T] }
+	val values: List[Option[T]] = contexts.map(context => context.get(name).asInstanceOf[Option[T]])
 
 	def includes(varName: String): Boolean = name == varName
 

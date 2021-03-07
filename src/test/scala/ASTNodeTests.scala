@@ -10,7 +10,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val literal: StringLiteral = StringLiteral("abc", 1)
 		assertEquals(1, literal.values.length)
-		assertEquals("abc", literal.values.head)
+		assertEquals("abc", literal.values.head.get)
 		assertEquals(Types.String, literal.nodeType)
 		assertEquals("\"abc\"", literal.code)
 		assertEquals(0, literal.height)
@@ -30,7 +30,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val literal: IntLiteral = IntLiteral(42, 2)
 		assertEquals(2, literal.values.length)
-		assertEquals(42, literal.values.head)
+		assertEquals(42, literal.values.head.get)
 		assertEquals(Types.Int, literal.nodeType)
 		assertEquals("42", literal.code)
 		assertEquals(0, literal.height)
@@ -42,7 +42,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		var literal: BoolLiteral = BoolLiteral(value = false, 3)
 		assertEquals(3, literal.values.length)
-		assertEquals(false, literal.values.head)
+		assertEquals(false, literal.values.head.get)
 		assertEquals(Types.Bool, literal.nodeType)
 		assertEquals("False", literal.code)
 		assertEquals(0, literal.height)
@@ -51,7 +51,7 @@ class ASTNodeTests extends JUnitSuite
 
 		literal = BoolLiteral(value = true, 4)
 		assertEquals(4, literal.values.length)
-		assertEquals(true, literal.values.head)
+		assertEquals(true, literal.values.head.get)
 		assertEquals(Types.Bool, literal.nodeType)
 		assertEquals("True", literal.code)
 		assertEquals(0, literal.height)
@@ -63,7 +63,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val node: IntToString = IntToString(IntLiteral(83, 1))
 		assertEquals(1, node.values.length)
-		assertEquals("83", node.values.head)
+		assertEquals("83", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("str(83)", node.code)
 		assertEquals(1, node.height)
@@ -75,7 +75,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val node: StringToInt = StringToInt(StringLiteral("83", 1))
 		assertEquals(1, node.values.length)
-		assertEquals(83, node.values.head)
+		assertEquals(83, node.values.head.get)
 		assertEquals(Types.Int, node.nodeType)
 		assertEquals("int(\"83\")", node.code)
 		assertEquals(1, node.height)
@@ -87,7 +87,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		var node: StringLower = StringLower(StringLiteral("aBC", 1))
 		assertEquals(1, node.values.length)
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("\"aBC\".lower()", node.code)
 		assertEquals(1, node.height)
@@ -96,7 +96,7 @@ class ASTNodeTests extends JUnitSuite
 
 		node = StringLower(StringConcat(StringLiteral("aBC", 1), StringLiteral("deF", 1)))
 		assertEquals(1, node.values.length)
-		assertEquals("abcdef", node.values.head)
+		assertEquals("abcdef", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("(\"aBC\" + \"deF\").lower()", node.code)
 		assertEquals(2, node.height)
@@ -110,14 +110,14 @@ class ASTNodeTests extends JUnitSuite
 			IntMultiply(IntMultiply(IntLiteral(1, 1), IntLiteral(2, 1)),
 			            IntMultiply(IntLiteral(3, 1), IntLiteral(4, 1)))
 		assertEquals("1 * 2 * 3 * 4", multiplyNumbers.code)
-		assertEquals(24, multiplyNumbers.values.head)
+		assertEquals(24, multiplyNumbers.values.head.get)
 	}
 
 	@Test def stringMultiplication(): Unit =
 	{
 		val multiply = StringMultiply(StringLiteral("a", 1), IntLiteral(3, 1))
 		assertEquals("\"a\" * 3", multiply.code)
-		assertEquals("aaa", multiply.values.head)
+		assertEquals("aaa", multiply.values.head.get)
 	}
 
 	@Test def alpha(): Unit =
@@ -126,16 +126,16 @@ class ASTNodeTests extends JUnitSuite
 		val isAlpha2 = IsAlpha(StringLiteral("a123", 1))
 		val isAlpha3 = IsAlpha(StringLiteral("a ", 1))
 		val isAlpha4 = IsAlpha(StringLiteral("a%*", 1))
-		assertEquals(true, isAlpha1.values.head)
-		assertEquals(false, isAlpha2.values.head)
-		assertEquals(false, isAlpha3.values.head)
-		assertEquals(false, isAlpha4.values.head)
+		assertEquals(true, isAlpha1.values.head.get)
+		assertEquals(false, isAlpha2.values.head.get)
+		assertEquals(false, isAlpha3.values.head.get)
+		assertEquals(false, isAlpha4.values.head.get)
 	}
 
 	@Test def capitalize(): Unit =
 	{
 		val caps1 = Capitalize(StringLiteral("abc", 1))
-		assertEquals("Abc", caps1.values.head)
+		assertEquals("Abc", caps1.values.head.get)
 
 	}
 
@@ -145,11 +145,11 @@ class ASTNodeTests extends JUnitSuite
 		val isNumeric2 = IsNumeric(StringLiteral("123", 1))
 		val isNumeric3 = IsNumeric(StringLiteral("123 ", 1))
 		val isNumeric4 = IsNumeric(StringLiteral("123%*", 1))
-		assertEquals(false, isNumeric1.values.head)
+		assertEquals(false, isNumeric1.values.head.get)
 		assertEquals("\"abc123\".isnumeric()", isNumeric1.code)
-		assertEquals(true, isNumeric2.values.head)
-		assertEquals(false, isNumeric3.values.head)
-		assertEquals(false, isNumeric4.values.head)
+		assertEquals(true, isNumeric2.values.head.get)
+		assertEquals(false, isNumeric3.values.head.get)
+		assertEquals(false, isNumeric4.values.head.get)
 	}
 
 	@Test def startsWith(): Unit =
@@ -158,12 +158,12 @@ class ASTNodeTests extends JUnitSuite
 		val StartsWith2 = StartsWith(StringLiteral("123", 1), StringLiteral("23", 1))
 		val EndsWith1 = EndsWith(StringLiteral("abc123", 1), StringLiteral("123", 1))
 		val EndsWith2 = EndsWith(StringLiteral("123", 1), StringLiteral("3", 1))
-		assertEquals(true, StartsWith1.values.head)
+		assertEquals(true, StartsWith1.values.head.get)
 		assertEquals("\"abc123\".startswith(\"abc\")", StartsWith1.code)
-		assertEquals(false, StartsWith2.values.head)
+		assertEquals(false, StartsWith2.values.head.get)
 		assertEquals("\"abc123\".endswith(\"123\")", EndsWith1.code)
-		assertEquals(true, EndsWith1.values.head)
-		assertEquals(true, EndsWith2.values.head)
+		assertEquals(true, EndsWith1.values.head.get)
+		assertEquals(true, EndsWith2.values.head.get)
 
 	}
 
@@ -171,7 +171,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val node: Max = Max(new IntListNode
 		{
-			override val values: List[Iterable[Int]] = List(-1123 :: 2 :: 1 :: Nil)
+			override val values: List[Option[Iterable[Int]]] = List(-1123 :: 2 :: 1 :: Nil).map(Some(_))
 			override protected val parenless: Boolean = true
 			override val code: String = "[-1123, 2, 1]"
 			override val height: Int = 1
@@ -182,10 +182,10 @@ class ASTNodeTests extends JUnitSuite
 
 			override lazy val usesVariables: Boolean = false
 
-			override def updateValues(contexts: Contexts): ASTNode = null
+			override def updateValues(contexts: Contexts): IntListNode = ???
 		})
 		assertEquals(1, node.values.length)
-		assertEquals(2, node.values.head)
+		assertEquals(2, node.values.head.get)
 		assertEquals(Types.Int, node.nodeType)
 		assertEquals("max([-1123, 2, 1])", node.code)
 		assertEquals(2, node.height)
@@ -197,7 +197,7 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val node: Min = Min(new IntListNode
 		{
-			override val values: List[Iterable[Int]] = List(-1123 :: 2 :: 1 :: Nil)
+			override val values: List[Option[Iterable[Int]]] = List(-1123 :: 2 :: 1 :: Nil).map(Some(_))
 			override protected val parenless: Boolean = true
 			override val code: String = "[-1123, 2, 1]"
 			override val height: Int = 1
@@ -208,10 +208,10 @@ class ASTNodeTests extends JUnitSuite
 
 			override lazy val usesVariables: Boolean = false
 
-			override def updateValues(contexts: Contexts): ASTNode = null
+			override def updateValues(contexts: Contexts): IntListNode = ???
 		})
 		assertEquals(1, node.values.length)
-		assertEquals(-1123, node.values.head)
+		assertEquals(-1123, node.values.head.get)
 		assertEquals(Types.Int, node.nodeType)
 		assertEquals("min([-1123, 2, 1])", node.code)
 		assertEquals(2, node.height)
@@ -223,28 +223,28 @@ class ASTNodeTests extends JUnitSuite
 	{
 		var node = UnarySplit(StringLiteral("abc", 1))
 		assertEquals(1, node.values.length)
-		assertEquals(List("abc"), node.values.head)
+		assertEquals(List("abc"), node.values.head.get)
 		assertEquals(Types.Iterable(Types.String), node.nodeType)
 		assertEquals("\"abc\".split()", node.code)
 		assertEquals(1, node.height)
 
 		node = UnarySplit(StringLiteral("abc def", 1))
 		assertEquals(1, node.values.length)
-		assertEquals(List("abc", "def"), node.values.head)
+		assertEquals(List("abc", "def"), node.values.head.get)
 		assertEquals(Types.Iterable(Types.String), node.nodeType)
 		assertEquals("\"abc def\".split()", node.code)
 		assertEquals(1, node.height)
 
 		node = UnarySplit(StringLiteral("abc\tdef", 1))
 		assertEquals(1, node.values.length)
-		assertEquals(List("abc", "def"), node.values.head)
+		assertEquals(List("abc", "def"), node.values.head.get)
 		assertEquals(Types.Iterable(Types.String), node.nodeType)
 		assertEquals("\"abc\\tdef\".split()", node.code)
 		assertEquals(1, node.height)
 
 		node = UnarySplit(StringLiteral("abc\ndef", 1))
 		assertEquals(1, node.values.length)
-		assertEquals(List("abc", "def"), node.values.head)
+		assertEquals(List("abc", "def"), node.values.head.get)
 		assertEquals(Types.Iterable(Types.String), node.nodeType)
 		assertEquals("\"abc\\ndef\".split()", node.code)
 		assertEquals(1, node.height)
@@ -257,7 +257,7 @@ class ASTNodeTests extends JUnitSuite
 
 		var node: BinarySubstring = BinarySubstring(str, IntLiteral(0, 1))
 		assertEquals(1, node.values.length)
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("\"abc\"[0]", node.code)
 		assertEquals(1, node.height)
@@ -266,7 +266,7 @@ class ASTNodeTests extends JUnitSuite
 
 		node = BinarySubstring(str, IntLiteral(1, 1))
 		assertEquals(1, node.values.length)
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("\"abc\"[1]", node.code)
 		assertEquals(1, node.height)
@@ -275,7 +275,7 @@ class ASTNodeTests extends JUnitSuite
 
 		node = BinarySubstring(str, IntLiteral(2, 1))
 		assertEquals(1, node.values.length)
-		assertEquals("c", node.values.head)
+		assertEquals("c", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("\"abc\"[2]", node.code)
 		assertEquals(1, node.height)
@@ -283,7 +283,8 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals(node.children.size, 2)
 
 		node = BinarySubstring(str, IntLiteral(3, 1))
-		assertEquals(0, node.values.length)
+		assertEquals(1, node.values.length)
+		assertEquals(None, node.values.head)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("\"abc\"[3]", node.code)
 		assertEquals(1, node.height)
@@ -297,7 +298,7 @@ class ASTNodeTests extends JUnitSuite
 		val str: StringNode = StringLiteral("abc", 1)
 		var node: TernarySubstring = TernarySubstring(str, IntLiteral(0, 1), IntLiteral(3, 1))
 		assertEquals(1, node.values.length)
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("\"abc\"[0:3]", node.code)
 		assertEquals(1, node.height)
@@ -309,182 +310,182 @@ class ASTNodeTests extends JUnitSuite
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(-3, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [-4, -2] -> "a"
 		node = TernarySubstring(
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(-2, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [-4, -1] -> "ab"
 		node = TernarySubstring(
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(-1, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [-4, 0]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(0, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [-4, 1]  -> "a"
 		node = TernarySubstring(
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(1, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [-4, 2]  -> "ab"
 		node = TernarySubstring(
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(2, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [-4, 3]  -> "abc"
 		node = TernarySubstring(
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(3, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [-4, 4]  -> "abc"
 		node = TernarySubstring(
 			str,
 			IntLiteral(-4, 1),
 			IntLiteral(4, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [0, -4]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(-4, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [0, -3]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(-3, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [0, -2]  -> "a"
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(-2, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [0, -1]  -> "ab"
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [0, 0]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(0, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [0, 1]  -> "a"
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(1, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [0, 2]  -> "ab"
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(2, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [0, 3]  -> "abc"
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(3, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [0, 4]  -> "abc"
 		node = TernarySubstring(
 			str,
 			IntLiteral(0, 1),
 			IntLiteral(4, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [1, -4]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(-4, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, -3]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(-3, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, -2]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(-2, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, -1]  -> "b"
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// [1, 0]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(0, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, 1]  -> ""
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, 2]  -> "b"
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(2, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// [1, 3]  -> "bc"
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(3, 1))
-		assertEquals("bc", node.values.head)
+		assertEquals("bc", node.values.head.get)
 
 		// [1, 4]  -> "bc"
 		node = TernarySubstring(
 			str,
 			IntLiteral(1, 1),
 			IntLiteral(4, 1))
-		assertEquals("bc", node.values.head)
+		assertEquals("bc", node.values.head.get)
 
 
 		// [3, -4]  -> ""
@@ -501,7 +502,7 @@ class ASTNodeTests extends JUnitSuite
 				str,
 				IntLiteral(3, 1),
 				IntLiteral(i, 1))
-			assertEquals("", node.values.head)
+			assertEquals("", node.values.head.get)
 		}
 	}
 
@@ -515,7 +516,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(3, 1),
 			IntLiteral(1, 1))
 		assertEquals(1, node.values.length)
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 		assertEquals(Types.String, node.nodeType)
 		assertEquals("\"abc\"[0:3:1]", node.code)
 		assertEquals(1, node.height)
@@ -528,7 +529,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [-4, -2] -> "a"
 		node = new QuaternarySubstring(
@@ -536,7 +537,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(1, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [-4, -1] -> "ab"
 		node = new QuaternarySubstring(
@@ -544,7 +545,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(1, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [-4, 0]  -> ""
 		node = new QuaternarySubstring(
@@ -552,7 +553,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(0, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [-4, 1]  -> "a"
 		node = new QuaternarySubstring(
@@ -560,7 +561,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(1, 1),
 			IntLiteral(1, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [-4, 2]  -> "ab"
 		node = new QuaternarySubstring(
@@ -568,7 +569,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(2, 1),
 			IntLiteral(1, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [-4, 3]  -> "abc"
 		node = new QuaternarySubstring(
@@ -576,7 +577,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(3, 1),
 			IntLiteral(1, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [-4, 4]  -> "abc"
 		node = new QuaternarySubstring(
@@ -584,7 +585,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-4, 1),
 			IntLiteral(4, 1),
 			IntLiteral(1, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [0, -4]  -> ""
 		node = new QuaternarySubstring(
@@ -592,7 +593,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(-4, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [0, -3]  -> ""
 		node = new QuaternarySubstring(
@@ -600,7 +601,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [0, -2]  -> "a"
 		node = new QuaternarySubstring(
@@ -608,7 +609,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(1, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [0, -1]  -> "ab"
 		node = new QuaternarySubstring(
@@ -616,7 +617,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(1, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [0, 0]  -> ""
 		node = new QuaternarySubstring(
@@ -624,7 +625,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(0, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [0, 1]  -> "a"
 		node = new QuaternarySubstring(
@@ -632,7 +633,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(1, 1),
 			IntLiteral(1, 1))
-		assertEquals("a", node.values.head)
+		assertEquals("a", node.values.head.get)
 
 		// [0, 2]  -> "ab"
 		node = new QuaternarySubstring(
@@ -640,7 +641,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(2, 1),
 			IntLiteral(1, 1))
-		assertEquals("ab", node.values.head)
+		assertEquals("ab", node.values.head.get)
 
 		// [0, 3]  -> "abc"
 		node = new QuaternarySubstring(
@@ -648,7 +649,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(3, 1),
 			IntLiteral(1, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [0, 4]  -> "abc"
 		node = new QuaternarySubstring(
@@ -656,7 +657,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(4, 1),
 			IntLiteral(1, 1))
-		assertEquals("abc", node.values.head)
+		assertEquals("abc", node.values.head.get)
 
 		// [1, -4]  -> ""
 		node = new QuaternarySubstring(
@@ -664,7 +665,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(-4, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, -3]  -> ""
 		node = new QuaternarySubstring(
@@ -672,7 +673,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, -2]  -> ""
 		node = new QuaternarySubstring(
@@ -680,7 +681,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, -1]  -> "b"
 		node = new QuaternarySubstring(
@@ -688,7 +689,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(1, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// [1, 0]  -> ""
 		node = new QuaternarySubstring(
@@ -696,7 +697,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(0, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, 1]  -> ""
 		node = new QuaternarySubstring(
@@ -704,7 +705,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(1, 1),
 			IntLiteral(1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// [1, 2]  -> "b"
 		node = new QuaternarySubstring(
@@ -712,7 +713,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(2, 1),
 			IntLiteral(1, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// [1, 3]  -> "bc"
 		node = new QuaternarySubstring(
@@ -720,7 +721,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(3, 1),
 			IntLiteral(1, 1))
-		assertEquals("bc", node.values.head)
+		assertEquals("bc", node.values.head.get)
 
 		// [1, 4]  -> "bc"
 		node = new QuaternarySubstring(
@@ -728,7 +729,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(4, 1),
 			IntLiteral(1, 1))
-		assertEquals("bc", node.values.head)
+		assertEquals("bc", node.values.head.get)
 
 
 		// [3, -4]  -> ""
@@ -746,7 +747,7 @@ class ASTNodeTests extends JUnitSuite
 				IntLiteral(3, 1),
 				IntLiteral(i, 1),
 				IntLiteral(1, 1))
-			assertEquals("", node.values.head)
+			assertEquals("", node.values.head.get)
 		}
 
 		// s[3:-3:-1] -> 'cb'
@@ -755,7 +756,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(3, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("cb", node.values.head)
+		assertEquals("cb", node.values.head.get)
 
 		// s[3:-2:-1] -> 'c'
 		node = new QuaternarySubstring(
@@ -763,7 +764,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(3, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("c", node.values.head)
+		assertEquals("c", node.values.head.get)
 
 		// s[3:-1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -771,7 +772,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(3, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[3:0:-1] -> 'cb'
 		node = new QuaternarySubstring(
@@ -779,7 +780,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(3, 1),
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1))
-		assertEquals("cb", node.values.head)
+		assertEquals("cb", node.values.head.get)
 
 		// s[3:1:-1] -> 'c'
 		node = new QuaternarySubstring(
@@ -787,7 +788,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(3, 1),
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("c", node.values.head)
+		assertEquals("c", node.values.head.get)
 
 		// s[3:3:-1] -> ''
 		// s[3:2:-1] -> ''
@@ -798,7 +799,7 @@ class ASTNodeTests extends JUnitSuite
 				IntLiteral(3, 1),
 				IntLiteral(i, 1),
 				IntLiteral(-1, 1))
-			assertEquals("", node.values.head)
+			assertEquals("", node.values.head.get)
 		}
 
 		// s[2:-3:-1] -> 'cb'
@@ -807,7 +808,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("cb", node.values.head)
+		assertEquals("cb", node.values.head.get)
 
 		// s[2:-2:-1] -> 'c'
 		node = new QuaternarySubstring(
@@ -815,7 +816,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("c", node.values.head)
+		assertEquals("c", node.values.head.get)
 
 		// s[2:-1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -823,7 +824,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[2:0:-1] -> 'cb'
 		node = new QuaternarySubstring(
@@ -831,7 +832,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1))
-		assertEquals("cb", node.values.head)
+		assertEquals("cb", node.values.head.get)
 
 		// s[2:1:-1] -> 'c'
 		node = new QuaternarySubstring(
@@ -839,7 +840,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("c", node.values.head)
+		assertEquals("c", node.values.head.get)
 
 		// s[2:2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -847,7 +848,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[2:3:-1] -> ''
 		node = new QuaternarySubstring(
@@ -855,7 +856,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[2:4:-1] -> ''
 		node = new QuaternarySubstring(
@@ -863,7 +864,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(2, 1),
 			IntLiteral(4, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[1:-3:-1] -> 'b'
 		node = new QuaternarySubstring(
@@ -871,7 +872,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// s[1:-2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -879,7 +880,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[1:-1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -887,7 +888,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[1:0:-1] -> 'b'
 		node = new QuaternarySubstring(
@@ -895,7 +896,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// s[1:1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -903,7 +904,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[1:2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -911,7 +912,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[1:3:-1] -> ''
 		node = new QuaternarySubstring(
@@ -919,7 +920,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(1, 1),
 			IntLiteral(3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:-3:-1] -> ''
 		node = new QuaternarySubstring(
@@ -927,7 +928,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:-2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -935,7 +936,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:-1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -943,7 +944,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:0:-1] -> ''
 		node = new QuaternarySubstring(
@@ -951,7 +952,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -959,7 +960,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -967,7 +968,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:3:-1] -> ''
 		node = new QuaternarySubstring(
@@ -975,7 +976,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(0, 1),
 			IntLiteral(3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[0:4:-1] -> ''
 		for (i <- -3 to 4) {
@@ -984,7 +985,7 @@ class ASTNodeTests extends JUnitSuite
 				IntLiteral(0, 1),
 				IntLiteral(i, 1),
 				IntLiteral(-1, 1))
-			assertEquals("", node.values.head)
+			assertEquals("", node.values.head.get)
 		}
 
 		// s[-1:-3:-1] -> 'cb'
@@ -993,7 +994,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-1, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("cb", node.values.head)
+		assertEquals("cb", node.values.head.get)
 
 		// s[-1:-2:-1] -> 'c'
 		node = new QuaternarySubstring(
@@ -1001,7 +1002,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-1, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("c", node.values.head)
+		assertEquals("c", node.values.head.get)
 
 		// s[-1:-1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1009,7 +1010,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-1, 1),
 			IntLiteral(-1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[-1:0:-1] -> 'cb'
 		node = new QuaternarySubstring(
@@ -1017,7 +1018,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-1, 1),
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1))
-		assertEquals("cb", node.values.head)
+		assertEquals("cb", node.values.head.get)
 
 		// s[-1:1:-1] -> 'c'
 		node = new QuaternarySubstring(
@@ -1025,7 +1026,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-1, 1),
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("c", node.values.head)
+		assertEquals("c", node.values.head.get)
 
 		// s[-1:2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1033,7 +1034,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-1, 1),
 			IntLiteral(2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[-1:3:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1041,7 +1042,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-1, 1),
 			IntLiteral(3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[-2:-3:-1] -> 'b'
 		node = new QuaternarySubstring(
@@ -1049,7 +1050,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-2, 1),
 			IntLiteral(-3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// s[-2:-2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1057,7 +1058,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-2, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[-2:-1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1065,7 +1066,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-2, 1),
 			IntLiteral(-2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[-2:0:-1] -> 'b'
 		node = new QuaternarySubstring(
@@ -1073,7 +1074,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-2, 1),
 			IntLiteral(0, 1),
 			IntLiteral(-1, 1))
-		assertEquals("b", node.values.head)
+		assertEquals("b", node.values.head.get)
 
 		// s[-2:1:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1081,7 +1082,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-2, 1),
 			IntLiteral(1, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[-2:2:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1089,7 +1090,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-2, 1),
 			IntLiteral(2, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 		// s[-2:3:-1] -> ''
 		node = new QuaternarySubstring(
@@ -1097,7 +1098,7 @@ class ASTNodeTests extends JUnitSuite
 			IntLiteral(-2, 1),
 			IntLiteral(3, 1),
 			IntLiteral(-1, 1))
-		assertEquals("", node.values.head)
+		assertEquals("", node.values.head.get)
 
 	}
 
@@ -1109,7 +1110,7 @@ class ASTNodeTests extends JUnitSuite
 		val node = IntDivision(
 			IntLiteral(-1, 1),
 			IntLiteral(4, 1))
-		assertEquals(-1, node.values.head)
+		assertEquals(-1, node.values.head.get)
 	}
 
 	@Test def stringConcatNode(): Unit = ()
@@ -1136,22 +1137,22 @@ class ASTNodeTests extends JUnitSuite
 		val x = StringVariable("x", Map("x" -> "abcde") :: Map("x" -> "a") :: Map("x" -> "ab") :: Nil)
 		val step = StringStep(x, IntLiteral(1, x.values.length))
 		assertEquals("x[::1]", step.code)
-		assertEquals(List("abcde", "a", "ab"), step.values)
+		assertEquals(List("abcde", "a", "ab"), step.values.map(_.get))
 
 		val step2 = StringStep(x, IntLiteral(-1, x.values.length))
 		assertEquals("x[::-1]", step2.code)
-		assertEquals(List("edcba", "a", "ba"), step2.values)
+		assertEquals(List("edcba", "a", "ba"), step2.values.map(_.get))
 
 		val step3 = StringStep(x, IntLiteral(2, x.values.length))
 		assertEquals("x[::2]", step3.code)
-		assertEquals(List("ace", "a", "a"), step3.values)
+		assertEquals(List("ace", "a", "a"), step3.values.map(_.get))
 
 		val step4 = StringStep(x, IntLiteral(-2, x.values.length))
 		assertEquals("x[::-2]", step4.code)
-		assertEquals(List("eca", "a", "b"), step4.values)
+		assertEquals(List("eca", "a", "b"), step4.values.map(_.get))
 
 		val step5 = StringStep(x, IntLiteral(0, x.values.length))
-		assertEquals(Nil, step5.values)
+		assertEquals(None, step5.values.head)
 	}
 
 	@Test def substringListNode(): Unit = ()
@@ -1165,11 +1166,11 @@ class ASTNodeTests extends JUnitSuite
 		val x = StringVariable("x", Map("x" -> "") :: Map("x" -> "abc") :: Map("x" -> "bc") :: Map("x" -> "aaaabc") :: Map("x" -> "abcabc") :: Nil)
 		val count = Count(x, StringLiteral("a", x.values.length))
 		assertEquals("x.count(\"a\")", count.code)
-		assertEquals(List(0, 1, 0, 4, 2), count.values)
+		assertEquals(List(0, 1, 0, 4, 2), count.values.map(_.get))
 
 		val count2 = Count(x, StringLiteral("aa", x.values.length))
 		assertEquals("x.count(\"aa\")", count2.code)
-		assertEquals(List(0, 0, 0, 2, 0), count2.values)
+		assertEquals(List(0, 0, 0, 2, 0), count2.values.map(_.get))
 	}
 
 	@Test def printingNodes(): Unit =
@@ -1207,5 +1208,25 @@ class ASTNodeTests extends JUnitSuite
 
 		val divNumbers2 = IntDivision(IntLiteral(1, 1), addNumbers)
 		assertEquals("1 // (1 + 2 + 3 + 4)", divNumbers2.code)
+	}
+
+	@Test def listCompNode(): Unit =
+	{
+		val contexts: List[Map[String, Any]] = List(
+			Map("lst" -> List("Sorin", "Lerner")),
+			Map("lst" -> List("Kasra", "Ferdowsi", "Fard")))
+		val lst = new ListVariable[String]("lst", contexts, Types.String)
+
+		val innerContexts: List[Map[String, Any]] = List(
+			Map("var" -> "Sorin"),
+			Map("var" -> "Lerner"),
+			Map("var" -> "Kasra"),
+			Map("var" -> "Ferdowsi"),
+			Map("var" -> "Fard"))
+		val innerStr = StringVariable("var", innerContexts)
+		val map = BinarySubstring(innerStr, IntLiteral(0, 5))
+		val lcn = new StringToStringListCompNode(lst, map, "var")
+
+		assertEquals(List(Some(List("S", "L")), Some(List("K", "F", "F"))), lcn.values)
 	}
 }

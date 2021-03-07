@@ -28,13 +28,12 @@ trait OEValuesManager
 
 class InputsValuesManager extends OEValuesManager
 {
-	val classValues: mutable.Set[List[Any]] = mutable.HashSet[List[Any]]()
+	val classValues: mutable.Set[List[Option[Any]]] = mutable.HashSet[List[Option[Any]]]()
 
 	override def isRepresentative(program: ASTNode): Boolean =
 	{
 		try {
-			val results: List[Any] = program.values
-			classValues.add(results)
+			classValues.add(program.values)
 		} catch {
 			case _: Exception => false
 		}
@@ -42,7 +41,7 @@ class InputsValuesManager extends OEValuesManager
 
 	override def irrelevant(program: ASTNode): Boolean =
 	{
-		val results: List[Any] = program.values
+		val results: List[Option[Any]] = program.values
 		program.includes("var") && program.terms > 1 && results.length > 1 && results.tail.forall(_ == results.head)
 	}
 

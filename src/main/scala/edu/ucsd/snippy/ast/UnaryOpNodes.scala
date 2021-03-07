@@ -7,10 +7,7 @@ trait UnaryOpNode[T] extends ASTNode
 {
 	val arg: ASTNode
 
-	override lazy val values: List[T] = arg.values.map(doOp) match {
-		case l if l.forall(_.isDefined) => l.map(_.get)
-		case _ => Nil
-	}
+	override lazy val values: List[Option[T]] = arg.values.map(_.flatMap(doOp))
 
 	override val height: Int = 1 + arg.height
 	override val terms: Int = 1 + arg.terms
@@ -176,7 +173,7 @@ case class IsNumeric(arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
 	override lazy val code: String = arg.parensIfNeeded + ".isnumeric()"
 
 	override def doOp(x: Any): Option[Boolean] = x match {
-		case arg: String => Some(arg.forall(_.isDigit))
+		case arg: String => Some(arg.matches("\\d+"))
 		case _ => wrongType(x)
 	}
 

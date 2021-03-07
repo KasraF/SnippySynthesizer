@@ -121,9 +121,9 @@ class ConditionalSolutionEnumerator(
 		//   enumerate conditions and see if we have a complete tuple
 		val nextCond = condEnumerator.next()
 
-		if (nextCond.nodeType == Types.Bool) {
-			val key = nextCond.values.asInstanceOf[List[Boolean]].zipWithIndex.foldLeft((Set[Int](), Set[Int]())) {
-				case ((thenIdxs, elseIdxs), (cond, idx)) => if (cond) {
+		if (nextCond.nodeType == Types.Bool && nextCond.values.forall(_.isDefined)) {
+			val key = nextCond.values.asInstanceOf[List[Option[Boolean]]].zipWithIndex.foldLeft((Set[Int](), Set[Int]())) {
+				case ((thenIdxs, elseIdxs), (cond, idx)) => if (cond.get) {
 					(thenIdxs + idx, elseIdxs)
 				}else {
 					(thenIdxs, elseIdxs + idx)

@@ -216,13 +216,13 @@ class SynthesisTaskTests extends JUnitSuite
 				maker.isInstanceOf[BasicVocabMaker] &&
 				maker.asInstanceOf[BasicVocabMaker]
 					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
-					.values == List("x")))
+					.values == List(Some("x"))))
 		assertTrue(task.vocab.leaves().exists(
 			maker => maker.arity == 0 &&
 				maker.isInstanceOf[BasicVocabMaker] &&
 				maker.asInstanceOf[BasicVocabMaker]
 					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
-					.values == List("y")))
+					.values == List(Some("y"))))
 	}
 
 	@Test def multivariableStringLiteralsTest: Unit =
@@ -256,24 +256,24 @@ class SynthesisTaskTests extends JUnitSuite
 				maker.isInstanceOf[BasicVocabMaker] &&
 				maker.asInstanceOf[BasicVocabMaker]
 					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
-					.values == List("x")))
+					.values == List(Some("x"))))
 		assertTrue(task.vocab.leaves().exists(
 			maker => maker.arity == 0 &&
 				maker.isInstanceOf[BasicVocabMaker] &&
 				maker.asInstanceOf[BasicVocabMaker]
 					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
-					.values == List("y")))
+					.values == List(Some("y"))))
 		assertTrue(task.vocab.leaves().exists(
 			maker => maker.arity == 0 &&
 				maker.isInstanceOf[BasicVocabMaker] &&
 				maker.asInstanceOf[BasicVocabMaker]
 					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
-					.values == List("a")))
+					.values == List(Some("a"))))
 		assertTrue(task.vocab.leaves().exists(
 			maker => maker.arity == 0 &&
 				maker.isInstanceOf[BasicVocabMaker] &&
 				maker.asInstanceOf[BasicVocabMaker]
 					.apply(Nil, Map().asInstanceOf[Map[String, Any]] :: Nil)
-					.values == List("b")))
+					.values == List(Some("b"))))
 	}
 }

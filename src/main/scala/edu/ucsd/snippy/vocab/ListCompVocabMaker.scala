@@ -217,14 +217,16 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 		while (!done && listIter.hasNext) {
 			val lst = listIter.next()
 
-			if (lst.values.head.asInstanceOf[List[_]].nonEmpty) {
+			if (lst.values.exists(_.isDefined) && lst.values.filter(_.isDefined).forall(_.get.asInstanceOf[List[Any]].nonEmpty)) {
 				this.currList = lst
 				val newContexts = new Contexts(this.contexts.zipWithIndex.flatMap(
 					context =>
-						this.currList.values(context._2)
-							.asInstanceOf[List[Any]]
-							.map(value => context._1 + (this.varName -> value))))
-				val oeValuesManager = new InputsValuesManager()
+						this.currList.values(context._2) match {
+							case Some(lst: List[Any]) => lst.map(value => context._1 + (this.varName -> value))
+							case None => Nil // We skip these, and handle them when unrolling later
+						}
+				))
+				val oeValuesManager = new InputsValuesManager
 				this.enumerator = if (!size) {
 					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts.contexts)
 				} else {
