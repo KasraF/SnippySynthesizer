@@ -1,0 +1,31 @@
+{
+	"varNames": [
+		"out"
+	],
+	"previous_env": {
+		"#": "",
+		"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123', '']",
+		"startsWith": "'start'",
+		"out": "[]"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123', '']",
+			"startsWith": "'start'",
+			"out": "['start', 'startswith', 'start 123']"
+		},
+		{
+			"#": "1",
+			"inp": "['aaa', 'aAaaaa']",
+			"startsWith": "'aa'",
+			"out": "['aaa']"
+		}
+		{
+			"#": "2",
+			"inp": "['aba', 'aaAaaa']",
+			"startsWith": "'aa'",
+			"out": "['aaAaaa']"
+		}
+	]
+}

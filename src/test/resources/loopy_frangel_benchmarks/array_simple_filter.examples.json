@@ -1,0 +1,25 @@
+{
+	"varNames": [
+		"filtered"
+	],
+	"previous_env": {
+		"#": "",
+		"inp1": "['bad', 'awesome', 'terrible', '', 'Rude', 'badly', 'rude', 'rude..']",
+		"inp2": "['terrible', 'bad', 'rude']",
+		"filtered": "[]"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"inp1": "['bad', 'awesome', 'terrible', '', 'Rude', 'badly', 'rude', 'rude..']",
+			"inp2": "['terrible', 'bad', 'rude']",
+			"filtered": "['', 'awesome', '', '', 'Rude', 'badly', '', 'rude..']"
+		},
+		{
+			"#": "1",
+			"inp1": "['terribl', 'bad']",
+			"inp2": "['terrible', 'bad', 'rude']",
+			"filtered": "['terribl', '']"
+		}
+	]
+}
