@@ -10,14 +10,34 @@ trait ListCompNode[T] extends ListNode[T]
 	val varName: String
 
 	override val childType: Types = map.nodeType
-	override val values: List[List[T]] = {
-		var rs: List[List[_]] = Nil;
-		var start = 0;
-		for (delta <- list.values.map(_.asInstanceOf[List[_]].length)) {
-			rs = rs :+ map.values.slice(start, start + delta)
-			start += delta
+	override val values: List[Option[List[T]]] = {
+		var rs: List[Option[List[T]]] = Nil
+		var start = 0
+
+		val deltas = list.values.map {
+			case Some(lst: List[_]) => Some(lst.length)
+			case _ => None
 		}
-		rs.asInstanceOf[List[List[T]]]
+
+		for (delta <- deltas) {
+			delta match {
+				case Some(delta) =>
+					// TODO Test this carefully
+					val values = map.values.asInstanceOf[List[Option[T]]].slice(start, start + delta)
+					if (values.forall(_.isDefined)) {
+						rs = rs :+ Some(values.map(_.get))
+					} else {
+						rs = rs :+ None
+					}
+
+					start += delta
+				case None =>
+					// We didn't add None lists to the context, so just add None and don't change start
+					rs +:= None
+			}
+		}
+
+		rs
 	}
 	override val height: Int = 1 + Math.max(list.height, map.height)
 	override val terms: Int = 1 + list.terms + map.terms
@@ -28,7 +48,7 @@ trait ListCompNode[T] extends ListNode[T]
 
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
-	override def updateValues(contexts: Contexts): ASTNode = null
+	override def updateValues(contexts: Contexts): ListCompNode[T] = ???
 }
 
 class StringToStringListCompNode(val list: ListNode[String], val map: StringNode, val varName: String) extends ListCompNode[String]

@@ -54,7 +54,7 @@ class ChildrenIteratorsTests extends JUnitSuite
 		val nodes = List(
 			new IntNode
 			{
-				override val values: List[Int] = List(0)
+				override val values: List[Option[Int]] = List(Some(0))
 				override val code: String = "0"
 				override val height: Int = 0
 				override val terms: Int = 1
@@ -65,12 +65,12 @@ class ChildrenIteratorsTests extends JUnitSuite
 
 				override def includes(varName: String): Boolean = false
 
-				override def updateValues(contexts: Contexts): ASTNode = null
+				override def updateValues(contexts: Contexts): IntNode = null
 
 				override def cost: Int = 1
 			}, new IntNode
 			{
-				override val values: List[Int] = List(1)
+				override val values: List[Option[Int]] = List(Some(1))
 				override val code: String = "1"
 				override val height: Int = 0
 				override val terms: Int = 1
@@ -81,13 +81,13 @@ class ChildrenIteratorsTests extends JUnitSuite
 
 				override def includes(varName: String): Boolean = false
 
-				override def updateValues(contexts: Contexts): ASTNode = null
+				override def updateValues(contexts: Contexts): IntNode = null
 
 				override def cost: Int = 1
 
 			}, new IntNode
 			{
-				override val values: List[Int] = List(2)
+				override val values: List[Option[Int]] = List(Some(2))
 				override val code: String = "x"
 				override val height: Int = 0
 				override val terms: Int = 1
@@ -100,7 +100,7 @@ class ChildrenIteratorsTests extends JUnitSuite
 
 				override def cost: Int = 1
 
-				override def updateValues(contexts: Contexts): ASTNode = null
+				override def updateValues(contexts: Contexts): IntNode = null
 			})
 	}
 }

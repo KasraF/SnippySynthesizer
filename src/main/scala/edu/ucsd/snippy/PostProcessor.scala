@@ -5,10 +5,10 @@ import edu.ucsd.snippy.ast._
 object PostProcessor
 {
 	def clean(node: ASTNode): ASTNode = if (!node.usesVariables && node.values.toSet.size == 1) //second check is a tad redundant but just to be safe
-		Types.typeof(node.values.head) match {
-			case Types.String => StringLiteral(node.values(0).asInstanceOf[String], node.values.length)
-			case Types.Bool => BoolLiteral(node.values(0).asInstanceOf[Boolean], node.values.length)
-			case Types.Int => IntLiteral(node.values(0).asInstanceOf[Int], node.values.length)
+		Types.typeof(node.values.head.get) match {
+			case Types.String => StringLiteral(node.values.head.get.asInstanceOf[String], node.values.length)
+			case Types.Bool => BoolLiteral(node.values.head.get.asInstanceOf[Boolean], node.values.length)
+			case Types.Int => IntLiteral(node.values.head.get.asInstanceOf[Int], node.values.length)
 			case _ => node
 		}
 	else node match {

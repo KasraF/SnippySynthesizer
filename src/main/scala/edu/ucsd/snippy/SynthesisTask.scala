@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.predicates._
-import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSolutionEnumerator, InterleavedSolutionEnumerator, SolutionEnumerator}
+import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalMegazordSolutionEnumerator, ConditionalSingleEnumMultivarSolutionEnumerator, ConditionalSingleEnumSingleVarSolutionEnumerator, SolutionEnumerator}
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -51,10 +51,9 @@ object SynthesisTask
 	 * @return whether LooPy is enabled.
 	 */
 	def isLoopy(
-		previousEnv   : Map[String, Any],
+		previousEnv: Map[String, Any],
 		outputVarNames: List[String],
-		envs          : List[Map[String, Any]]
-	): Boolean =
+		envs: List[Map[String, Any]]): Boolean =
 	{
 		previousEnv.nonEmpty &&
 			outputVarNames.forall(varName => previousEnv.contains(varName)) &&
@@ -100,41 +99,30 @@ object SynthesisTask
 
 		val oeManager = new InputsValuesManager
 		val additionalLiterals = getStringLiterals(processedEnvs, outputVarNames)
-		val originalContexts = contexts
 
 		val predicate: Predicate = outputVarNames match {
 			case single :: Nil => Predicate.getPredicate(single, processedEnvs, oeManager)
-			case multiple if loopy =>
+			case multiple =>
 				val (newContexts, pred) = this.mulitvariablePredicate(multiple, contexts, processedEnvs)
 				contexts = newContexts
 				pred
-			case multiple => new BasicMultivariablePredicate(multiple.map(varName => varName -> Predicate.getPredicate(varName, processedEnvs, oeManager)).toMap)
 		}
 
-		val parameters =
-			contexts.head
-				.map { inputVar =>
-					val varValueOpts = contexts.map(ex => ex.find(kv => kv._1 == inputVar._1))
-					(inputVar._1, if (varValueOpts.exists(_.isEmpty)) Types.Unknown else Utils.getTypeOfAll(varValueOpts.flatten.map(_._2)))
-				}
-				// TODO Handle empty sets
-				.filter(!_._2.equals(Types.Unknown))
-				.toList
+		val parameters = contexts.flatMap(_.keys)
+			.toSet[String]
+			.map(varName => varName -> Utils.getTypeOfAll(contexts.map(ex => ex.get(varName)).filter(_.isDefined).map(_.get)))
+			.filter(!_._2.equals(Types.Unknown))
+			.toList
 		val vocab: VocabFactory = VocabFactory(parameters, additionalLiterals, size)
 
 		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
-				// new InterleavedSolutionEnumerator(pred, size, parameters, additionalLiterals)
-				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_(name)))).toList
-				new ConditionalSolutionEnumerator(outputVariables, originalContexts, processedEnvs, parameters, additionalLiterals)
-			case _ if size && outputVarNames.length == 1 =>
-				val outputVariables = outputVarNames.map(name => name -> Utils.getTypeOfAll(processedEnvs.map(_(name)))).toList
-				new ConditionalSolutionEnumerator(outputVariables, originalContexts, processedEnvs, parameters, additionalLiterals)
-			case _ if size =>
+				new ConditionalSingleEnumMultivarSolutionEnumerator(pred, parameters, additionalLiterals)
+			case pred: SingleVariablePredicate if size =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val enumerator = new enumeration.ProbEnumerator(vocab, oeManager, contexts, false, 0, bank, mini, 100)
-				new BasicSolutionEnumerator(predicate, enumerator)
+				new ConditionalSingleEnumSingleVarSolutionEnumerator(enumerator, pred.varName, pred.retType, pred.values, contexts)
 			case _ =>
 				val enumerator = new BasicEnumerator(vocab, oeManager, contexts)
 				new BasicSolutionEnumerator(predicate, enumerator)
@@ -154,8 +142,7 @@ object SynthesisTask
 	def mulitvariablePredicate(
 		outputVarNames: List[String],
 		inputContexts: List[Context],
-		outputEnvs: List[Map[String, Any]]
-	): (List[Context], MultilineMultivariablePredicate) = {
+		outputEnvs: List[Map[String, Any]]): (List[Context], MultilineMultivariablePredicate) = {
 		var contexts = inputContexts
 
 		// We can support multiline assignments, so let's build the graph

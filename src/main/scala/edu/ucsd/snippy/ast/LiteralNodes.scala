@@ -9,7 +9,7 @@ abstract class LiteralNode[T](numContexts: Int) extends ASTNode
 	val height = 0
 	val terms = 1
 	val value: T
-	override val values: List[T] = List.fill(numContexts)(value)
+	override val values: List[Option[T]] = List.fill(numContexts)(Some(value))
 	override val children: Iterable[ASTNode] = Iterable.empty
 	override lazy val usesVariables: Boolean = false
 
@@ -36,7 +36,7 @@ case class StringLiteral(value: String, numContexts: Int) extends LiteralNode[St
 		}
 	}) + '"'
 
-	override def updateValues(contexts: Contexts): ASTNode = copy(value, numContexts = contexts.contextLen)
+	override def updateValues(contexts: Contexts): StringLiteral = copy(value, numContexts = contexts.contextLen)
 }
 
 case class IntLiteral(value: Int, numContexts: Int) extends LiteralNode[Int](numContexts) with IntNode
@@ -44,7 +44,7 @@ case class IntLiteral(value: Int, numContexts: Int) extends LiteralNode[Int](num
 	override protected val parenless: Boolean = true
 	override val code: String = value.toString
 
-	override def updateValues(contexts: Contexts): ASTNode = copy(value, numContexts = contexts.contextLen)
+	override def updateValues(contexts: Contexts): IntLiteral = copy(value, numContexts = contexts.contextLen)
 }
 
 case class BoolLiteral(value: Boolean, numContexts: Int) extends LiteralNode[Boolean](numContexts) with BoolNode
@@ -52,5 +52,5 @@ case class BoolLiteral(value: Boolean, numContexts: Int) extends LiteralNode[Boo
 	override protected val parenless: Boolean = true
 	override val code: String = value.toString.capitalize
 
-	override def updateValues(contexts: Contexts): ASTNode = copy(value, numContexts = contexts.contextLen)
+	override def updateValues(contexts: Contexts): BoolLiteral = copy(value, numContexts = contexts.contextLen)
 }

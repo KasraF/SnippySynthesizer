@@ -5,11 +5,7 @@
 		"rs"
 	],
 	"previous_env": {
-		"#": "",
-		"inp": "'aabbcde'",
-		"chars": "{}",
-		"duplicates": "{}",
-		"rs": "0"
+		"inp": "'aabbcde'"
 	},
 	"envs": [
 		{

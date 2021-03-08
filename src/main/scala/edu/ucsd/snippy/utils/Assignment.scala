@@ -29,38 +29,46 @@ case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase:
 {
 	override val code: String = {
 		// Cleanup!
-		// TODO This cleanup code is (a) very ugly and (b) not well tested
-		var preCondition: List[Assignment] = List()
-		var thenCode: List[Assignment] = this.cleanup(thenCase)
-		var elseCode: List[Assignment] = this.cleanup(elseCase)
 
-		while (thenCode.nonEmpty && elseCode.nonEmpty && thenCode.head.code == elseCode.head.code) {
-			preCondition +:= thenCode.head
-			thenCode = thenCode.tail
-			elseCode = elseCode.tail
-		}
+		// First check if the condition is all true or false
+		if (cond.values.forall(_.get)) {
+			this.cleanup(thenCase).map(_.code).mkString("\n")
+		} else if (cond.values.forall(!_.get)) {
+			this.cleanup(elseCase).map(_.code).mkString("\n")
+		} else {
+			// TODO This cleanup code is (a) very ugly and (b) not well tested
+			var preCondition: List[Assignment] = List()
+			var thenCode: List[Assignment] = this.cleanup(thenCase)
+			var elseCode: List[Assignment] = this.cleanup(elseCase)
 
-		val precondString = preCondition.map(_.code).mkString("\n")
-		val condString = (thenCode, elseCode) match {
-			case (Nil, Nil) => ""
-			case (thenCode, Nil) =>
-				f"if ${PostProcessor.clean(cond).code}:\n" +
-					"\t" + thenCode.map(_.code).mkString("\n\t")
-			case (Nil, elseCode) =>
-				f"if ${PostProcessor.clean(NegateBool(cond)).code}:\n" +
-					"\t" + elseCode.map(_.code).mkString("\n\t")
-			case (thenCode, elseCode) =>
-				f"if ${PostProcessor.clean(cond).code}:\n" +
-					"\t" + thenCode.map(_.code).mkString("\n\t") +
-				"\nelse:\n" +
-					"\t" + elseCode.map(_.code).mkString("\n\t")
-		}
+			while (thenCode.nonEmpty && elseCode.nonEmpty && thenCode.head.code == elseCode.head.code) {
+				preCondition +:= thenCode.head
+				thenCode = thenCode.tail
+				elseCode = elseCode.tail
+			}
 
-		(precondString, condString) match {
-			case ("", "") => "None"
-			case ("", rs) => rs
-			case (rs, "") => rs
-			case (pre, cond) => pre + "\n" + cond
+			val precondString = preCondition.map(_.code).mkString("\n")
+			val condString = (thenCode, elseCode) match {
+				case (Nil, Nil) => ""
+				case (thenCode, Nil) =>
+					f"if ${PostProcessor.clean(cond).code}:\n" +
+						"\t" + thenCode.map(_.code).mkString("\n\t")
+				case (Nil, elseCode) =>
+					f"if ${PostProcessor.clean(NegateBool(cond)).code}:\n" +
+						"\t" + elseCode.map(_.code).mkString("\n\t")
+				case (thenCode, elseCode) =>
+					f"if ${PostProcessor.clean(cond).code}:\n" +
+						"\t" + thenCode.map(_.code).mkString("\n\t") +
+						"\nelse:\n" +
+						"\t" + elseCode.map(_.code).mkString("\n\t")
+			}
+
+			(precondString, condString) match {
+				case ("", "") => "None"
+				case ("", rs) => rs
+				case (rs, "") => rs
+				case (pre, cond) => pre + "\n" + cond
+			}
 		}
 	}
 

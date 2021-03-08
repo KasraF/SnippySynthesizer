@@ -5,12 +5,13 @@ import edu.ucsd.snippy.SynthesisTask.Context
 import edu.ucsd.snippy.ast.{ASTNode, BoolNode, Types}
 import edu.ucsd.snippy.enumeration.{InputsValuesManager, ProbEnumerator}
 import edu.ucsd.snippy.predicates.SingleVariablePredicate
-import edu.ucsd.snippy.utils.{Assignment, ConditionalAssignment, SingleAssignment}
+import edu.ucsd.snippy.utils.Utils.{filterByIndices, getBinaryPartitions}
+import edu.ucsd.snippy.utils.{Assignment, ConditionalAssignment}
 import edu.ucsd.snippy.vocab.VocabFactory
 
 import scala.collection.mutable
 
-class ConditionalSolutionEnumerator(
+class ConditionalMegazordSolutionEnumerator(
 	val outputVariables: List[(String, Types.Value)],
 	val inputContexts: List[Context],
 	val outputEnvs: List[Map[String, Any]],
@@ -85,14 +86,14 @@ class ConditionalSolutionEnumerator(
 							(thenIndices, elseIndices) -> UnaryPartition(enum)
 						} else {
 							// Then case
-							val thenInputContexts = this.filterByIndices(inputContexts, thenIndices)
-							val thenOutputEnvs = this.filterByIndices(outputEnvs, thenIndices)
+							val thenInputContexts = filterByIndices(inputContexts, thenIndices)
+							val thenOutputEnvs = filterByIndices(outputEnvs, thenIndices)
 							val (_, thenPred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), thenInputContexts, thenOutputEnvs)
 							val thenEnum = new InterleavedSolutionEnumerator(thenPred, true, variables, additionalLiterals)
 
 							// Else case
-							val elseInputContexts = this.filterByIndices(inputContexts, elseIndices)
-							val elseOutputEnvs = this.filterByIndices(outputEnvs, elseIndices)
+							val elseInputContexts = filterByIndices(inputContexts, elseIndices)
+							val elseOutputEnvs = filterByIndices(outputEnvs, elseIndices)
 							val (_, elsePred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), elseInputContexts, elseOutputEnvs)
 							val elseEnum = new InterleavedSolutionEnumerator(elsePred, true, variables, additionalLiterals)
 
@@ -121,9 +122,9 @@ class ConditionalSolutionEnumerator(
 		//   enumerate conditions and see if we have a complete tuple
 		val nextCond = condEnumerator.next()
 
-		if (nextCond.nodeType == Types.Bool) {
-			val key = nextCond.values.asInstanceOf[List[Boolean]].zipWithIndex.foldLeft((Set[Int](), Set[Int]())) {
-				case ((thenIdxs, elseIdxs), (cond, idx)) => if (cond) {
+		if (nextCond.nodeType == Types.Bool && nextCond.values.forall(_.isDefined)) {
+			val key = nextCond.values.asInstanceOf[List[Option[Boolean]]].zipWithIndex.foldLeft((Set[Int](), Set[Int]())) {
+				case ((thenIdxs, elseIdxs), (cond, idx)) => if (cond.get) {
 					(thenIdxs + idx, elseIdxs)
 				}else {
 					(thenIdxs, elseIdxs + idx)
@@ -148,17 +149,6 @@ class ConditionalSolutionEnumerator(
 					}
 			}
 		}
-	}
-
-	private def filterByIndices[T](lst: List[T], indices: Set[Int]): List[T] =
-		lst.zipWithIndex.filter(tup => indices.contains(tup._2)).map(_._1)
-
-	private def getBinaryPartitions[T](lst: List[T], startingIdx: Int = 0): List[(Set[Int], Set[Int])] = lst match {
-		case Nil => List((Set(), Set()))
-		case _ :: Nil => List((Set(startingIdx), Set()))
-		case _ :: tail =>
-			val parts: List[(Set[Int], Set[Int])] = getBinaryPartitions(tail, startingIdx + 1)
-			parts.map(p => (p._1 + startingIdx, p._2)) ++ parts.map(p => (p._1, p._2 + startingIdx))
 	}
 
 	private sealed abstract class Partition {

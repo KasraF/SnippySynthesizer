@@ -1,10 +1,7 @@
 {
 	"varNames": ["words","abbr"],
 	"previous_env": {
-		"#": "",
-		"name": "'Augusta Ada King'",
-		"words": "[' ']",
-		"abbr": "' '"
+		"name": "'Augusta Ada King'"
 	},
 	"envs": [
 		{

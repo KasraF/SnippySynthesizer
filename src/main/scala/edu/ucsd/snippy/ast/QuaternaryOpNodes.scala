@@ -10,14 +10,14 @@ trait QuaternaryOpNode[T] extends ASTNode
 	val arg2: ASTNode
 	val arg3: ASTNode
 
-	lazy val values: List[T] = arg0.values
-		.zip(arg1.values)
-		.zip(arg2.values)
-		.zip(arg3.values)
-		.map(tup => doOp(tup._1._1._1, tup._1._1._2, tup._1._2, tup._2)) match {
-		case l if l.forall(_.isDefined) => l.map(_.get)
-		case _ => Nil
-	}
+	lazy val values: List[Option[T]] = arg0.values
+		.lazyZip(arg1.values)
+		.lazyZip(arg2.values)
+		.lazyZip(arg3.values)
+		.map {
+			case (Some(arg0), Some(arg1), Some(arg2), Some(arg3)) => doOp(arg0, arg1, arg2, arg3)
+			case _ => None
+		}
 
 	override val height: Int = 1 + Math.max(arg0.height, Math.max(arg1.height, Math.max(arg2.height, arg3.height)))
 	override val terms: Int = 1 + arg0.terms + arg1.terms + arg2.terms + arg3.terms
