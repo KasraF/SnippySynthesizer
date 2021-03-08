@@ -5,7 +5,7 @@ import java.io.File
 object Benchmarks extends App
 {
 	def runBenchmark(dir: File, timeout: Int = 7): Unit = {
-		println("----- ------------------- ------- ---------- --------------------------------------")
+		println("----- ------------------------ ------- ---------- --------------------------------------")
 		dir.listFiles()
 			.filter(_.getName.contains(".examples.json"))
 			.filter(!_.getName.contains(".out"))
@@ -15,14 +15,14 @@ object Benchmarks extends App
 				val file = benchmark._1
 				val index = benchmark._2 + 1
 				val name: String = file.getName.substring(0, file.getName.indexOf('.'))
-				print(f"($index%2d)  [$name%17s] ")
+				print(f"($index%2d)  [$name%22s] ")
 
 				try {
 					Snippy.synthesize(file, timeout) match {
 						case (None, time: Int, count: Int) => println(f"[${time / 1000.0}%.3f] [$count%8d] Timeout") // println(f"[$count%d] Timeout")
 						case (Some(program: String), time: Int, count: Int) =>
 							val str = if (program.contains('\n')) {
-								program.split('\n').mkString('\n' + " ".repeat(45))
+								program.split('\n').mkString('\n' + " ".repeat(50))
 							} else {
 								program
 							}
@@ -48,7 +48,7 @@ object Benchmarks extends App
 		"+------------------------------+\n" +
 		"| Snippet synthesis for Python |\n" +
 		"+------------------------------+")
-	println("Index Name                Time    Count      Program")
+	println("Index Name                     Time    Count      Program")
 
 	val benchmarks = new File("src/test/resources")
 	assert(benchmarks.isDirectory)
