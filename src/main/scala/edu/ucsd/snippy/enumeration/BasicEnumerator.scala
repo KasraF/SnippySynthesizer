@@ -88,7 +88,7 @@ class BasicEnumerator(
 			if (rootMaker.hasNext) {
 				val prog = rootMaker.next
 
-				if (prog.values.nonEmpty && oeManager.isRepresentative(prog)) {
+				if (prog.values.exists(_.isDefined) && oeManager.isRepresentative(prog)) {
 					res = Some(prog)
 				}
 			}

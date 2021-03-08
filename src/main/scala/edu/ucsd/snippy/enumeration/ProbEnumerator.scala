@@ -136,12 +136,11 @@ class ProbEnumerator(
 		var res: Option[ASTNode] = None
 		// Iterate while no non-equivalent program is found
 		while (res.isEmpty) {
-
 			if (costLevel > endCost) return None
 
 			if (rootMaker.hasNext) {
 				val program = rootMaker.next
-				if (oeManager.isRepresentative(program)) {
+				if (program.values.exists(_.isDefined) && oeManager.isRepresentative(program)) {
 					res = Some(program)
 				}
 			}
