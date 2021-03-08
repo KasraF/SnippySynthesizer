@@ -6,10 +6,7 @@
 	],
 	"previous_env": {
 		"#": "",
-		"s": "'aaba'",
-		"rot": "''",
-		"rev": "''",
-		"rs": "False"
+		"s": "'aaba'"
 	},
 	"envs": [
 		{
