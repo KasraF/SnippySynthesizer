@@ -80,9 +80,7 @@ case class Equals(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Boolean] with
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
 		Equals(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
-	override def updateValues(contexts: Contexts): ASTNode = copy(
-		lhs.updateValues(contexts).asInstanceOf[IntNode],
-		rhs.updateValues(contexts).asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts): Equals = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
 case class StringConcat(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[String] with StringNode
@@ -209,9 +207,9 @@ case class Modulo(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] with Int
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
 		Modulo(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
 
-	override def updateValues(contexts: Contexts): ASTNode = copy(
-		lhs.updateValues(contexts).asInstanceOf[IntNode],
-		rhs.updateValues(contexts).asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts): Modulo = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
 }
 
 case class Find(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Int] with IntNode
@@ -257,9 +255,9 @@ case class IntContains(lhs: IntNode, rhs: ListNode[Int]) extends BinaryOpNode[Bo
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
 		IntContains(l.asInstanceOf[IntNode], r.asInstanceOf[ListNode[Int]])
 
-	override def updateValues(contexts: Contexts): ASTNode = copy(
-		lhs.updateValues(contexts).asInstanceOf[IntNode],
-		rhs.updateValues(contexts).asInstanceOf[ListNode[Int]])
+	override def updateValues(contexts: Contexts): IntContains = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
 }
 
 case class StringSplit(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
