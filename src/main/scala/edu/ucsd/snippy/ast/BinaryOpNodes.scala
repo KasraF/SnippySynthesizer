@@ -68,6 +68,23 @@ case class GreaterThan(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Boolean]
 		rhs.updateValues(contexts).asInstanceOf[IntNode])
 }
 
+case class Equals(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " == " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Int, r: Int) => Some(l == r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		Equals(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): ASTNode = copy(
+		lhs.updateValues(contexts).asInstanceOf[IntNode],
+		rhs.updateValues(contexts).asInstanceOf[IntNode])
+}
+
 case class StringConcat(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[String] with StringNode
 {
 	override lazy val code: String = lhs.code + " + " + rhs.code
@@ -189,6 +206,25 @@ case class IntDivision(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] wit
 		rhs.updateValues(contexts).asInstanceOf[IntNode])
 }
 
+case class Modulo(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = lhs.parensIfNeeded + " % " + rhs.parensIfNeeded
+
+	override def doOp(l: Any, r: Any): Option[Int] =
+		(l, r) match {
+			case (_: Int, 0) => None
+			case (l: Int, r: Int) => Some(Math.floorMod(l, r))
+			case _ => wrongType(l, r)
+		}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
+		Modulo(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): ASTNode = copy(
+		lhs.updateValues(contexts).asInstanceOf[IntNode],
+		rhs.updateValues(contexts).asInstanceOf[IntNode])
+}
+
 case class Find(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Int] with IntNode
 {
 	override protected val parenless: Boolean = true
@@ -222,6 +258,23 @@ case class Contains(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Boole
 	override def updateValues(contexts: Contexts): ASTNode = copy(
 		lhs.updateValues(contexts).asInstanceOf[StringNode],
 		rhs.updateValues(contexts).asInstanceOf[StringNode])
+}
+
+case class IntContains(lhs: IntNode, rhs: ListNode[Int]) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.parensIfNeeded + " in " + rhs.parensIfNeeded
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (elem: Int, list: List[Int]) => Some(list.contains(elem))
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		IntContains(l.asInstanceOf[IntNode], r.asInstanceOf[ListNode[Int]])
+
+	override def updateValues(contexts: Contexts): ASTNode = copy(
+		lhs.updateValues(contexts).asInstanceOf[IntNode],
+		rhs.updateValues(contexts).asInstanceOf[ListNode[Int]])
 }
 
 case class StringSplit(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Iterable[String]] with StringListNode
