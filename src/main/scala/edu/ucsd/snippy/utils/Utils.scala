@@ -34,4 +34,15 @@ object Utils
 			neType
 		}
 	}
+
+	def getBinaryPartitions[T](lst: List[T], startingIdx: Int = 0): List[(Set[Int], Set[Int])] = lst match {
+		case Nil => List((Set(), Set()))
+		case _ :: Nil => List((Set(startingIdx), Set()))
+		case _ :: tail =>
+			val parts: List[(Set[Int], Set[Int])] = getBinaryPartitions(tail, startingIdx + 1)
+			parts.map(p => (p._1 + startingIdx, p._2)) ++ parts.map(p => (p._1, p._2 + startingIdx))
+	}
+
+	@inline def filterByIndices[T](lst: List[T], indices: Set[Int]): List[T] =
+		lst.zipWithIndex.filter(tup => indices.contains(tup._2)).map(_._1)
 }
