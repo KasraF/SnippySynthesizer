@@ -1,0 +1,17 @@
+{
+	"varNames": ["out"],
+	"previous_env": {
+		"#": "",
+		"inp": "'GeeksForGeeks'",
+		"n": "4",
+		"out": "''"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"inp": "'GeeksForGeeks'",
+			"n": "4",
+			"out": "'GeesForGeeks'"
+		}
+	]
+}

@@ -1,0 +1,17 @@
+{
+	"varNames": ["sorted", "second_largest"],
+	"previous_env": {
+		"#": "",
+		"inp": "[10, 20, 4, 45, 99]",
+		"sorted": "[]",
+		"second_largest": "-1"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"inp": "[10, 20, 4, 45, 99]",
+			"sorted": "[4, 10, 20, 45, 99]",
+			"second_largest": "45"
+		}
+	]
+}
