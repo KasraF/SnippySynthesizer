@@ -1,0 +1,40 @@
+{
+	"varNames": ["out"],
+	"previous_env": {
+		"#": "",
+		"inp": "['b', 'e', 'a', 'd', 'c']",
+		"sort": "True",
+		"reverse": "True",
+		"out": "[]"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "True",
+			"reverse": "True",
+			"out": "['e', 'd', 'c', 'b', 'a']"
+		},
+		{
+			"#": "1",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "True",
+			"reverse": "False",
+			"out": "['a', 'b', 'c', 'd', 'e']"
+		},
+		{
+			"#": "2",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "False",
+			"reverse": "True",
+			"out": "['c', 'd', 'a', 'e', 'b']"
+		},
+		{
+			"#": "3",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "False",
+			"reverse": "False",
+			"out": "['b', 'e', 'a', 'd', 'c']"
+		}
+	]
+}
