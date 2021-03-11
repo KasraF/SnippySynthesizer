@@ -1,0 +1,25 @@
+{
+	"varNames": ["out"],
+	"previous_env": {
+		"#": "",
+		"inp": "'computer science is COOL'",
+		"out": "''"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"inp": "'computer science is COOL'",
+			"out": "'Computer science is COOL'"
+		},
+		{
+			"#": "1",
+			"inp": "'123abc'",
+			"out": "'123abc'"
+		},
+		{
+			"#": "2",
+			"inp": "'aaa'",
+			"out": "'Aaa'"
+		}
+	]
+}

@@ -1,0 +1,40 @@
+{
+	"varNames": ["out"],
+	"previous_env": {
+		"#": "",
+		"inp1": "['abc', 'DEF', '12345']",
+		"delim": "','",
+		"inp2": "'init.'",
+		"out": "''"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"inp1": "['abc', 'DEF', '12345']",
+			"delim": "','",
+			"inp2": "'init.'",
+			"out": "'init.abc, DEF, 12345'"
+		},
+		{
+			"#": "1",
+			"inp1": "['abc', 'DEF']",
+			"delim": "','",
+			"inp2": "'abc'",
+			"out": "'abcabc, DEF'"
+		},
+		{
+			"#": "2",
+			"inp1": "['abc']",
+			"delim": "' '",
+			"inp2": "'xyz '",
+			"out": "'xyz abc'"
+		},
+		{
+			"#": "3",
+			"inp1": "['', '']",
+			"delim": "','",
+			"inp2": "''",
+			"out": "','"
+		}
+	]
+}
