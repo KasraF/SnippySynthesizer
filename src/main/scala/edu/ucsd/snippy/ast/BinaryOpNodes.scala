@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.DebugPrints
+import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.Contexts
 
 trait BinaryOpNode[T] extends ASTNode
@@ -402,4 +403,67 @@ case class StringStep(lhs: StringNode, rhs: IntNode) extends BinaryOpNode[String
 		StringStep(l.asInstanceOf[StringNode], r.asInstanceOf[IntNode])
 
 	override def updateValues(contexts: Contexts): StringStep = copy( lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+abstract sealed class ListLookup[T](lhs: ListNode[T], rhs: IntNode) extends BinaryOpNode[T]
+{
+	override protected val parenless: Boolean = true
+	override val nodeType: Types = lhs.childType
+	override val code: String = s"${lhs.parensIfNeeded}[${rhs.code}]"
+
+	override def doOp(l: Any, r: Any): Option[T] = (l, r) match {
+		case (lst: List[T], idx: Int) =>
+			if (idx >= 0 && idx < lst.length) Some(lst(idx)) else None
+		case _ => wrongType(l, r)
+	}
+}
+
+case class StringListLookup(lhs: ListNode[String], rhs: IntNode) extends ListLookup[String](lhs, rhs) with StringNode
+{
+	override def make(l: ASTNode, r: ASTNode): ListLookup[String] =
+		StringListLookup(l.asInstanceOf[ListNode[String]], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): StringListLookup = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class IntListLookup(lhs: ListNode[Int], rhs: IntNode) extends ListLookup[Int](lhs, rhs) with IntNode
+{
+	override def make(l: ASTNode, r: ASTNode): ListLookup[Int] =
+		IntListLookup(l.asInstanceOf[ListNode[Int]], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): IntListLookup = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class ListContains[T](lhs: ASTNode, rhs: ListNode[T]) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override protected val parenless: Boolean = false
+	override val code: String = s"${lhs.parensIfNeeded} in ${rhs.parensIfNeeded}"
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (e: T, r: List[T]) => Some(r.contains(e))
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		ListContains(l.asInstanceOf[ASTNode], r.asInstanceOf[ListNode[T]])
+
+	override def updateValues(contexts: Contexts): ListContains[T] = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class ListConcat[T](lhs: ListNode[T], rhs: ListNode[T]) extends BinaryOpNode[Iterable[T]] with ListNode[T]
+{
+	override val childType: Types = lhs.childType
+	override val code: String = s"${lhs.parensIfNeeded} + ${rhs.parensIfNeeded}"
+	override protected val parenless: Boolean = false
+
+	override def doOp(l: Any, r: Any): Option[Iterable[T]] = (l, r) match {
+		case (l: List[T], r: List[T]) => Some(l ++ r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[T]] =
+		ListConcat[T](l.asInstanceOf[ListNode[T]], r.asInstanceOf[ListNode[T]])
+
+	override def updateValues(contexts: Contexts): ListNode[T] =
+		copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
