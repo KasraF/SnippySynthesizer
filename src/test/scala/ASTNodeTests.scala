@@ -198,7 +198,79 @@ class ASTNodeTests extends JUnitSuite
 
 			override def updateValues(contexts: Contexts): StringListNode = ???
 		})
+		assertEquals(List(-1123, 2, 1, -2212, 3, 2), code1.values.head.get)
 		assertEquals(List("abc", "def", "ghi", "jkl"), code2.values.head.get)
+	}
+
+	@Test def lookupTest(): Unit = {
+		val code1 = IntListLookup(new IntListNode
+		{
+			override val values: List[Option[Iterable[Int]]] = List(-1123 :: 2 :: 1 :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "[-1123, 2, 1]"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): IntListNode = ???
+		}, IntLiteral(0, 1))
+		val code2 = StringListLookup(new StringListNode
+		{
+			override val values: List[Option[Iterable[String]]] = List("abc" :: "def" :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "['abc', 'def']"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): StringListNode = ???
+		}, IntLiteral(1, 1))
+		assertEquals(-1123, code1.values.head.get)
+		assertEquals("def", code2.values.head.get)
+	}
+
+	@Test def appendTest(): Unit = {
+		val code1 = IntListAppend(new IntListNode
+		{
+			override val values: List[Option[Iterable[Int]]] = List(-1123 :: 2 :: 1 :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "[-1123, 2, 1]"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): IntListNode = ???
+		}, IntLiteral(123, 1))
+		val code2 = StringListAppend(new StringListNode
+		{
+			override val values: List[Option[Iterable[String]]] = List("abc" :: "def" :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "['abc', 'def']"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): StringListNode = ???
+		}, StringLiteral("123", 1))
+		assertEquals(List(-1123, 2, 1, 123), code1.values.head.get)
+		assertEquals(List("abc", "def", "123"), code2.values.head.get)
+
 	}
 
 	@Test def numeric(): Unit =

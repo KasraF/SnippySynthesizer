@@ -495,7 +495,17 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						IntListLookup(children.head.asInstanceOf[ListNode[Int]], children.tail.head.asInstanceOf[IntNode])
 				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.StringList, Types.Int)
+					override val returnType: Types = Types.String
+					override val nodeType: Class[_ <: ASTNode] = classOf[StringListLookup]
+					override val head: String = ""
 
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						StringListLookup(children.head.asInstanceOf[ListNode[String]], children.tail.head.asInstanceOf[IntNode])
+				},
 				new ListCompVocabMaker(Types.String, Types.String, size) {
 					override val nodeType: Class[_ <: ASTNode] = classOf[StringToStringListCompNode]
 					override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
