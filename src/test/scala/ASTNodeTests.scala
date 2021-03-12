@@ -136,7 +136,69 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val caps1 = Capitalize(StringLiteral("abc", 1))
 		assertEquals("Abc", caps1.values.head.get)
+	}
 
+	@Test def concat(): Unit =
+	{
+		val code1 = ListConcat(new IntListNode
+		{
+			override val values: List[Option[Iterable[Int]]] = List(-1123 :: 2 :: 1 :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "[-1123, 2, 1]"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): IntListNode = ???
+		}, new IntListNode
+		{
+			override val values: List[Option[Iterable[Int]]] = List(-2212 :: 3 :: 2 :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "[-1123, 2, 1]"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): IntListNode = ???
+		})
+		val code2 = ListConcat(new StringListNode
+		{
+			override val values: List[Option[Iterable[String]]] = List("abc" :: "def" :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "['abc', 'def']"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): StringListNode = ???
+		}, new StringListNode
+		{
+			override val values: List[Option[Iterable[String]]] = List("ghi" :: "jkl" :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "['ghi', 'jkl']"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): StringListNode = ???
+		})
+		assertEquals(List("abc", "def", "ghi", "jkl"), code2.values.head.get)
 	}
 
 	@Test def numeric(): Unit =
@@ -156,11 +218,13 @@ class ASTNodeTests extends JUnitSuite
 	{
 		val StartsWith1 = StartsWith(StringLiteral("abc123", 1), StringLiteral("abc", 1))
 		val StartsWith2 = StartsWith(StringLiteral("123", 1), StringLiteral("23", 1))
+		val StartsWith3 = StartsWith(StringLiteral("start 123", 1), StringLiteral("start", 1))
 		val EndsWith1 = EndsWith(StringLiteral("abc123", 1), StringLiteral("123", 1))
 		val EndsWith2 = EndsWith(StringLiteral("123", 1), StringLiteral("3", 1))
 		assertEquals(true, StartsWith1.values.head.get)
 		assertEquals("\"abc123\".startswith(\"abc\")", StartsWith1.code)
 		assertEquals(false, StartsWith2.values.head.get)
+		assertEquals(true, StartsWith3.values.head.get)
 		assertEquals("\"abc123\".endswith(\"123\")", EndsWith1.code)
 		assertEquals(true, EndsWith1.values.head.get)
 		assertEquals(true, EndsWith2.values.head.get)

@@ -440,6 +440,18 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						SortedStringList(children.head.asInstanceOf[ListNode[String]])
 				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.AnyList)
+					override val returnType: Types = Types.AnyList
+					override val nodeType: Class[_ <: ASTNode] = classOf[ListConcat[Any]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						ListConcat[Any](children.head.asInstanceOf[ListNode[Any]], children.tail.head.asInstanceOf[ListNode[Any]])
+				},
+
 				new ListCompVocabMaker(Types.String, Types.String, size) {
 					override val nodeType: Class[_ <: ASTNode] = classOf[StringToStringListCompNode]
 					override def makeNode(lst: ASTNode, map: ASTNode): ASTNode =
