@@ -197,6 +197,20 @@ case class SortedStringList(arg: ListNode[String]) extends UnaryOpNode[Iterable[
 	override def updateValues(contexts: Contexts): SortedStringList = copy(arg.updateValues(contexts).asInstanceOf[ListNode[String]])
 }
 
+case class SortedIntList(arg: ListNode[Int]) extends UnaryOpNode[Iterable[Int]] with IntListNode
+{
+	override lazy val code: String = "sorted(" + arg.code + ")"
+
+	override def doOp(arg: Any): Option[Iterable[Int]] = arg match {
+		case lst: Iterable[Int] => Some(lst.toList.sorted)
+		case _ => wrongType(arg)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[Int]] = SortedIntList(x.asInstanceOf[ListNode[Int]])
+
+	override def updateValues(contexts: Contexts): SortedIntList = copy(arg.updateValues(contexts).asInstanceOf[ListNode[Int]])
+}
+
 case class UnarySplit(arg: StringNode) extends UnaryOpNode[Iterable[String]] with StringListNode
 {
 	override lazy val code: String = arg.code + ".split()"

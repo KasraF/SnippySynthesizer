@@ -380,7 +380,6 @@ case class EndsWith(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Boole
 	override def updateValues(contexts: Contexts): EndsWith = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
-
 case class StringStep(lhs: StringNode, rhs: IntNode) extends BinaryOpNode[String] with StringNode
 {
 	override protected val parenless: Boolean = true
@@ -466,4 +465,42 @@ case class ListConcat[T](lhs: ListNode[T], rhs: ListNode[T]) extends BinaryOpNod
 
 	override def updateValues(contexts: Contexts): ListNode[T] =
 		copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class IntListAppend(lhs: ListNode[Int], rhs: IntNode) extends BinaryOpNode[Iterable[Int]] with ListNode[Int]
+{
+	override protected val parenless: Boolean = true
+	override val childType: Types = lhs.childType
+	override val code: String = s"${lhs.parensIfNeeded}.append(${rhs.code})"
+
+	override def doOp(l: Any, r: Any): Option[Iterable[Int]] = (l, r) match {
+		case (lst: List[Int], elem: Int) => Some(lst :+ elem)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[Int]] =
+		IntListAppend(l.asInstanceOf[ListNode[Int]], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): ListNode[Int] =
+		copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+
+}
+
+case class StringListAppend(lhs: ListNode[String], rhs: StringNode) extends BinaryOpNode[Iterable[String]] with ListNode[String]
+{
+	override protected val parenless: Boolean = true
+	override val childType: Types = lhs.childType
+	override val code: String = s"${lhs.parensIfNeeded}.append(${rhs.code})"
+
+	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
+		case (lst: List[String], elem: String) => Some(lst :+ elem)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] =
+		StringListAppend(l.asInstanceOf[ListNode[String]], r.asInstanceOf[StringNode])
+
+	override def updateValues(contexts: Contexts): ListNode[String] =
+		copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+
 }

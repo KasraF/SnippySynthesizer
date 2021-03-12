@@ -420,17 +420,6 @@ object VocabFactory
 				},
 				new BasicVocabMaker
 				{
-					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.String, Types.StringList)
-					override val returnType: Types = Types.String
-					override val nodeType: Class[_ <: ASTNode] = classOf[StringJoin]
-					override val head: String = ""
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						StringJoin(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[ListNode[String]])
-				},
-				new BasicVocabMaker
-				{
 					override val arity: Int = 1
 					override val childTypes: List[Types] = List(Types.StringList)
 					override val returnType: Types = Types.StringList
@@ -442,14 +431,69 @@ object VocabFactory
 				},
 				new BasicVocabMaker
 				{
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.IntList)
+					override val returnType: Types = Types.IntList
+					override val nodeType: Class[_ <: ASTNode] = classOf[SortedIntList]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						SortedIntList(children.head.asInstanceOf[ListNode[Int]])
+				},
+				new BasicVocabMaker
+				{
 					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.AnyList)
+					override val childTypes: List[Types] = List(Types.AnyList, Types.AnyList)
 					override val returnType: Types = Types.AnyList
 					override val nodeType: Class[_ <: ASTNode] = classOf[ListConcat[Any]]
 					override val head: String = ""
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						ListConcat[Any](children.head.asInstanceOf[ListNode[Any]], children.tail.head.asInstanceOf[ListNode[Any]])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.IntList, Types.Int)
+					override val returnType: Types = Types.IntList
+					override val nodeType: Class[_ <: ASTNode] = classOf[IntListAppend]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						IntListAppend(children.head.asInstanceOf[ListNode[Int]], children.tail.head.asInstanceOf[IntNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.StringList, Types.String)
+					override val returnType: Types = Types.StringList
+					override val nodeType: Class[_ <: ASTNode] = classOf[StringListAppend]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						StringListAppend(children.head.asInstanceOf[ListNode[String]], children.tail.head.asInstanceOf[StringNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.String, Types.StringList)
+					override val returnType: Types = Types.String
+					override val nodeType: Class[_ <: ASTNode] = classOf[StringJoin]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						StringJoin(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[ListNode[String]])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.IntList, Types.Int)
+					override val returnType: Types = Types.Int
+					override val nodeType: Class[_ <: ASTNode] = classOf[IntListLookup]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						IntListLookup(children.head.asInstanceOf[ListNode[Int]], children.tail.head.asInstanceOf[IntNode])
 				},
 
 				new ListCompVocabMaker(Types.String, Types.String, size) {
