@@ -3,8 +3,7 @@
 	"previous_env": {
 		"#": "",
 		"inp": "'GeeksForGeeks'",
-		"n": "4",
-		"out": "''"
+		"n": "4"
 	},
 	"envs": [
 		{

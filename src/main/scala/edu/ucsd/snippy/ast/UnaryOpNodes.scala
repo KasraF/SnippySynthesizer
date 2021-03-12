@@ -154,12 +154,13 @@ case class IsAlpha(arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
 	override def updateValues(contexts: Contexts): IsAlpha = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
+
 case class Capitalize(arg: StringNode) extends UnaryOpNode[String] with StringNode
 {
 	override lazy val code: String = arg.parensIfNeeded + ".capitalize()"
 
 	override def doOp(x: Any): Option[String] = x match {
-		case arg: String => Some(arg.capitalize)
+		case arg: String => Some(arg.toLowerCase().capitalize)
 		case _ => wrongType(x)
 	}
 

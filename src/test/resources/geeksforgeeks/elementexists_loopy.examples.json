@@ -3,8 +3,7 @@
 	"previous_env": {
 		"#": "",
 		"inp": "[1, 16, 31, 5, 3, 4]",
-		"elem": "21",
-		"exists": "False"
+		"elem": "21"
 	},
 	"envs": [
 		{
