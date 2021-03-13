@@ -1,0 +1,63 @@
+{
+	"varNames": [
+		"split",
+		"rs"
+	],
+	"previous_env": {
+		"#": "",
+		"inp": "'need word greater than length n'",
+		"num": "4",
+		"split": "[]",
+		"rs": "[]"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"idx": "0",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
+			"rs": "['need']"
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
+			"rs": "['need', 'word']"
+		},
+		{
+			"#": "2",
+			"idx": "2",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
+			"rs": "['need', 'word']"
+		},
+		{
+			"#": "3",
+			"idx": "3",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
+			"rs": "['need', 'word', 'than']"
+		},
+		{
+			"#": "4",
+			"idx": "4",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
+			"rs": "['need', 'word', 'than']"
+		},
+		{
+			"#": "5",
+			"idx": "5",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
+			"rs": "['need', 'word', 'than']"
+		}
+	]
+}
