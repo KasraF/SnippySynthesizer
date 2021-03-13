@@ -1,0 +1,29 @@
+{
+	"varNames": [
+		"out"
+	],
+	"previous_env": {
+		"#": "",
+        "out": "''"
+	},
+	"envs": [
+		{
+			"#": "",
+			"inp1": "'path'",
+			"inp2": "'field'",
+			"out": "'path.field'"
+		},
+		{
+			"#": "",
+			"inp1": "'a'",
+			"inp2": "''",
+			"out": "'a.'"
+		},
+		{
+			"#": "",
+			"inp1": "''",
+			"inp2": "'field'",
+			"out": "'field'"
+		}
+	]
+}

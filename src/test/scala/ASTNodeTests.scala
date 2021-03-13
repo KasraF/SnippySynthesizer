@@ -237,6 +237,40 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals("def", code2.values.head.get)
 	}
 
+	@Test def containsTest(): Unit = {
+		val code1 = IntListContains(IntLiteral(0, 1), new IntListNode {
+			override val values: List[Option[Iterable[Int]]] = List(-1123 :: 2 :: 1 :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "[-1123, 2, 1]"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): IntListNode = ???
+		})
+		val code2 = StringListContains(StringLiteral("abc", 1), new StringListNode
+		{
+			override val values: List[Option[Iterable[String]]] = List("abc" :: "def" :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "['abc', 'def']"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): StringListNode = ???
+		})
+		assertEquals(false, code1.values.head.get)
+		assertEquals(true, code2.values.head.get)
+	}
+
 	@Test def appendTest(): Unit = {
 		val code1 = IntListAppend(new IntListNode
 		{
