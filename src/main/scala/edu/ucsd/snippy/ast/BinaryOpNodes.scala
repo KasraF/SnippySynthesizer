@@ -433,20 +433,36 @@ case class IntListLookup(lhs: ListNode[Int], rhs: IntNode) extends ListLookup[In
 	override def updateValues(contexts: Contexts): IntListLookup = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
-case class ListContains[T](lhs: ASTNode, rhs: ListNode[T]) extends BinaryOpNode[Boolean] with BoolNode
+case class StringListContains(lhs: ASTNode, rhs: ListNode[String]) extends BinaryOpNode[Boolean] with BoolNode
 {
 	override protected val parenless: Boolean = false
 	override val code: String = s"${lhs.parensIfNeeded} in ${rhs.parensIfNeeded}"
 
 	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
-		case (e: T, r: List[T]) => Some(r.contains(e))
+		case (e: String, r: List[String]) => Some(r.contains(e))
 		case _ => wrongType(l, r)
 	}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		ListContains(l.asInstanceOf[ASTNode], r.asInstanceOf[ListNode[T]])
+		StringListContains(l.asInstanceOf[ASTNode], r.asInstanceOf[ListNode[String]])
 
-	override def updateValues(contexts: Contexts): ListContains[T] = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+	override def updateValues(contexts: Contexts): StringListContains = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class IntListContains(lhs: ASTNode, rhs: ListNode[Int]) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override protected val parenless: Boolean = false
+	override val code: String = s"${lhs.parensIfNeeded} in ${rhs.parensIfNeeded}"
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (e: Int, r: List[Int]) => Some(r.contains(e))
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		IntListContains(l.asInstanceOf[ASTNode], r.asInstanceOf[ListNode[Int]])
+
+	override def updateValues(contexts: Contexts): IntListContains = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
 case class ListConcat[T](lhs: ListNode[T], rhs: ListNode[T]) extends BinaryOpNode[Iterable[T]] with ListNode[T]

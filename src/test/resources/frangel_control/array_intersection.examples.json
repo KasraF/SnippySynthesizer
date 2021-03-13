@@ -1,0 +1,48 @@
+{
+	"varNames": [
+		"intersect"
+	],
+	"previous_env": {
+		"#": "",
+		"inp1": "['abc', '', 'hi', '1', 'x']",
+		"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
+		"intersect": "[]"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['abc', '', 'hi', '1', 'x']",
+			"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
+			"intersect": "['abc']"
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['abc', '', 'hi', '1', 'x']",
+			"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
+			"intersect": "['abc']"
+		},
+		{
+			"#": "2",
+			"idx": "2",
+			"inp1": "['abc', '', 'hi', '1', 'x']",
+			"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
+			"intersect": "['abc', 'hi']"
+		},
+		{
+			"#": "3",
+			"idx": "3",
+			"inp1": "['abc', '', 'hi', '1', 'x']",
+			"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
+			"intersect": "['abc', 'hi', '1']"
+		},
+		{
+			"#": "4",
+			"idx": "4",
+			"inp1": "['abc', '', 'hi', '1', 'x']",
+			"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
+			"intersect": "['abc', 'hi', '1']"
+		}
+	]
+}

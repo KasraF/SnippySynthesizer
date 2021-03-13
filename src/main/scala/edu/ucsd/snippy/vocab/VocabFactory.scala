@@ -443,17 +443,6 @@ object VocabFactory
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.AnyList, Types.AnyList)
-					override val returnType: Types = Types.AnyList
-					override val nodeType: Class[_ <: ASTNode] = classOf[ListConcat[Any]]
-					override val head: String = ""
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						ListConcat[Any](children.head.asInstanceOf[ListNode[Any]], children.tail.head.asInstanceOf[ListNode[Any]])
-				},
-				new BasicVocabMaker
-				{
-					override val arity: Int = 2
 					override val childTypes: List[Types] = List(Types.IntList, Types.Int)
 					override val returnType: Types = Types.IntList
 					override val nodeType: Class[_ <: ASTNode] = classOf[IntListAppend]
@@ -505,6 +494,28 @@ object VocabFactory
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						StringListLookup(children.head.asInstanceOf[ListNode[String]], children.tail.head.asInstanceOf[IntNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.String, Types.StringList)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[StringListContains]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						StringListContains(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[ListNode[String]])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Int, Types.IntList)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[IntListContains]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						IntListContains(children.head.asInstanceOf[IntNode], children.tail.head.asInstanceOf[ListNode[Int]])
 				},
 				new ListCompVocabMaker(Types.String, Types.String, size) {
 					override val nodeType: Class[_ <: ASTNode] = classOf[StringToStringListCompNode]
