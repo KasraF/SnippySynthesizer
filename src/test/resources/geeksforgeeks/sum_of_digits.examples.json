@@ -1,13 +1,11 @@
 {
-	"varNames": ["sorted", "n_largest"],
+	"varNames": ["out"],
 	"previous_env": {
-		"#": "",
 		"inp": "[12, 67, 98, 34]",
 		"out": "[]"
 	},
 	"envs": [
 		{
-			"#": "0",
 			"inp": "[12, 67, 98, 34]",
 			"out": "[3, 13, 17, 7]"
 		}
