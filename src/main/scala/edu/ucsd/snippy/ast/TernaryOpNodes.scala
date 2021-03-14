@@ -52,9 +52,9 @@ case class StringReplace(arg0: StringNode, arg1: StringNode, arg2: StringNode) e
 		StringReplace(a0.asInstanceOf[StringNode], a1.asInstanceOf[StringNode], a2.asInstanceOf[StringNode])
 
 	override def updateValues(contexts: Contexts): StringReplace = copy(
-		arg0.updateValues(contexts).asInstanceOf[StringNode],
-		arg1.updateValues(contexts).asInstanceOf[StringNode],
-		arg2.updateValues(contexts).asInstanceOf[StringNode])
+		arg0.updateValues(contexts),
+		arg1.updateValues(contexts),
+		arg2.updateValues(contexts))
 }
 
 case class TernarySubstring(arg0: StringNode, arg1: IntNode, arg2: IntNode) extends TernaryOpNode[String] with StringNode
@@ -82,40 +82,66 @@ case class TernarySubstring(arg0: StringNode, arg1: IntNode, arg2: IntNode) exte
 		TernarySubstring(a0.asInstanceOf[StringNode], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
 
 	override def updateValues(contexts: Contexts): TernarySubstring = copy(
-		arg0.updateValues(contexts).asInstanceOf[StringNode],
-		arg1.updateValues(contexts).asInstanceOf[IntNode],
-		arg2.updateValues(contexts).asInstanceOf[IntNode])
+		arg0.updateValues(contexts),
+		arg1.updateValues(contexts),
+		arg2.updateValues(contexts))
 }
 
-case class IntTernarySubList(arg0: ListNode[Int], arg1: IntNode, arg2: IntNode) extends TernaryOpNode[Iterable[Int]] with ListNode[Int]
+case class ListInsert[T, E <: ASTNode](arg0: ListNode[T], arg1: IntNode, arg2: E) extends TernaryOpNode[Iterable[T]] with ListNode[T]
+{
+	override val code: String = s"${arg0.parensIfNeeded}[:${arg1.code}] + [${arg2.code}] + ${arg0.parensIfNeeded}[${arg1.code}:]"
+	override protected val parenless: Boolean = false
+	override val childType: Types = arg0.childType
+
+	override def doOp(a0: Any, a1: Any, a2: Any): Option[Iterable[T]] = (a0, a1, a2) match {
+		case (lst: List[T], index: Int, elem: T) =>
+			if (index >= 0 && index <= lst.length) {
+				Some(lst.slice(0, index) ++ (elem :: lst.slice(index, lst.length)))
+			} else {
+				None
+			}
+		case _ => wrongType(a0, a1, a2)
+	}
+
+	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernaryOpNode[Iterable[T]] =
+		ListInsert[T, E](a0.asInstanceOf[ListNode[T]], a1.asInstanceOf[IntNode], a2.asInstanceOf[E])
+
+	override def updateValues(contexts: Contexts): ListNode[T] = copy(
+		arg0.updateValues(contexts),
+		arg1.updateValues(contexts),
+		arg2.updateValues(contexts))
+}
+
+case class TernarySubList[T](arg0: ListNode[T], arg1: IntNode, arg2: IntNode) extends TernaryOpNode[Iterable[T]] with ListNode[T]
 {
 	override protected val parenless: Boolean = true
 	override lazy val code: String =
 		arg0.parensIfNeeded + "[" + arg1.code + ":" + arg2.code + "]"
 
-	override def doOp(a0: Any, a1: Any, a2: Any): Option[Iterable[Int]] = (a0, a1, a2) match {
-		case (s: List[Int], start_orig: Int, end_orig: Int) =>
+	override def doOp(a0: Any, a1: Any, a2: Any): Option[Iterable[T]] = (a0, a1, a2) match {
+		case (s: List[T], start_orig: Int, end_orig: Int) =>
 			// The max() and min() remove unnecessary looping
 			val start = (if (start_orig >= 0) start_orig else (s.length + start_orig)).max(0).min(s.length)
 			val end = (if (end_orig >= 0) end_orig else (s.length + end_orig)).max(0).min(s.length)
-			var rs = List[Int]()
+			var rs = List[T]()
 
 			if (start < end) {
-				for (idx <- start until end) (
-					rs = rs :+ s(idx))
+				for (idx <- start until end) {
+					rs = rs :+ s(idx)
+				}
 			}
 
 			Some(rs)
 		case _ => wrongType(a0, a1, a2)
 	}
 
-	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): IntTernarySubList =
-		IntTernarySubList(a0.asInstanceOf[ListNode[Int]], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
+	override def make(a0: ASTNode, a1: ASTNode, a2: ASTNode): TernarySubList[T] =
+		TernarySubList[T](a0.asInstanceOf[ListNode[T]], a1.asInstanceOf[IntNode], a2.asInstanceOf[IntNode])
 
-	override def updateValues(contexts: Contexts): IntTernarySubList = copy(
-		arg0.updateValues(contexts).asInstanceOf[ListNode[Int]],
-		arg1.updateValues(contexts).asInstanceOf[IntNode],
-		arg2.updateValues(contexts).asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts): TernarySubList[T] = copy(
+		arg0.updateValues(contexts),
+		arg1.updateValues(contexts),
+		arg2.updateValues(contexts))
 
 	override val childType: Types = arg0.childType
 }

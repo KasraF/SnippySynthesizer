@@ -47,35 +47,39 @@ case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase:
 			var postCondition: List[Assignment] = List()
 
 			// First, check if one branch is the more general solution. If so, use the general one for both cases.
-			for ((thenAssignment, thenIndex) <- thenCode.zipWithIndex) {
-				thenAssignment match {
-					case SingleAssignment(name, thenProgram) =>
-						elseCode.zipWithIndex.find(c => c._1.isInstanceOf[SingleAssignment] && c._1.asInstanceOf[SingleAssignment].name == name) match {
-							case Some((SingleAssignment(_, elseProgram), elseIndex)) =>
-								// See if we can even make this comparison
-								val thenModifiedVariables = this.varsAssigned(thenCode.slice(0, thenIndex))
-								val elseModifiedVariables = this.varsAssigned(elseCode.slice(0, elseIndex))
-
-								if (!(thenModifiedVariables.exists(thenProgram.includes) ||
-									elseModifiedVariables.exists(elseProgram.includes))) {
-									val thenThenValues = filterByIndices(thenProgram.values, thenPartition)
-									val elseThenValues = filterByIndices(elseProgram.values, thenPartition)
-									val thenElseValues = filterByIndices(thenProgram.values, elsePartition)
-									val elseElseValues = filterByIndices(elseProgram.values, elsePartition)
-
-									if (thenThenValues == elseThenValues) {
-										// Else is the more general solution
-										thenCode(thenIndex).asInstanceOf[SingleAssignment].program = elseProgram
-									} else if (thenElseValues == elseElseValues) {
-										// Then is the more general solution
-										elseCode(elseIndex).asInstanceOf[SingleAssignment].program = thenProgram
-									}
-								}
-							case None => ()
-						}
-					case _ => ()
-				}
-			}
+			// TODO This is SO incorrect... :/
+			// see move_zeros_count.examples.json
+//			for ((thenAssignment, thenIndex) <- thenCode.zipWithIndex) {
+//				thenAssignment match {
+//					case SingleAssignment(name, thenProgram) =>
+//						elseCode.zipWithIndex.find(c => c._1.isInstanceOf[SingleAssignment] && c._1.asInstanceOf[SingleAssignment].name == name) match {
+//							case Some((SingleAssignment(_, elseProgram), elseIndex)) =>
+//								// See if we can even make this comparison
+//								val thenModifiedVariables = this.varsAssigned(thenCode.slice(0, thenIndex))
+//								val elseModifiedVariables = this.varsAssigned(elseCode.slice(0, elseIndex))
+//
+//								if (!(thenModifiedVariables.exists(thenProgram.includes) ||
+//									elseModifiedVariables.exists(elseProgram.includes))) {
+//									val thenThenValues = filterByIndices(thenProgram.values, thenPartition)
+//									val elseThenValues = filterByIndices(elseProgram.values, thenPartition)
+//									val thenElseValues = filterByIndices(thenProgram.values, elsePartition)
+//									val elseElseValues = filterByIndices(elseProgram.values, elsePartition)
+//
+//									if (thenThenValues == elseThenValues) {
+//										// Else is the more general solution
+//										println(s"${thenProgram.code} <- ${elseProgram.code}")
+//										thenCode(thenIndex).asInstanceOf[SingleAssignment].program = elseProgram
+//									} else if (thenElseValues == elseElseValues) {
+//										// Then is the more general solution
+//										println(s"${elseProgram.code} <- ${thenProgram.code}")
+//										elseCode(elseIndex).asInstanceOf[SingleAssignment].program = thenProgram
+//									}
+//								}
+//							case None => ()
+//						}
+//					case _ => ()
+//				}
+//			}
 
 			// Now take out common prefixes,...
 			while (thenCode.nonEmpty && elseCode.nonEmpty && thenCode.head.code() == elseCode.head.code()) {

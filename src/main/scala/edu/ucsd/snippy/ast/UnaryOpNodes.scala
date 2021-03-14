@@ -152,40 +152,27 @@ case class IsAlpha(arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
 
 	override def make(x: ASTNode): UnaryOpNode[Boolean] = IsAlpha(x.asInstanceOf[StringNode])
 
-	override def updateValues(contexts: Contexts): IsAlpha = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
+	override def updateValues(contexts: Contexts): IsAlpha = copy(arg.updateValues(contexts))
 }
 
-case class IntSet(arg: ListNode[Int]) extends UnaryOpNode[Iterable[Int]] with ListNode[Int]
-{
-	override lazy val code: String = "set(" + arg.parensIfNeeded + ")"
 
-	override def doOp(x: Any): Option[Iterable[Int]] = x match {
-		case arg: List[Int] => Some(arg.distinct)
-		case _ => wrongType(x)
-	}
-
-	override def make(x: ASTNode): UnaryOpNode[Iterable[Int]] = IntSet(x.asInstanceOf[ListNode[Int]])
-
-	override def updateValues(contexts: Contexts): IntSet = copy(arg.updateValues(contexts).asInstanceOf[ListNode[Int]])
-
-	override val childType: Types = arg.childType
-}
-
-case class StringSet(arg: ListNode[String]) extends UnaryOpNode[Iterable[String]] with ListNode[String]
-{
-	override lazy val code: String = "set(" + arg.parensIfNeeded + ")"
-
-	override def doOp(x: Any): Option[Iterable[String]] = x match {
-		case arg: List[String] => Some(arg.distinct)
-		case _ => wrongType(x)
-	}
-
-	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] = StringSet(x.asInstanceOf[ListNode[String]])
-
-	override def updateValues(contexts: Contexts): StringSet = copy(arg.updateValues(contexts).asInstanceOf[ListNode[String]])
-
-	override val childType: Types = arg.childType
-}
+// TODO This is incorrect, since (a) set in Python returns a Set node not List, and (b) we can't
+//   guarantee what order the values will be in either, so a simple list(set()) won't fix it.
+//case class UniqueList[T](arg: ListNode[T]) extends UnaryOpNode[Iterable[T]] with ListNode[T]
+//{
+//	override val childType: Types = arg.childType
+//	override protected val parenless: Boolean = true
+//	override lazy val code: String = s"set(${arg.code})"
+//
+//	override def doOp(x: Any): Option[Iterable[T]] = x match {
+//		case arg: List[T] => Some(arg.distinct)
+//		case _ => wrongType(x)
+//	}
+//
+//	override def make(x: ASTNode): UnaryOpNode[Iterable[T]] = UniqueList[T](x.asInstanceOf[ListNode[T]])
+//
+//	override def updateValues(contexts: Contexts): UniqueList[T] = copy(arg.updateValues(contexts))
+//}
 
 case class Capitalize(arg: StringNode) extends UnaryOpNode[String] with StringNode
 {
