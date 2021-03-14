@@ -406,6 +406,21 @@ object VocabFactory
 							children(1).asInstanceOf[IntNode],
 							children(2).asInstanceOf[IntNode])
 				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 3
+					override val childTypes: List[Types] = List(Types.IntList, Types.Int, Types.Int)
+					override val returnType: Types = Types.IntList
+					override val nodeType: Class[_ <: ASTNode] = classOf[IntTernarySubList]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						IntTernarySubList(
+							children.head.asInstanceOf[ListNode[Int]],
+							children(1).asInstanceOf[IntNode],
+							children(2).asInstanceOf[IntNode])
+				},
+
 
 				new BasicVocabMaker
 				{
@@ -461,6 +476,28 @@ object VocabFactory
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						StringListAppend(children.head.asInstanceOf[ListNode[String]], children.tail.head.asInstanceOf[StringNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.StringList, Types.Int)
+					override val returnType: Types = Types.StringList
+					override val nodeType: Class[_ <: ASTNode] = classOf[StringListStep]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						StringListStep(children.head.asInstanceOf[ListNode[String]], children.tail.head.asInstanceOf[IntNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.IntList, Types.Int)
+					override val returnType: Types = Types.IntList
+					override val nodeType: Class[_ <: ASTNode] = classOf[IntListStep]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						IntListStep(children.head.asInstanceOf[ListNode[Int]], children.tail.head.asInstanceOf[IntNode])
 				},
 				new BasicVocabMaker
 				{

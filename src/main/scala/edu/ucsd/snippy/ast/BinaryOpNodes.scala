@@ -404,6 +404,56 @@ case class StringStep(lhs: StringNode, rhs: IntNode) extends BinaryOpNode[String
 	override def updateValues(contexts: Contexts): StringStep = copy( lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
+case class StringListStep(lhs: ListNode[String], rhs: IntNode) extends BinaryOpNode[Iterable[String]] with ListNode[String]
+{
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + "[::" + rhs.code + "]"
+
+	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
+		case (_, _: 0) => None
+		case (str: List[String], step: Int) =>
+			var rs = List[String]()
+			var idx = if (step > 0) 0 else str.length - 1
+			while (idx >= 0 && idx < str.length) {
+				rs = rs :+ str(idx)
+				idx += step
+			}
+			Some(rs)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] = StringListStep(l.asInstanceOf[ListNode[String]], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): StringListStep = copy( lhs.updateValues(contexts), rhs.updateValues(contexts))
+
+	override val childType: Types = lhs.childType
+}
+
+case class IntListStep(lhs: ListNode[Int], rhs: IntNode) extends BinaryOpNode[Iterable[Int]] with ListNode[Int]
+{
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + "[::" + rhs.code + "]"
+
+	override def doOp(l: Any, r: Any): Option[Iterable[Int]] = (l, r) match {
+		case (_, _: 0) => None
+		case (str: List[Int], step: Int) =>
+			var rs = List[Int]()
+			var idx = if (step > 0) 0 else str.length - 1
+			while (idx >= 0 && idx < str.length) {
+				rs = rs :+ str(idx)
+				idx += step
+			}
+			Some(rs)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[Int]] = IntListStep(l.asInstanceOf[ListNode[Int]], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): IntListStep = copy( lhs.updateValues(contexts), rhs.updateValues(contexts))
+
+	override val childType: Types = lhs.childType
+}
+
 abstract sealed class ListLookup[T](lhs: ListNode[T], rhs: IntNode) extends BinaryOpNode[T]
 {
 	override protected val parenless: Boolean = true
