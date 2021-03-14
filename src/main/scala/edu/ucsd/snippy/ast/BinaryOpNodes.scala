@@ -515,21 +515,21 @@ case class IntListContains(lhs: ASTNode, rhs: ListNode[Int]) extends BinaryOpNod
 	override def updateValues(contexts: Contexts): IntListContains = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
-case class ListConcat[T](lhs: ListNode[T], rhs: ListNode[T]) extends BinaryOpNode[Iterable[T]] with ListNode[T]
+case class ListConcat(lhs: ListNode[String], rhs: ListNode[String]) extends BinaryOpNode[Iterable[String]] with ListNode[String]
 {
 	override val childType: Types = lhs.childType
 	override val code: String = s"${lhs.parensIfNeeded} + ${rhs.parensIfNeeded}"
 	override protected val parenless: Boolean = false
 
-	override def doOp(l: Any, r: Any): Option[Iterable[T]] = (l, r) match {
-		case (l: List[T], r: List[T]) => Some(l ++ r)
+	override def doOp(l: Any, r: Any): Option[Iterable[String]] = (l, r) match {
+		case (l: List[String], r: List[String]) => Some(l ++ r)
 		case _ => wrongType(l, r)
 	}
 
-	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[T]] =
-		ListConcat[T](l.asInstanceOf[ListNode[T]], r.asInstanceOf[ListNode[T]])
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[String]] =
+		ListConcat(l.asInstanceOf[ListNode[String]], r.asInstanceOf[ListNode[String]])
 
-	override def updateValues(contexts: Contexts): ListNode[T] =
+	override def updateValues(contexts: Contexts): ListNode[String] =
 		copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
