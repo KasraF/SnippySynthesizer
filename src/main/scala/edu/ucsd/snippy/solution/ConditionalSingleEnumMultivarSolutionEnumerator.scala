@@ -1,5 +1,5 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolNode, Types}
+import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, StringVariable, Types}
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, ProbEnumerator}
 import edu.ucsd.snippy.predicates.MultilineMultivariablePredicate
@@ -15,7 +15,13 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 	literals: Iterable[String]) extends SolutionEnumerator
 {
 	val partitions = getBinaryPartitions(predicate.graphStart.state.indices.toList)
-	val conditionals = this.partitions.map(_ => new CondStore)
+	val conditionals = this.partitions.map(part => {
+		val rs = new CondStore
+		if (part._2.isEmpty) {
+			rs.cond = Some(BoolLiteral(true, part._1.size))
+		}
+		rs
+	})
 	val graph: Node = Node.convert(predicate.graphStart, partitions, variables, literals)
 	var solution: Option[Assignment] = None
 
@@ -56,7 +62,7 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 	}
 }
 
-case class Variable(typ: Types, name: String)
+case class Variable(name: String, typ: Types)
 
 class CondStore {
 	var cond: Option[BoolNode] = None
@@ -76,8 +82,61 @@ case class Edge(
 	variables: Map[Variable, List[CondProgStore]])
 
 object Node {
+	def createProgStore(
+		prevEnvs: List[Map[String, Any]],
+		envs: List[Map[String, Any]],
+		variable: Variable,
+		partition: (Set[Int], Set[Int])): CondProgStore = {
+		val values = envs.map(_(variable.name))
+		val rs = CondProgStore(
+			new ProgStore(partition._1, filterByIndices(values, partition._1)),
+			new ProgStore(partition._2, filterByIndices(values, partition._2)))
+
+		// If the else case is empty, we can set it to any program, and it will be removed in post-
+		// processing
+		if (partition._2.isEmpty) {
+			rs.elseCase.program = Some(BoolLiteral(true, partition._1.size))
+		}
+
+		// If the variable doesn't change between envs, assign it to itself so we can trivially
+		// remove the assignment in post.
+		val prevValues = prevEnvs.map(_.get(variable.name))
+		val thenValues = filterByIndices(prevValues, partition._1)
+		if (thenValues.forall(_.isDefined) &&
+			thenValues.map(_.get) == rs.thenCase.values) {
+			rs.thenCase.program = variable match {
+				case Variable(name, Types.Bool) => Some(BoolVariable(name, envs))
+				case Variable(name, Types.String) => Some(StringVariable(name, envs))
+				case Variable(name, Types.Int) => Some(IntVariable(name, envs))
+				case Variable(name, Types.IntList) => Some(ListVariable[Int](name, envs, Types.Int))
+				case Variable(name, Types.StringList) => Some(ListVariable[String](name, envs, Types.String))
+				case Variable(name, Types.IntIntMap) => Some(MapVariable[Int,Int](name, envs, Types.Int, Types.Int))
+				case Variable(name, Types.IntStringMap) => Some(MapVariable[Int,String](name, envs, Types.Int, Types.String))
+				case Variable(name, Types.StringIntMap) => Some(MapVariable[String,Int](name, envs, Types.String, Types.Int))
+				case Variable(name, Types.StringStringMap) => Some(MapVariable[String,String](name, envs, Types.String, Types.String))
+			}
+		}
+
+		val elseValues = filterByIndices(prevValues, partition._2)
+		if (elseValues.forall(_.isDefined) && elseValues.map(_.get) == rs.elseCase.values) {
+			rs.elseCase.program = variable match {
+				case Variable(name, Types.Bool) => Some(BoolVariable(name, envs))
+				case Variable(name, Types.String) => Some(StringVariable(name, envs))
+				case Variable(name, Types.Int) => Some(IntVariable(name, envs))
+				case Variable(name, Types.IntList) => Some(ListVariable[Int](name, envs, Types.Int))
+				case Variable(name, Types.StringList) => Some(ListVariable[String](name, envs, Types.String))
+				case Variable(name, Types.IntIntMap) => Some(MapVariable[Int,Int](name, envs, Types.Int, Types.Int))
+				case Variable(name, Types.IntStringMap) => Some(MapVariable[Int,String](name, envs, Types.Int, Types.String))
+				case Variable(name, Types.StringIntMap) => Some(MapVariable[String,Int](name, envs, Types.String, Types.Int))
+				case Variable(name, Types.StringStringMap) => Some(MapVariable[String,String](name, envs, Types.String, Types.String))
+			}
+		}
+
+		rs
+	}
+
 	def convert(
-		node: edu.ucsd.snippy.predicates.Node,
+		parent: edu.ucsd.snippy.predicates.Node,
 		partitionIndices: List[(Set[Int], Set[Int])],
 		variables: List[(String, Types)],
 		literals: Iterable[String],
@@ -85,41 +144,29 @@ object Node {
 		val enumerator = new ProbEnumerator(
 			VocabFactory(variables, literals, size),
 			new InputsValuesManager,
-			node.state,
+			parent.state,
 			false,
 			0,
 			mutable.Map[Int, mutable.ArrayBuffer[ASTNode]](),
 			mutable.Map[Int, mutable.ArrayBuffer[ASTNode]](),
 			100)
-		val n: Node = Node(enumerator, node.state, Nil, partitionIndices)
-		val edges = node.edges
+		val n: Node = Node(enumerator, parent.state, Nil, partitionIndices)
+		val edges = parent.edges
 			.map(e => e -> convert(e.child, partitionIndices, variables, literals, size))
 			.map {
 				case (edu.ucsd.snippy.predicates.SingleEdge(_, variable, outputType, _, _), child) =>
-					val newVariable = Variable(outputType, variable)
-					val stores = partitionIndices.map(idxs => {
-						val values = child.state.map(_(variable))
-						CondProgStore(
-							new ProgStore(idxs._1, filterByIndices(values, idxs._1)),
-							new ProgStore(idxs._2, filterByIndices(values, idxs._2)))
-					})
+					val newVariable = Variable(variable, outputType)
+					val stores = partitionIndices.map(indices => createProgStore(parent.state, child.state, newVariable, indices))
 					Edge(n, child, List(newVariable -> stores).toMap)
-				case (edu.ucsd.snippy.predicates.MultiEdge(programs, outputTypes, _, _), child) => {
+				case (edu.ucsd.snippy.predicates.MultiEdge(_, outputTypes, _, _), child) =>
 					val variables = outputTypes.map {
-						case (variable, outputType) => {
-							val newVariable = Variable(outputType, variable)
-							val stores = partitionIndices.map(idxs => {
-								val values = child.state.map(_(variable))
-								CondProgStore(
-									new ProgStore(idxs._1, filterByIndices(values, idxs._1)),
-									new ProgStore(idxs._2, filterByIndices(values, idxs._2)))
-							})
+						case (variable, outputType) =>
+							val newVariable = Variable(variable, outputType)
+							val stores = partitionIndices.map(idxs => createProgStore(parent.state, child.state, newVariable, idxs))
 							newVariable -> stores
-						}
 					}
 					Edge(n, child, variables)
-				}
-		}
+			}
 
 		n.edges = edges
 		n

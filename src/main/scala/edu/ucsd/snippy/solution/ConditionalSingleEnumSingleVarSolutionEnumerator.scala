@@ -1,5 +1,5 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolNode, Types}
+import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, Types}
 import edu.ucsd.snippy.enumeration.Enumerator
 import edu.ucsd.snippy.utils.{Assignment, ConditionalAssignment, SingleAssignment}
 import edu.ucsd.snippy.utils.Utils.{filterByIndices, getBinaryPartitions}
@@ -78,9 +78,9 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 }
 
 class SolutionStore(val thenVals: List[Any], val elseVals: List[Any]) {
-	var cond: Option[BoolNode] = None
+	var cond: Option[BoolNode] = if (elseVals.isEmpty) Some(BoolLiteral(true, thenVals.length)) else None
 	var thenCase: Option[ASTNode] = None
-	var elseCase: Option[ASTNode] = None
+	var elseCase: Option[ASTNode] = if (elseVals.isEmpty) Some(BoolLiteral(true, thenVals.length)) else None
 
 	@inline def isComplete(): Boolean = cond.isDefined && thenCase.isDefined && elseCase.isDefined
 }
