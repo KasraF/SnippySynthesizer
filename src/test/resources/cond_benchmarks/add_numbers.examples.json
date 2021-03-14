@@ -1,0 +1,46 @@
+{
+	"varNames": [
+		"rs",
+		"carry"
+	],
+	"previous_env": {
+		"time": 6,
+		"#": "0",
+		"fst": "[2, 2, 1]",
+		"snd": "[0, 9, 8]",
+		"rs": "[]",
+		"carry": "0",
+		"i": "0"
+	},
+	"envs": [
+		{
+			"time": 7,
+			"#": "0",
+			"fst": "[2, 2, 1]",
+			"snd": "[0, 9, 8]",
+			"rs": "[9]",
+			"carry": "0",
+			"i": "0"
+		},
+		{
+			"time": 9,
+			"#": "1",
+			"fst": "[2, 2, 1]",
+			"snd": "[0, 9, 8]",
+			"rs": "[1, 9]",
+			"carry": "1",
+			"i": "1"
+		},
+		{
+			"time": 11,
+			"#": "2",
+			"fst": "[2, 2, 1]",
+			"snd": "[0, 9, 8]",
+			"rs": "[3, 1, 9]",
+			"carry": "0",
+			"i": "2"
+		}
+	],
+	"program": "\"\"\"\nAdd Two Numbers:\n  Returns sum of the given numbers,\n  where all numbers are represented as\n  lists of their digits in order.\n  >>> task([1, 5], [1, 6]) == [3, 1]\n\"\"\"\ndef task(fst, snd):\n    rs = []\n    carry = 0\n\n    for i in range(len(fst)):\n       rs, carry = rs, carry\n \n    while fst and snd:\n        val = fst.pop() + snd.pop() + carry\n        rs = [val % 10] + rs\n        carry = val // 10\n \n    if carry:\n        rs = [carry] + rs\n \n    return rs\n \ntask([2,2,1], [0,9,8])",
+	"line_no": 13
+}

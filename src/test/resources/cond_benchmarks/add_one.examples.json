@@ -1,0 +1,46 @@
+{
+	"varNames": [
+		"rs",
+		"carry"
+	],
+	"previous_env": {
+		"time": 6,
+		"#": "0",
+		"$": "11",
+		"digits": "[1, 2, 9]",
+		"rs": "[]",
+		"carry": "1",
+		"d": "1",
+		"lineno": 12,
+		"prev_lineno": 11,
+		"next_lineno": 11
+	},
+	"envs": [
+		{
+			"time": 7,
+			"#": "0",
+			"digits": "[1, 2, 9]",
+			"rs": "[0]",
+			"carry": "1",
+			"d": "1"
+		},
+		{
+			"time": 9,
+			"#": "1",
+			"digits": "[1, 2, 9]",
+			"rs": "[3, 0]",
+			"carry": "0",
+			"d": "2"
+		},
+		{
+			"time": 11,
+			"#": "2",
+			"digits": "[1, 2, 9]",
+			"rs": "[1, 3, 0]",
+			"carry": "0",
+			"d": "9"
+		}
+	],
+	"program": "\"\"\"\nplusOne:\n   Given a non-empty array of\n   decimal digits representing a\n   non-negative integer,\n   increment one to the integer.\n   >>> task([1, 2, 3]) == [1, 2, 4]\n\"\"\"\ndef task(digits: [int]) -> [int]:\n    rs = []\n    carry = 1\n    for d in digits:\n        rs, carry = rs, carry\n\n    rs = []\n    for d in digits[::-1]:\n        val = d + carry\n        rs = [val % 10] + rs\n        carry = val // 10\n  \n    if carry:\n        rs = [carry] + rs\n  \n    return rs\n \ntask([1,2,9])",
+	"line_no": 13
+}

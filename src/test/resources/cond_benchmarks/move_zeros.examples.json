@@ -1,0 +1,44 @@
+{
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {
+		"time": 6,
+		"#": "0",
+		"inp": "[0, 0, 1, 0, 1, 2, 0, 3]",
+		"rs": "[]",
+		"i": "0"
+	},
+	"envs": [
+		{
+			"time": 7,
+			"#": "0",
+			"inp": "[0, 0, 1, 0, 1, 2, 0, 3]",
+			"rs": "[0]",
+			"i": "0"
+		},
+		{
+			"time": 9,
+			"#": "1",
+			"inp": "[0, 0, 1, 0, 1, 2, 0, 3]",
+			"rs": "[0, 0]",
+			"i": "0"
+		},
+		{
+			"time": 11,
+			"#": "2",
+			"inp": "[0, 0, 1, 0, 1, 2, 0, 3]",
+			"rs": "[1, 0, 0]",
+			"i": "1"
+		},
+		{
+			"time": 13,
+			"#": "3",
+			"inp": "[0, 0, 1, 0, 1, 2, 0, 3]",
+			"rs": "[1, 0, 0, 0]",
+			"i": "0"
+		}
+	],
+	"program": "\"\"\"\nAddition\n    Return the numeric value of\n\tthe math addition expression\n\tin the given string:\n    >>> task('1 + 2 + 3 + 4') == 10\n\"\"\"\ndef task(inp):\n    rs = []\n    for i in inp:\n        rs = rs\n    return rs\n    \n\ntask([0, 0, 1, 0, 1, 2, 0, 3])\n",
+	"line_no": 11
+}

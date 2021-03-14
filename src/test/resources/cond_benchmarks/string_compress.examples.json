@@ -1,0 +1,74 @@
+{
+	"varNames": [
+		"rs",
+		"count",
+		"last"
+	],
+	"previous_env": {
+		"time": 8,
+		"#": "0",
+		"s": "'aabccca'",
+		"rs": "''",
+		"count": "1",
+		"last": "'a'",
+		"c": "'a'"
+	},
+	"envs": [
+		{
+			"time": 9,
+			"#": "0",
+			"s": "'aabccca'",
+			"rs": "''",
+			"count": "2",
+			"last": "'a'",
+			"c": "'a'"
+		},
+		{
+			"time": 11,
+			"#": "1",
+			"s": "'aabccca'",
+			"rs": "'2a'",
+			"count": "1",
+			"last": "'b'",
+			"c": "'b'"
+		},
+		{
+			"time": 13,
+			"#": "2",
+			"s": "'aabccca'",
+			"rs": "'2a1b'",
+			"count": "1",
+			"last": "'c'",
+			"c": "'c'"
+		},
+		{
+			"time": 15,
+			"#": "3",
+			"s": "'aabccca'",
+			"rs": "'2a1b'",
+			"count": "2",
+			"last": "'c'",
+			"c": "'c'"
+		},
+		{
+			"time": 17,
+			"#": "4",
+			"s": "'aabccca'",
+			"rs": "'2a1b'",
+			"count": "3",
+			"last": "'c'",
+			"c": "'c'"
+		},
+		{
+			"time": 19,
+			"#": "5",
+			"s": "'aabccca'",
+			"rs": "'2a1b3c'",
+			"count": "1",
+			"last": "'a'",
+			"c": "'a'"
+		}
+	],
+	"program": "\"\"\"\nString Compression:\n   Implement a method for basic string\n   compression, using the count of\n   repeated characters.\n   >>> task('aabccca') == '2a1b3c1a'\n\"\"\"\ndef task(s):\n    rs = ''\n    count = 1\n    last = s[0]\n    for c in s[1:]:\n        rs, count, last = rs, count, last\n    rs += str(count) + last\n    return rs\n\ntask('aabccca')",
+	"line_no": 13
+}

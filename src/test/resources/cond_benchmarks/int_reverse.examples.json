@@ -1,0 +1,34 @@
+{
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"time": 4,
+			"#": "",
+			"x": "521",
+			"rs": "125"
+		},
+		{
+			"time": 8,
+			"#": "",
+			"x": "-13",
+			"rs": "-31"
+		},
+		{
+			"time": 12,
+			"#": "",
+			"x": "-941",
+			"rs": "-149"
+		},
+		{
+			"time": 16,
+			"#": "",
+			"x": "11",
+			"rs": "11"
+		}
+	],
+	"program": "\"\"\"\nReverse Int:\n   Return the integer value of\n   x, but with the digits in\n   reverse order.\n   >>> task(123) == 321\n   >>> task(-21) == -12\n\"\"\"\ndef task(x: int) -> int:\n    rs = 0\n    return rs\n \ntask(521)\ntask(-13)\ntask(-941)\ntask(11)",
+	"line_no": 10
+}

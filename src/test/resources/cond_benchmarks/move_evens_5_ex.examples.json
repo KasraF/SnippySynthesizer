@@ -1,0 +1,59 @@
+{
+	"varNames": [
+		"rs",
+		"split"
+	],
+	"previous_env": {
+		"time": 7,
+		"#": "0",
+		"inp": "[1, 1, 2, 4, 5]",
+		"rs": "[]",
+		"split": "0",
+		"i": "1"
+	},
+	"envs": [
+		{
+			"time": 8,
+			"#": "0",
+			"inp": "[1, 1, 2, 4, 5]",
+			"rs": "[1]",
+			"split": "1",
+			"i": "1"
+		},
+		{
+			"time": 10,
+			"#": "1",
+			"inp": "[1, 1, 2, 4, 5]",
+			"rs": "[1, 1]",
+			"split": "2",
+			"i": "1"
+		},
+		{
+			"time": 12,
+			"#": "2",
+			"inp": "[1, 1, 2, 4, 5]",
+			"rs": "[1, 1, 2]",
+			"split": "2",
+			"i": "2"
+		},
+		{
+			"time": 14,
+			"#": "3",
+			"$": "10",
+			"inp": "[1, 1, 2, 4, 5]",
+			"rs": "[1, 1, 2, 4]",
+			"split": "2",
+			"i": "4"
+		},
+		{
+			"time": 16,
+			"#": "4",
+			"inp": "[1, 1, 2, 4, 5]",
+			"rs": "[1, 1, 5, 2, 4]",
+			"split": "3",
+			"i": "5"
+		}
+	],
+	"program": "\"\"\"\nAddition\n    Return the numeric value of\n\tthe math addition expression\n\tin the given string:\n    >>> task('1 + 2 + 3 + 4') == 10\n\"\"\"\ndef task(inp):\n    rs = []\n    split = 0\n    for i in inp:\n        rs, split = rs, split\n    return rs\n    \n\ntask([1,1,2,4,5])\n",
+	"line_no": 12
+}
