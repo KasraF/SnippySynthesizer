@@ -1,6 +1,7 @@
 package edu.ucsd.snippy.ast
 
 import edu.ucsd.snippy.DebugPrints
+import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.Contexts
 
 trait UnaryOpNode[T] extends ASTNode
@@ -154,6 +155,37 @@ case class IsAlpha(arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
 	override def updateValues(contexts: Contexts): IsAlpha = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
+case class IntSet(arg: ListNode[Int]) extends UnaryOpNode[Iterable[Int]] with ListNode[Int]
+{
+	override lazy val code: String = "set(" + arg.parensIfNeeded + ")"
+
+	override def doOp(x: Any): Option[Iterable[Int]] = x match {
+		case arg: List[Int] => Some(arg.distinct)
+		case _ => wrongType(x)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[Int]] = IntSet(x.asInstanceOf[ListNode[Int]])
+
+	override def updateValues(contexts: Contexts): IntSet = copy(arg.updateValues(contexts).asInstanceOf[ListNode[Int]])
+
+	override val childType: Types = arg.childType
+}
+
+case class StringSet(arg: ListNode[String]) extends UnaryOpNode[Iterable[String]] with ListNode[String]
+{
+	override lazy val code: String = "set(" + arg.parensIfNeeded + ")"
+
+	override def doOp(x: Any): Option[Iterable[String]] = x match {
+		case arg: List[String] => Some(arg.distinct)
+		case _ => wrongType(x)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] = StringSet(x.asInstanceOf[ListNode[String]])
+
+	override def updateValues(contexts: Contexts): StringSet = copy(arg.updateValues(contexts).asInstanceOf[ListNode[String]])
+
+	override val childType: Types = arg.childType
+}
 
 case class Capitalize(arg: StringNode) extends UnaryOpNode[String] with StringNode
 {
@@ -167,20 +199,6 @@ case class Capitalize(arg: StringNode) extends UnaryOpNode[String] with StringNo
 	override def make(x: ASTNode): UnaryOpNode[String] = Capitalize(x.asInstanceOf[StringNode])
 
 	override def updateValues(contexts: Contexts): Capitalize = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
-}
-
-case class IsNumeric(arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
-{
-	override lazy val code: String = arg.parensIfNeeded + ".isnumeric()"
-
-	override def doOp(x: Any): Option[Boolean] = x match {
-		case arg: String => Some(arg.matches("\\d+"))
-		case _ => wrongType(x)
-	}
-
-	override def make(x: ASTNode): UnaryOpNode[Boolean] = IsNumeric(x.asInstanceOf[StringNode])
-
-	override def updateValues(contexts: Contexts): IsNumeric = copy(arg.updateValues(contexts).asInstanceOf[StringNode])
 }
 
 case class SortedStringList(arg: ListNode[String]) extends UnaryOpNode[Iterable[String]] with StringListNode

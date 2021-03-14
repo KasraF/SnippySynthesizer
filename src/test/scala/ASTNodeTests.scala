@@ -676,6 +676,229 @@ class ASTNodeTests extends JUnitSuite
 		}
 	}
 
+	@Test def ternarySubListNode(): Unit =
+	{
+		val lst: IntListNode = new IntListNode
+		{
+			override val values: List[Option[Iterable[Int]]] = List(1 :: 2 :: 3 :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "[-1123, 2, 1]"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): IntListNode = ???
+		}
+		var node: IntTernarySubList = IntTernarySubList(lst, IntLiteral(0, 1), IntLiteral(3, 1))
+		assertEquals(1, node.values.length)
+		assertEquals(2, node.height)
+		assertEquals(4, node.terms)
+		assertEquals(node.children.size, 3)
+
+		// [-4, -3] -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(-3, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [-4, -2] -> "a"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(-2, 1))
+		assertEquals(List(1), node.values.head.get)
+
+		// [-4, -1] -> "ab"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(-1, 1))
+		assertEquals(List(1, 2), node.values.head.get)
+
+		// [-4, 0]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(0, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [-4, 1]  -> "a"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(1, 1))
+		assertEquals(List(1), node.values.head.get)
+
+		// [-4, 2]  -> "ab"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(2, 1))
+		assertEquals(List(1, 2), node.values.head.get)
+
+		// [-4, 3]  -> "abc"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(3, 1))
+		assertEquals(List(1, 2, 3), node.values.head.get)
+
+		// [-4, 4]  -> "abc"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(-4, 1),
+			IntLiteral(4, 1))
+		assertEquals(List(1, 2, 3), node.values.head.get)
+
+		// [0, -4]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(-4, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [0, -3]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(-3, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [0, -2]  -> "a"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(-2, 1))
+		assertEquals(List(1), node.values.head.get)
+
+		// [0, -1]  -> "ab"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(-1, 1))
+		assertEquals(List(1, 2), node.values.head.get)
+
+		// [0, 0]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(0, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [0, 1]  -> "a"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(1, 1))
+		assertEquals(List(1), node.values.head.get)
+
+		// [0, 2]  -> "ab"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(2, 1))
+		assertEquals(List(1, 2), node.values.head.get)
+
+		// [0, 3]  -> "abc"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(3, 1))
+		assertEquals(List(1, 2, 3), node.values.head.get)
+
+		// [0, 4]  -> "abc"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(0, 1),
+			IntLiteral(4, 1))
+		assertEquals(List(1, 2, 3), node.values.head.get)
+
+		// [1, -4]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(-4, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [1, -3]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(-3, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [1, -2]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(-2, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [1, -1]  -> "b"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(-1, 1))
+		assertEquals(List(2), node.values.head.get)
+
+		// [1, 0]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(0, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [1, 1]  -> ""
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(1, 1))
+		assertEquals(List(), node.values.head.get)
+
+		// [1, 2]  -> "b"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(2, 1))
+		assertEquals(List(2), node.values.head.get)
+
+		// [1, 3]  -> "bc"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(3, 1))
+		assertEquals(List(2, 3), node.values.head.get)
+
+		// [1, 4]  -> "bc"
+		node = IntTernarySubList(
+			lst,
+			IntLiteral(1, 1),
+			IntLiteral(4, 1))
+		assertEquals(List(2, 3), node.values.head.get)
+
+
+		// [3, -4]  -> ""
+		// [3, -3]  -> ""
+		// [3, -2]  -> ""
+		// [3, -1]  -> ""
+		// [3, 0]  -> ""
+		// [3, 1]  -> ""
+		// [3, 2]  -> ""
+		// [3, 3]  -> ""
+		// [3, 4]  -> ""
+		for (i <- -3 to 4) {
+			node = IntTernarySubList(
+				lst,
+				IntLiteral(3, 1),
+				IntLiteral(i, 1))
+			assertEquals(List(), node.values.head.get)
+		}
+	}
 	// Quaternary Operations
 	@Test def quaternarySubstringNode(): Unit =
 	{
@@ -1323,6 +1546,36 @@ class ASTNodeTests extends JUnitSuite
 
 		val step5 = StringStep(x, IntLiteral(0, x.values.length))
 		assertEquals(None, step5.values.head)
+	}
+
+	@Test def ListStep(): Unit =
+	{
+		val x =  new StringListNode
+		{
+			override val values: List[Option[Iterable[String]]] = List("abc" :: "def" :: "ghi" :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "['abc', 'def']"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): StringListNode = ???
+		}
+		val step = StringListStep(x, IntLiteral(1, x.values.length))
+		assertEquals(List("abc", "def", "ghi"), step.values.head.get)
+
+		val step2 = StringListStep(x, IntLiteral(-1, x.values.length))
+		assertEquals(List("ghi", "def", "abc"), step2.values.map(_.get).head)
+
+		val step3 = StringListStep(x, IntLiteral(2, x.values.length))
+		assertEquals(List("abc", "ghi"), step3.values.map(_.get).head)
+
+		val step4 = StringListStep(x, IntLiteral(-2, x.values.length))
+		assertEquals(List("ghi", "abc"), step4.values.map(_.get).head)
 	}
 
 	@Test def substringListNode(): Unit = ()
