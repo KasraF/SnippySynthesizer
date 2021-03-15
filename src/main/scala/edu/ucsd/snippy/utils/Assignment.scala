@@ -1,14 +1,20 @@
 package edu.ucsd.snippy.utils
 import edu.ucsd.snippy.PostProcessor
 import edu.ucsd.snippy.ast.{ASTNode, BoolNode, NegateBool, VariableNode}
-import edu.ucsd.snippy.utils.Utils.filterByIndices
 
 sealed abstract class Assignment {
 	def code(): String
 }
 
 case class SingleAssignment(name: String, var program: ASTNode) extends Assignment {
-	override def code(): String = f"$name = ${PostProcessor.clean(program).code}"
+	override def code(): String = {
+		var rs = f"$name = ${PostProcessor.clean(program).code}"
+		val selfAssign = s"$name = $name + "
+		if (rs.startsWith(selfAssign)) {
+			rs = rs.replace(selfAssign, s"$name += ")
+		}
+		rs
+	}
 }
 
 case class BasicMultivariableAssignment(names: List[String], programs: List[ASTNode]) extends Assignment
@@ -88,7 +94,7 @@ case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase:
 				elseCode = elseCode.tail
 			}
 
-			// ...Lines arbitrarily sandwiched b/w other assignments,...
+			// ...Lines sandwiched b/w other assignments,...
 			var i = 0
 			while(i < thenCode.length) {
 				// TODO This can/should? be part of the loop above. But this whole code is hacky
@@ -96,13 +102,18 @@ case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase:
 				thenCode(i) match {
 					case SingleAssignment(name, thenProgram) => {
 						elseCode.zipWithIndex.find(a => a._1.isInstanceOf[SingleAssignment] && a._1.asInstanceOf[SingleAssignment].name == name) match {
-							case Some((SingleAssignment(_, elseProgram), j)) =>
-								val thenModifiedVariables = this.varsAssigned(thenCode.slice(0, i))
-								val elseModifiedVariables = this.varsAssigned(elseCode.slice(0, j))
-								if (!(thenModifiedVariables.exists(thenProgram.includes) ||
-									elseModifiedVariables.exists(elseProgram.includes)) &&
-									thenProgram.code == elseProgram.code) {
+							case Some((SingleAssignment(_, elseProgram), j)) if elseProgram.code == thenProgram.code =>
+								val thenVarsAssignedBefore = this.varsAssigned(thenCode.slice(0, i))
+								val elseVarsAssignedBefore = this.varsAssigned(elseCode.slice(0, j))
+
+								if (!(thenVarsAssignedBefore.exists(thenProgram.includes) ||
+									elseVarsAssignedBefore.exists(elseProgram.includes))) {
 									preCondition = preCondition :+ thenCode(i)
+									thenCode = thenCode.slice(0, i) ++ thenCode.slice(i + 1, thenCode.length)
+									elseCode = elseCode.slice(0, i) ++ elseCode.slice(i + 1, elseCode.length)
+								} else if (!(this.anyInclude(thenCode.slice(i + 1, thenCode.length), name) ||
+									this.anyInclude(elseCode.slice(j + 1, elseCode.length), name))) {
+									postCondition = postCondition :+ thenCode(i)
 									thenCode = thenCode.slice(0, i) ++ thenCode.slice(i + 1, thenCode.length)
 									elseCode = elseCode.slice(0, i) ++ elseCode.slice(i + 1, elseCode.length)
 								} else {
@@ -155,6 +166,14 @@ case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase:
 				case (pre, cond, post) => pre + "\n" + cond + "\n" + post
 			}
 		}
+	}
+
+	def anyInclude(assigns: List[Assignment], varName: String): Boolean = assigns match {
+		case Nil => false
+		case SingleAssignment(_, program) :: rest => anyInclude(rest, varName) || program.includes(varName)
+		case BasicMultivariableAssignment(_, programs) :: rest => anyInclude(rest, varName) || programs.exists(_.includes(varName))
+		case MultilineMultivariableAssignment(as) :: rest => anyInclude(as ++ rest, varName)
+		case ConditionalAssignment(_, thenCase, elseCase) :: rest => anyInclude(thenCase :: elseCase :: rest, varName)
 	}
 
 	def varsAssigned(lst: List[Assignment]): Set[String] =
