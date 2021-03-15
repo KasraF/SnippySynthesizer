@@ -3,7 +3,7 @@
 		"out"
 	],
 	"previous_env": {
-		"inp": "['start', 'starts', 'xstart', 'start 123']",
+		"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
 		"startsWith": "'start'",
 		"out": "[]"
 	},
@@ -11,30 +11,37 @@
 		{
 			"#": "0",
 			"idx": "0",
-			"inp": "['start', 'starts', 'xstart', 'start 123']",
+			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
 			"startsWith": "'start'",
 			"out": "['start']"
 		},
 		{
 			"#": "1",
 			"idx": "1",
-			"inp": "['start', 'starts', 'xstart', 'start 123']",
+			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
 			"startsWith": "'start'",
-			"out": "['start', 'starts']"
+			"out": "['start', 'startswith']"
 		},
 		{
 			"#": "2",
 			"idx": "2",
-			"inp": "['start', 'starts', 'xstart', 'start 123']",
+			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
 			"startsWith": "'start'",
-			"out": "['start', 'starts']"
+			"out": "['start', 'startswith']"
 		},
 		{
 			"#": "3",
 			"idx": "3",
-			"inp": "['start', 'starts', 'xstart', 'start 123']",
+			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
 			"startsWith": "'start'",
-			"out": "['start', 'starts', 'start 123']"
+			"out": "['start', 'startswith']"
+		},
+		{
+			"#": "4",
+			"idx": "4",
+			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
+			"startsWith": "'start'",
+			"out": "['start', 'startswith', 'start 123']"
 		}
 	]
 }
