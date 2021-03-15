@@ -449,6 +449,28 @@ object VocabFactory
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Int, Types.IntList)
+					override val returnType: Types = Types.IntList
+					override val nodeType: Class[_ <: ASTNode] = classOf[ListPrepend[Int, IntNode]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						ListPrepend[Int, IntNode](children.head.asInstanceOf[IntNode], children.tail.head.asInstanceOf[ListNode[Int]])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.String, Types.StringList)
+					override val returnType: Types = Types.StringList
+					override val nodeType: Class[_ <: ASTNode] = classOf[ListPrepend[String, StringNode]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						ListPrepend[String, StringNode](children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[ListNode[String]])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
 					override val childTypes: List[Types] = List(Types.StringList, Types.Int)
 					override val returnType: Types = Types.StringList
 					override val nodeType: Class[_ <: ASTNode] = classOf[ListStep[String]]
@@ -638,7 +660,6 @@ object VocabFactory
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						MapGet(children.head.asInstanceOf[MapNode[String,Int]], children(1).asInstanceOf[StringNode])
-
 				},
 				new BasicVocabMaker
 				{

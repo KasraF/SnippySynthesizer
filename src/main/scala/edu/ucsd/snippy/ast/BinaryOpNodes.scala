@@ -510,5 +510,22 @@ case class ListAppend[T, E <: ASTNode](lhs: ListNode[T], rhs: E) extends BinaryO
 
 	override def updateValues(contexts: Contexts): ListAppend[T, E] =
 		copy(lhs.updateValues(contexts), rhs.updateValues(contexts).asInstanceOf[E])
+}
 
+case class ListPrepend[T, E <: ASTNode](lhs: E, rhs: ListNode[T]) extends BinaryOpNode[Iterable[T]] with ListNode[T]
+{
+	override val childType: Types = rhs.childType
+	override protected val parenless: Boolean = false
+	override val code: String = s"[${lhs.code}] + ${rhs.parensIfNeeded}"
+
+	override def doOp(l: Any, r: Any): Option[Iterable[T]] = (l, r) match {
+		case (elem: T, lst: List[T]) => Some(elem :: lst)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Iterable[T]] =
+		ListPrepend[T, E](l.asInstanceOf[E], r.asInstanceOf[ListNode[T]])
+
+	override def updateValues(contexts: Contexts): ListPrepend[T, E] =
+		copy(lhs.updateValues(contexts).asInstanceOf[E], rhs.updateValues(contexts))
 }
