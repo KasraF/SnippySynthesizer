@@ -140,7 +140,17 @@ object Node {
 		partitionIndices: List[(Set[Int], Set[Int])],
 		variables: List[(String, Types)],
 		literals: Iterable[String],
-		size: Boolean = true): Node = {
+		size: Boolean = true): Node = do_convert(parent,partitionIndices,variables,literals,size,mutable.Map.empty)
+
+	private def do_convert (
+		parent: edu.ucsd.snippy.predicates.Node,
+		partitionIndices: List[(Set[Int], Set[Int])],
+		variables: List[(String, Types)],
+		literals: Iterable[String],
+		size: Boolean,
+		seen: mutable.Map[edu.ucsd.snippy.predicates.Node,Node]): Node = {
+		if (seen.contains(parent)) return seen(parent)
+
 		val enumerator = new ProbEnumerator(
 			VocabFactory(variables, literals, size),
 			new InputsValuesManager,
@@ -152,7 +162,9 @@ object Node {
 			100)
 		val n: Node = Node(enumerator, parent.state, Nil, partitionIndices)
 		val edges = parent.edges
-			.map(e => e -> convert(e.child, partitionIndices, variables, literals, size))
+			.map{e =>
+				e -> do_convert(e.child, partitionIndices, variables, literals, size, seen)
+			}
 			.map {
 				case (edu.ucsd.snippy.predicates.SingleEdge(_, variable, outputType, _, _), child) =>
 					val newVariable = Variable(variable, outputType)
@@ -169,6 +181,7 @@ object Node {
 			}
 
 		n.edges = edges
+		seen += parent -> n
 		n
 	}
 }
@@ -180,8 +193,22 @@ case class Node(
 	partitionIndices: List[(Set[Int], Set[Int])],
 	var onStep: ASTNode => Unit = _ => ()) {
 
+	var seen = false
+	private def reset_seen(): Unit = {
+		seen = false
+		for (edge <- edges)
+			edge.child.reset_seen()
+	}
 	def step(): Boolean = {
-		var graphChanged = false
+		reset_seen()
+		do_step()
+	}
+	private def do_step(): Boolean = {
+		if (seen)
+			false
+		else {
+			seen = true
+			var graphChanged = false
 
 		if (this.enum.hasNext) {
 			val program = this.enum.next()
@@ -217,13 +244,13 @@ case class Node(
 							}
 						}
 					}
+
+					graphChanged |= edge.child.do_step()
 				}
-
-				graphChanged |= edge.child.step()
 			}
-		}
 
-		graphChanged
+			graphChanged
+		}
 	}
 
 	def traverse(partitionIndex: Int): Option[(List[Assignment], List[Assignment])] = {

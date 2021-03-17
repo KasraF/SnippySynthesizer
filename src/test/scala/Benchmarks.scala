@@ -29,6 +29,7 @@ object Benchmarks extends App
 							println(f"[${time / 1000.0}%.3f] [$count%8d] $str")
 					}
 				} catch {
+					case e: AssertionError => throw e
 					case e: Throwable => println(e)
 				}
 
