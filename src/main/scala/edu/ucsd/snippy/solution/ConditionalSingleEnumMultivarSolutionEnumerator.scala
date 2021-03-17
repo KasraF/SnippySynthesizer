@@ -244,12 +244,12 @@ case class Node(
 							}
 						}
 					}
-
-					graphChanged |= edge.child.do_step()
+				}
+				graphChanged |= edge.child.do_step()
 				}
 			}
 
-			graphChanged
+		graphChanged
 		}
 	}
 
