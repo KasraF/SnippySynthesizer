@@ -1,9 +1,9 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, StringVariable, Types}
+import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, StringVariable, Types}
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, ProbEnumerator}
 import edu.ucsd.snippy.predicates.MultilineMultivariablePredicate
-import edu.ucsd.snippy.utils.Utils.{filterByIndices, getBinaryPartitions}
+import edu.ucsd.snippy.utils.Utils.{falseForIndices, filterByIndices, getBinaryPartitions, trueForIndices}
 import edu.ucsd.snippy.utils.{Assignment, BasicMultivariableAssignment, ConditionalAssignment, MultilineMultivariableAssignment, SingleAssignment, Utils}
 import edu.ucsd.snippy.vocab.VocabFactory
 
@@ -14,11 +14,11 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 	variables: List[(String, Types)],
 	literals: Iterable[String]) extends SolutionEnumerator
 {
-	val partitions = getBinaryPartitions(predicate.graphStart.state.indices.toList)
-	val conditionals = this.partitions.map(part => {
+	val partitions: List[(Set[Int], Set[Int])] = getBinaryPartitions(predicate.graphStart.state.indices.toList)
+	val conditionals: List[CondStore] = this.partitions.map(part => {
 		val rs = new CondStore
 		if (part._2.isEmpty) {
-			rs.cond = Some(BoolLiteral(true, part._1.size))
+			rs.cond = Some(BoolLiteral(value = true, part._1.size))
 		}
 		rs
 	})
@@ -26,22 +26,26 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 	var solution: Option[Assignment] = None
 
 	// Setup the conditional enum listener
-	graph.onStep = (program: ASTNode) => {
-		if (program.nodeType == Types.Bool && program.values.forall(_.isDefined)) {
-			val values: List[Boolean] = program.values.map(_.get).asInstanceOf[List[Boolean]]
-			for ((store, index) <- this.conditionals.zipWithIndex) {
+	graph.onStep = {
+		case program: BoolNode if program.values.forall(_.isDefined) =>
+			val values: List[Boolean] = program.values.map(_.get)
+			for ((store, index) <- this.conditionals.zipWithIndex.filter(_._1.cond.isEmpty)) {
 				val (thenIndices, elseIndices) = this.partitions(index)
-				if (store.cond.isEmpty &&
-					filterByIndices(values, thenIndices).forall(identity) &&
-					filterByIndices(values, elseIndices).forall(!_)) {
+				if (trueForIndices(values, thenIndices) && falseForIndices(values, elseIndices)) {
 					if (program.usesVariables) {
-						store.cond = Some(program.asInstanceOf[BoolNode])
+						store.cond = Some(program)
+					} else {
+						graph.enum.oeManager.remove(program)
+					}
+				} else if (trueForIndices(values, elseIndices) && falseForIndices(values, thenIndices)) {
+					if (program.usesVariables) {
+						store.cond = Some(NegateBool(program))
 					} else {
 						graph.enum.oeManager.remove(program)
 					}
 				}
 			}
-		}
+		case _ => ()
 	}
 
 	def step(): Unit = {
@@ -73,7 +77,7 @@ class ProgStore(val indices: Set[Int], val values: List[Any]) {
 }
 
 case class CondProgStore(thenCase: ProgStore, elseCase: ProgStore) {
-	def isComplete(): Boolean = thenCase.program.isDefined && elseCase.program.isDefined
+	def isComplete: Boolean = thenCase.program.isDefined && elseCase.program.isDefined
 }
 
 case class Edge(
@@ -95,7 +99,7 @@ object Node {
 		// If the else case is empty, we can set it to any program, and it will be removed in post-
 		// processing
 		if (partition._2.isEmpty) {
-			rs.elseCase.program = Some(BoolLiteral(true, partition._1.size))
+			rs.elseCase.program = Some(BoolLiteral(value = true, partition._1.size))
 		}
 
 		// If the variable doesn't change between envs, assign it to itself so we can trivially
@@ -258,7 +262,7 @@ case class Node(
 			Some((Nil, Nil))
 		} else {
 			for (edge <- this.edges) {
-				if (edge.variables.map(_._2(partitionIndex)).forall(_.isComplete()))
+				if (edge.variables.map(_._2(partitionIndex)).forall(_.isComplete))
 					edge.child.traverse(partitionIndex) match {
 						case None => ()
 						case Some((thenAssign, elseAssign)) =>

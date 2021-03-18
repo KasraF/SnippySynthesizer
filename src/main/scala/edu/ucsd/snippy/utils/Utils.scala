@@ -45,4 +45,9 @@ object Utils
 
 	@inline def filterByIndices[T](lst: List[T], indices: Set[Int]): List[T] =
 		lst.zipWithIndex.filter(tup => indices.contains(tup._2)).map(_._1)
+
+	@inline def trueForIndices(lst: List[Boolean], indices: Set[Int]): Boolean =
+		lst.zipWithIndex.filter { case (_, i) => indices.contains(i) }.forall(_._1)
+	@inline def falseForIndices(lst: List[Boolean], indices: Set[Int]): Boolean =
+		lst.zipWithIndex.filter { case (_, i) => indices.contains(i) }.forall(!_._1)
 }

@@ -1,5 +1,5 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, Types}
+import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, NegateBool, Types}
 import edu.ucsd.snippy.enumeration.Enumerator
 import edu.ucsd.snippy.utils.{Assignment, ConditionalAssignment, SingleAssignment}
 import edu.ucsd.snippy.utils.Utils.{filterByIndices, getBinaryPartitions}
@@ -25,18 +25,35 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 
 			if (store.cond.isEmpty &&
 				program.nodeType == Types.Bool &&
-				program.values.forall(_.isDefined) &&
-				program.values.asInstanceOf[List[Option[Boolean]]]
+				program.values.forall(_.isDefined)) {
+
+				if (program.values.asInstanceOf[List[Option[Boolean]]]
+					.map(_.get)
 					.zipWithIndex
 					.forall(tup =>
-						(thenPart.contains(tup._2) && tup._1.get) ||
-						(elsePart.contains(tup._2) && !tup._1.get)))
-			{
-				if (program.usesVariables) {
-					store.cond = Some(program.asInstanceOf[BoolNode])
-					updated = true
-				} else {
-					enumerator.oeManager.remove(program)
+						(thenPart.contains(tup._2) && tup._1) ||
+							(elsePart.contains(tup._2) && !tup._1)))
+				{
+					// Is the correct condition for the `true` case
+					if (program.usesVariables) {
+						store.cond = Some(program.asInstanceOf[BoolNode])
+						updated = true
+					} else {
+						enumerator.oeManager.remove(program)
+					}
+				} else if (program.values.asInstanceOf[List[Option[Boolean]]]
+					.zipWithIndex
+					.forall(tup =>
+						(thenPart.contains(tup._2) && !tup._1.get) ||
+							(elsePart.contains(tup._2) && tup._1.get)))
+				{
+					// Is the correct condition for the `false` case, so invert it!
+					if (program.usesVariables) {
+						store.cond = Some(NegateBool(program.asInstanceOf[BoolNode]))
+						updated = true
+					} else {
+						enumerator.oeManager.remove(program)
+					}
 				}
 			}
 
