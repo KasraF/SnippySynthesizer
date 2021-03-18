@@ -32,8 +32,20 @@ case class MultilineMultivariableAssignment(assignments: List[Assignment]) exten
 	override def code(): String = assignments.map(_.code).mkString("\n")
 }
 
-case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase: Assignment) extends Assignment
+case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, var elseCase: Assignment) extends Assignment
 {
+	// PostProcessor handles double negation
+	PostProcessor.clean(cond) match {
+		case NegateBool(inner) =>
+			// Flip the if-condition
+			cond = inner
+			val tmp = elseCase
+			elseCase = thenCase
+			thenCase = tmp
+		case cleanCond =>
+			cond = cleanCond.asInstanceOf[BoolNode]
+	}
+
 	override def code(): String = {
 		// Cleanup!
 
@@ -44,8 +56,6 @@ case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase:
 			this.flatten(elseCase).filter(deadCodeFilter).map(_.code()).mkString("\n")
 		} else {
 			// TODO This cleanup code is (a) very ugly and (b) not well tested
-			val thenPartition: Set[Int] = cond.values.zipWithIndex.filter(_._1.get).map(_._2).toSet
-			val elsePartition: Set[Int] = cond.values.zipWithIndex.filter(!_._1.get).map(_._2).toSet
 
 			var preCondition: List[Assignment] = List()
 			var thenCode: List[Assignment] = this.flatten(thenCase)
@@ -55,6 +65,9 @@ case class ConditionalAssignment(cond: BoolNode, thenCase: Assignment, elseCase:
 			// First, check if one branch is the more general solution. If so, use the general one for both cases.
 			// TODO This is SO incorrect... :/
 			// see move_zeros_count.examples.json
+//			val thenPartition: Set[Int] = cond.values.zipWithIndex.filter(_._1.get).map(_._2).toSet
+//			val elsePartition: Set[Int] = cond.values.zipWithIndex.filter(!_._1.get).map(_._2).toSet
+
 //			for ((thenAssignment, thenIndex) <- thenCode.zipWithIndex) {
 //				thenAssignment match {
 //					case SingleAssignment(name, thenProgram) =>

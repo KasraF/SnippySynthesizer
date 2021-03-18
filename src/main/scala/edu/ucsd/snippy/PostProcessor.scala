@@ -50,6 +50,9 @@ object PostProcessor
 				case (a: StringLiteral, b: StringLiteral) => StringLiteral(a.value + b.value, a.values.length)
 				case _ => StringConcat(lhs, rhs)
 			}
+		case NegateBool(NegateBool(inner)) =>
+			// Double negation!
+			clean(inner)
 		case uni: UnaryOpNode[_] =>
 			val arg = clean(uni.arg)
 			uni.make(arg)

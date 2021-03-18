@@ -248,15 +248,19 @@ case class NegateInt(arg: IntNode) extends UnaryOpNode[Int] with IntNode
 
 case class NegateBool(arg: BoolNode) extends UnaryOpNode[Boolean] with BoolNode
 {
-	override lazy val code: String = "not " + arg.parensIfNeeded
+	override lazy val code: String = arg match {
+		case Contains(lhs, rhs) => s"${lhs.parensIfNeeded} not in ${rhs.parensIfNeeded}"
+		case ListContains(lhs, rhs) =>s"${lhs.parensIfNeeded} not in ${rhs.parensIfNeeded}"
+		case _ => s"not ${arg.parensIfNeeded}"
+	}
 	override val parenless: Boolean = false
 
 	override def doOp(x: Any): Option[Boolean] = x match {
 		case x: Boolean => Some(!x)
-		case _ =>wrongType(x)
+		case _ => wrongType(x)
 	}
 
 	override def make(x: ASTNode): UnaryOpNode[Boolean] = NegateBool(x.asInstanceOf[BoolNode])
 
-	override def updateValues(contexts: Contexts): NegateBool = copy(arg.updateValues(contexts).asInstanceOf[BoolNode])
+	override def updateValues(contexts: Contexts): NegateBool = copy(arg.updateValues(contexts))
 }
