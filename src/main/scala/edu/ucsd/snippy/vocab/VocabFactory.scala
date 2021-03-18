@@ -236,17 +236,6 @@ object VocabFactory
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.Int, Types.IntList)
-					override val returnType: Types = Types.Bool
-					override val nodeType: Class[_ <: ASTNode] = classOf[IntContains]
-					override val head: String = ""
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						IntContains(children.head.asInstanceOf[IntNode], children.tail.head.asInstanceOf[ListNode[Int]])
-				},
-				new BasicVocabMaker
-				{
-					override val arity: Int = 2
 					override val childTypes: List[Types] = List(Types.String, Types.String)
 					override val returnType: Types = Types.Int
 					override val nodeType: Class[_ <: ASTNode] = classOf[Count]
