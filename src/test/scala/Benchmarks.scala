@@ -15,24 +15,26 @@ object Benchmarks extends App
 				val file = benchmark._1
 				val index = benchmark._2 + 1
 				val name: String = file.getName.substring(0, file.getName.indexOf('.'))
-				print(f"($index%2d)  [$name%22s] ")
+				var printStr: String = f"($index%2d)  [$name%22s] "
 
 				try {
 					Snippy.synthesize(file, timeout) match {
-						case (None, time: Int, count: Int) => println(f"[${time / 1000.0}%.3f] [$count%8d] Timeout") // println(f"[$count%d] Timeout")
+						case (None, time: Int, count: Int) => printStr += f"[${time / 1000.0}%.3f] [$count%8d] Timeout"
 						case (Some(program: String), time: Int, count: Int) =>
+							printStr += f"[${time / 1000.0}%.3f] [$count%8d] "
 							val str = if (program.contains('\n')) {
-								program.split('\n').mkString('\n' + " ".repeat(50))
+								program.split('\n').mkString('\n' + " ".repeat(printStr.length))
 							} else {
 								program
 							}
-							println(f"[${time / 1000.0}%.3f] [$count%8d] $str")
+							printStr += str
 					}
 				} catch {
 					case e: AssertionError => throw e
-					case e: Throwable => println(e)
+					case e: Throwable => printStr += e
 				}
 
+				println(printStr)
 				Runtime.getRuntime.gc()
 			})
 	}
