@@ -87,8 +87,6 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 			}
 		}
 
-		DebugPrints.setNone()
-
 		// We don't support nested list comprehensions
 		val vocabs = newVarVocab ::
 			vocabFactory.leavesMakers :::

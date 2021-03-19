@@ -251,6 +251,9 @@ case class NegateBool(arg: BoolNode) extends UnaryOpNode[Boolean] with BoolNode
 	override lazy val code: String = arg match {
 		case Contains(lhs, rhs) => s"${lhs.parensIfNeeded} not in ${rhs.parensIfNeeded}"
 		case ListContains(lhs, rhs) =>s"${lhs.parensIfNeeded} not in ${rhs.parensIfNeeded}"
+		case LessThanEq(lhs, rhs) => GreaterThan(lhs, rhs).code
+		case GreaterThan(lhs, rhs) => LessThanEq(lhs, rhs).code
+		case Equals(lhs, rhs) => s"${lhs.parensIfNeeded} != ${rhs.parensIfNeeded}"
 		case _ => s"not ${arg.parensIfNeeded}"
 	}
 	override val parenless: Boolean = false

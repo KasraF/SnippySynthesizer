@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.vocab
 
-import edu.ucsd.snippy.ast.Types.Types
+import edu.ucsd.snippy.ast.Types.{IntList, Types}
 import edu.ucsd.snippy.ast.{ASTNode, BoolVariable, IntVariable, StringVariable, Types, _}
 
 class VocabFactory(
@@ -25,6 +25,7 @@ object VocabFactory
 		size: Boolean): VocabFactory =
 	{
 		val defaultStringLiterals = List(" ")
+		val defaultIntLiterals = List(-1, 0, 1, 2)
 		val stringLiterals = (defaultStringLiterals ++ additionalLiterals).distinct
 
 		val vocab: List[VocabMaker] = {
@@ -100,29 +101,8 @@ object VocabFactory
 					override def apply(children : List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						StringLiteral(str, contexts.length)
 				}
-			} ++ List(
-				new BasicVocabMaker
-				{
-					override val arity: Int = 0
-					override val childTypes: List[Types] = Nil
-					override val returnType: Types = Types.Int
-					override val nodeType: Class[_ <: ASTNode] = classOf[IntLiteral]
-					override val head: String = ""
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						IntLiteral(0, contexts.length)
-				},
-				new BasicVocabMaker
-				{
-					override val arity: Int = 0
-					override val childTypes: List[Types] = Nil
-					override val returnType: Types = Types.Int
-					override val nodeType: Class[_ <: ASTNode] = classOf[IntLiteral]
-					override val head: String = ""
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						IntLiteral(2, contexts.length)
-				},
+			} ++
+			defaultIntLiterals.map{num =>
 				new BasicVocabMaker
 				{
 					override val arity: Int = 0
@@ -132,19 +112,9 @@ object VocabFactory
 					override val head: String = ""
 
 					override def apply(children : List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						IntLiteral(1, contexts.length)
-				},
-				new BasicVocabMaker
-				{
-					override val arity: Int = 0
-					override val childTypes: List[Types] = Nil
-					override val returnType: Types = Types.Int
-					override val nodeType: Class[_ <: ASTNode] = classOf[IntLiteral]
-					override val head: String = ""
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						IntLiteral(-1, contexts.length)
-				}, // Binary Ops
+						IntLiteral(num, contexts.length)
+				}
+			} ++ List(
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
@@ -226,17 +196,6 @@ object VocabFactory
 				{
 					override val arity: Int = 2
 					override val childTypes: List[Types] = List(Types.String, Types.String)
-					override val returnType: Types = Types.Bool
-					override val nodeType: Class[_ <: ASTNode] = classOf[Contains]
-					override val head: String = ""
-
-					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						Contains(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
-				},
-				new BasicVocabMaker
-				{
-					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.String, Types.String)
 					override val returnType: Types = Types.Int
 					override val nodeType: Class[_ <: ASTNode] = classOf[Count]
 					override val head: String = ""
@@ -265,6 +224,17 @@ object VocabFactory
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						EndsWith(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.String, Types.String)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[Contains]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						Contains(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
 				},
 				new BasicVocabMaker
 				{

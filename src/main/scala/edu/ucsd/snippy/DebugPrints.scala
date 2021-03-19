@@ -5,8 +5,8 @@ import org.slf4j.{Logger, LoggerFactory}
 object DebugPrints
 {
 	val logger: Logger = LoggerFactory.getLogger(this.getClass)
-	var debug: Boolean = this.logger.isDebugEnabled
-	var info: Boolean = this.logger.isInfoEnabled
+	var debug: Boolean = false // this.logger.isDebugEnabled
+	var info: Boolean = false // this.logger.isInfoEnabled
 
 	def setNone(): Unit =
 		this.debug = false
