@@ -16,5 +16,8 @@
 			"name": "'Kasra Ferdowsi Fard'",
 			"rs": "'K.F.F'"
 		}
+	],
+	"solutions": [
+		"if name.count(\" \") > 1:\n\trs = \".\".join([var[0] for var in name.split(\" \")])"
 	]
 }

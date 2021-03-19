@@ -69,6 +69,7 @@
 			"c": "'a'"
 		}
 	],
-	"program": "\"\"\"\nString Compression:\n   Implement a method for basic string\n   compression, using the count of\n   repeated characters.\n   >>> task('aabccca') == '2a1b3c1a'\n\"\"\"\ndef task(s):\n    rs = ''\n    count = 1\n    last = s[0]\n    for c in s[1:]:\n        rs, count, last = rs, count, last\n    rs += str(count) + last\n    return rs\n\ntask('aabccca')",
-	"line_no": 13
+	"solutions": [
+		"if last in c:\n\tcount += 1\nelse:\n\trs += str(count) + last\n\tlast = c\n\tcount = len(last)"
+	]
 }

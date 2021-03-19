@@ -53,6 +53,7 @@
 			"i": "0"
 		}
 	],
-	"program": "\"\"\"\nAddition\n    Return the numeric value of\n\tthe math addition expression\n\tin the given string:\n    >>> task('1 + 2 + 3 + 4') == 10\n\"\"\"\ndef task(inp):\n    rs = []\n    count = 0\n    for i in inp:\n        rs, count = rs, count\n    return rs\n    \n\ntask([0, 0, 1, 3, 0, 2, 0, 3])\n",
-	"line_no": 12
+	"solutions": [
+		"if i > 0:\n\trs += [i]\nelse:\n\tcount += 1"
+	]
 }

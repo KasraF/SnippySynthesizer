@@ -54,6 +54,8 @@
 			"i": "5"
 		}
 	],
-	"program": "\"\"\"\nAddition\n    Return the numeric value of\n\tthe math addition expression\n\tin the given string:\n    >>> task('1 + 2 + 3 + 4') == 10\n\"\"\"\ndef task(inp):\n    rs = []\n    split = 0\n    for i in inp:\n        rs, split = rs, split\n    return rs\n    \n\ntask([1,1,2,4,5])\n",
-	"line_no": 12
+	"solutions": [
+		"if i % 2 == 1:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1\nelse:\n\trs += [i]",
+		"if 1 > i % 2:\n\trs += [i]\nelse:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1",
+	]
 }

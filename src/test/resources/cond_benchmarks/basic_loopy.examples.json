@@ -16,5 +16,8 @@
 			"name": "'Hello There'",
 			"rs": "'ht'"
 		}
+	],
+	"solutions": [
+		"if name.count(\" \") < 2:\n\trs = \"\".join([var[0] for var in name.split(\" \")]).lower()\nelse:\n\trs = \"\".join([var[0] for var in name.split(\" \")])"
 	]
 }

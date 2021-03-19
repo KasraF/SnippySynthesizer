@@ -1,6 +1,8 @@
 package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast.ASTNode
+import net.liftweb.json
+import net.liftweb.json.JObject
 
 import java.io.{BufferedWriter, FileWriter}
 import scala.concurrent.duration._
@@ -60,18 +62,31 @@ object Snippy extends App
 	case class ExpectedEOFException() extends Exception
 
 	// trace.DebugPrints.setDebug()
-	val rs = args match {
-		case Array(task) => synthesize(new JFile(task))
-		case Array(task, timeout) => synthesize(new JFile(task), timeout.toInt)
+	val (file, timeout) = args match {
+		case Array(task) => (new JFile(task), 7)
+		case Array(task, timeout) => (new JFile(task), timeout.toInt)
 	}
 
-	val (program, time, count) = rs match {
+	val (program, time, count) = synthesize(file, timeout) match {
 		case (None, time, count) => ("None", time, count)
 		case (Some(program), time, count) => (program, time, count)
 	}
 
 	val writer = new BufferedWriter(new FileWriter(args.head + ".out"))
 	writer.write(program)
-	println(f"[$count%d] [${time / 1000.0}%1.3f] $program")
 	writer.close()
+
+	// Check if the task has a solution!
+	val task = json.parse(fromFile(file).mkString).asInstanceOf[JObject].values
+
+	if (task.contains("solutions") && task("solutions").asInstanceOf[List[String]].nonEmpty) {
+		val solutions = task("solutions").asInstanceOf[List[String]]
+		if (solutions.contains(program)) {
+			println(f"[+] [$count%d] [${time / 1000.0}%1.3f]\n$program")
+		} else {
+			println(f"[-] [$count%d] [${time / 1000.0}%1.3f]\n$program\n---\n${solutions.head}")
+		}
+	} else {
+		println(f"[?] [$count%d] [${time / 1000.0}%1.3f]\n$program")
+	}
 }
