@@ -25,5 +25,8 @@
 			"x": "2",
 			"y": "4"
 		}
+	],
+	"solutions": [
+		"if x > 0:\n\ty = x + y\nelse:\n\ty = y - x\nx += 1"
 	]
 }

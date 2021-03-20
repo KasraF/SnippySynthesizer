@@ -52,6 +52,7 @@
 			"i": "1"
 		}
 	],
-	"program": "\"\"\"\nPartition:\n   Partition the given list around the\n   given pivot, such that all values\n   smaller than the pivot come before\n   all values equal or greater.\n   \n   >>> task([3, 5, 4, 2, 1], 3) ==\n       [1, 2, 5, 3, 4]\n\"\"\"\ndef task(lst, pivot):\n    rs = []\n    for i in lst:\n        rs = rs\n    return rs\n \ntask([5,3,4,2,1], 3)",
-	"line_no": 14
+	"solutions": [
+		"if pivot > i:\n\trs = [i] + rs\nelse:\n\trs += [i]"
+	]
 }

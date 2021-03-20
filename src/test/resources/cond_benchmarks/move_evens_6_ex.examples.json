@@ -1,1 +1,96 @@
-{"varNames":["rs","split"],"previous_env":{"time":7,"#":"0","$":"10","inp":"[2, 3, 1, 2, 4, 5]","rs":"[]","split":"0","i":"2","lineno":11,"prev_lineno":10,"next_lineno":10},"envs":[{"time":8,"#":"0","$":"10","inp":"[2, 3, 1, 2, 4, 5]","rs":"[2]","split":"0","i":"2","lineno":10,"prev_lineno":11,"next_lineno":11},{"time":10,"#":"1","$":"10","inp":"[2, 3, 1, 2, 4, 5]","rs":"[3, 2]","split":"1","i":"3","lineno":10,"prev_lineno":11,"next_lineno":11},{"time":12,"#":"2","$":"10","inp":"[2, 3, 1, 2, 4, 5]","rs":"[3, 1, 2]","split":"2","i":"1","lineno":10,"prev_lineno":11,"next_lineno":11},{"time":14,"#":"3","$":"10","inp":"[2, 3, 1, 2, 4, 5]","rs":"[3, 1, 2, 2]","split":"2","i":"2","lineno":10,"prev_lineno":11,"next_lineno":11},{"time":16,"#":"4","$":"10","inp":"[2, 3, 1, 2, 4, 5]","rs":"[3, 1, 2, 2, 4]","split":"2","i":"4","lineno":10,"prev_lineno":11,"next_lineno":11},{"time":18,"#":"5","$":"10","inp":"[2, 3, 1, 2, 4, 5]","rs":"[3, 1, 5, 2, 2, 4]","split":"3","i":"5","lineno":10,"prev_lineno":11,"next_lineno":12}],"program":"\"\"\"\nAddition\n    Return the numeric value of\n\tthe math addition expression\n\tin the given string:\n    >>> task('1 + 2 + 3 + 4') == 10\n\"\"\"\ndef task(inp):\n    rs = []\n    split = 0\n    for i in inp:\n        rs, split = rs, split\n    return rs\n    \n\ntask([2,3,1,2,4,5])\n","line_no":12}
+{
+	"varNames": [
+		"rs",
+		"split"
+	],
+	"previous_env": {
+		"time": 7,
+		"#": "0",
+		"$": "10",
+		"inp": "[2, 3, 1, 2, 4, 5]",
+		"rs": "[]",
+		"split": "0",
+		"i": "2",
+		"lineno": 11,
+		"prev_lineno": 10,
+		"next_lineno": 10
+	},
+	"envs": [
+		{
+			"time": 8,
+			"#": "0",
+			"$": "10",
+			"inp": "[2, 3, 1, 2, 4, 5]",
+			"rs": "[2]",
+			"split": "0",
+			"i": "2",
+			"lineno": 10,
+			"prev_lineno": 11,
+			"next_lineno": 11
+		},
+		{
+			"time": 10,
+			"#": "1",
+			"$": "10",
+			"inp": "[2, 3, 1, 2, 4, 5]",
+			"rs": "[3, 2]",
+			"split": "1",
+			"i": "3",
+			"lineno": 10,
+			"prev_lineno": 11,
+			"next_lineno": 11
+		},
+		{
+			"time": 12,
+			"#": "2",
+			"$": "10",
+			"inp": "[2, 3, 1, 2, 4, 5]",
+			"rs": "[3, 1, 2]",
+			"split": "2",
+			"i": "1",
+			"lineno": 10,
+			"prev_lineno": 11,
+			"next_lineno": 11
+		},
+		{
+			"time": 14,
+			"#": "3",
+			"$": "10",
+			"inp": "[2, 3, 1, 2, 4, 5]",
+			"rs": "[3, 1, 2, 2]",
+			"split": "2",
+			"i": "2",
+			"lineno": 10,
+			"prev_lineno": 11,
+			"next_lineno": 11
+		},
+		{
+			"time": 16,
+			"#": "4",
+			"$": "10",
+			"inp": "[2, 3, 1, 2, 4, 5]",
+			"rs": "[3, 1, 2, 2, 4]",
+			"split": "2",
+			"i": "4",
+			"lineno": 10,
+			"prev_lineno": 11,
+			"next_lineno": 11
+		},
+		{
+			"time": 18,
+			"#": "5",
+			"$": "10",
+			"inp": "[2, 3, 1, 2, 4, 5]",
+			"rs": "[3, 1, 5, 2, 2, 4]",
+			"split": "3",
+			"i": "5",
+			"lineno": 10,
+			"prev_lineno": 11,
+			"next_lineno": 12
+		}
+	],
+	"solutions": [
+		"if 1 > i % 2:\n\trs += [i]\nelse:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1",
+		"if i % 2 == 1:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1\nelse:\n\trs += [i]"
+	]
+}

@@ -3,6 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast.ASTNode
 import net.liftweb.json
 import net.liftweb.json.Formats
+import net.liftweb.json.JObject
 
 import java.io.File
 import scala.concurrent.duration._
@@ -11,6 +12,8 @@ import scala.io.StdIn
 import scala.sys.process.stderr
 import scala.tools.nsc.io.JFile
 import scala.util.control.Breaks._
+import java.io.BufferedWriter
+import java.io.FileWriter
 
 class SynthResult(
 	val id: Int,
@@ -123,14 +126,32 @@ object Snippy extends App
 				stderr.println(e.toString)
 		}
 	} else {
-		val solution = args.toList match {
-			case file :: timeout :: _ => synthesize(new JFile(file), timeout.toInt)
-			case file :: _ => synthesize(new JFile(file))
+		val (file, timeout) = args match {
+			case Array(task) => (new JFile(task), 7)
+			case Array(task, timeout) => (new JFile(task), timeout.toInt)
 		}
 
-		solution match {
-			case (Some(solution), time, count) => println(s"[$time] [$count] $solution")
-			case (None, time, count) =>  println(s"[$time] [$count] None")
+		val (program, time, count) = synthesize(file, timeout) match {
+			case (None, time, count) => ("None", time, count)
+			case (Some(program), time, count) => (program, time, count)
+		}
+
+		val writer = new BufferedWriter(new FileWriter(args.head + ".out"))
+		writer.write(program)
+		writer.close()
+
+		// Check if the task has a solution!
+		val task = json.parse(fromFile(file).mkString).asInstanceOf[JObject].values
+
+		if (task.contains("solutions") && task("solutions").asInstanceOf[List[String]].nonEmpty) {
+			val solutions = task("solutions").asInstanceOf[List[String]]
+			if (solutions.contains(program)) {
+				println(f"[+] [$count%d] [${time / 1000.0}%1.3f]\n$program")
+			} else {
+				println(f"[-] [$count%d] [${time / 1000.0}%1.3f]\n$program\n---\n${solutions.head}")
+			}
+		} else {
+			println(f"[?] [$count%d] [${time / 1000.0}%1.3f]\n$program")
 		}
 	}
 }

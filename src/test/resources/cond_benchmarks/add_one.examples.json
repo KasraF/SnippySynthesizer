@@ -41,6 +41,7 @@
 			"d": "9"
 		}
 	],
-	"program": "\"\"\"\nplusOne:\n   Given a non-empty array of\n   decimal digits representing a\n   non-negative integer,\n   increment one to the integer.\n   >>> task([1, 2, 3]) == [1, 2, 4]\n\"\"\"\ndef task(digits: [int]) -> [int]:\n    rs = []\n    carry = 1\n    for d in digits:\n        rs, carry = rs, carry\n\n    rs = []\n    for d in digits[::-1]:\n        val = d + carry\n        rs = [val % 10] + rs\n        carry = val // 10\n  \n    if carry:\n        rs = [carry] + rs\n  \n    return rs\n \ntask([1,2,9])",
-	"line_no": 13
+	"solutions": [
+		"rs = [(d + carry) % 10] + rs\ncarry = (d + carry) // 10"
+	]
 }
