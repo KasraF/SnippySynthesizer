@@ -4,24 +4,22 @@
 		"rev",
 		"rs"
 	],
-	"previous_env": {
-		"#": "",
-		"s": "'aaba'"
-	},
+	"previous_env": {},
 	"envs": [
 		{
-			"#": "1",
 			"s": "'aaba'",
 			"rot": "'aaab'",
 			"rev": "'baaa'",
 			"rs": "False"
 		},
 		{
-			"#": "2",
 			"s": "'aabb'",
 			"rot": "'baab'",
 			"rev": "'baab'",
 			"rs": "True"
 		}
+	],
+	"solutions": [
+		"rot = s[1:] + s[:1]\nrev = rot[::-1]\nrs = rot in rev"
 	]
 }

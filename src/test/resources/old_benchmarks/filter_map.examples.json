@@ -1,17 +1,16 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 11,
-      "#": "",
-      "$": "",
-      "inp": "'aabbcde'",
-      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
-      "rs": "{'a': 2, 'b': 2}",
-      "lineno": 3,
-      "prev_lineno": 2,
-      "next_lineno": "R3"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"inp": "'aabbcde'",
+			"counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+			"rs": "{'a': 2, 'b': 2}"
+		}
+	],
+	"solutions": [
+		"rs = {key: counts[key] for key in counts if inp.count(key) > 1}"
+	]
 }

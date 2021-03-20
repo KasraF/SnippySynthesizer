@@ -8,5 +8,8 @@
 			"y": "3",
 			"z": "4"
 		}
+	],
+	"solutions": [
+		"x = a + a\ny = a + x\nz = a + y"
 	]
 }

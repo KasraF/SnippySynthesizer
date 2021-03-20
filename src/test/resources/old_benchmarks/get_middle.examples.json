@@ -1,36 +1,23 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 1,
-      "#": "",
-      "$": "",
-      "s": "'test'",
-      "rs": "'es'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": 3
-    },
-    {
-      "time": 5,
-      "#": "",
-      "$": "",
-      "s": "'example'",
-      "rs": "'m'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": 3
-    },
-    {
-      "time": 9,
-      "#": "",
-      "$": "",
-      "s": "'testing'",
-      "rs": "'t'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": 3
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"s": "'test'",
+			"rs": "'es'"
+		},
+		{
+			"s": "'example'",
+			"rs": "'m'"
+		},
+		{
+			"s": "'testing'",
+			"rs": "'t'"
+		}
+	],
+	"solutions": [
+		"rs = s[(len(s) - 1) // 2:len(s) // 2 + 1]"
+	]
 }

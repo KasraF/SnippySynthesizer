@@ -3,14 +3,11 @@
 	"previous_env": {},
 	"envs": [
 		{
-			"time": 10,
-			"#": "",
-			"$": "",
 			"name": "'Sorin Lerner'",
-			"abbr": "'s.l'",
-			"lineno": 3,
-			"prev_lineno": 2,
-			"next_lineno": "R3"
+			"abbr": "'s.l'"
 		}
+	],
+	"solutions": [
+		"abbr = \".\".join([var[0] for var in name.split(\" \")]).lower()"
 	]
 }

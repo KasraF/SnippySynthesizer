@@ -1,28 +1,18 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 2,
-      "#": "",
-      "$": "",
-      "s": "'abracadabra'",
-      "vowels": "'aeiouAEIOU'",
-      "rs": "5",
-      "lineno": 3,
-      "prev_lineno": 2,
-      "next_lineno": "R3"
-    },
-    {
-      "time": 6,
-      "#": "",
-      "$": "",
-      "s": "'Nadia Polikarpova'",
-      "vowels": "'aeiouAEIOU'",
-      "rs": "8",
-      "lineno": 3,
-      "prev_lineno": 2,
-      "next_lineno": "R3"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"s": "'abracadabra'",
+			"vowels": "'aeiouAEIOU'",
+			"rs": "5"
+		},
+		{
+			"s": "'Nadia Polikarpova'",
+			"vowels": "'aeiouAEIOU'",
+			"rs": "8"
+		}
+	]
 }

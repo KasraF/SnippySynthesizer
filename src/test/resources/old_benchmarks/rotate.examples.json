@@ -1,28 +1,21 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 1,
-      "#": "",
-      "$": "",
-      "s": "'abcd'",
-      "count": "1",
-      "rs": "'dabc'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": "R2"
-    },
-    {
-      "time": 4,
-      "#": "",
-      "$": "",
-      "s": "'abcd'",
-      "count": "2",
-      "rs": "'cdab'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": "R2"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"s": "'abcd'",
+			"count": "1",
+			"rs": "'dabc'"
+		},
+		{
+			"s": "'abcd'",
+			"count": "2",
+			"rs": "'cdab'"
+		}
+	],
+	"solutions": [
+		"rs = s[:count] + s[count:]"
+	]
 }
