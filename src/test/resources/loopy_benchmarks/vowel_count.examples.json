@@ -3,11 +3,9 @@
 		"count"
 	],
 	"previous_env": {
-		"#": "",
 		"s": "'aaeeeio'",
 		"vowels": "'aeiouAEIOU'",
-		"count": "0",
-		"v": "''"
+		"count": "0"
 	},
 	"envs": [
 		{
@@ -38,5 +36,8 @@
 			"count": "7",
 			"v": "'o'"
 		}
+	],
+	"solutions": [
+		"count += s.count(v)"
 	]
 }

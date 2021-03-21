@@ -1,16 +1,15 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 1,
-      "#": "",
-      "$": "",
-      "inp": "'aabbcde'",
-      "rs": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": "R2"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"inp": "'aabbcde'",
+			"rs": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}"
+		}
+	],
+	"solutions": [
+		"rs = {var: inp.count(var) for var in inp}"
+	]
 }

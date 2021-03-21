@@ -1,12 +1,12 @@
 {
-	"varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "#": "",
-      "$": "",
-      "inp": "'coding'",
-      "rs": "{'c': 'CCC', 'o': 'OOO', 'd': 'DDD', 'i': 'III', 'n': 'NNN', 'g': 'GGG'}"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"inp": "'coding'",
+			"rs": "{'c': 'CCC', 'o': 'OOO', 'd': 'DDD', 'i': 'III', 'n': 'NNN', 'g': 'GGG'}"
+		}
+	]
 }

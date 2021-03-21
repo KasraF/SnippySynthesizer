@@ -4,57 +4,34 @@
 		"y"
 	],
 	"previous_env": {
-		"time": 4,
-		"#": "0",
 		"$": "2",
 		"x": "1",
-		"y": "1",
-		"lineno": 3,
-		"prev_lineno": 2,
-		"next_lineno": 2
+		"y": "1"
 	},
 	"envs": [
 		{
-			"time": 5,
 			"#": "0",
-			"$": "2",
 			"x": "2",
-			"y": "1",
-			"lineno": 2,
-			"prev_lineno": 3,
-			"next_lineno": 3
+			"y": "1"
 		},
 		{
-			"time": 7,
 			"#": "1",
-			"$": "2",
 			"x": "3",
-			"y": "2",
-			"lineno": 2,
-			"prev_lineno": 3,
-			"next_lineno": 3
+			"y": "2"
 		},
 		{
-			"time": 9,
 			"#": "2",
-			"$": "2",
 			"x": "5",
-			"y": "3",
-			"lineno": 2,
-			"prev_lineno": 3,
-			"next_lineno": 3
+			"y": "3"
 		},
 		{
-			"time": 9,
 			"#": "3",
-			"$": "2",
 			"x": "8",
-			"y": "5",
-			"lineno": 2,
-			"prev_lineno": 3,
-			"next_lineno": 3
+			"y": "5"
 		}
 	],
-	"program": "def f():\n    x = y = 1\n    for i in range(5):\n        x, y = x, y\nf()",
-	"line_no": 4
+	"solutions": [
+		"y, x = x, x + y",
+		"x, y = x + y, x"
+	]
 }

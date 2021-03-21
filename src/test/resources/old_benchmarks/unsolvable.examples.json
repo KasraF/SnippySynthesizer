@@ -1,26 +1,16 @@
 {
-  "varNames": ["mult"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 12,
-      "#": "",
-      "$": "",
-      "inp": "'abc'",
-      "mult": "2",
-      "lineno": 12,
-      "prev_lineno": 11,
-      "next_lineno": 13
-    },
-    {
-      "time": 12,
-      "#": "",
-      "$": "",
-      "inp": "'abc'",
-      "mult": "3",
-      "lineno": 12,
-      "prev_lineno": 11,
-      "next_lineno": 13
-    }
-  ]
+	"varNames": [
+		"mult"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"inp": "'abc'",
+			"mult": "2"
+		},
+		{
+			"inp": "'abc'",
+			"mult": "3"
+		}
+	]
 }

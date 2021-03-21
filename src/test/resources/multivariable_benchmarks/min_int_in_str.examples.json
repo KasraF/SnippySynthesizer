@@ -12,5 +12,9 @@
 			"nums": "[-2, 1, 3, 5]",
 			"min": "-2"
 		}
+	],
+	"solutions": [
+		"nums = [int(var) for var in inp.split(\" \")]\nmin = min(nums)",
+		"nums = [int(var) for var in inp.split()]\nmin = min(nums)"
 	]
 }

@@ -12,5 +12,9 @@
 			"tmp": "'A.A.K'",
 			"abbr": "'a.a.k'"
 		}
+	],
+	"solutions": [
+		"words = name.split(\" \")\nchars = [var[0] for var in words]\ntmp = \".\".join(chars)\nabbr = tmp.lower()",
+		"words = name.split()\nchars = [var[0] for var in words]\ntmp = \".\".join(chars)\nabbr = tmp.lower()"
 	]
 }
