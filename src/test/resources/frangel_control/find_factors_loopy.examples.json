@@ -73,5 +73,9 @@
 			"inp": "9",
 			"out": "[]"
 		}
-	}
+	},
+	"solutions": [
+		"if 1 > inp % idx:\n\tout += [idx]",
+		"if 0 == inp % idx:\n\tout += [idx]"
+	]
 }

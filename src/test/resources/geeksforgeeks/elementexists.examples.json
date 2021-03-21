@@ -36,5 +36,8 @@
 		"1": {
 			"#": ""
 		}
-	}
+	},
+	"solutions": [
+		"exists = elem in inp"
+	]
 }

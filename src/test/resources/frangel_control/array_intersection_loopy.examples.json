@@ -51,5 +51,8 @@
 			"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
 			"intersect": "[]"
 		}
-	}
+	},
+	"solutions": [
+		"if inp1[idx] in inp2:\n\tintersect += [inp1[idx]]"
+	]
 }

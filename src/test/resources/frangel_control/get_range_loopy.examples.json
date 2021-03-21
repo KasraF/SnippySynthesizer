@@ -51,5 +51,8 @@
 			"end": "15",
 			"out": "[]"
 		}
-	}
+	},
+	"solutions": [
+		"out += [start + i]"
+	]
 }

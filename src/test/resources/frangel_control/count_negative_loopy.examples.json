@@ -68,5 +68,8 @@
 			"only_neg": "[]",
 			"count": "0"
 		}
-	}
+	},
+	"solutions": [
+		"if 0 > inp[idx]:\n\tonly_neg += [inp[idx]]\n\tcount = len(only_neg)"
+	]
 }

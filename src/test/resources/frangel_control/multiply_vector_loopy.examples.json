@@ -67,5 +67,8 @@
 			"n": "5",
 			"out": "[]"
 		}
-	}
+	},
+	"solutions": [
+		"out += [n * inp[idx]]"
+	]
 }

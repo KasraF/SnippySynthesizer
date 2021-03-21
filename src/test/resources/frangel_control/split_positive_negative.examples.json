@@ -60,5 +60,9 @@
 			"only_pos": "[]",
 			"only_neg": "[]"
 		}
-	}
+	},
+	"solutions": [
+		"if idx > inp[idx]:\n\tonly_neg += [inp[idx]]\nelse:\n\tonly_pos += [inp[idx]]",
+		"if 0 > inp[idx]:\n\tonly_neg += [inp[idx]]\nelse:\n\tonly_pos += [inp[idx]]"
+	]
 }

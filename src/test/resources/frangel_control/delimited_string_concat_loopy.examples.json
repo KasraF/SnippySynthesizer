@@ -22,5 +22,8 @@
 			"inp2": "'init.'",
 			"out": "''"
 		}
-	}
+	},
+	"solutions": [
+		"join = (delim + \" \").join(inp1)\nout = inp2 + join"
+	]
 }
