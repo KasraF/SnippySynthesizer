@@ -77,5 +77,8 @@
 			"unique": "['a', 'd', 'c', 'A', ' ', 'b', '123']",
 			"count": "7"
 		}
+	],
+	"solutions": [
+		"if inp[idx] not in unique:\n\tcount += 1\n\tunique += [inp[idx]]"
 	]
 }

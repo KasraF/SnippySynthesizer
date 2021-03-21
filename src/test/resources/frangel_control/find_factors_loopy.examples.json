@@ -60,5 +60,9 @@
 			"idx": "9",
 			"out": "[1, 3, 9]"
 		}
+	],
+	"solutions": [
+		"if 1 > inp % idx:\n\tout += [idx]",
+		"if 0 == inp % idx:\n\tout += [idx]"
 	]
 }

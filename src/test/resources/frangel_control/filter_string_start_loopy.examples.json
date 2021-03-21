@@ -43,5 +43,8 @@
 			"startsWith": "'start'",
 			"out": "['start', 'startswith', 'start 123']"
 		}
+	],
+	"solutions": [
+		"if inp[idx].startswith(startsWith)\n\tout += [inp[idx]]"
 	]
 }

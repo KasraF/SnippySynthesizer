@@ -66,5 +66,8 @@
 			"idx": "9",
 			"out": "103"
 		}
+	],
+	"solutions": [
+		"out = out // 2"
 	]
 }

@@ -42,5 +42,8 @@
 			"inp2": "[3, 2, 5, 4, 1]",
 			"out": "['c', 'b', 'e', 'd', 'a']"
 		}
+	],
+	"solutions": [
+		"out = out + [inp1[-1 + inp2[idx]]]"
 	]
 }

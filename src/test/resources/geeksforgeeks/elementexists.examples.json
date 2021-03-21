@@ -28,5 +28,8 @@
 			"elem": "1",
 			"exists": "True"
 		}
+	],
+	"solutions": [
+		"exists = elem in inp"
 	]
 }

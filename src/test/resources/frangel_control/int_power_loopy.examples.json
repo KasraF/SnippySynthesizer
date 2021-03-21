@@ -30,5 +30,8 @@
 			"exp": "4",
 			"out": "14641"
 		}
+	],
+	"solutions": [
+		"out = base * out"
 	]
 }

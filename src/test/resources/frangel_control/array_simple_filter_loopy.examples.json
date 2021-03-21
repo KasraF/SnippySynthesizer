@@ -65,5 +65,8 @@
 			"inp2": "['terrible', 'bad', 'rude']",
 			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly', ' ', 'rude..']"
 		}
+	],
+	"solutions": [
+		"if inp1[idx] in inp2:\n\tfiltered += [\" \"]\nelse:\n\tfiltered += [inp1[idx]]"
 	]
 }

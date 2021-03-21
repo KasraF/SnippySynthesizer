@@ -12,5 +12,8 @@
 			"nums": "[-9, 8, -3, 0, 1, 99, 100, 0, 9]",
 			"maximum": "100"
 		}
+	],
+	"solutions": [
+		"maximum = max(nums)"
 	]
 }

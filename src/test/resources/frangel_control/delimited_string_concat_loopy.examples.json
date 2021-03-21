@@ -16,5 +16,8 @@
 			"join": "'abc, DEF, 12345'",
 			"out": "'init.abc, DEF, 12345'"
 		}
+	],
+	"solutions": [
+		"join = (delim + \" \").join(inp1)\nout = inp2 + join"
 	]
 }

@@ -40,5 +40,8 @@
 			"elem2": "71",
 			"out": "True"
 		}
+	],
+	"solutions": [
+		"out = elem2 > elem1"
 	]
 }
