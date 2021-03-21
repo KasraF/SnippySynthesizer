@@ -24,9 +24,11 @@ class PredicateTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["x"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "x": "1",
 			  |      "y": "2"
 			  |    }
@@ -53,14 +55,17 @@ class PredicateTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["x", "y"],
-			  |  "previous_env": {
-			  |    "#": "",
-			  |    "z": "1",
-			  |    "x": "0",
-			  |    "y": "0"
+			  |  "previousEnvs": {
+			  |    "1": {
+			  |      "#": "",
+			  |      "z": "1",
+			  |      "x": "0",
+			  |      "y": "0"
+			  |    }
 			  |  },
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
 			  |      "#": "0",
 			  |      "z": "1",
 			  |      "x": "2",
@@ -142,13 +147,16 @@ class PredicateTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["x", "y"],
-			  |  "previous_env": {
+			  |  "previousEnvs": {
+			  |    "1": {
 			  |      "#": "",
 			  |      "x": "1",
 			  |      "y": "1",
+			  |    }
 			  |  },
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
 			  |      "#": "0",
 			  |      "x": "2",
 			  |      "y": "3"
@@ -180,14 +188,17 @@ class PredicateTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["x", "y", "z"],
-			  |  "previous_env": {
-			  |    "#": "",
-			  |    "x": "1",
-			  |    "y": "1",
-			  |    "z": "1"
+			  |  "previousEnvs": {
+			  |    "1": {
+			  |      "#": "",
+			  |      "x": "1",
+			  |      "y": "1",
+			  |      "z": "1"
+			  |    }
 			  |  },
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
 			  |      "#": "0",
 			  |      "x": "2",
 			  |      "y": "3",

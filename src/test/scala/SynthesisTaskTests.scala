@@ -13,12 +13,16 @@ class SynthesisTaskTests extends JUnitSuite
 		val task1 = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["l"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "l": "[]"
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "l": "[1,2,3,1]"
 			  |    }
 			  |  ]
@@ -30,12 +34,16 @@ class SynthesisTaskTests extends JUnitSuite
 		val task2 = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["l"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "l": "[]"
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "l": "['a','b','3','1']"
 			  |    }
 			  |  ]
@@ -50,13 +58,17 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["filters"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
 			  |      "filters": "[]",
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
 			  |      "filters": "{'a': 2, 'b': 2}",
 			  |    }
@@ -74,13 +86,17 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["filters"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
 			  |      "filters": "{}",
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
 			  |      "filters": "{'a': 2, 'b': 2}",
 			  |    }
@@ -99,9 +115,11 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["l"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "l": "[]"
 			  |    }
 			  |  ]
@@ -116,9 +134,11 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["filters"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
 			  |      "filters": "{}",
 			  |    }
@@ -135,13 +155,17 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["filters"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "counts": "{}",
 			  |      "filters": "{'a': 2, 'b': 2}",
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
 			  |      "filters": "{'a': 2, 'b': 2}",
 			  |    }
@@ -158,17 +182,20 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["filters"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "counts": "[]",
-			  |      "filters": "{'a': 2, 'b': 2}",
+			  |      "filters": "{'a': 2, 'b': 2}"
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "counts": "[1, 2, 3]",
-			  |      "filters": "{'a': 2, 'b': 2}",
+			  |      "filters": "{'a': 2, 'b': 2}"
 			  |    }
-			  |
 			  |  ]
 			  |}""".stripMargin)
 		assertEquals(Types.IntList, task.parameters.find(kv => kv._1 == "counts").get._2)
@@ -179,13 +206,17 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["filters"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "counts": "[]",
 			  |      "filters": "{'a': 2, 'b': 2}",
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "counts": "[]",
 			  |      "filters": "{'a': 2, 'b': 2}",
 			  |    }
@@ -200,12 +231,16 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["x"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "x": "'x'",
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "x": "'y'",
 			  |    }
 			  |  ]
@@ -230,21 +265,29 @@ class SynthesisTaskTests extends JUnitSuite
 		val task = SynthesisTask.fromString(
 			"""{
 			  |  "varNames": ["x", "y"],
-			  |  "previous_env": {},
+			  |  "previousEnvs": {},
 			  |  "envs": [
 			  |    {
+			  |      "time": 1,
+			  |      "#": "",
 			  |      "x": "'x'",
 			  |      "y": "'x'"
 			  |    },
 			  |    {
+			  |      "time": 2,
+			  |      "#": "",
 			  |      "x": "'y'",
 			  |      "y": "'y'",
 			  |    },
 			  |    {
+			  |      "time": 3,
+			  |      "#": "",
 			  |      "x": "'a'",
 			  |      "y": "'b'"
 			  |    },
 			  |    {
+			  |      "time": 4,
+			  |      "#": "",
 			  |      "x": "'b'",
 			  |      "y": "'a'"
 			  |    }
