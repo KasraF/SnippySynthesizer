@@ -6,23 +6,26 @@
 	"envs": [
 		{
 			"#": "",
-			"inp": "[10, 20, 4, 45, 99]",
-			"sorted": "[4, 10, 20, 45, 99]",
+			"inp": "[10, 20, 45, 8, 99]",
+			"sorted": "[8, 10, 20, 45, 99]",
 			"second_largest": "45",
 			"time": 1
 		},
 		{
 			"#": "",
-			"inp": "[10, 20, 4]",
-			"sorted": "[4, 10, 20]",
-			"second_largest": "10",
+			"inp": "[20, 10, 45, 9, 12]",
+			"sorted": "[9, 10, 12, 20, 45]",
+			"second_largest": "20",
 			"time": 2
 		}
 	],
 	"previousEnvs": {
 		"1": {
 			"#": "",
-			"inp": "[10, 20, 4, 45, 99]"
+			"inp": "[10, 20, 45, 8, 99]"
 		}
-	}
+	},
+	"solutions": [
+		"sorted = sorted(inp)\nsecond_largest = max(sorted[0:-1])"
+	]
 }

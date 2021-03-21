@@ -31,5 +31,8 @@
 			"inp": "[13, 2, 9]",
 			"out": "1"
 		}
-	}
+	},
+	"solutions": [
+		"out = out * inp[idx]"
+	]
 }

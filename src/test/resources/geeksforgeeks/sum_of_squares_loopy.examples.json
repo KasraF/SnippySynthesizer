@@ -31,6 +31,13 @@
 			"squares": "[1, 4, 9, 16]",
 			"sum": "30",
 			"time": 4
+		},
+		{
+			"#": "4",
+			"idx": "5",
+			"squares": "[1, 4, 9, 16, 25]",
+			"sum": "55",
+			"time": 5
 		}
 	],
 	"previousEnvs": {
@@ -39,5 +46,8 @@
 			"squares": "[]",
 			"sum": "0"
 		}
-	}
+	},
+	"solutions": [
+		"squares += [idx * idx]\nsum += max(squares)"
+	]
 }
