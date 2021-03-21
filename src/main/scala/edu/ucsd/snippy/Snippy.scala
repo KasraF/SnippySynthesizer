@@ -72,35 +72,41 @@ object Snippy extends App
 	def synthesizeIO(timeout: Int = 7): Unit = {
 		val stdout = scala.sys.process.stdout
 		val stdin = scala.sys.process.stdin
-		// TODO What is this?
-		implicit val formats: Formats = json.DefaultFormats
-
-		val taskStr = StdIn.readLine()
-		val task = SynthesisTask.fromString(taskStr)
 		var code: Option[String] = None
 
-		if (task.contexts.exists(_.nonEmpty)) {
-			val deadline = timeout.seconds.fromNow
+		try {
+			// TODO What is this?
+			implicit val formats: Formats = json.DefaultFormats
 
-			breakable {
-				for (solution <- task.enumerator) {
-					solution match {
-						case Some(assignment) =>
-							code = Some(assignment.code())
+			val taskStr = StdIn.readLine()
+			val task = SynthesisTask.fromString(taskStr)
+
+			if (task.contexts.exists(_.nonEmpty)) {
+				val deadline = timeout.seconds.fromNow
+
+				breakable {
+					for (solution <- task.enumerator) {
+						solution match {
+							case Some(assignment) =>
+								code = Some(assignment.code())
+								break
+							case _ => ()
+						}
+
+						if (!deadline.hasTimeLeft || stdin.available() != 0) {
 							break
-						case _ => ()
-					}
-
-					if (!deadline.hasTimeLeft || stdin.available() != 0) {
-						break
+						}
 					}
 				}
 			}
+		} catch {
+			case e: Throwable => stderr.println(e.toString)
 		}
 
 		val solution = new SynthResult(0, code.isDefined, code)
 		stdout.println(json.Serialization.write(solution)(json.DefaultFormats))
 		stdout.flush()
+		System.gc()
 	}
 
 	case class ExpectedEOFException() extends Exception
@@ -119,12 +125,7 @@ object Snippy extends App
 //		}
 
 	if (args.isEmpty) {
-		// Listen on stdin for synthesis tasks
-		while (true) try synthesizeIO() catch {
-			case e: Throwable =>
-				println("ERROR")
-				stderr.println(e.toString)
-		}
+		while (true) synthesizeIO()
 	} else {
 		val (file, timeout) = args match {
 			case Array(task) => (new JFile(task), 7)
