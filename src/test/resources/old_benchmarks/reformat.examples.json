@@ -2,15 +2,17 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"s": "'Visual Studio Code'",
-			"rs": "'visual-studio-code'"
+			"rs": "'visual-studio-code'",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = \"-\".join(s.split(\" \")).lower()",
 		"rs = \"-\".join(s.split()).lower()"
-	]
+	],
+	"previousEnvs": {}
 }

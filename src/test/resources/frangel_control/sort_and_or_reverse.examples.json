@@ -1,13 +1,8 @@
 {
-	"varNames": ["out1", "out2"],
-	"previous_env": {
-		"#": "",
-		"inp": "['b', 'e', 'a', 'd', 'c']",
-		"sort": "True",
-		"reverse": "True",
-		"out1": "[]",
-		"out2": "[]"
-	},
+	"varNames": [
+		"out1",
+		"out2"
+	],
 	"envs": [
 		{
 			"#": "",
@@ -15,7 +10,8 @@
 			"sort": "True",
 			"reverse": "True",
 			"out1": "['a', 'b', 'c', 'd', 'e']",
-			"out2": "['e', 'd', 'c', 'b', 'a']"
+			"out2": "['e', 'd', 'c', 'b', 'a']",
+			"time": 1
 		},
 		{
 			"#": "",
@@ -23,7 +19,8 @@
 			"sort": "True",
 			"reverse": "False",
 			"out1": "['a', 'b', 'c', 'd', 'e']",
-			"out2": "['a', 'b', 'c', 'd', 'e']"
+			"out2": "['a', 'b', 'c', 'd', 'e']",
+			"time": 2
 		},
 		{
 			"#": "",
@@ -31,7 +28,8 @@
 			"sort": "False",
 			"reverse": "True",
 			"out1": "['b', 'e', 'a', 'd', 'c']",
-			"out2": "['c', 'd', 'a', 'e', 'b']"
+			"out2": "['c', 'd', 'a', 'e', 'b']",
+			"time": 3
 		},
 		{
 			"#": "",
@@ -39,7 +37,18 @@
 			"sort": "False",
 			"reverse": "False",
 			"out1": "['b', 'e', 'a', 'd', 'c']",
-			"out2": "['b', 'e', 'a', 'd', 'c']"
+			"out2": "['b', 'e', 'a', 'd', 'c']",
+			"time": 4
 		}
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "True",
+			"reverse": "True",
+			"out1": "[]",
+			"out2": "[]"
+		}
+	}
 }

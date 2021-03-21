@@ -3,18 +3,6 @@
 		"rs",
 		"carry"
 	],
-	"previous_env": {
-		"time": 6,
-		"#": "0",
-		"$": "11",
-		"digits": "[1, 2, 9]",
-		"rs": "[]",
-		"carry": "1",
-		"d": "1",
-		"lineno": 12,
-		"prev_lineno": 11,
-		"next_lineno": 11
-	},
 	"envs": [
 		{
 			"time": 7,
@@ -43,5 +31,19 @@
 	],
 	"solutions": [
 		"rs = [(d + carry) % 10] + rs\ncarry = (d + carry) // 10"
-	]
+	],
+	"previousEnvs": {
+		"7": {
+			"time": 6,
+			"#": "0",
+			"$": "11",
+			"digits": "[1, 2, 9]",
+			"rs": "[]",
+			"carry": "1",
+			"d": "1",
+			"lineno": 12,
+			"prev_lineno": 11,
+			"next_lineno": 11
+		}
+	}
 }

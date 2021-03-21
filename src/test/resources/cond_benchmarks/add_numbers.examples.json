@@ -4,15 +4,6 @@
 		"carry",
 		"d"
 	],
-	"previous_env": {
-		"time": 6,
-		"#": "0",
-		"fst": "[2, 2, 1]",
-		"snd": "[0, 9, 8]",
-		"rs": "[]",
-		"carry": "0",
-		"i": "0"
-	},
 	"envs": [
 		{
 			"time": 7,
@@ -48,5 +39,16 @@
 	"solutions": [
 		"d = fst[-i] + snd[-i] + carry\nrs = [d % 10] + rs\ncarry = d // 10",
 		"d = fst[-i] + snd[-i] + carry\ncarry = d // 10\nrs = [d % 10] + rs"
-	]
+	],
+	"previousEnvs": {
+		"7": {
+			"time": 6,
+			"#": "0",
+			"fst": "[2, 2, 1]",
+			"snd": "[0, 9, 8]",
+			"rs": "[]",
+			"carry": "0",
+			"i": "0"
+		}
+	}
 }

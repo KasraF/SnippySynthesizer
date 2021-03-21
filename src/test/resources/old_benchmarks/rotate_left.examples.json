@@ -2,21 +2,25 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"s": "'qwertyu'",
 			"count": "1",
-			"rs": "'wertyuq'"
+			"rs": "'wertyuq'",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"s": "'qwertyu'",
 			"count": "2",
-			"rs": "'ertyuqw'"
+			"rs": "'ertyuqw'",
+			"time": 2,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = (s + s)[count:count + len(s)]",
 		"rs = (s + s)[count:len(s) + count]"
-	]
+	],
+	"previousEnvs": {}
 }

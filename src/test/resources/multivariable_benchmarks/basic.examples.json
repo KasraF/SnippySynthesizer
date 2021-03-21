@@ -1,15 +1,21 @@
 {
-	"varNames": ["x", "y", "z"],
-	"previous_env": {},
+	"varNames": [
+		"x",
+		"y",
+		"z"
+	],
 	"envs": [
 		{
 			"a": "1",
 			"x": "2",
 			"y": "3",
-			"z": "4"
+			"z": "4",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"x = a + a\ny = a + x\nz = a + y"
-	]
+	],
+	"previousEnvs": {}
 }

@@ -3,14 +3,6 @@
 		"rs",
 		"split"
 	],
-	"previous_env": {
-		"time": 7,
-		"#": "0",
-		"inp": "[1, 1, 2, 4, 5]",
-		"rs": "[]",
-		"split": "0",
-		"i": "1"
-	},
 	"envs": [
 		{
 			"time": 8,
@@ -56,6 +48,16 @@
 	],
 	"solutions": [
 		"if i % 2 == 1:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1\nelse:\n\trs += [i]",
-		"if 1 > i % 2:\n\trs += [i]\nelse:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1",
-	]
+		"if 1 > i % 2:\n\trs += [i]\nelse:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1"
+	],
+	"previousEnvs": {
+		"8": {
+			"time": 7,
+			"#": "0",
+			"inp": "[1, 1, 2, 4, 5]",
+			"rs": "[]",
+			"split": "0",
+			"i": "1"
+		}
+	}
 }

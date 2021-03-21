@@ -2,14 +2,16 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"s": "291",
-			"rs": "'291'"
+			"rs": "'291'",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = str(s)"
-	]
+	],
+	"previousEnvs": {}
 }

@@ -2,22 +2,28 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"name": "'Sorin Lerner'",
-			"rs": "12"
+			"rs": "12",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"name": "'Nadia Polikarpova'",
-			"rs": "17"
+			"rs": "17",
+			"time": 2,
+			"#": ""
 		},
 		{
 			"name": "'Hila Peleg'",
-			"rs": "10"
+			"rs": "10",
+			"time": 3,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = len(name)"
-	]
+	],
+	"previousEnvs": {}
 }

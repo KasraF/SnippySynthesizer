@@ -2,18 +2,22 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"s": "'hello'",
-			"rs": "'olleh'"
+			"rs": "'olleh'",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"s": "'world'",
-			"rs": "'dlrow'"
+			"rs": "'dlrow'",
+			"time": 2,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = s[::-1]"
-	]
+	],
+	"previousEnvs": {}
 }

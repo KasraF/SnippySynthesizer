@@ -1,21 +1,28 @@
 {
-	"varNames": ["sorted", "second_largest"],
-	"previous_env": {
-		"#": "",
-		"inp": "[10, 20, 4, 45, 99]"
-	},
+	"varNames": [
+		"sorted",
+		"second_largest"
+	],
 	"envs": [
 		{
 			"#": "",
 			"inp": "[10, 20, 4, 45, 99]",
 			"sorted": "[4, 10, 20, 45, 99]",
-			"second_largest": "45"
+			"second_largest": "45",
+			"time": 1
 		},
 		{
 			"#": "",
 			"inp": "[10, 20, 4]",
 			"sorted": "[4, 10, 20]",
-			"second_largest": "10"
+			"second_largest": "10",
+			"time": 2
 		}
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "[10, 20, 4, 45, 99]"
+		}
+	}
 }

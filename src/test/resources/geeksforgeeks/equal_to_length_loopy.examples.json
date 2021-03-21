@@ -3,13 +3,6 @@
 		"split",
 		"rs"
 	],
-	"previous_env": {
-		"#": "",
-		"inp": "'need word greater than length n'",
-		"num": "4",
-		"split": "[]",
-		"rs": "[]"
-	},
 	"envs": [
 		{
 			"#": "0",
@@ -17,7 +10,8 @@
 			"inp": "'need word greater than length n'",
 			"num": "4",
 			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
-			"rs": "['need']"
+			"rs": "['need']",
+			"time": 1
 		},
 		{
 			"#": "1",
@@ -25,7 +19,8 @@
 			"inp": "'need word greater than length n'",
 			"num": "4",
 			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
-			"rs": "['need', 'word']"
+			"rs": "['need', 'word']",
+			"time": 2
 		},
 		{
 			"#": "2",
@@ -33,7 +28,8 @@
 			"inp": "'need word greater than length n'",
 			"num": "4",
 			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
-			"rs": "['need', 'word']"
+			"rs": "['need', 'word']",
+			"time": 3
 		},
 		{
 			"#": "3",
@@ -41,7 +37,8 @@
 			"inp": "'need word greater than length n'",
 			"num": "4",
 			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
-			"rs": "['need', 'word', 'than']"
+			"rs": "['need', 'word', 'than']",
+			"time": 4
 		},
 		{
 			"#": "4",
@@ -49,7 +46,8 @@
 			"inp": "'need word greater than length n'",
 			"num": "4",
 			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
-			"rs": "['need', 'word', 'than']"
+			"rs": "['need', 'word', 'than']",
+			"time": 5
 		},
 		{
 			"#": "5",
@@ -57,7 +55,17 @@
 			"inp": "'need word greater than length n'",
 			"num": "4",
 			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
-			"rs": "['need', 'word', 'than']"
+			"rs": "['need', 'word', 'than']",
+			"time": 6
 		}
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "[]",
+			"rs": "[]"
+		}
+	}
 }

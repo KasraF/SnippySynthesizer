@@ -4,15 +4,6 @@
 		"count",
 		"last"
 	],
-	"previous_env": {
-		"time": 8,
-		"#": "0",
-		"s": "'aabccca'",
-		"rs": "''",
-		"count": "1",
-		"last": "'a'",
-		"c": "'a'"
-	},
 	"envs": [
 		{
 			"time": 9,
@@ -71,5 +62,16 @@
 	],
 	"solutions": [
 		"if last in c:\n\tcount += 1\nelse:\n\trs += str(count) + last\n\tlast = c\n\tcount = len(last)"
-	]
+	],
+	"previousEnvs": {
+		"9": {
+			"time": 8,
+			"#": "0",
+			"s": "'aabccca'",
+			"rs": "''",
+			"count": "1",
+			"last": "'a'",
+			"c": "'a'"
+		}
+	}
 }

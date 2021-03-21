@@ -3,14 +3,6 @@
 		"rs",
 		"count"
 	],
-	"previous_env": {
-		"time": 7,
-		"#": "0",
-		"inp": "[0, 0, 1, 3, 0, 2, 0, 3]",
-		"rs": "[]",
-		"count": "0",
-		"i": "0"
-	},
 	"envs": [
 		{
 			"time": 8,
@@ -55,5 +47,15 @@
 	],
 	"solutions": [
 		"if i > 0:\n\trs += [i]\nelse:\n\tcount += 1"
-	]
+	],
+	"previousEnvs": {
+		"8": {
+			"time": 7,
+			"#": "0",
+			"inp": "[0, 0, 1, 3, 0, 2, 0, 3]",
+			"rs": "[]",
+			"count": "0",
+			"i": "0"
+		}
+	}
 }

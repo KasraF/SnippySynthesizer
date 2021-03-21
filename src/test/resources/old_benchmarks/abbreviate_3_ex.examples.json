@@ -2,22 +2,28 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"name": "'Hila Peleg'",
-			"rs": "'H.P'"
+			"rs": "'H.P'",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"name": "'Sorin Lerner'",
-			"rs": "'S.L'"
+			"rs": "'S.L'",
+			"time": 2,
+			"#": ""
 		},
 		{
 			"name": "'Kasra Ferdowsi Fard'",
-			"rs": "'K.F.F'"
+			"rs": "'K.F.F'",
+			"time": 3,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = \".\".join([var[0] for var in name.split(\" \")])"
-	]
+	],
+	"previousEnvs": {}
 }

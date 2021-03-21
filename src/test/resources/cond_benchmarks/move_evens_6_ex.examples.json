@@ -3,18 +3,6 @@
 		"rs",
 		"split"
 	],
-	"previous_env": {
-		"time": 7,
-		"#": "0",
-		"$": "10",
-		"inp": "[2, 3, 1, 2, 4, 5]",
-		"rs": "[]",
-		"split": "0",
-		"i": "2",
-		"lineno": 11,
-		"prev_lineno": 10,
-		"next_lineno": 10
-	},
 	"envs": [
 		{
 			"time": 8,
@@ -92,5 +80,19 @@
 	"solutions": [
 		"if 1 > i % 2:\n\trs += [i]\nelse:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1",
 		"if i % 2 == 1:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1\nelse:\n\trs += [i]"
-	]
+	],
+	"previousEnvs": {
+		"8": {
+			"time": 7,
+			"#": "0",
+			"$": "10",
+			"inp": "[2, 3, 1, 2, 4, 5]",
+			"rs": "[]",
+			"split": "0",
+			"i": "2",
+			"lineno": 11,
+			"prev_lineno": 10,
+			"next_lineno": 10
+		}
+	}
 }

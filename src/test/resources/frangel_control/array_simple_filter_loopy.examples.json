@@ -2,68 +2,78 @@
 	"varNames": [
 		"filtered"
 	],
-	"previous_env": {
-		"#": "",
-		"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
-		"inp2": "['terrible', 'bad', 'rude']",
-		"filtered": "[]"
-	},
 	"envs": [
 		{
 			"#": "0",
 			"idx": "0",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ']"
+			"filtered": "[' ']",
+			"time": 1
 		},
 		{
 			"#": "1",
 			"idx": "1",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ', 'awesome']"
+			"filtered": "[' ', 'awesome']",
+			"time": 2
 		},
 		{
 			"#": "2",
 			"idx": "2",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ', 'awesome', ' ']"
+			"filtered": "[' ', 'awesome', ' ']",
+			"time": 3
 		},
 		{
 			"#": "3",
 			"idx": "3",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ', 'awesome', ' ', ' ']"
+			"filtered": "[' ', 'awesome', ' ', ' ']",
+			"time": 4
 		},
 		{
 			"#": "4",
 			"idx": "4",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude']"
+			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude']",
+			"time": 5
 		},
 		{
 			"#": "5",
 			"idx": "5",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly']"
+			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly']",
+			"time": 6
 		},
 		{
 			"#": "6",
 			"idx": "6",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly', ' ']"
+			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly', ' ']",
+			"time": 7
 		},
 		{
 			"#": "7",
 			"idx": "7",
 			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
 			"inp2": "['terrible', 'bad', 'rude']",
-			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly', ' ', 'rude..']"
+			"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly', ' ', 'rude..']",
+			"time": 8
 		}
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
+			"inp2": "['terrible', 'bad', 'rude']",
+			"filtered": "[]"
+		}
+	}
 }

@@ -2,25 +2,31 @@
 	"varNames": [
 		"mult"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"inp": "'book'",
 			"charmap": "{'b': 1, 'o': 2, 'k': 1}",
-			"mult": "{'o': 2}"
+			"mult": "{'o': 2}",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"inp": "'aabbcde'",
 			"charmap": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
-			"mult": "{'a': 2, 'b': 2}"
+			"mult": "{'a': 2, 'b': 2}",
+			"time": 2,
+			"#": ""
 		},
 		{
 			"inp": "'vscode'",
 			"charmap": "{'v': 1, 's': 1, 'c': 1, 'o': 1, 'd': 1, 'e': 1}",
-			"mult": "{}"
+			"mult": "{}",
+			"time": 3,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"mult = {key: charmap[key] for key in charmap if inp.count(key) > 1}"
-	]
+	],
+	"previousEnvs": {}
 }

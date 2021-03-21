@@ -2,15 +2,19 @@
 	"varNames": [
 		"mult"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"inp": "'abc'",
-			"mult": "2"
+			"mult": "2",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"inp": "'abc'",
-			"mult": "3"
+			"mult": "3",
+			"time": 2,
+			"#": ""
 		}
-	]
+	],
+	"previousEnvs": {}
 }

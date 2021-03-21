@@ -2,16 +2,18 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"inp": "'aabbcde'",
 			"counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
 			"filters": "{'a': 2, 'b': 2}",
-			"rs": "2"
+			"rs": "2",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = len(filters)"
-	]
+	],
+	"previousEnvs": {}
 }

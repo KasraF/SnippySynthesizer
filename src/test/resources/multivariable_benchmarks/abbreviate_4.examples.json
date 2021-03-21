@@ -1,8 +1,10 @@
 {
-	"varNames": ["words", "chars", "tmp","abbr"],
-	"previous_env": {
-		"name": "'Augusta Ada King'"
-	},
+	"varNames": [
+		"words",
+		"chars",
+		"tmp",
+		"abbr"
+	],
 	"envs": [
 		{
 			"#": "0",
@@ -10,11 +12,17 @@
 			"words": "['Augusta', 'Ada', 'King']",
 			"chars": "['A', 'A', 'K']",
 			"tmp": "'A.A.K'",
-			"abbr": "'a.a.k'"
+			"abbr": "'a.a.k'",
+			"time": 1
 		}
 	],
 	"solutions": [
 		"words = name.split(\" \")\nchars = [var[0] for var in words]\ntmp = \".\".join(chars)\nabbr = tmp.lower()",
 		"words = name.split()\nchars = [var[0] for var in words]\ntmp = \".\".join(chars)\nabbr = tmp.lower()"
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"name": "'Augusta Ada King'"
+		}
+	}
 }

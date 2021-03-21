@@ -1,12 +1,8 @@
 {
-	"varNames": ["join", "out"],
-	"previous_env": {
-		"#": "",
-		"inp1": "['abc', 'DEF', '12345']",
-		"delim": "','",
-		"inp2": "'init.'",
-		"out": "''"
-	},
+	"varNames": [
+		"join",
+		"out"
+	],
 	"envs": [
 		{
 			"#": "0",
@@ -14,7 +10,17 @@
 			"delim": "','",
 			"inp2": "'init.'",
 			"join": "'abc, DEF, 12345'",
-			"out": "'init.abc, DEF, 12345'"
+			"out": "'init.abc, DEF, 12345'",
+			"time": 1
 		}
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp1": "['abc', 'DEF', '12345']",
+			"delim": "','",
+			"inp2": "'init.'",
+			"out": "''"
+		}
+	}
 }

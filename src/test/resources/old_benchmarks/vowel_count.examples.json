@@ -2,17 +2,21 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"s": "'abracadabra'",
 			"vowels": "'aeiouAEIOU'",
-			"rs": "5"
+			"rs": "5",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"s": "'Nadia Polikarpova'",
 			"vowels": "'aeiouAEIOU'",
-			"rs": "8"
+			"rs": "8",
+			"time": 2,
+			"#": ""
 		}
-	]
+	],
+	"previousEnvs": {}
 }

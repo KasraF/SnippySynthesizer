@@ -2,14 +2,6 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {
-		"time": 5,
-		"#": "0",
-		"lst": "[5, 3, 4, 2, 1]",
-		"pivot": "3",
-		"rs": "[]",
-		"i": "5"
-	},
 	"envs": [
 		{
 			"time": 6,
@@ -54,5 +46,15 @@
 	],
 	"solutions": [
 		"if pivot > i:\n\trs = [i] + rs\nelse:\n\trs += [i]"
-	]
+	],
+	"previousEnvs": {
+		"6": {
+			"time": 5,
+			"#": "0",
+			"lst": "[5, 3, 4, 2, 1]",
+			"pivot": "3",
+			"rs": "[]",
+			"i": "5"
+		}
+	}
 }

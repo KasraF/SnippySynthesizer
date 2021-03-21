@@ -2,15 +2,17 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"inp1": "'Welcome to USA. usa is awesome!'",
 			"inp2": "'USA'",
-			"rs": "2"
+			"rs": "2",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = inp1.upper().count(inp2)"
-	]
+	],
+	"previousEnvs": {}
 }

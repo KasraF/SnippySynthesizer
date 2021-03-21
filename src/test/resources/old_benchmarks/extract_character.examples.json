@@ -2,15 +2,17 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"idx": "2",
 			"s": "'abcd'",
-			"rs": "'abd'"
+			"rs": "'abd'",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = s[:idx] + s[idx+1:]"
-	]
+	],
+	"previousEnvs": {}
 }

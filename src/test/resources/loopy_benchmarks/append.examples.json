@@ -1,17 +1,22 @@
- {
-	"varNames": ["out"],
-	"previous_env": {
-		"inp": "[2, 40, 800]"
-	},
+{
+	"varNames": [
+		"out"
+	],
 	"envs": [
 		{
 			"#": "0",
 			"i": "0",
 			"inp": "[2, 40, 800]",
-			"out": "[4, 80, 1600]"
+			"out": "[4, 80, 1600]",
+			"time": 1
 		}
 	],
-	 "solutions": [
-		 "out = [var + var for var in inp]"
-	 ]
+	"solutions": [
+		"out = [var + var for var in inp]"
+	],
+	"previousEnvs": {
+		"1": {
+			"inp": "[2, 40, 800]"
+		}
+	}
 }

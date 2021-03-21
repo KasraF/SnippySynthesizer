@@ -3,18 +3,22 @@
 		"nums",
 		"min"
 	],
-	"previous_env": { 
-		"inp": "'-2 1 3 5'"
-	},
 	"envs": [
 		{
 			"inp": "'-2 1 3 5'",
 			"nums": "[-2, 1, 3, 5]",
-			"min": "-2"
+			"min": "-2",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"nums = [int(var) for var in inp.split(\" \")]\nmin = min(nums)",
 		"nums = [int(var) for var in inp.split()]\nmin = min(nums)"
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"inp": "'-2 1 3 5'"
+		}
+	}
 }

@@ -2,14 +2,16 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"name": "'Kasra Ferdowsi Fard'",
-			"rs": "'K.F.F'"
+			"rs": "'K.F.F'",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = \".\".join([var[0] for var in name.split(\" \")])"
-	]
+	],
+	"previousEnvs": {}
 }

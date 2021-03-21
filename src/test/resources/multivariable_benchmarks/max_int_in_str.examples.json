@@ -3,18 +3,22 @@
 		"nums",
 		"max"
 	],
-	"previous_env": {
-		"inp": "'-2 1 3 5'"
-	},
 	"envs": [
 		{
 			"inp": "'-2 1 3 5'",
 			"nums": "[-2, 1, 3, 5]",
-			"max": "5"
+			"max": "5",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"nums = [int(var) for var in inp.split(\" \")]\nmax = max(nums)",
 		"nums = [int(var) for var in inp.split()]\nmax = max(nums)"
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"inp": "'-2 1 3 5'"
+		}
+	}
 }

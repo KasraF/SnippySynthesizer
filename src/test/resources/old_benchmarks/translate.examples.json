@@ -2,7 +2,6 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"c1": "'T'",
@@ -10,7 +9,10 @@
 			"c3": "'C'",
 			"c4": "'G'",
 			"s": "'ATTGC'",
-			"rs": "'TAACG'"
+			"rs": "'TAACG'",
+			"time": 1,
+			"#": ""
 		}
-	]
+	],
+	"previousEnvs": {}
 }

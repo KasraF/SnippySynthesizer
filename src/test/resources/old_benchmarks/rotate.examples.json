@@ -2,20 +2,24 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"s": "'abcd'",
 			"count": "1",
-			"rs": "'dabc'"
+			"rs": "'dabc'",
+			"time": 1,
+			"#": ""
 		},
 		{
 			"s": "'abcd'",
 			"count": "2",
-			"rs": "'cdab'"
+			"rs": "'cdab'",
+			"time": 2,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = s[:count] + s[count:]"
-	]
+	],
+	"previousEnvs": {}
 }

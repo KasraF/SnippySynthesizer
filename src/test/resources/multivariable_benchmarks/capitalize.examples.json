@@ -1,17 +1,23 @@
 {
-	"varNames": ["words", "caps"],
-	"previous_env": {
-		"name": "'alison heck'"
-	},
+	"varNames": [
+		"words",
+		"caps"
+	],
 	"envs": [
 		{
 			"#": "0",
 			"name": "'alison heck'",
 			"words": "['alison', 'heck']",
-			"caps": "'Alison Heck'"
+			"caps": "'Alison Heck'",
+			"time": 1
 		}
 	],
 	"solutions": [
 		"words = name.split(\" \")\ncaps = \" \".join([var.capitalize() for var in words])"
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"name": "'alison heck'"
+		}
+	}
 }

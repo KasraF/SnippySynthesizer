@@ -1,14 +1,19 @@
 {
-	"varNames": ["out"],
-	"previous_env": {
-		"#": "",
-		"inp": "'computer science is COOL'"
-	},
+	"varNames": [
+		"out"
+	],
 	"envs": [
 		{
 			"#": "0",
 			"inp": "'computer science is COOL'",
-			"out": "'Computer science is COOL'"
+			"out": "'Computer science is COOL'",
+			"time": 1
 		}
-	]
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "'computer science is COOL'"
+		}
+	}
 }

@@ -2,11 +2,13 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"inp": "'coding'",
-			"rs": "{'c': 'CCC', 'o': 'OOO', 'd': 'DDD', 'i': 'III', 'n': 'NNN', 'g': 'GGG'}"
+			"rs": "{'c': 'CCC', 'o': 'OOO', 'd': 'DDD', 'i': 'III', 'n': 'NNN', 'g': 'GGG'}",
+			"time": 1,
+			"#": ""
 		}
-	]
+	],
+	"previousEnvs": {}
 }

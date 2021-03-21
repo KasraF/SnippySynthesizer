@@ -2,15 +2,17 @@
 	"varNames": [
 		"rs"
 	],
-	"previous_env": {},
 	"envs": [
 		{
 			"s": "'123 321 322'",
-			"rs": "123"
+			"rs": "123",
+			"time": 1,
+			"#": ""
 		}
 	],
 	"solutions": [
 		"rs = min([int(var) for var in s.split(\" \")])",
 		"rs = min([int(var) for var in s.split()])"
-	]
+	],
+	"previousEnvs": {}
 }
