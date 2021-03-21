@@ -10,5 +10,8 @@
 			"inp": "[2, 40, 800]",
 			"out": "[4, 80, 1600]"
 		}
-	]
+	],
+	 "solutions": [
+		 "out = [var + var for var in inp]"
+	 ]
 }

@@ -1,14 +1,16 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "c1": "'T'",
-      "c2": "'A'",
-      "c3": "'C'",
-      "c4": "'G'",
-      "s": "'ATTGC'",
-      "rs": "'TAACG'"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"c1": "'T'",
+			"c2": "'A'",
+			"c3": "'C'",
+			"c4": "'G'",
+			"s": "'ATTGC'",
+			"rs": "'TAACG'"
+		}
+	]
 }

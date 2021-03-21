@@ -1,10 +1,7 @@
 {
 	"varNames": ["words", "caps"],
 	"previous_env": {
-		"#": "",
-		"name": "'alison heck'",
-		"words": "[' ']",
-		"caps": "' '"
+		"name": "'alison heck'"
 	},
 	"envs": [
 		{
@@ -13,5 +10,8 @@
 			"words": "['alison', 'heck']",
 			"caps": "'Alison Heck'"
 		}
+	],
+	"solutions": [
+		"words = name.split(\" \")\ncaps = \" \".join([var.capitalize() for var in words])"
 	]
 }

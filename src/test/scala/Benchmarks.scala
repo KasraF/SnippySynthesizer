@@ -7,7 +7,7 @@ import scala.io.Source.fromFile
 
 object Benchmarks extends App
 {
-	def runBenchmark(dir: File, timeout: Int = 7): Unit = {
+	def runBenchmark(dir: File, benchTimeout: Int = 7): Unit = {
 		println("----- - ----------------------- ------- ---------- --------------------------------------")
 		var total = 0
 		var failed = 0
@@ -29,7 +29,7 @@ object Benchmarks extends App
 					val taskStr = fromFile(file).mkString
 					val task = json.parse(taskStr).asInstanceOf[JObject].values
 
-					Snippy.synthesize(taskStr, timeout) match {
+					Snippy.synthesize(taskStr, benchTimeout) match {
 						case (None, time: Int, count: Int) =>
 							printStr = f"($index%2d) [?] [$name%22s] [${time / 1000.0}%.3f] [$count%8d] Timeout"
 							timeout += 1

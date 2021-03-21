@@ -1,28 +1,22 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 1,
-      "#": "",
-      "$": "",
-      "step": "-1",
-      "line": "'hello world!'",
-      "rs": "'olleh !dlrow'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": "R2"
-    },
-    {
-      "time": 4,
-      "#": "",
-      "$": "",
-      "step": "-1",
-      "line": "'Sorin Lerner'",
-      "rs": "'niroS renreL'",
-      "lineno": 2,
-      "prev_lineno": 1,
-      "next_lineno": "R2"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"line": "'hello world!'",
+			"rs": "'olleh !dlrow'"
+		},
+		{
+			"line": "'Sorin Lerner'",
+			"rs": "'niroS renreL'"
+		}
+	],
+	"solutions": [
+		"rs = \" \".join([var[::-1] for var in line.split(\" \")])",
+		"rs = \" \".join([var[::-1] for var in line.split()])",
+		"rs = \" \".join(line.split(\" \")[::-1])[::-1]",
+		"rs = \" \".join(line.split()[::-1])[::-1]"
+	]
 }

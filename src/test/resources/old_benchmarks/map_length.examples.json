@@ -1,18 +1,17 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "time": 19,
-      "#": "",
-      "$": "",
-      "inp": "'aabbcde'",
-      "counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
-      "filters": "{'a': 2, 'b': 2}",
-      "rs": "2",
-      "lineno": 4,
-      "prev_lineno": 3,
-      "next_lineno": "R4"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"inp": "'aabbcde'",
+			"counts": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+			"filters": "{'a': 2, 'b': 2}",
+			"rs": "2"
+		}
+	],
+	"solutions": [
+		"rs = len(filters)"
+	]
 }

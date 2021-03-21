@@ -10,5 +10,9 @@
 			"words": "['Augusta', 'Ada', 'King']",
 			"abbr": "'a.a.k'"
 		}
+	],
+	"solutions": [
+		"words = name.split()\nabbr = \".\".join([var[0] for var in words]).lower()",
+		"words = name.split(\" \")\nabbr = \".\".join([var[0] for var in words]).lower()"
 	]
 }

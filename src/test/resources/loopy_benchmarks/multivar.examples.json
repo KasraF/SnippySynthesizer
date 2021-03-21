@@ -17,5 +17,11 @@
 			"prev_lineno": 2,
 			"next_lineno": "R3"
 		}
+	],
+	"solutions": [
+		"x += x\ny = x + y",
+		"x += z\ny = x + z",
+		"x += x\ny += x",
+		"x += z\ny += x"
 	]
 }

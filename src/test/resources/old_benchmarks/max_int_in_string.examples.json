@@ -1,11 +1,17 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "space": "' '",
-      "s": "'123 321 322'",
-      "rs": "322"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"space": "' '",
+			"s": "'123 321 322'",
+			"rs": "322"
+		}
+	],
+	"solutions": [
+		"rs = max([int(var) for var in s.split(\" \")])",
+		"rs = max([int(var) for var in s.split()])"
+	]
 }

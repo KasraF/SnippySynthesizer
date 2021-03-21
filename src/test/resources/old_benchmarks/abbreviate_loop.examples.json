@@ -1,49 +1,33 @@
 {
-  "varNames": ["rs"],
-  "previous_env": {
-    "time": 2,
-    "#": "0",
-    "$": "2",
-    "name": "'Augusta Ada King'",
-    "rs": "''",
-    "word": "'Augusta'",
-    "lineno": 3,
-    "prev_lineno": 2,
-    "next_lineno": 2
-  },
-  "envs": [
-    {
-      "time": 3,
-      "#": "0",
-      "$": "2",
-      "name": "'Augusta Ada King'",
-      "rs": "'A.'",
-      "word": "'Augusta'",
-      "lineno": 2,
-      "prev_lineno": 3,
-      "next_lineno": 3
-    },
-    {
-      "time": 5,
-      "#": "1",
-      "$": "2",
-      "name": "'Augusta Ada King'",
-      "rs": "'A.A.'",
-      "word": "'Ada'",
-      "lineno": 2,
-      "prev_lineno": 3,
-      "next_lineno": 3
-    },
-    {
-      "time": 7,
-      "#": "2",
-      "$": "2",
-      "name": "'Augusta Ada King'",
-      "rs": "'A.A.K.'",
-      "word": "'King'",
-      "lineno": 2,
-      "prev_lineno": 3,
-      "next_lineno": "R2"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {
+		"name": "'Augusta Ada King'",
+		"word": "'Augusta'",
+		"rs": "''"
+	},
+	"envs": [
+		{
+			"#": "0",
+			"name": "'Augusta Ada King'",
+			"rs": "'A.'",
+			"word": "'Augusta'"
+		},
+		{
+			"#": "1",
+			"name": "'Augusta Ada King'",
+			"rs": "'A.A.'",
+			"word": "'Ada'"
+		},
+		{
+			"#": "2",
+			"name": "'Augusta Ada King'",
+			"rs": "'A.A.K.'",
+			"word": "'King'"
+		}
+	],
+	"solutions": [
+		"rs += word[0] + \".\""
+	]
 }

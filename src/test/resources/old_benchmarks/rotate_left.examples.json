@@ -1,21 +1,22 @@
 {
-	"varNames": ["rs"],
-  "previous_env": {},
-  "envs": [
-    {
-      "#": "",
-      "$": "",
-      "s": "'qwertyu'",
-      "count": "1",
-      "rs": "'wertyuq'"
-    },
-    {
-      "time": 4,
-      "#": "",
-      "$": "",
-      "s": "'qwertyu'",
-      "count": "2",
-      "rs": "'ertyuqw'"
-    }
-  ]
+	"varNames": [
+		"rs"
+	],
+	"previous_env": {},
+	"envs": [
+		{
+			"s": "'qwertyu'",
+			"count": "1",
+			"rs": "'wertyuq'"
+		},
+		{
+			"s": "'qwertyu'",
+			"count": "2",
+			"rs": "'ertyuqw'"
+		}
+	],
+	"solutions": [
+		"rs = (s + s)[count:count + len(s)]",
+		"rs = (s + s)[count:len(s) + count]"
+	]
 }

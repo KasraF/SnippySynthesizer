@@ -11,5 +11,9 @@
 			"chars": "['A', 'A', 'K']",
 			"abbr": "'a.a.k'"
 		}
+	],
+	"solutions": [
+		"words = name.split(\" \")\nchars = [var[0] for var in words]\nabbr = \".\".join(chars).lower()",
+		"words = name.split()\nchars = [var[0] for var in words]\nabbr = \".\".join(chars).lower()"
 	]
 }
