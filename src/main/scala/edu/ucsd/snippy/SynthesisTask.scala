@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.predicates._
-import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalMegazordSolutionEnumerator, ConditionalSingleEnumMultivarSolutionEnumerator, ConditionalSingleEnumSingleVarSolutionEnumerator, SolutionEnumerator}
+import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSingleEnumMultivarSolutionEnumerator, ConditionalSingleEnumSingleVarSolutionEnumerator, SolutionEnumerator}
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -38,72 +38,53 @@ object SynthesisTask
 	val reserved_names: Set[String] =
 		Set("time", "#", "$", "lineno", "prev_lineno", "next_lineno", "__run_py__")
 
-	/**
-	 * Checks whether we can use the output variables' previous values in the environment. To do so
-	 * we need:
-	 * 1. The variable to have been defined in the previous env
-	 * 2. If in a loop, we have the full trace of the loop, and know what the previous value
-	 * of the variable at each iteration of the loop was.
-	 *
-	 * @param previousEnv    The environment immediately before the first env
-	 * @param outputVarNames The names of the output variables.
-	 * @param envs           The environments we are going to use as synthesis spec.
-	 * @return whether LooPy is enabled.
-	 */
-	def isLoopy(
-		previousEnv: Map[String, Any],
-		outputVarNames: List[String],
-		envs: List[Map[String, Any]]): Boolean =
-	{
-		previousEnv.nonEmpty &&
-			outputVarNames.forall(varName => previousEnv.contains(varName)) &&
-			envs.head.contains("#") &&
-			// Not in a loop, but reusing variable
-			(envs.head("#").asInstanceOf[String].isEmpty ||
-				// In a loop
-				(envs.head("#").asInstanceOf[String].nonEmpty &&
-					envs.tail.foldLeft(envs.head("#").asInstanceOf[String].toInt)((currIndex, env) => {
-						if (currIndex >= 0 && env("#").asInstanceOf[String].toInt == currIndex + 1) {
-							currIndex + 1
-						} else {
-							-1
-						}
-					}) != -1))
-	}
-
 	def fromString(jsonString: String, size: Boolean = true): SynthesisTask = {
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
-		val previousEnv: Map[String, Any] =
-			cleanupInputs(input("previous_env").asInstanceOf[Map[String, Any]])
-		val processedEnvs: List[Map[String, Any]] = envs
-			.asInstanceOf[List[Map[String, Any]]]
-			.map(cleanupInputs)
-		val loopy = isLoopy(previousEnv, outputVarNames, envs)
+		val previousEnvMap: Map[Int, Map[String, Any]] = input("previousEnvs").asInstanceOf[Map[String, Map[String, Any]]].map(tup => tup._1.toInt -> tup._2)
 
-		var contexts: List[Context] = if (loopy) {
-			processedEnvs
-				.zip(previousEnv :: processedEnvs.slice(0, processedEnvs.length - 1))
-				.map {
-					case (curr_env, prev_env) =>
-						curr_env
-							.filter(entry => !outputVarNames.contains(entry._1))
-							.filter(_._1 != "#") ++
-							outputVarNames.collect(varName => varName -> prev_env(varName)).toMap
+		// First, build a tuple of (prevEnv, env) for all the envs
+		val allEnvs: List[(Option[Map[String, Any]], Map[String, Any])] = envs.map(env =>
+		{
+			val time = env("time").asInstanceOf[BigInt].toInt
+			if (previousEnvMap.contains(time)) {
+				Some(previousEnvMap(time)) -> env
+			} else {
+				// We need to use the time + iter to see if we can find the previous env in the
+				// other envs
+				val iterStr = env("#").asInstanceOf[String]
+				if (iterStr.isEmpty) {
+					// Not a loop, and no prev env, so no luck :(
+					None -> env
+				} else {
+					// Find the nearest entry with the iter one less than this one
+					val iter = iterStr.toInt
+					val prevEnv = envs
+						.filter(env => env("time").asInstanceOf[BigInt].toInt < time)
+						.filter(env => env.contains("#") && env("#").asInstanceOf[String].toInt == iter - 1)
+						.last
+					Some(prevEnv) -> env
 				}
-		} else {
-			// Not in a loop. Do the usual.
-			processedEnvs.map(env => env.filter(entry => !outputVarNames.contains(entry._1)).filter(_._1 != "#"))
+			}
+		})
+		.map(tup => tup._1.map(cleanupInputs)-> cleanupInputs(tup._2))
+		val justEnvs = allEnvs.map(_._2)
+
+		var contexts: List[Context] = allEnvs.map {
+			case (Some(prevEnv), env) =>
+				env.filter(entry => !outputVarNames.contains(entry._1)) ++
+					outputVarNames.filter(prevEnv.contains).collect(varName => varName -> prevEnv(varName)).toMap
+			case (None, env) => env.filter(entry => !outputVarNames.contains(entry._1))
 		}
 
 		val oeManager = new InputsValuesManager
-		val additionalLiterals = getStringLiterals(processedEnvs, outputVarNames)
+		val additionalLiterals = getStringLiterals(justEnvs, outputVarNames)
 
 		val predicate: Predicate = outputVarNames match {
-			case single :: Nil => Predicate.getPredicate(single, processedEnvs, oeManager)
+			case single :: Nil => Predicate.getPredicate(single, justEnvs, oeManager)
 			case multiple =>
-				val (newContexts, pred) = this.mulitvariablePredicate(multiple, contexts, processedEnvs)
+				val (newContexts, pred) = this.mulitvariablePredicate(multiple, contexts, justEnvs)
 				contexts = newContexts
 				pred
 		}
