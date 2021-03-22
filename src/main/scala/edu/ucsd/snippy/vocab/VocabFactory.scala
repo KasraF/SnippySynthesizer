@@ -140,6 +140,17 @@ object VocabFactory
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.String, Types.String)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[StringEquals]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						StringEquals(children.head.asInstanceOf[StringNode], children(1).asInstanceOf[StringNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
 					override val childTypes: List[Types] = List(Types.Int, Types.Int)
 					override val returnType: Types = Types.Bool
 					override val nodeType: Class[_ <: ASTNode] = classOf[LessThanEq]
@@ -385,6 +396,17 @@ object VocabFactory
 				},
 				new BasicVocabMaker
 				{
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.StringStringMap)
+					override val returnType: Types = Types.StringList
+					override val nodeType: Class[_ <: ASTNode] = classOf[MapKeys]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						MapKeys(children.head.asInstanceOf[MapNode[String,String]])
+				},
+				new BasicVocabMaker
+				{
 					override val arity: Int = 2
 					override val childTypes: List[Types] = List(Types.IntList, Types.Int)
 					override val returnType: Types = Types.IntList
@@ -595,7 +617,7 @@ object VocabFactory
 				new FilteredMapVocabMaker(Types.String, Types.String, size) {
 					override val nodeType: Class[_ <: ASTNode] = classOf[StringStringFilteredMapNode]
 					override def makeNode(map: ASTNode, filter: BoolNode) : ASTNode =
-						new StringStringFilteredMapNode(map.asInstanceOf[StringStringMapNode], filter, this.keyName)
+						new StringStringFilteredMapNode(map.asInstanceOf[MapNode[String,String]], filter, this.keyName)
 
 					override val returnType: Types = Types.Unknown
 					override val childTypes: List[Types] = List(Types.Unknown)
@@ -619,6 +641,17 @@ object VocabFactory
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						MapGet(children.head.asInstanceOf[MapNode[String,Int]], children(1).asInstanceOf[StringNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.StringStringMap, Types.String)
+					override val returnType: Types = Types.String
+					override val nodeType: Class[_ <: ASTNode] = classOf[StringMapGet]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						StringMapGet(children.head.asInstanceOf[MapNode[String,String]], children(1).asInstanceOf[StringNode])
 				},
 				new BasicVocabMaker
 				{

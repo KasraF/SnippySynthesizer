@@ -84,6 +84,21 @@ case class Equals(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Boolean] with
 	override def updateValues(contexts: Contexts): Equals = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
+case class StringEquals(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " == " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: String, r: String) => Some(l == r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		StringEquals(l.asInstanceOf[StringNode], r.asInstanceOf[StringNode])
+
+	override def updateValues(contexts: Contexts): StringEquals = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
 case class StringConcat(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[String] with StringNode
 {
 	override lazy val code: String = lhs.code + " + " + rhs.code
@@ -115,6 +130,22 @@ case class MapGet(lhs: MapNode[String, Int], rhs: StringNode) extends BinaryOpNo
 		MapGet(l.asInstanceOf[MapNode[String, Int]], r.asInstanceOf[StringNode])
 
 	override def updateValues(contexts: Contexts): MapGet = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class StringMapGet(lhs: MapNode[String, String], rhs: StringNode) extends BinaryOpNode[String] with StringNode
+{
+	override protected val parenless: Boolean = true
+	override lazy val code: String = lhs.parensIfNeeded + "[" + rhs.code + "]"
+
+	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
+		case (map: Map[String, String], key: String) => map.get(key)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[String] =
+		StringMapGet(l.asInstanceOf[MapNode[String, String]], r.asInstanceOf[StringNode])
+
+	override def updateValues(contexts: Contexts): StringMapGet = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
 case class IntAddition(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] with IntNode

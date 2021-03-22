@@ -1,0 +1,60 @@
+{
+	"varNames": [
+		"rs"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"inp": "{'a': 'q', 'Animal': 'animal', 'Bicycles': 'bicicleta', 'extra': 'EXTRA', 'Idea': 'idea', 'c': 'C'}",
+			"key": "'a'",
+			"rs": "[]",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"inp": "{'a': 'q', 'Animal': 'animal', 'Bicycles': 'bicicleta', 'extra': 'EXTRA', 'Idea': 'idea', 'c': 'C'}",
+			"key": "'Animal'",
+			"rs": "['Animal']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"inp": "{'a': 'q', 'Animal': 'animal', 'Bicycles': 'bicicleta', 'extra': 'EXTRA', 'Idea': 'idea', 'c': 'C'}",
+			"key": "'Bicycles'",
+			"rs": "['Animal']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"inp": "{'a': 'q', 'Animal': 'animal', 'Bicycles': 'bicicleta', 'extra': 'EXTRA', 'Idea': 'idea', 'c': 'C'}",
+			"key": "'extra'",
+			"rs": "['Animal', 'extra']",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"inp": "{'a': 'q', 'Animal': 'animal', 'Bicycles': 'bicicleta', 'extra': 'EXTRA', 'Idea': 'idea', 'c': 'C'}",
+			"key": "'Idea'",
+			"rs": "['Animal', 'extra', 'Idea']",
+			"time": 5
+		},
+		{
+			"#": "5",
+			"inp": "{'a': 'q', 'Animal': 'animal', 'Bicycles': 'bicicleta', 'extra': 'EXTRA', 'Idea': 'idea', 'c': 'C'}",
+			"key": "'c'",
+			"rs": "['Animal', 'extra', 'Idea', 'c']",
+			"time": 6
+		}
+	],
+	"solutions": [
+		"if key.capitalize() == inp[key].capitalize():\n\trs += [key]",
+		"if key.lower() == inp[key].lower():\n\trs += [key]"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "{'a': 'q', 'Animal': 'animal', 'Bicycles': 'bicicleta', 'extra': 'EXTRA', 'Idea': 'idea', 'c': 'C'}",
+			"time": 1
+		}
+	}
+}

@@ -246,6 +246,20 @@ case class NegateInt(arg: IntNode) extends UnaryOpNode[Int] with IntNode
 	override def updateValues(contexts: Contexts): NegateInt = copy(arg.updateValues(contexts).asInstanceOf[IntNode])
 }
 
+case class MapKeys(arg: MapNode[String, String]) extends UnaryOpNode[Iterable[String]] with StringListNode
+{
+	override lazy val code: String = arg.code + ".keys()"
+
+	override def doOp(arg: Any): Option[Iterable[String]] = arg match {
+		case (map: Map[String, String]) => Some(map.keys.toList)
+		case _ => wrongType(arg)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Iterable[String]] = MapKeys(x.asInstanceOf[MapNode[String, String]])
+
+	override def updateValues(contexts: Contexts): MapKeys = copy(arg.updateValues(contexts))
+}
+
 case class NegateBool(arg: BoolNode) extends UnaryOpNode[Boolean] with BoolNode
 {
 	override lazy val code: String = arg match {
