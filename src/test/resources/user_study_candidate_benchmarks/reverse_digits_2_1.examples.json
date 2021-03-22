@@ -1,0 +1,93 @@
+{
+	"varNames": [
+		"rev",
+		"num"
+	],
+	"previousEnvs": {
+		"6": {
+			"time": 5,
+			"#": "0",
+			"$": "2",
+			"num": "123",
+			"rev": "0",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": 2
+		},
+		"17": {
+			"time": 16,
+			"#": "0",
+			"$": "2",
+			"num": "321",
+			"rev": "0",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": 2
+		}
+	},
+	"envs": [
+		{
+			"time": 6,
+			"#": "0",
+			"$": "2",
+			"num": "12",
+			"rev": "3",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 8,
+			"#": "1",
+			"$": "2",
+			"num": "1",
+			"rev": "32",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 10,
+			"#": "2",
+			"$": "2",
+			"num": "0",
+			"rev": "321",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 4
+		},
+		{
+			"time": 17,
+			"#": "0",
+			"$": "2",
+			"num": "32",
+			"rev": "1",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 19,
+			"#": "1",
+			"$": "2",
+			"num": "3",
+			"rev": "12",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 21,
+			"#": "2",
+			"$": "2",
+			"num": "0",
+			"rev": "123",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 4
+		}
+	],
+	"solutions": [
+		"rev = rev * 10 + num % 10\nnum = num // 10"
+	]
+}

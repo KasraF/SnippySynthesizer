@@ -1,0 +1,67 @@
+{
+	"varNames": [
+		"res"
+	],
+	"previousEnvs": {
+		"5": {
+			"time": 4,
+			"#": "0",
+			"$": "2",
+			"arr": "[4, 7, 19, 16]",
+			"res": "0",
+			"i": "4",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": 2
+		}
+	},
+	"envs": [
+		{
+			"time": 5,
+			"#": "0",
+			"$": "2",
+			"arr": "[4, 7, 19, 16]",
+			"res": "15",
+			"i": "4",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 7,
+			"#": "1",
+			"$": "2",
+			"arr": "[4, 7, 19, 16]",
+			"res": "27",
+			"i": "7",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 9,
+			"#": "2",
+			"$": "2",
+			"arr": "[4, 7, 19, 16]",
+			"res": "27",
+			"i": "19",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 11,
+			"#": "3",
+			"$": "2",
+			"arr": "[4, 7, 19, 16]",
+			"res": "30",
+			"i": "16",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 4
+		}
+	],
+	"solutions": [
+		"res += max(arr) - i"
+	]
+}

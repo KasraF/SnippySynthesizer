@@ -1,0 +1,32 @@
+{
+	"varNames": [
+		"rev"
+	],
+	"previousEnvs": {},
+	"envs": [
+		{
+			"time": 4,
+			"#": "",
+			"$": "",
+			"num": "123",
+			"rev": "321",
+			"lineno": 2,
+			"prev_lineno": 1,
+			"next_lineno": "R2"
+		},
+		{
+			"time": 8,
+			"#": "",
+			"$": "",
+			"num": "-321",
+			"rev": "-123",
+			"lineno": 2,
+			"prev_lineno": 1,
+			"next_lineno": "R2"
+		}
+	],
+	"solutions": [
+		"if num > -1:\n\trev = int(str(num)[::-1])\nelse:\n\trev = -1 * int(str(num * -1)[::-1])",
+		"if num > 0:\n\trev = int(str(num)[::-1])\nelse:\n\trev = -1 * int(str(num * -1)[::-1])"
+	]
+}
