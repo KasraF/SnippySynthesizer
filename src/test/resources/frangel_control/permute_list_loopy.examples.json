@@ -53,6 +53,6 @@
 		}
 	},
 	"solutions": [
-		"out = out + [inp1[-1 + inp2[idx]]]"
+		"out += [inp1[-1 + inp2[idx]]]"
 	]
 }

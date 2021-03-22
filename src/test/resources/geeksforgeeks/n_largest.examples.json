@@ -21,5 +21,8 @@
 			"inp": "[4, 5, 1, 2, 9]",
 			"n": "2"
 		}
-	}
+	},
+	"solutions": [
+		"reverse = sorted(inp)[::-1]\nn_largest = reverse[0:n]\nsort = sorted(reverse)"
+	]
 }
