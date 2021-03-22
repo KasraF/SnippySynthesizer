@@ -1,0 +1,31 @@
+{
+	"varNames": [
+		"rev"
+	],
+	"previousEnvs": {},
+	"envs": [
+		{
+			"time": 4,
+			"#": "",
+			"$": "",
+			"num": "123",
+			"rev": "321",
+			"lineno": 2,
+			"prev_lineno": 1,
+			"next_lineno": "R2"
+		},
+		{
+			"time": 8,
+			"#": "",
+			"$": "",
+			"num": "321",
+			"rev": "123",
+			"lineno": 2,
+			"prev_lineno": 1,
+			"next_lineno": "R2"
+		}
+	],
+	"solutions": [
+		"rev = int(str(num)[::-1])"
+	]
+}

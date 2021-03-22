@@ -1,0 +1,103 @@
+{
+	"varNames": [
+		"v",
+		"rs",
+		"carry"
+	],
+	"previousEnvs": {
+		"7": {
+			"time": 6,
+			"#": "0",
+			"$": "3",
+			"digits": "[1, 2, 9]",
+			"rs": "[]",
+			"carry": "1",
+			"d": "9",
+			"lineno": 4,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		"19": {
+			"time": 18,
+			"#": "0",
+			"$": "3",
+			"digits": "[3, 0]",
+			"rs": "[]",
+			"carry": "1",
+			"d": "0",
+			"lineno": 4,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		}
+	},
+	"envs": [
+		{
+			"time": 7,
+			"#": "0",
+			"$": "3",
+			"digits": "[1, 2, 9]",
+			"rs": "[0]",
+			"carry": "1",
+			"d": "9",
+			"v": "10",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 4
+		},
+		{
+			"time": 9,
+			"#": "1",
+			"$": "3",
+			"digits": "[1, 2, 9]",
+			"rs": "[3, 0]",
+			"carry": "0",
+			"d": "2",
+			"v": "3",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 4
+		},
+		{
+			"time": 11,
+			"#": "2",
+			"$": "3",
+			"digits": "[1, 2, 9]",
+			"rs": "[1, 3, 0]",
+			"carry": "0",
+			"d": "1",
+			"v": "1",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 5
+		},
+		{
+			"time": 19,
+			"#": "0",
+			"$": "3",
+			"digits": "[3, 0]",
+			"rs": "[1]",
+			"carry": "0",
+			"d": "0",
+			"v": "1",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 4
+		},
+		{
+			"time": 21,
+			"#": "1",
+			"$": "3",
+			"digits": "[3, 0]",
+			"rs": "[3, 1]",
+			"carry": "0",
+			"d": "3",
+			"v": "3",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 5
+		}
+	],
+	"solutions": [
+		"val = d + carry\nrs = [val % 10] + rs\ncarry = val // 10"
+	]
+}

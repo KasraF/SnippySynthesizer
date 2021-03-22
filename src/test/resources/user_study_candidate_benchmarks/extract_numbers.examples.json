@@ -1,0 +1,75 @@
+{
+	"varNames": [
+		"res",
+		"sub"
+	],
+	"previousEnvs": {
+		"8": {
+			"time": 5,
+			"#": "0",
+			"$": "3",
+			"s": "'123ab56'",
+			"res": "[]",
+			"sub": "''",
+			"c": "'1'",
+			"lineno": 4,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		}
+	},
+	"envs": [
+		{
+			"time": 8,
+			"#": "0",
+			"$": "3",
+			"s": "'123ab56'",
+			"res": "[]",
+			"sub": "'1'",
+			"c": "'1'",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 4
+		},
+		{
+			"time": 10,
+			"#": "1",
+			"$": "3",
+			"s": "'123ab56'",
+			"res": "[]",
+			"sub": "'12'",
+			"c": "'2'",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 4
+		},
+		{
+			"time": 12,
+			"#": "2",
+			"$": "3",
+			"s": "'123ab56'",
+			"res": "[]",
+			"sub": "'123'",
+			"c": "'3'",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 4
+		},
+		{
+			"time": 14,
+			"#": "3",
+			"$": "3",
+			"s": "'123ab56'",
+			"res": "[123]",
+			"sub": "''",
+			"c": "'a'",
+			"lineno": 3,
+			"prev_lineno": 4,
+			"next_lineno": 4
+		}
+	],
+	"solutions": [
+		"if c.isdigit():\n\tsub += c\nelse:\n\tres += [int(sub)]\n\tsub = \"\"",
+		"if c.isalpha():\n\tres += [int(sub)]\n\tsub = \"\"\nelse:\n\tsub += c",
+		"if c.isalpha():\n\tres += [int(sub)]\n\tsub = s[-1:-1]\nelse:\n\tsub += c"
+	]
+}
