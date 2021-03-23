@@ -50,6 +50,7 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 
 	def step(): Unit = {
 		if (this.graph.step()) {
+			this.graph.computeShortestPaths
 			for ((condStore, index) <- this.conditionals.zipWithIndex) {
 				if (condStore.cond.isDefined) {
 					graph.traverse(index) match {
@@ -187,6 +188,7 @@ object Node {
 			}
 
 		n.edges = edges
+		if (n.edges.isEmpty) for (i <- 0 until n.distancesToEnd.length) n.distancesToEnd.update(i,(0,None))
 		seen += parent -> n
 		n
 	}
@@ -259,12 +261,36 @@ case class Node(
 		}
 	}
 
+	val distancesToEnd: Array[(Int,Option[Edge])] = Array.fill(this.partitionIndices.length)(Int.MaxValue,None)
+	def computeShortestPaths(): Unit = {
+		reset_seen()
+		do_computeShortest()
+	}
+	def do_computeShortest(): Unit = {
+		if (seen) return
+		for (edge <- this.edges) {
+			edge.child.computeShortestPaths
+			for (i <- 0 until distancesToEnd.length) {
+				if (edge.variables.map(_._2(i)).forall(_.isComplete) && edge.child.distancesToEnd(i)._1 < Int.MaxValue) {
+					val distanceOnEdge = edge.child.distancesToEnd(i)._1 + edge.variables.map{ case (v,stores) =>
+						stores(i).thenCase.program.get.terms + stores(i).elseCase.program.get.terms
+					}.sum
+					if (distanceOnEdge < distancesToEnd(i)._1) {
+						distancesToEnd.update(i,(distanceOnEdge,Some(edge)))
+					}
+				}
+			}
+		}
+		seen = true
+	}
+
 	def traverse(partitionIndex: Int): Option[(List[Assignment], List[Assignment])] = {
 		if (edges.isEmpty) {
 			Some((Nil, Nil))
 		} else {
-			for (edge <- this.edges) {
-				if (edge.variables.map(_._2(partitionIndex)).forall(_.isComplete))
+			//for (edge <- this.edges) {
+			this.distancesToEnd(partitionIndex)._2.foreach{edge =>
+				//if (edge.variables.map(_._2(partitionIndex)).forall(_.isComplete))
 					edge.child.traverse(partitionIndex) match {
 						case None => ()
 						case Some((thenAssign, elseAssign)) =>
