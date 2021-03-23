@@ -87,6 +87,15 @@ trait ListNode[T] extends IterableNode
 	override def updateValues(contexts: Contexts): ListNode[T]
 }
 
+trait SetNode[T] extends IterableNode
+{
+	val childType: Types
+	override val values: List[Option[Set[T]]]
+	override lazy val nodeType: Types = Types.setOf(childType)
+
+	override def updateValues(contexts: Contexts): SetNode[T]
+}
+
 trait StringListNode extends ListNode[String]
 {
 	override val childType: Types = Types.String

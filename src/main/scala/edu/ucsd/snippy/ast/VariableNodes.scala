@@ -43,3 +43,8 @@ case class MapVariable[K, V](name: String, contexts: List[Map[String, Any]], key
 {
 	override def updateValues(contexts: Contexts): MapVariable[K, V] = copy(name, contexts = contexts.contexts)
 }
+
+case class SetVariable[T](name: String, contexts: List[Map[String, Any]], childType: Types) extends VariableNode[Set[T]](contexts) with SetNode[T]
+{
+	override def updateValues(contexts: Contexts): SetNode[T] = copy(name, contexts = contexts.contexts)
+}

@@ -47,5 +47,14 @@ class ParserTests extends JUnitSuite
 	@Test def parseBadValTypeMap(): Unit = assertEquals(None, parser.parse("{0: 'a', 1: 2}"))
 	@Test def parseBadKeyTypeMap(): Unit = assertEquals(None, parser.parse("{0: 'a', 'a': 'b'}"))
 
-	// TODO Sets
+	// Sets
+	@Test def parseStrSet(): Unit = assertEquals(Some(Set("a", "b")), parser.parse("{'a', 'b'}"))
+	@Test def parseIntSet(): Unit = assertEquals(Some(Set(0, 1)), parser.parse("{0, 1}"))
+	@Test def parseExtraSpacesSet0(): Unit = assertEquals(Some(Set(0, 1)), parser.parse(" {0, 1} "))
+	@Test def parseExtraSpacesSet1(): Unit = assertEquals(Some(Set(0, 1)), parser.parse("{ 0, 1}"))
+	@Test def parseExtraSpacesSet2(): Unit = assertEquals(Some(Set(0, 1)), parser.parse("{ 0, 1 }"))
+	@Test def parseExtraSpacesSet3(): Unit = assertEquals(Some(Set(0, 1)), parser.parse("{0  , 1  }"))
+	@Test def parseExtraSpacesSet4(): Unit = assertEquals(Some(Set(0, 1)), parser.parse("{0,1}"))
+	@Test def parseBadValTypeSet(): Unit = assertEquals(None, parser.parse("{0, 'a'}"))
+	@Test def parseBadKeyTypeSet(): Unit = assertEquals(None, parser.parse("{'a', 1}"))
 }

@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.ast
 
-import edu.ucsd.snippy.DebugPrints.dprintln
+import edu.ucsd.snippy.DebugPrints.eprintln
 
 object Types extends Enumeration
 {
@@ -38,7 +38,7 @@ object Types extends Enumeration
 		override def canEqual(that: Any): Boolean = this.equals(that)
 
 		override def equals(that: Any): Boolean =
-			that.isInstanceOf[Types.List] && that.asInstanceOf[Types.List].childType.equals(this.childType)
+			that.isInstanceOf[Types.Set] && that.asInstanceOf[Types.Set].childType.equals(this.childType)
 
 		override def toString(): String = s"Set[$childType]"
 	}
@@ -87,7 +87,7 @@ object Types extends Enumeration
 		case Types.Int => IntList
 		case Types.Bool => BoolList
 		case _ =>
-			dprintln("Could not determine type of " + t)
+			eprintln("Could not determine type of " + t)
 			AnyList
 	}
 
@@ -97,8 +97,16 @@ object Types extends Enumeration
 		case (String, Int) => StringIntMap
 		case (String, String) => StringStringMap
 		case _ =>
-			dprintln(s"Could not determine type of ($k, $v)")
+			eprintln(s"Could not determine type of ($k, $v)")
 			Map(Types.Any, Types.Any)
+	}
+
+	@inline def setOf(t: Types.Value): Types.Value = t match {
+		case Types.String => StringSet
+		case Types.Int => IntSet
+		case _ =>
+			eprintln("Could not determine type of " + t)
+			AnyList
 	}
 
 	@inline def childOf(t: Types.Types): Types.Types = t match {
@@ -106,7 +114,7 @@ object Types extends Enumeration
 		case Types.Set(t) => t
 		case Types.String => t
 		case _ =>
-			dprintln("Could not determine type of " + t)
+			eprintln("Could not determine type of " + t)
 			Unknown
 	}
 
@@ -130,18 +138,18 @@ object Types extends Enumeration
 					case (_: Int, _: String) => IntStringMap
 					case (_: Int, _: Int) => IntIntMap
 					case _ =>
-						dprintln("Could not determine type of " + x)
+						eprintln("Could not determine type of " + x)
 						Unknown
 				}
 				case _ =>
-					dprintln("Could not determine type of " + x)
+					eprintln("Could not determine type of " + x)
 					Unknown
 			}
 			case x: scala.collection.Set[_] if x.nonEmpty => x.head match {
 				case _: String => StringSet
 				case _: Int => IntSet
 				case _ =>
-					dprintln("Could not determine type of " + x)
+					eprintln("Could not determine type of " + x)
 					Unknown
 			}
 			case x: scala.collection.Map[_, _] if x.nonEmpty => x.head match {
@@ -150,11 +158,11 @@ object Types extends Enumeration
 				case (_: Int, _: String) => IntStringMap
 				case (_: Int, _: Int) => IntIntMap
 				case _ =>
-					dprintln("Could not determine type of " + x)
+					eprintln("Could not determine type of " + x)
 					Unknown
 			}
 			case _ =>
-				dprintln("Could not determine type of " + x)
+				eprintln("Could not determine type of " + x)
 				Unknown
 		}
 	}

@@ -1,5 +1,5 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, StringVariable, Types}
+import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, SetVariable, StringVariable, Types}
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, ProbEnumerator}
 import edu.ucsd.snippy.predicates.MultilineMultivariablePredicate
@@ -133,6 +133,8 @@ object Node {
 				case Variable(name, Types.IntStringMap) => Some(MapVariable[Int,String](name, envs, Types.Int, Types.String))
 				case Variable(name, Types.StringIntMap) => Some(MapVariable[String,Int](name, envs, Types.String, Types.Int))
 				case Variable(name, Types.StringStringMap) => Some(MapVariable[String,String](name, envs, Types.String, Types.String))
+				case Variable(name, Types.IntSet) => Some(SetVariable[Int](name, envs, Types.Int))
+				case Variable(name, Types.StringSet) => Some(SetVariable[String](name, envs, Types.String))
 			}
 		}
 

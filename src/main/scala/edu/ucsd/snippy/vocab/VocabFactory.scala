@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.vocab
 
-import edu.ucsd.snippy.ast.Types.{IntList, Types}
+import edu.ucsd.snippy.ast.Types.{IntList, IntSet, Types, childOf}
 import edu.ucsd.snippy.ast.{ASTNode, BoolVariable, IntVariable, StringVariable, Types, _}
 
 class VocabFactory(
@@ -84,6 +84,16 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						MapVariable(name, contexts, keyType, valType)
 				}
+				case (name, Types.Set(childType)) => new BasicVocabMaker {
+					override val arity: Int = 0
+					override val childTypes: List[Types] = Nil
+					override val returnType: Types = Types.setOf(childType)
+					override val nodeType: Class[_ <: ASTNode] = classOf[SetVariable[Any]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						SetVariable(name, contexts, childType)
+				}
 				case (name, typ) =>
 					assert(assertion = false, s"Input type $typ not supported for input $name")
 					null
@@ -115,6 +125,16 @@ object VocabFactory
 						IntLiteral(num, contexts.length)
 				}
 			} ++ List(
+				new BasicVocabMaker {
+					override val returnType: Types = IntSet
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(IntList)
+					override val nodeType: Class[_ <: ASTNode] = classOf[ToSet[Int]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						ToSet(children.head.asInstanceOf[ListNode[Int]])
+				},
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2
