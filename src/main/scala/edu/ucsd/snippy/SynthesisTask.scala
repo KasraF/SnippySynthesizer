@@ -63,8 +63,8 @@ object SynthesisTask
 					val prevEnv = envs
 						.filter(env => env("time").asInstanceOf[BigInt].toInt < time)
 						.filter(env => env.contains("#") && env("#").asInstanceOf[String].toInt == iter - 1)
-						.last
-					Some(prevEnv) -> env
+						.lastOption
+					prevEnv -> env
 				}
 			}
 		})
