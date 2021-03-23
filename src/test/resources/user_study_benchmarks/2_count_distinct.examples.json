@@ -1,0 +1,82 @@
+{
+	"varNames": [
+		"w",
+		"d",
+		"dist_counts"
+	],
+	"previousEnvs": {
+		"5": {
+			"time": 4,
+			"#": "0",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[]",
+			"i": "0",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": 2
+		}
+	},
+	"envs": [
+		{
+			"time": 5,
+			"#": "0",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[3]",
+			"i": "0",
+			"w": "['a', 'b', 'a', 'c']",
+			"d": "{'a', 'b', 'c'}",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 7,
+			"#": "1",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[3, 4]",
+			"i": "1",
+			"w": "['b', 'a', 'c', 'd']",
+			"d": "{'a', 'd', 'b', 'c'}",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 9,
+			"#": "2",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[3, 4, 4]",
+			"i": "2",
+			"w": "['a', 'c', 'd', 'b']",
+			"d": "{'a', 'd', 'b', 'c'}",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 11,
+			"#": "3",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[3, 4, 4, 3]",
+			"i": "3",
+			"w": "['c', 'd', 'b', 'c']",
+			"d": "{'d', 'b', 'c'}",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 4
+		}
+	],
+	"solutions": [
+		"w = arr[i:i+k]\nd = set(w)\ndist_counts += [len(dist)]"
+	]
+}

@@ -60,10 +60,13 @@ object BenchmarksVerbose extends App
 								.zipAll(solutionLines, " ".repeat(lineLength), "")
 								.foreach {
 									case (line, sol) =>
-										buffer
-											.a("| ")
-											.fgRed()
-											.a(line)
+										buffer.a("| ")
+										if (solutions.exists(_.contains(line))) {
+											buffer.fgGreen()
+										} else {
+											buffer.fgRed()
+										}
+										buffer.a(line)
 											.fgDefault()
 											.a(repeat(" ", metaLine.length - lineLength - 1))
 											.a("| ")

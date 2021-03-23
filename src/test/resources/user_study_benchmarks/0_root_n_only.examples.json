@@ -1,0 +1,48 @@
+{
+	"varNames": [
+		"n"
+	],
+	"previousEnvs": {
+		"5": {
+			"time": 4,
+			"#": "",
+			"$": "",
+			"n": "1798",
+			"k": "2",
+			"i": "0",
+			"digits": "[1, 7, 9, 8]",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": 1
+		}
+	},
+	"envs": [
+		{
+			"time": 5,
+			"#": "",
+			"$": "",
+			"n": "25",
+			"k": "2",
+			"i": "0",
+			"digits": "[1, 7, 9, 8]",
+			"lineno": 1,
+			"prev_lineno": 3,
+			"next_lineno": 2
+		},
+		{
+			"time": 8,
+			"#": "",
+			"$": "",
+			"n": "7",
+			"k": "2",
+			"i": "1",
+			"digits": "[2, 5]",
+			"lineno": 1,
+			"prev_lineno": 3,
+			"next_lineno": 4
+		}
+	],
+	"solutions": [
+		"n = sum(digits)"
+	]
+}

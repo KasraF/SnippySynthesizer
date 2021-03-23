@@ -1,0 +1,54 @@
+{
+	"varNames": [
+		"w",
+		"d",
+		"dist_counts"
+	],
+	"previousEnvs": {
+		"5": {
+			"time": 4,
+			"#": "0",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[]",
+			"i": "0",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": 2
+		}
+	},
+	"envs": [
+		{
+			"time": 5,
+			"#": "0",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[3]",
+			"i": "0",
+			"w": "['a', 'b', 'a', 'c']",
+			"d": "{'b', 'c', 'a'}",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 7,
+			"#": "1",
+			"$": "2",
+			"arr": "['a', 'b', 'a', 'c', 'd', 'b', 'c']",
+			"k": "4",
+			"dist_counts": "[3, 4]",
+			"i": "1",
+			"w": "['b', 'a', 'c', 'd']",
+			"d": "{'d', 'b', 'c', 'a'}",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		}
+	],
+	"solutions": [
+		"w = arr[i:i+k]\nd = set(w)\ndist_counts += [len(dist)]"
+	]
+}
