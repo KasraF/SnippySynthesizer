@@ -135,6 +135,16 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						ToSet(children.head.asInstanceOf[ListNode[Int]])
 				},
+				new BasicVocabMaker {
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(IntList)
+					override val nodeType: Class[_ <: ASTNode] = classOf[Sum]
+					override val returnType: Types = Types.Int
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						Sum(children.head.asInstanceOf[ListNode[Int]])
+				},
 				new BasicVocabMaker
 				{
 					override val arity: Int = 2

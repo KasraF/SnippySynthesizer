@@ -296,3 +296,15 @@ case class NegateBool(arg: BoolNode) extends UnaryOpNode[Boolean] with BoolNode
 
 	override def updateValues(contexts: Contexts): NegateBool = copy(arg.updateValues(contexts))
 }
+
+case class Sum(arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
+{
+	override lazy val code: String = f"sum(${arg.code})"
+	override val parenless = true
+	override def doOp(x: Any): Option[Int] = x match {
+		case lst: List[Int] => Some(lst.sum)
+		case _ => wrongType(x)
+	}
+	override def make(x: ASTNode): Sum = Sum(x.asInstanceOf[ListNode[Int]])
+	override def updateValues(contexts: Contexts): Sum = copy(arg.updateValues(contexts))
+}
