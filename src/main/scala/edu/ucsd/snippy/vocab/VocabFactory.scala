@@ -767,6 +767,16 @@ object VocabFactory
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						TernarySubList[String](children.head.asInstanceOf[ListNode[String]], children(1).asInstanceOf[IntNode], children(2).asInstanceOf[IntNode])
+				},
+				new BasicVocabMaker {
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.String)
+					override val returnType: Types = Types.StringList
+					override val nodeType: Class[_ <: ASTNode] = classOf[ToList]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						ToList(children.head.asInstanceOf[StringNode])
 				}
 			)
 		}

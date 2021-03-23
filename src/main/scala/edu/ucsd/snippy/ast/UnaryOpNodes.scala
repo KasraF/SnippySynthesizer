@@ -43,6 +43,21 @@ case class ToSet[T](arg: ListNode[T]) extends UnaryOpNode[Set[T]] with SetNode[T
 	override def updateValues(contexts: Contexts): ToSet[T] = copy(arg.updateValues(contexts))
 }
 
+case class ToList(arg: StringNode) extends UnaryOpNode[List[String]] with StringListNode
+{
+	override lazy val code: String = f"list(${arg.code})"
+
+	override def doOp(x: Any): Option[List[String]] = x match {
+		case s: String => Some(s.map(_.toString).toList)
+		case _ => wrongType(x)
+	}
+
+	override def make(x: ASTNode): ToList =
+		ToList(x.asInstanceOf[StringNode])
+
+	override def updateValues(contexts: Contexts): ToList = copy(arg.updateValues(contexts))
+}
+
 case class IntToString(arg: IntNode) extends UnaryOpNode[String] with StringNode
 {
 	override lazy val code: String = "str(" + arg.code + ")"
