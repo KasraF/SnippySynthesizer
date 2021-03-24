@@ -213,6 +213,7 @@ case class Node(
 		reset_seen()
 		do_step()
 	}
+	var done = false
 	private def do_step(): Boolean = {
 		if (seen)
 			false
@@ -220,7 +221,7 @@ case class Node(
 			seen = true
 			var graphChanged = false
 
-		if (this.enum.hasNext) {
+		if (!done && this.enum.hasNext) {
 			val program = this.enum.next()
 
 			this.onStep(program)
@@ -256,8 +257,15 @@ case class Node(
 					}
 				}
 				graphChanged |= edge.child.do_step()
-				}
 			}
+			if (edges.forall(edge => edge.variables.forall(v => v._2.forall(store => store.isComplete))))
+				done = true
+		}
+		else if (done) { //don't run this enumerator but still run children.
+			for (edge <- this.edges) {
+				graphChanged |= edge.child.do_step()
+			}
+		}
 
 		graphChanged
 		}
