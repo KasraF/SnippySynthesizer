@@ -18,4 +18,5 @@ trait Enumerator extends Iterator[ASTNode]
 	val vocab: VocabFactory
 	val oeManager: OEValuesManager
 	val contexts: List[Map[String, Any]]
+	def programsSeen: Int
 }

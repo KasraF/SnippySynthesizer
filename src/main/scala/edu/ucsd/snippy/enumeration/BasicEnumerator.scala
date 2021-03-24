@@ -21,6 +21,7 @@ class BasicEnumerator(
 	var height = 0
 	var rootMaker: Iterator[ASTNode] =
 		currIter.next().init(currLevelProgs.toList, contexts, vocab, height)
+	var progs = 0
 
 	// TODO We don't use this rn
 	// ProbUpdate.probMap = ProbUpdate.createProbMap(vocab)
@@ -90,6 +91,7 @@ class BasicEnumerator(
 
 				if (prog.values.exists(_.isDefined) && oeManager.isRepresentative(prog)) {
 					res = Some(prog)
+					progs += 1
 				}
 			}
 			else if (currIter.hasNext) {
@@ -104,4 +106,6 @@ class BasicEnumerator(
 		currLevelProgs += res.get
 		res
 	}
+
+	override def programsSeen: Int = progs
 }

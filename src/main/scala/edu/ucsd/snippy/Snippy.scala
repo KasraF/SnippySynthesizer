@@ -51,16 +51,16 @@ object Snippy extends App
 		val deadline = timeout.seconds.fromNow
 
 		breakable {
-			for ((solution, i) <- task.enumerator.zipWithIndex) {
+			for (solution <- task.enumerator) {
 				solution match {
 					case Some(assignment) =>
-						rs = (Some(assignment.code), timeout * 1000 - deadline.timeLeft.toMillis.toInt, i)
+						rs = (Some(assignment.code), timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
 						break
 					case _ => ()
 				}
 
 				if (!deadline.hasTimeLeft) {
-					rs = (None, timeout * 1000 - deadline.timeLeft.toMillis.toInt, i)
+					rs = (None, timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
 					break
 				}
 			}

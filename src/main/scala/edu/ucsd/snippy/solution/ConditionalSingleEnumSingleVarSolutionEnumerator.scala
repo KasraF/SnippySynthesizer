@@ -92,6 +92,8 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 			}
 		}
 	}
+
+	override def programsSeen: Int = enumerator.programsSeen
 }
 
 class SolutionStore(val thenVals: List[Any], val elseVals: List[Any]) {

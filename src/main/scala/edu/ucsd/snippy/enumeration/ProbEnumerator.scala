@@ -130,7 +130,7 @@ class ProbEnumerator(
 		advanceRoot()
 	}
 
-
+	var progs = 0
 	def getNextProgram: Option[ASTNode] =
 	{
 		var res: Option[ASTNode] = None
@@ -142,6 +142,7 @@ class ProbEnumerator(
 				val program = rootMaker.next
 				if (program.values.exists(_.isDefined) && oeManager.isRepresentative(program)) {
 					res = Some(program)
+					progs += 1
 				}
 			}
 			else if (currIterator.hasNext) {
@@ -155,4 +156,6 @@ class ProbEnumerator(
 		//Console.withOut(size_log) { println(nested, currLevelPrograms.takeRight(1).map(c => (c.code, c.values, c.cost))) }
 		res
 	}
+
+	override def programsSeen: Int = progs
 }

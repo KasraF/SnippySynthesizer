@@ -79,5 +79,7 @@ class InterleavedSolutionEnumerator(
 			}
 		}
 	}
+
+	override def programsSeen: Int = enumerators.map(_._2.programsSeen).sum
 }
 

@@ -184,4 +184,9 @@ class ConditionalMegazordSolutionEnumerator(
 			this.thenProgram.isDefined && this.elseProgram.isDefined
 		}
 	}
+
+	override def programsSeen: Int = partitions.map(_._2 match {
+		case UnaryPartition(e1) => e1.programsSeen
+		case BinaryPartition(e1, e2) => e1.programsSeen + e2.programsSeen
+	}).sum + condEnumerator.programsSeen
 }

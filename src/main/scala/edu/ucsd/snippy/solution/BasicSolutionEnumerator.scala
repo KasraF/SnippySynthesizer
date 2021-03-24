@@ -11,5 +11,7 @@ class BasicSolutionEnumerator(val predicate: Predicate, val enumerator: Enumerat
 	override def step(): Unit =
 		if (solution.isEmpty && enumerator.hasNext)
 			this.solution = predicate.evaluate(enumerator.next)
+
+	override def programsSeen: Int = enumerator.programsSeen
 }
 

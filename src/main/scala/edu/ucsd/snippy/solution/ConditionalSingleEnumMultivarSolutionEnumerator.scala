@@ -65,6 +65,8 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 			}
 		}
 	}
+
+	override def programsSeen: Int = this.graph.programsSeen
 }
 
 case class Variable(name: String, typ: Types)
@@ -308,6 +310,22 @@ case class Node(
 					}
 				}
 			None
+		}
+	}
+
+	def programsSeen: Int = {
+		//This is not a map on purpose. :(
+		val seen = mutable.ArrayBuffer[(Node,Int)]()
+		get_progCount(seen)
+		seen.map(_._2).sum
+	}
+	private def get_progCount(seen: mutable.ArrayBuffer[(Node, Int)]): Unit = {
+		if (!seen.exists(_._1 == this)) {
+			seen += (this -> this.enum.programsSeen)
+
+			for (edge <- edges) {
+				edge.child.get_progCount(seen)
+			}
 		}
 	}
 }
