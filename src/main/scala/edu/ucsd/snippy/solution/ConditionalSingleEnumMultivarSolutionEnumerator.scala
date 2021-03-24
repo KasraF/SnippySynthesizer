@@ -279,13 +279,13 @@ case class Node(
 	def do_computeShortest(): Unit = {
 		if (seen) return
 		for (edge <- this.edges) {
-			edge.child.computeShortestPaths
+			edge.child.do_computeShortest()
 			for (i <- 0 until distancesToEnd.length) {
 				if (edge.variables.map(_._2(i)).forall(_.isComplete) && edge.child.distancesToEnd(i)._1 < Int.MaxValue) {
 					val distanceOnEdge = edge.child.distancesToEnd(i)._1 + edge.variables.map{ case (v,stores) =>
 						stores(i).thenCase.program.get.terms + stores(i).elseCase.program.get.terms
 					}.sum
-					if (distanceOnEdge < distancesToEnd(i)._1) {
+					if (distanceOnEdge < distancesToEnd(i)._1 || (distanceOnEdge == distancesToEnd(i)._1 && distancesToEnd(i)._2.map(e => edge.variables.size < e.variables.size).getOrElse(false))) {
 						distancesToEnd.update(i,(distanceOnEdge,Some(edge)))
 					}
 				}
@@ -335,5 +335,22 @@ case class Node(
 				edge.child.get_progCount(seen)
 			}
 		}
+	}
+
+	def do_print(nodeLabel: Node => String, edgeLabel: Edge => String): Unit = {
+		if (seen) return
+		println(s"${System.identityHashCode(this).toString} [label=${'"' + nodeLabel(this) + '"'}]")
+		for (edge <- edges) {
+			edge.child.do_print(nodeLabel,edgeLabel)
+			println(s"${System.identityHashCode(this)} -> ${System.identityHashCode(edge.child)} [label=${'"' + edgeLabel(edge) + '"'}]")
+		}
+		seen = true
+	}
+
+	def printGraph(nodeLabel: Node => String, edgeLabel: Edge => String) = {
+		reset_seen()
+		println("digraph G {")
+		do_print(nodeLabel,edgeLabel)
+		println("}")
 	}
 }
