@@ -118,14 +118,22 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 							case Some((SingleAssignment(_, elseProgram), j)) if elseProgram.code == thenProgram.code =>
 								val thenVarsAssignedBefore = this.varsAssigned(thenCode.slice(0, i))
 								val elseVarsAssignedBefore = this.varsAssigned(elseCode.slice(0, j))
+								val thenVarsAssignedAfter = this.varsAssigned(thenCode.slice(i + 1, thenCode.length))
+								val elseVarsAssignedAfter = this.varsAssigned(elseCode.slice(j + 1, elseCode.length))
 
 								if (!(thenVarsAssignedBefore.exists(thenProgram.includes) ||
-									elseVarsAssignedBefore.exists(elseProgram.includes))) {
+									  elseVarsAssignedBefore.exists(elseProgram.includes)) &&
+									!(anyInclude(thenCode.slice(0, i), name) ||
+									  anyInclude(elseCode.slice(0, j), name)))
+								{
 									preCondition = preCondition :+ thenCode(i)
 									thenCode = thenCode.slice(0, i) ++ thenCode.slice(i + 1, thenCode.length)
 									elseCode = elseCode.slice(0, i) ++ elseCode.slice(i + 1, elseCode.length)
-								} else if (!(this.anyInclude(thenCode.slice(i + 1, thenCode.length), name) ||
-									this.anyInclude(elseCode.slice(j + 1, elseCode.length), name))) {
+								}
+								else if (!(thenVarsAssignedAfter.exists(thenProgram.includes) ||
+										   elseVarsAssignedAfter.exists(elseProgram.includes)) &&
+										 !(this.anyInclude(thenCode.slice(i + 1, thenCode.length), name) ||
+										   this.anyInclude(elseCode.slice(j + 1, elseCode.length), name))) {
 									postCondition = postCondition :+ thenCode(i)
 									thenCode = thenCode.slice(0, i) ++ thenCode.slice(i + 1, thenCode.length)
 									elseCode = elseCode.slice(0, i) ++ elseCode.slice(i + 1, elseCode.length)
