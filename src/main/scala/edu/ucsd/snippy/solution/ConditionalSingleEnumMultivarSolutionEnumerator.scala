@@ -52,7 +52,7 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 		if (this.graph.step()) {
 			this.graph.computeShortestPaths
 			for ((condStore, index) <- this.conditionals.zipWithIndex) {
-				if (condStore.cond.isDefined) {
+				if (condStore.cond.isDefined && this.solution.isEmpty) {
 					graph.traverse(index) match {
 						case Some((thenAssignments, elseAssignments)) =>
 							this.solution = Some(ConditionalAssignment(
