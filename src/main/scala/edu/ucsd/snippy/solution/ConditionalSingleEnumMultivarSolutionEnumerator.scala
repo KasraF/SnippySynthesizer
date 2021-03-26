@@ -190,12 +190,13 @@ object Node {
 			}
 
 		n.edges = edges
-		if (n.edges.isEmpty) for (i <- 0 until n.distancesToEnd.length) n.distancesToEnd.update(i,(0,None))
+		if (n.edges.isEmpty) for (i <- 0 until n.distancesToEnd.length) n.distancesToEnd.update(i,DistancePaths((0,None),(0,None)))
 		seen += parent -> n
 		n
 	}
 }
 
+case class DistancePaths(thenPath: (Int,Option[Edge]),elsePath: (Int,Option[Edge]))
 case class Node(
 	enum: Enumerator,
 	state: List[Map[String, Any]],
@@ -271,7 +272,7 @@ case class Node(
 		}
 	}
 
-	val distancesToEnd: Array[(Int,Option[Edge])] = Array.fill(this.partitionIndices.length)(Int.MaxValue,None)
+	val distancesToEnd: Array[DistancePaths] = Array.fill(this.partitionIndices.length)(DistancePaths((Int.MaxValue,None),(Int.MaxValue,None)))
 	def computeShortestPaths(): Unit = {
 		reset_seen()
 		do_computeShortest()
@@ -281,12 +282,24 @@ case class Node(
 		for (edge <- this.edges) {
 			edge.child.do_computeShortest()
 			for (i <- 0 until distancesToEnd.length) {
-				if (edge.variables.map(_._2(i)).forall(_.isComplete) && edge.child.distancesToEnd(i)._1 < Int.MaxValue) {
-					val distanceOnEdge = edge.child.distancesToEnd(i)._1 + edge.variables.map{ case (v,stores) =>
-						stores(i).thenCase.program.get.terms + stores(i).elseCase.program.get.terms
+				//then case
+				if (edge.variables.map(_._2(i)).forall(store => !store.thenCase.program.isEmpty) && edge.child.distancesToEnd(i).thenPath._1 < Int.MaxValue) {
+					val distanceOnThenEdge = edge.child.distancesToEnd(i).thenPath._1 + edge.variables.map { case (v, stores) =>
+						stores(i).thenCase.program.get.terms
 					}.sum
-					if (distanceOnEdge < distancesToEnd(i)._1 || (distanceOnEdge == distancesToEnd(i)._1 && distancesToEnd(i)._2.map(e => edge.variables.size < e.variables.size).getOrElse(false))) {
-						distancesToEnd.update(i,(distanceOnEdge,Some(edge)))
+					if (distanceOnThenEdge < distancesToEnd(i).thenPath._1 || (distanceOnThenEdge == distancesToEnd(i).thenPath._1 && distancesToEnd(i).thenPath._2.map(e => edge.variables.size < e.variables.size).getOrElse(false))) {
+						distancesToEnd.update(i,distancesToEnd(i).copy(thenPath = (distanceOnThenEdge,Some(edge))))
+					}
+				}
+				//else case
+				if (edge.variables.map(_._2(i)).forall(store => !store.elseCase.program.isEmpty) && edge.child.distancesToEnd(i).elsePath._1 < Int.MaxValue) {
+					val distanceOnElseEdge = edge.child.distancesToEnd(i).elsePath._1 + edge.variables.map{ case (v,stores) =>
+						stores(i).elseCase.program.get.terms
+					}.sum
+
+
+					if (distanceOnElseEdge < distancesToEnd(i).elsePath._1 || (distanceOnElseEdge == distancesToEnd(i).elsePath._1 && distancesToEnd(i).elsePath._2.map(e => edge.variables.size < e.variables.size).getOrElse(false))) {
+						distancesToEnd.update(i,distancesToEnd(i).copy(elsePath = (distanceOnElseEdge,Some(edge))))
 					}
 				}
 			}
@@ -295,28 +308,41 @@ case class Node(
 	}
 
 	def traverse(partitionIndex: Int): Option[(List[Assignment], List[Assignment])] = {
+		if (this.distancesToEnd(partitionIndex).thenPath._2.isEmpty || this.distancesToEnd(partitionIndex).elsePath._2.isEmpty)
+			None
+		else {
+			val thenAssigns = traverse(partitionIndex,true)
+			val elseAssigns = traverse(partitionIndex,false)
+			for (t <- thenAssigns; e <- elseAssigns) yield (t,e)
+		}
+	}
+	def traverse(partitionIndex: Int, thenBranch: Boolean): Option[List[Assignment]] = {
 		if (edges.isEmpty) {
-			Some((Nil, Nil))
+			Some(Nil)
 		} else {
-			//for (edge <- this.edges) {
-			this.distancesToEnd(partitionIndex)._2.foreach{edge =>
-				//if (edge.variables.map(_._2(partitionIndex)).forall(_.isComplete))
-					edge.child.traverse(partitionIndex) match {
+			val path = if (thenBranch) this.distancesToEnd(partitionIndex).thenPath else this.distancesToEnd(partitionIndex).elsePath
+			path._2.foreach { edge =>
+					//if (edge.variables.map(_._2(partitionIndex)).forall(_.isComplete))
+					edge.child.traverse(partitionIndex, thenBranch) match {
 						case None => ()
-						case Some((thenAssign, elseAssign)) =>
-							val (newThenAssign, newElseAssign) = if (edge.variables.size == 1) {
+						case Some(assign) =>
+							val newAssign = if (edge.variables.size == 1) {
 								val (variable, store) = edge.variables.head
-								(SingleAssignment(variable.name, store(partitionIndex).thenCase.program.get),
-									SingleAssignment(variable.name, store(partitionIndex).elseCase.program.get))
+								if (thenBranch)
+									SingleAssignment(variable.name, store(partitionIndex).thenCase.program.get)
+								else
+									SingleAssignment(variable.name, store(partitionIndex).elseCase.program.get)
 							} else {
 								val ordered = edge.variables.map(tup => tup._1 -> tup._2(partitionIndex)).toList
 								val names = ordered.map(_._1.name)
-								(BasicMultivariableAssignment(names, ordered.map(_._2.thenCase.program.get)),
-									BasicMultivariableAssignment(names, ordered.map(_._2.elseCase.program.get)))
+								if (thenBranch)
+									BasicMultivariableAssignment(names, ordered.map(_._2.thenCase.program.get))
+								else
+									BasicMultivariableAssignment(names, ordered.map(_._2.elseCase.program.get))
 							}
-							return Some(newThenAssign :: thenAssign, newElseAssign :: elseAssign)
+							return Some(newAssign :: assign)
 					}
-				}
+			}
 			None
 		}
 	}
