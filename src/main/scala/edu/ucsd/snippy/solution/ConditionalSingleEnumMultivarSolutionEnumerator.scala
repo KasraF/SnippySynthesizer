@@ -1,5 +1,5 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, SetVariable, StringVariable, Types}
+import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, SetVariable, StringVariable, Types, VariableNode}
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, ProbEnumerator}
 import edu.ucsd.snippy.predicates.MultilineMultivariablePredicate
@@ -111,34 +111,12 @@ object Node {
 		val thenValues = filterByIndices(prevValues, partition._1)
 		if (thenValues.forall(_.isDefined) &&
 			thenValues.map(_.get) == rs.thenCase.values) {
-			rs.thenCase.program = variable match {
-				case Variable(name, Types.Bool) => Some(BoolVariable(name, envs))
-				case Variable(name, Types.String) => Some(StringVariable(name, envs))
-				case Variable(name, Types.Int) => Some(IntVariable(name, envs))
-				case Variable(name, Types.IntList) => Some(ListVariable[Int](name, envs, Types.Int))
-				case Variable(name, Types.StringList) => Some(ListVariable[String](name, envs, Types.String))
-				case Variable(name, Types.IntIntMap) => Some(MapVariable[Int,Int](name, envs, Types.Int, Types.Int))
-				case Variable(name, Types.IntStringMap) => Some(MapVariable[Int,String](name, envs, Types.Int, Types.String))
-				case Variable(name, Types.StringIntMap) => Some(MapVariable[String,Int](name, envs, Types.String, Types.Int))
-				case Variable(name, Types.StringStringMap) => Some(MapVariable[String,String](name, envs, Types.String, Types.String))
-			}
+			rs.thenCase.program = Some(VariableNode.nodeFromType(variable.name,variable.typ,envs))
 		}
 
 		val elseValues = filterByIndices(prevValues, partition._2)
 		if (elseValues.forall(_.isDefined) && elseValues.map(_.get) == rs.elseCase.values) {
-			rs.elseCase.program = variable match {
-				case Variable(name, Types.Bool) => Some(BoolVariable(name, envs))
-				case Variable(name, Types.String) => Some(StringVariable(name, envs))
-				case Variable(name, Types.Int) => Some(IntVariable(name, envs))
-				case Variable(name, Types.IntList) => Some(ListVariable[Int](name, envs, Types.Int))
-				case Variable(name, Types.StringList) => Some(ListVariable[String](name, envs, Types.String))
-				case Variable(name, Types.IntIntMap) => Some(MapVariable[Int,Int](name, envs, Types.Int, Types.Int))
-				case Variable(name, Types.IntStringMap) => Some(MapVariable[Int,String](name, envs, Types.Int, Types.String))
-				case Variable(name, Types.StringIntMap) => Some(MapVariable[String,Int](name, envs, Types.String, Types.Int))
-				case Variable(name, Types.StringStringMap) => Some(MapVariable[String,String](name, envs, Types.String, Types.String))
-				case Variable(name, Types.IntSet) => Some(SetVariable[Int](name, envs, Types.Int))
-				case Variable(name, Types.StringSet) => Some(SetVariable[String](name, envs, Types.String))
-			}
+			rs.elseCase.program = Some(VariableNode.nodeFromType(variable.name,variable.typ,envs))
 		}
 
 		rs

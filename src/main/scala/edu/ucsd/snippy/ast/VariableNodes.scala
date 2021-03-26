@@ -19,6 +19,22 @@ abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 	override lazy val usesVariables: Boolean = true
 }
 
+object VariableNode {
+	def nodeFromType(name: String, retType: Types.Types, contexts: List[Map[String, Any]]): ASTNode = retType match {
+		case Types.Bool => (BoolVariable(name, contexts))
+		case Types.String => (StringVariable(name, contexts))
+		case Types.Int => (IntVariable(name, contexts))
+		case Types.IntList => (ListVariable[Int](name, contexts, Types.Int))
+		case Types.StringList => (ListVariable[String](name, contexts, Types.String))
+		case Types.IntIntMap => (MapVariable[Int,Int](name, contexts, Types.Int, Types.Int))
+		case Types.IntStringMap => (MapVariable[Int,String](name, contexts, Types.Int, Types.String))
+		case Types.StringIntMap => (MapVariable[String,Int](name, contexts, Types.String, Types.Int))
+		case Types.StringStringMap => (MapVariable[String,String](name, contexts, Types.String, Types.String))
+		case Types.IntSet => SetVariable[Int](name, contexts, Types.Int)
+		case Types.StringSet => SetVariable[String](name,contexts,Types.String)
+	}
+}
+
 case class StringVariable(name: String, contexts: List[Map[String, Any]]) extends VariableNode[String](contexts) with StringNode
 {
 	override def updateValues(contexts: Contexts): StringVariable = copy(name, contexts = contexts.contexts)
