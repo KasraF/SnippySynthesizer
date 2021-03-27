@@ -62,7 +62,7 @@
 		}
 	},
 	"solutions": [
-		"if 1 <= inp[idx]:\n\tsum += inp[idx]\n\tonly_pos += [inp[idx]]",
-		"if 0 < inp[idx]:\n\tsum += inp[idx]\n\tonly_pos += [inp[idx]]"
+		"if 1 <= inp[idx]:\n\tonly_pos += [inp[idx]]\n\tsum = sum(only_pos)",
+		"if 0 < inp[idx]:\n\tonly_pos += [inp[idx]]\n\tsum = sum(only_pos)"
 	]
 }

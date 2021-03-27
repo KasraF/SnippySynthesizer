@@ -34,6 +34,7 @@
 			"num": "12",
 			"rev": "3",
 			"a": "3",
+			"ten": "10",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 3
@@ -45,6 +46,7 @@
 			"num": "1",
 			"rev": "32",
 			"a": "2",
+			"ten": "10",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 3
@@ -56,6 +58,7 @@
 			"num": "0",
 			"rev": "321",
 			"a": "1",
+			"ten": "10",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 4
@@ -67,6 +70,7 @@
 			"num": "32",
 			"rev": "1",
 			"a": "1",
+			"ten": "10",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 3
@@ -78,6 +82,7 @@
 			"num": "3",
 			"rev": "12",
 			"a": "2",
+			"ten": "10",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 3
@@ -89,12 +94,14 @@
 			"num": "0",
 			"rev": "123",
 			"a": "3",
+			"ten": "10",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 4
 		}
 	],
 	"solutions": [
-		"a = num % 10\nrev = rev * 10 + a\nnum = num // 10"
+		"a = num % ten\nrev = rev * ten + a\nnum = num // ten",
+		"a = num % ten\nrev = a + rev * ten\nnum = num // ten"
 	]
 }
