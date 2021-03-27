@@ -1,0 +1,68 @@
+{
+	"varNames": [
+		"win",
+		"d",
+		"dist_counts"
+	],
+	"previousEnvs": {
+		"5": {
+			"time": 4,
+			"#": "",
+			"$": "",
+			"arr": "[11, 223, 11, 33, 36, 36]",
+			"k": "3",
+			"i": "0",
+			"dist_counts": "0",
+			"lineno": 3,
+			"prev_lineno": 2,
+			"next_lineno": 2
+		}
+	},
+	"envs": [
+		{
+			"time": 5,
+			"#": "",
+			"$": "",
+			"arr": "[11, 223, 11, 33, 36, 36]",
+			"k": "3",
+			"i": "0",
+			"win": "[11, 223, 11]",
+			"d": "{11, 223}",
+			"dist_counts": "2",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 7,
+			"#": "",
+			"$": "",
+			"arr": "[11, 223, 11, 33, 36, 36]",
+			"k": "3",
+			"i": "1",
+			"win": "[223, 11, 33]",
+			"d": "{11, 33, 223}",
+			"dist_counts": "3",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		},
+		{
+			"time": 7,
+			"#": "",
+			"$": "",
+			"arr": "[11, 223, 11, 33, 36, 36]",
+			"k": "3",
+			"i": "2",
+			"win": "[11, 33, 36]",
+			"d": "{11, 33, 36}",
+			"dist_counts": "3",
+			"lineno": 2,
+			"prev_lineno": 3,
+			"next_lineno": 3
+		}
+	],
+	"solutions": [
+		"w = arr[i:i+k]\nd = set(w)\ndist_counts += [len(dist)]"
+	]
+}

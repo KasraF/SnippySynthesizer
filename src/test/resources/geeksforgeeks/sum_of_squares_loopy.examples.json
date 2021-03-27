@@ -48,6 +48,6 @@
 		}
 	},
 	"solutions": [
-		"squares += [idx * idx]\nsum += max(squares)"
+		"squares += [idx * idx]\nsum = sum(squares)"
 	]
 }

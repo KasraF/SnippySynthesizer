@@ -98,6 +98,6 @@
 		}
 	],
 	"solutions": [
-		"val = d + carry\nrs = [val % 10] + rs\ncarry = val // 10"
+		"v = d + carry\nrs = [v % 10] + rs\ncarry = v // 10"
 	]
 }

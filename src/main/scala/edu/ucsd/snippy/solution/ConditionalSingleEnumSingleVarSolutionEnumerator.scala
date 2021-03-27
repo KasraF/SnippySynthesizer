@@ -1,5 +1,5 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, NegateBool, Types}
+import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, StringVariable, Types, VariableNode}
 import edu.ucsd.snippy.enumeration.Enumerator
 import edu.ucsd.snippy.utils.{Assignment, ConditionalAssignment, SingleAssignment}
 import edu.ucsd.snippy.utils.Utils.{filterByIndices, getBinaryPartitions}
@@ -12,10 +12,18 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 	val contexts: List[Map[String, Any]]) extends SolutionEnumerator
 {
 	val stores: List[((Set[Int], Set[Int]), SolutionStore)] = getBinaryPartitions(contexts.indices.toList)
-		.map(part => part ->
-			new SolutionStore(
+		.map{part =>
+			val store = new SolutionStore(
 				filterByIndices(values, part._1),
-				filterByIndices(values, part._2)))
+				filterByIndices(values, part._2))
+			val thenSource = filterByIndices(contexts,part._1)
+			if (thenSource.forall(_.contains(varName)) && thenSource.map(_(varName)).zip(store.thenVals).forall(t => t._1 == t._2))
+				store.thenCase = Some(VariableNode.nodeFromType(varName,retType, contexts))
+			val elseSource = filterByIndices(contexts,part._2)
+			if (elseSource.forall(_.contains(varName)) && elseSource.map(_(varName)).zip(store.elseVals).forall(t => t._1 == t._2))
+				store.elseCase = Some(VariableNode.nodeFromType(varName,retType, contexts))
+			part -> store
+		}
 	var solution: Option[Assignment] = None
 
 	override def step(): Unit = {

@@ -30,6 +30,6 @@
 		}
 	],
 	"solutions": [
-		"digits = [int(var) for var in str(n)]"
+		"digits = [int(var) for var in list(str(n))]"
 	]
 }

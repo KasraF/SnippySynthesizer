@@ -6,7 +6,7 @@
 		{
 			"#": "0",
 			"idx": "0",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
+			"inp": "['start', 'startsWith', 'starts', 'Start', 'start 123', 'xstart']",
 			"startsWith": "'start'",
 			"out": "['start']",
 			"time": 1
@@ -14,44 +14,52 @@
 		{
 			"#": "1",
 			"idx": "1",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
+			"inp": "['start', 'startsWith', 'starts', 'Start', 'start 123', 'xstart']",
 			"startsWith": "'start'",
-			"out": "['start', 'startswith']",
+			"out": "['start', 'startsWith']",
 			"time": 2
 		},
 		{
 			"#": "2",
 			"idx": "2",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
+			"inp": "['start', 'startsWith', 'starts', 'Start', 'start 123', 'xstart']",
 			"startsWith": "'start'",
-			"out": "['start', 'startswith']",
+			"out": "['start', 'startsWith', 'starts']",
 			"time": 3
 		},
 		{
 			"#": "3",
 			"idx": "3",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
+			"inp": "['start', 'startsWith', 'starts', 'Start', 'start 123', 'xstart']",
 			"startsWith": "'start'",
-			"out": "['start', 'startswith']",
+			"out": "['start', 'startsWith', 'starts']",
 			"time": 4
 		},
 		{
 			"#": "4",
 			"idx": "4",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
+			"inp": "['start', 'startsWith', 'starts', 'Start', 'start 123', 'xstart']",
 			"startsWith": "'start'",
-			"out": "['start', 'startswith', 'start 123']",
+			"out": "['start', 'startsWith', 'starts', 'start 123']",
 			"time": 5
+		},
+		{
+			"#": "5",
+			"idx": "5",
+			"inp": "['start', 'startsWith', 'starts', 'Start', 'start 123', 'xstart']",
+			"startsWith": "'start'",
+			"out": "['start', 'startsWith', 'starts', 'start 123']",
+			"time": 6
 		}
 	],
 	"previousEnvs": {
 		"1": {
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123']",
+			"inp": "['start', 'startsWith', 'starts', 'Start', 'start 123', 'xstart']",
 			"startsWith": "'start'",
 			"out": "[]"
 		}
 	},
 	"solutions": [
-		"if inp[idx].startswith(startsWith)\n\tout += [inp[idx]]"
+		"if inp[idx].startswith(startsWith):\n\tout += [inp[idx]]"
 	]
 }
