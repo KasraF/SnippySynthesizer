@@ -7,7 +7,7 @@ import scala.io.Source.fromFile
 
 object Benchmarks extends App
 {
-	def runBenchmark(dir: File, benchTimeout: Int = 7): Unit = {
+	def runBenchmark(dir: File, benchTimeout: Int = 7): (Int, Int, Int, Int) = {
 		println("----- - ----------------------- ------- ---------- --------------------------------------")
 		var total = 0
 		var failed = 0
@@ -60,6 +60,7 @@ object Benchmarks extends App
 				Runtime.getRuntime.gc()
 			})
 		println(f"${dir.getName}: $total total, $timeout timeouts, $failed failed, $unknown unknown")
+		(total, timeout, failed, unknown)
 	}
 
 	println(
@@ -76,26 +77,34 @@ object Benchmarks extends App
 		"+------------------------------+")
 	println("Index V Name                     Time    Count      Program")
 
-	val benchmarks = new File("src/test/resources")
-	assert(benchmarks.isDirectory)
+	val benchmarksDir = new File("src/test/resources")
+	assert(benchmarksDir.isDirectory)
 
 	DebugPrints.debug = false
 	DebugPrints.info = false
 
-	if (args.nonEmpty) {
-		val timeout = args.last.toIntOption match {
-			case Some(t) => t
-			case _ => 7
-		}
+	val timeout: Int = args.lastOption.map(_.toIntOption) match {
+		case Some(Some(t)) => t
+		case _ => 7
+	}
 
-		benchmarks.listFiles()
+	val benchmarks = if (args.nonEmpty) {
+		benchmarksDir.listFiles()
 			.filter(_.isDirectory)
 			.filter(dir => args.contains(dir.getName))
-			.foreach(this.runBenchmark(_, timeout))
+			.toList
 	} else {
-		benchmarks.listFiles()
+		benchmarksDir.listFiles()
 			.filter(_.isDirectory)
 			.sortBy(_.getName)(Ordering.String)
-			.foreach(this.runBenchmark(_))
+			.toList
 	}
+
+	val (total, timeoutCount, failed, unknown) = benchmarks
+		.map(this.runBenchmark(_, timeout))
+		.foldLeft((0, 0, 0, 0)) {
+			case ((a, b, c, d), (a1, b1, c1, d1)) =>
+				(a + a1, b + b1, c + c1, d + d1)
+		}
+	println(f"All Benchmarks: $total total, $timeoutCount timeouts, $failed failed, $unknown unknown")
 }
