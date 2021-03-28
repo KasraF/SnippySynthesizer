@@ -1,0 +1,58 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"num": "9",
+			"inp2": "'xyz'",
+			"out": "['a', 'b', 'c', 'd', 'e', 'xyz']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"num": "9",
+			"inp2": "'xyz'",
+			"out": "['a', 'b', 'c', 'd', 'e', 'xyz', 'xyz']",
+			"time": 3
+		},
+		{
+			"#": "2",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"num": "9",
+			"inp2": "'xyz'",
+			"out": "['a', 'b', 'c', 'd', 'e', 'xyz', 'xyz', 'xyz']",
+			"time": 5
+		},
+		{
+			"#": "3",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"num": "9",
+			"inp2": "'xyz'",
+			"out": "['a', 'b', 'c', 'd', 'e', 'xyz', 'xyz', 'xyz', 'xyz']",
+			"time": 6
+		},
+		{
+			"#": "4",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"num": "9",
+			"inp2": "'xyz'",
+			"out": "['a', 'b', 'c', 'd', 'e', 'xyz', 'xyz', 'xyz', 'xyz']",
+			"time": 7
+		}
+	],
+	"solutions": [
+		"if num > len(out):\n\tout += [inp2]"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"num": "9",
+			"out": "['a', 'b', 'c', 'd', 'e']"
+		}
+	}
+}

@@ -1,0 +1,72 @@
+{
+	"varNames": [
+		"union"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"combine": "['abc', 'x', 'hi', 'hi', 'x', 'def']",
+			"union": "['abc']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"combine": "['abc', 'x', 'hi', 'hi', 'x', 'def']",
+			"union": "['abc', 'x']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"idx": "2",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"combine": "['abc', 'x', 'hi', 'hi', 'x', 'def']",
+			"union": "['abc', 'x', 'hi']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"idx": "3",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"combine": "['abc', 'x', 'hi', 'hi', 'x', 'def']",
+			"union": "['abc', 'x', 'hi']",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"idx": "4",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"combine": "['abc', 'x', 'hi', 'hi', 'x', 'def']",
+			"union": "['abc', 'x', 'hi']",
+			"time": 5
+		},
+		{
+			"#": "5",
+			"idx": "5",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"combine": "['abc', 'x', 'hi', 'hi', 'x', 'def']",
+			"union": "['abc', 'x', 'hi', 'def']",
+			"time": 6
+		}
+	],
+	"solutions": [
+		"if combine[idx] not in union:\n\tunion += [combine[idx]]"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"union": "[]"
+		}
+	}
+}

@@ -1,0 +1,24 @@
+{
+	"varNames": [
+		"combine"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+			"combine": "['abc', 'x', 'hi', 'hi', 'x', 'def']",
+			"time": 1
+		}
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x', 'def']",
+		}
+	},
+	"solutions": [
+		"combine = inp1 + inp2"
+	]
+}

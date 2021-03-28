@@ -32,6 +32,9 @@
 			"time": 4
 		}
 	],
+	"solutions": [
+		"out += [sum(inp[0:idx + 1])]"
+	],
 	"previousEnvs": {
 		"1": {
 			"#": "",

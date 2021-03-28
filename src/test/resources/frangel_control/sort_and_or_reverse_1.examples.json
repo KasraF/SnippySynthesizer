@@ -1,0 +1,32 @@
+{
+	"varNames": [
+		"out2"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"reverse": "True",
+			"out2": "['e', 'd', 'c', 'b', 'a']",
+			"time": 1
+		},
+		{
+			"#": "",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"reverse": "False",
+			"out2": "['a', 'b', 'c', 'd', 'e']",
+			"time": 2
+		}
+	],
+	"solutions": [
+		"if reverse:\n\tout2 = inp[::-1]\nelse:\n\tout2 = inp"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "['a', 'b', 'c', 'd', 'e']",
+			"reverse": "True",
+			"out2": "[]"
+		}
+	}
+}
