@@ -1,0 +1,32 @@
+{
+	"varNames": [
+		"out1"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "True",
+			"out1": "['a', 'b', 'c', 'd', 'e']",
+			"time": 1
+		},
+		{
+			"#": "",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "False",
+			"out1": "['b', 'e', 'a', 'd', 'c']",
+			"time": 3
+		}
+	],
+	"solutions": [
+		"if sort:\n\tout1 = sorted(inp)\nelse:\n\tout1 = inp"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "['b', 'e', 'a', 'd', 'c']",
+			"sort": "True",
+			"out1": "[]"
+		}
+	}
+}
