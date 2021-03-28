@@ -1,5 +1,8 @@
-import edu.ucsd.snippy.PostProcessor
+import java.io.File
+
+import edu.ucsd.snippy.{PostProcessor, Snippy}
 import edu.ucsd.snippy.ast._
+import edu.ucsd.snippy.utils.{ConditionalAssignment, MultilineMultivariableAssignment, SingleAssignment}
 import org.junit.Assert._
 import org.junit.Test
 import org.scalatestplus.junit.JUnitSuite
@@ -150,5 +153,45 @@ class PostprocessorTests extends JUnitSuite
 	{
 		val expr = Contains(StringLiteral("abc", 1), StringLiteral("", 1))
 		assertEquals("False", PostProcessor.clean(expr).code)
+	}
+
+	@Test def multivarSamePrefixBug: Unit = {
+		//Snippy.synthesize(new File("C:\\Users\\peleg\\code\\PythonSynthesizer\\src\\test\\resources\\user_study_candidate_benchmarks\\increment_3.examples.json"),Int.MaxValue)
+		//if d > digits[carry]:
+		//			v = carry + d
+		//			rs += [0]
+		//		else:
+		//			v = carry + d
+		//			carry = carry * 0
+		//			rs = [v] + rs
+		val ctx = Map("d" -> 0, "rs" -> Nil, "carry" -> 0, "digits" -> List(0,3)) ::
+			Map("d" -> 0, "rs" -> Nil, "carry" -> 0, "digits" -> List(-1,3)) :: Nil
+		val d = VariableNode.nodeFromType("d",Types.Int,ctx).asInstanceOf[IntNode]
+		val carry = VariableNode.nodeFromType("carry",Types.Int,ctx).asInstanceOf[IntNode]
+		val rs = VariableNode.nodeFromType("rs", Types.IntList, ctx).asInstanceOf[ListVariable[Int]]
+		val v = VariableNode.nodeFromType("v",Types.Int,ctx).asInstanceOf[IntNode]
+		val conditionalAssignment = ConditionalAssignment(
+			NegateBool(GreaterThan(d,
+			IntListLookup(VariableNode.nodeFromType("digits",Types.IntList,ctx).asInstanceOf[ListVariable[Int]],
+				carry))),
+			MultilineMultivariableAssignment(
+				SingleAssignment("v", IntAddition(carry,d))
+				:: SingleAssignment("carry", IntMultiply(carry, IntLiteral(0, ctx.length)))
+				:: SingleAssignment("rs", ListPrepend(v,rs))
+				:: Nil
+			),
+			MultilineMultivariableAssignment(
+				SingleAssignment("carry", carry)
+				:: SingleAssignment("v", IntAddition(carry,d))
+				:: SingleAssignment("rs", ListAppend(rs,IntLiteral(0,ctx.length)))
+				:: Nil
+			)
+		)
+		assertEquals("""v = carry + d
+					   |if d > digits[carry]:
+					   |	rs += [0]
+					   |else:
+					   |	carry = carry * 0
+					   |	rs = [v] + rs""".stripMargin.replace("\r",""), conditionalAssignment.code())
 	}
 }

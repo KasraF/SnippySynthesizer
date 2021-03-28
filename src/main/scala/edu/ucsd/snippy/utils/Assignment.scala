@@ -57,49 +57,18 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 		} else {
 			// TODO This cleanup code is (a) very ugly and (b) not well tested
 
+			//everything here, run to a fixpoint:
+			var preStrs, thenStrs,elseStrs,postStrs: List[String] = Nil
 			var preCondition: List[Assignment] = List()
-			var thenCode: List[Assignment] = this.flatten(thenCase)
+			var thenCode: List[Assignment] = this.flatten(thenCase) //can this change too somehow? Does it need to go in the loop?
 			var elseCode: List[Assignment] = this.flatten(elseCase)
 			var postCondition: List[Assignment] = List()
-
-			// First, check if one branch is the more general solution. If so, use the general one for both cases.
-			// TODO This is SO incorrect... :/
-			// see move_zeros_count.examples.json
-//			val thenPartition: Set[Int] = cond.values.zipWithIndex.filter(_._1.get).map(_._2).toSet
-//			val elsePartition: Set[Int] = cond.values.zipWithIndex.filter(!_._1.get).map(_._2).toSet
-
-//			for ((thenAssignment, thenIndex) <- thenCode.zipWithIndex) {
-//				thenAssignment match {
-//					case SingleAssignment(name, thenProgram) =>
-//						elseCode.zipWithIndex.find(c => c._1.isInstanceOf[SingleAssignment] && c._1.asInstanceOf[SingleAssignment].name == name) match {
-//							case Some((SingleAssignment(_, elseProgram), elseIndex)) =>
-//								// See if we can even make this comparison
-//								val thenModifiedVariables = this.varsAssigned(thenCode.slice(0, thenIndex))
-//								val elseModifiedVariables = this.varsAssigned(elseCode.slice(0, elseIndex))
-//
-//								if (!(thenModifiedVariables.exists(thenProgram.includes) ||
-//									elseModifiedVariables.exists(elseProgram.includes))) {
-//									val thenThenValues = filterByIndices(thenProgram.values, thenPartition)
-//									val elseThenValues = filterByIndices(elseProgram.values, thenPartition)
-//									val thenElseValues = filterByIndices(thenProgram.values, elsePartition)
-//									val elseElseValues = filterByIndices(elseProgram.values, elsePartition)
-//
-//									if (thenThenValues == elseThenValues) {
-//										// Else is the more general solution
-//										println(s"${thenProgram.code} <- ${elseProgram.code}")
-//										thenCode(thenIndex).asInstanceOf[SingleAssignment].program = elseProgram
-//									} else if (thenElseValues == elseElseValues) {
-//										// Then is the more general solution
-//										println(s"${elseProgram.code} <- ${thenProgram.code}")
-//										elseCode(elseIndex).asInstanceOf[SingleAssignment].program = thenProgram
-//									}
-//								}
-//							case None => ()
-//						}
-//					case _ => ()
-//				}
-//			}
-
+			while (preStrs != preCondition.map(_.code) || thenStrs != thenCode.map(_.code) || elseStrs != elseCode.map(_.code) || postStrs != postCondition.map(_.code)) {
+				//changed, update the prev state:
+				preStrs = preCondition.map(_.code)
+				thenStrs = thenCode.map(_.code)
+				elseStrs = elseCode.map(_.code)
+				postStrs = postCondition.map(_.code)
 			// Now take out common prefixes,...
 			while (thenCode.nonEmpty && elseCode.nonEmpty && thenCode.head.code() == elseCode.head.code()) {
 				preCondition = preCondition :+ thenCode.head
@@ -159,8 +128,11 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 			elseCode = elseCode.filter(deadCodeFilter)
 			postCondition = postCondition.filter(deadCodeFilter)
 
+			}//end while changed
+
 			val preCondString = preCondition.map(_.code()).mkString("\n")
 			val postCondString = postCondition.map(_.code()).mkString("\n")
+
 			val condString = (thenCode, elseCode) match {
 				case (Nil, Nil) => ""
 				case (thenCode, Nil) =>
