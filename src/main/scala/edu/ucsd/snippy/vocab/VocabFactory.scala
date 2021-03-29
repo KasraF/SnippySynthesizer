@@ -393,14 +393,14 @@ object VocabFactory
 				},
 				new BasicVocabMaker
 				{
-					override val arity: Int = 2
-					override val childTypes: List[Types] = List(Types.String, Types.String)
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.String)
 					override val returnType: Types = Types.StringList
 					override val nodeType: Class[_ <: ASTNode] = classOf[StringSplit]
 					override val head: String = ""
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
-						StringSplit(children.head.asInstanceOf[StringNode], children.tail.head.asInstanceOf[StringNode])
+						UnarySplit(children.head.asInstanceOf[StringNode])
 				},
 				new BasicVocabMaker
 				{
