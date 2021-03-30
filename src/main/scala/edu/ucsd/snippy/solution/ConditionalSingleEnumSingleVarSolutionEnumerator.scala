@@ -28,7 +28,7 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 
 	override def step(): Unit = {
 		val program = enumerator.next()
-		for (((thenPart, elsePart), store) <- stores) {
+		val paths = for (((thenPart, elsePart), store) <- stores) yield {
 			var updated = false
 
 			if (store.cond.isEmpty &&
@@ -40,8 +40,7 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 					.zipWithIndex
 					.forall(tup =>
 						(thenPart.contains(tup._2) && tup._1) ||
-							(elsePart.contains(tup._2) && !tup._1)))
-				{
+							(elsePart.contains(tup._2) && !tup._1))) {
 					// Is the correct condition for the `true` case
 					if (program.usesVariables) {
 						store.cond = Some(program.asInstanceOf[BoolNode])
@@ -53,8 +52,7 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 					.zipWithIndex
 					.forall(tup =>
 						(thenPart.contains(tup._2) && !tup._1.get) ||
-							(elsePart.contains(tup._2) && tup._1.get)))
-				{
+							(elsePart.contains(tup._2) && tup._1.get))) {
 					// Is the correct condition for the `false` case, so invert it!
 					if (program.usesVariables) {
 						store.cond = Some(NegateBool(program.asInstanceOf[BoolNode]))
@@ -90,15 +88,17 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 					}
 				}
 			}
-
-			if (updated && store.isComplete()) {
+			(store, if (updated && store.isComplete())  if (store.cond.get.isInstanceOf[BoolLiteral]) 0 else
+				store.thenCase.get.terms + store.elseCase.get.terms + store.cond.get.terms else Int.MaxValue)
+		}
+		for ((store, weight) <- paths.sortBy(_._2); if store.isComplete()) {
 				this.solution = Some(ConditionalAssignment(
 					store.cond.get,
 					SingleAssignment(varName, store.thenCase.get),
 					SingleAssignment(varName, store.elseCase.get)))
 				return
 			}
-		}
+
 	}
 
 	override def programsSeen: Int = enumerator.programsSeen

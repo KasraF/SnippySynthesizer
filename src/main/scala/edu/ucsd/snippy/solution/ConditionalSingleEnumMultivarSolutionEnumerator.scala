@@ -51,8 +51,15 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 	def step(): Unit = {
 		if (this.graph.step()) {
 			this.graph.computeShortestPaths
-			for ((condStore, index) <- this.conditionals.zipWithIndex) {
-				if (condStore.cond.isDefined && this.solution.isEmpty) {
+			if (this.solution.isEmpty) {
+				val paths = for ((condStore, index) <- this.conditionals.zipWithIndex; if condStore.cond.isDefined) yield {
+					val weight = if (graph.distancesToEnd(index).thenPath._1 == Int.MaxValue || graph.distancesToEnd(index).elsePath._1 == Int.MaxValue) Int.MaxValue
+					else if (index == 0) 0
+					else graph.distancesToEnd(index).thenPath._1 + graph.distancesToEnd(index).elsePath._1 + condStore.cond.get.terms
+					(condStore,weight,index)
+				}
+				val (condStore, _, index) = paths.minBy(_._2)
+
 					graph.traverse(index) match {
 						case Some((thenAssignments, elseAssignments)) =>
 							this.solution = Some(ConditionalAssignment(
@@ -61,8 +68,8 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 								MultilineMultivariableAssignment(elseAssignments)))
 						case _ => ()
 					}
-				}
 			}
+
 		}
 	}
 
