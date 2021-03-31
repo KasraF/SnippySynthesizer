@@ -1,6 +1,6 @@
 package edu.ucsd.snippy.vocab
 
-import edu.ucsd.snippy.ast.Types.{IntList, IntSet, Types, childOf}
+import edu.ucsd.snippy.ast.Types.{IntList, IntSet, Types}
 import edu.ucsd.snippy.ast.{ASTNode, BoolVariable, IntVariable, StringVariable, Types, _}
 
 class VocabFactory(
@@ -396,7 +396,7 @@ object VocabFactory
 					override val arity: Int = 1
 					override val childTypes: List[Types] = List(Types.String)
 					override val returnType: Types = Types.StringList
-					override val nodeType: Class[_ <: ASTNode] = classOf[StringSplit]
+					override val nodeType: Class[_ <: ASTNode] = classOf[UnarySplit]
 					override val head: String = ""
 
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
