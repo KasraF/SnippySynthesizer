@@ -86,7 +86,10 @@ class InputParser extends Python3BaseVisitor[Option[Any]] {
 	}
 
 	override def visitDictorsetmaker(ctx: DictorsetmakerContext): Option[Any] = {
-		if (!ctx.COLON().isEmpty) {
+		if (ctx.children.isEmpty) {
+			// This is an empty map
+			return Some(Map())
+		} else if (!ctx.COLON().isEmpty) {
 			// This is a map
 			val map = ctx.children.asScala
 				.map(_.accept(this))
@@ -102,7 +105,7 @@ class InputParser extends Python3BaseVisitor[Option[Any]] {
 				return None
 			else
 				return Some(map)
-		} else if (!ctx.COMMA().isEmpty) {
+		} else {
 			// This is a set
 			val set = ctx.children.asScala
 				.map(_.accept(this))
