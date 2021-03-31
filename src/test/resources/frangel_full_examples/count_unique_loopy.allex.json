@@ -6,7 +6,7 @@
 				"unique": "[]",
 				"count": "0"
 			},
-			"out": {"count": 7}
+			"out": {"count": "7"}
 	},
 	{"in": {
 				"#": "",
@@ -14,7 +14,7 @@
 				"unique": "[]",
 				"count": "0"
 			},
-			"out": {"count": 9}
+			"out": {"count": "9"}
 	},
 	{"in": {
 				"#": "",
@@ -22,7 +22,7 @@
 				"unique": "[]",
 				"count": "0"
 			},
-			"out": {"count": 8}
+			"out": {"count": "8"}
 	},
 	{"in": {
 				"#": "",
@@ -30,7 +30,7 @@
 				"unique": "[]",
 				"count": "0"
 			},
-			"out": {"count": 7}
+			"out": {"count": "7"}
 	},
 	{"in": {
 				"#": "",
@@ -38,7 +38,7 @@
 				"unique": "[]",
 				"count": "0"
 			},
-			"out": {"count": 0}
+			"out": {"count": "0"}
 	}
 ],
 "loopheader": "for idx in range(len(inp)):"

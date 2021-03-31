@@ -1,0 +1,45 @@
+{
+"examples": [
+	{"in": {
+			"#": "",
+			"inp1": "['abc', '', 'hi', '1', 'x']",
+			"inp2": "['x!', 'hi', 'hi', 'abc', '1', 'def']",
+			"intersect": "[]"
+		},
+		"out": {"intersect": "['abc', 'hi', '1']"}
+	}
+	,{"in": {
+			"#": "",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['hi', 'x']",
+			"intersect": "[]"
+		},
+		"out": {"intersect": "['x', 'hi']"}
+	}
+	,{"in": {
+			"#": "",
+			"inp1": "['hi', 'x']",
+			"inp2": "['abc', 'x', 'hi']",
+			"intersect": "[]"
+		},
+		"out": {"intersect": "['hi', 'x']"}
+	}
+	,{"in": {
+			"#": "",
+			"inp1": "[' hi', 'x', 'hi!']",
+			"inp2": "['hi', 'x']",
+			"intersect": "[]"
+		},
+		"out": {"intersect": "['x']"}
+	}
+	,{"in": {
+			"#": "",
+			"inp1": "['abc', 'x', 'hi']",
+			"inp2": "['oh hi', 'X', 'xy']",
+			"intersect": "[]"
+		},
+		"out": {"intersect": "[]"}
+	}
+],
+"loopheader": "for idx in range(len(inp1)):"
+}

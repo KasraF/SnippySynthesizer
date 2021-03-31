@@ -4,7 +4,8 @@ import json
 def do_program(bench,prog):
     with open(bench + '.allex.json') as json_file:
         data = json.load(json_file)
-    full_prog = data['loopheader'] + '\n' + '\n'.join(['  ' + l for l in curr_program.split('\n')])
+    full_prog = data['loopheader'] + '\n' + '\n'.join(['  ' + l for l in prog.split('\n')])
+    #print(full_prog)
     success = 0
     for example in data['examples']:
         if test_example(example,full_prog):
@@ -14,8 +15,10 @@ def do_program(bench,prog):
 def test_example(example,full_prog):
     globs = {k: eval(example['in'][k]) for k in example['in'] if k != '#'}
     exec(full_prog,globs)
+    #print(globs['intersect'])
+    #print(example['out'])
     for v in example['out']:
-        if globs[v] != example['out'][v]:
+        if globs[v] != eval(example['out'][v]):
             return False
     return True
 
