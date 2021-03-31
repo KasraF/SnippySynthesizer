@@ -1,0 +1,37 @@
+{
+"examples": [
+	{"in": {
+				"#": "",
+				"inp1": "['bad', 'awesome', 'terrible', ' ', 'Rude', 'badly', 'rude', 'rude..']",
+				"inp2": "['terrible', 'bad', 'rude']",
+				"filtered": "[]"
+			},
+	"out": {"filtered": "[' ', 'awesome', ' ', ' ', 'Rude', 'badly', ' ', 'rude..']"}
+	}
+	,{"in": {
+				"#": "",
+				"inp1": "['terribl', 'bad']",
+				"inp2": "['terrible', 'bad', 'rude']",
+				"filtered": "[]"
+			},
+	"out": {"filtered": "['terribl', ' ']"}
+	}
+	,{"in": {
+				"#": "",
+				"inp1": "['bad', 'BAD']",
+				"inp2": "['terrible', 'bad', 'rude']",
+				"filtered": "[]"
+			},
+	"out": {"filtered": "[' ', 'BAD']"}
+	}
+	,{"in": {
+				"#": "",
+				"inp1": "['not-bad!', 'rude ']",
+				"inp2": "['terrible', 'bad', 'rude']",
+				"filtered": "[]"
+			},
+	"out": {"filtered": "['not-bad!', 'rude ']"}
+	}
+],
+"loopheader": "for idx in range(len(inp1)):"
+}

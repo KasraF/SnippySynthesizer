@@ -1,0 +1,13 @@
+{
+"examples": [
+	{"in":{
+			"#": "",
+			"inp": "[-3, 1, -1, 0, -4, -5, -2]",
+			"only_neg": "[]",
+			"count": "0"
+		},
+	"out": {"count": "5"}
+	}
+],
+"loopheader": "for idx in range(len(inp)):"
+}

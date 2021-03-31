@@ -1,0 +1,33 @@
+{
+"examples": [
+	{"in":{
+			"#": "",
+			"inp": "{'a': 'un', 'Animal': 'animal', 'Bicycle': 'bicicleta', 'color':'color', 'extra': 'EXTRA', 'Family':'familia', 'Idea': 'idea', 'Minute':'minuto','One':'uno','TERRIBLE':'terrible','To': 'a'}",
+			"time": "1"
+		},
+	"out": {"rs": "['Animal', 'color', 'extra', 'Idea', 'TERRIBLE']"}
+	}
+	,{"in":{
+			"#": "",
+			"inp": "{'A': 'a', 'B': 'b'}",
+			"time": "1"
+		},
+	"out": {"rs": "['A','B']"}
+	}
+	,{"in":{
+			"#": "",
+			"inp": "{'B': 'A', 'A': 'B'}",
+			"time": "1"
+		},
+	"out": {"rs": "[]"}
+	}
+	,{"in":{
+			"#": "",
+			"inp": "{'A':'a','B':'B', 'a':'A','b':'c'}",
+			"time": "1"
+		},
+	"out": {"rs": "['A','B','a']"}
+	}
+],
+"loopheader": "for key in inp:"
+}

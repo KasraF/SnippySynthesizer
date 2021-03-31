@@ -1,8 +1,13 @@
 import re
 import json
+import os
 
 def do_program(bench,prog):
-    with open(bench + '.allex.json') as json_file:
+    fname = bench + '.allex.json'
+    if not os.path.isfile(fname):
+        print(bench,'-','-')
+        return
+    with open(fname) as json_file:
         data = json.load(json_file)
     full_prog = data['loopheader'] + '\n' + '\n'.join(['  ' + l for l in prog.split('\n')])
     #print(full_prog)
@@ -13,14 +18,16 @@ def do_program(bench,prog):
     print(bench,success,len(data['examples']))
 
 def test_example(example,full_prog):
-    globs = {k: eval(example['in'][k]) for k in example['in'] if k != '#'}
-    exec(full_prog,globs)
-    #print(globs['intersect'])
-    #print(example['out'])
-    for v in example['out']:
-        if globs[v] != eval(example['out'][v]):
-            return False
-    return True
+    try:
+        globs = {k: eval(example['in'][k]) for k in example['in'] if k != '#'}
+        exec(full_prog,globs)
+        #print(example['out'])
+        for v in example['out']:
+            if globs[v] != eval(example['out'][v]):
+                return False
+        return True
+    except:
+        return False
 
 def do_compares(results_file):
     with open(results_file) as f:
@@ -32,9 +39,9 @@ def do_compares(results_file):
         m = re.match(r'^\(.*?\) \[.\] \[(.*?)\] \[.*?\] \[.*?\] (.*)$',l)
         if m:
             if curr_program: do_program(bench_name,curr_program)
-            curr_program = m[2]
-            bench_name = m[1].strip()
-            tab = len(m[0]) - len(m[2])
+            curr_program = m.group(2)
+            bench_name = m.group(1).strip()
+            tab = len(m.group(0)) - len(m.group(2))
         elif l.startswith(' ') and curr_program:
             curr_program += '\n' + l[tab:].rstrip()
     if curr_program: do_program(bench_name,curr_program)
