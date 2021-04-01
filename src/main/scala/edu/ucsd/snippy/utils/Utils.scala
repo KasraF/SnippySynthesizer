@@ -1,11 +1,11 @@
 package edu.ucsd.snippy.utils
 
 import edu.ucsd.snippy.ast.Types.Types
-import edu.ucsd.snippy.ast.{ASTNode, IntLiteral, StringLiteral, Types}
+import edu.ucsd.snippy.ast.{ASTNode, IntLiteral, ListLiteral, StringLiteral, Types}
 
 object Utils
 {
-	def synthesizeLiteralOption(vals: List[Any]): Option[ASTNode] =
+	def synthesizeLiteralOption(typ: Types, vals: List[Any]): Option[ASTNode] =
 		if (vals.length < 1)
 			None
 		else
@@ -19,6 +19,12 @@ object Utils
 					case Some(-1) => Some(IntLiteral(-1, vals.length))
 					case Some(0) => Some(IntLiteral(0, vals.length))
 					case Some(1) => Some(IntLiteral(1, vals.length))
+					case Some(List()) if typ == Types.IntList =>
+						Some(ListLiteral[Int](typ, List(), vals.length))
+					case Some(List()) if typ == Types.StringList =>
+						Some(ListLiteral[String](typ, List(), vals.length))
+					case Some(List()) if typ == Types.BoolList =>
+						Some(ListLiteral[Boolean](typ, List(), vals.length))
 					case _ => None
 				}
 

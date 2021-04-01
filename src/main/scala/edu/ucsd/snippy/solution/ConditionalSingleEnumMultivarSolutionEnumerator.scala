@@ -129,11 +129,11 @@ object Node {
 		// If we have more than one example, with all values constants, we should trivially assign
 		// to a constant
 		if (rs.thenCase.program.isEmpty) {
-			rs.thenCase.program = Utils.synthesizeLiteralOption(rs.thenCase.values)
+			rs.thenCase.program = Utils.synthesizeLiteralOption(variable.typ, rs.thenCase.values)
 		}
 
 		if (rs.elseCase.program.isEmpty) {
-			rs.elseCase.program = Utils.synthesizeLiteralOption(rs.elseCase.values)
+			rs.elseCase.program = Utils.synthesizeLiteralOption(variable.typ, rs.elseCase.values)
 		}
 
 		rs

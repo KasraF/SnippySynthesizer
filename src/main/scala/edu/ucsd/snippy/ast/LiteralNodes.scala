@@ -1,5 +1,6 @@
 package edu.ucsd.snippy.ast
 
+import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.enumeration.Contexts
 
 abstract class LiteralNode[T](numContexts: Int) extends ASTNode
@@ -53,4 +54,19 @@ case class BoolLiteral(value: Boolean, numContexts: Int) extends LiteralNode[Boo
 	override val code: String = value.toString.capitalize
 
 	override def updateValues(contexts: Contexts): BoolLiteral = copy(value, numContexts = contexts.contextLen)
+}
+
+case class ListLiteral[T](childType: Types, value: List[T], numContexts: Int) extends LiteralNode[List[T]](numContexts) with ListNode[T]
+{
+	val elems: List[LiteralNode[_]] = value.map {
+		case b: Boolean => BoolLiteral(b, numContexts)
+		case s: String => StringLiteral(s, numContexts)
+		case i: Int => IntLiteral(i, numContexts)
+	}
+
+	assert(elems.forall(_.nodeType == this.childType))
+
+	override protected val parenless: Boolean = true
+	override val code: String = f"[${elems.map(_.code).mkString(", ")}]"
+	override def updateValues(contexts: Contexts): ListLiteral[T] = copy(childType, value, numContexts = contexts.contextLen)
 }
