@@ -185,6 +185,20 @@ case class IsAlpha(arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
 	override def updateValues(contexts: Contexts): IsAlpha = copy(arg.updateValues(contexts))
 }
 
+case class IsLower(arg: StringNode) extends UnaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = arg.parensIfNeeded + ".islower()"
+
+	override def doOp(x: Any): Option[Boolean] = x match {
+		case arg: String => Some(arg.matches("[a-z]+"))
+		case _ => wrongType(x)
+	}
+
+	override def make(x: ASTNode): IsLower = IsLower(x.asInstanceOf[StringNode])
+
+	override def updateValues(contexts: Contexts): IsLower = copy(arg.updateValues(contexts))
+}
+
 
 // TODO This is incorrect, since (a) set in Python returns a Set node not List, and (b) we can't
 //   guarantee what order the values will be in either, so a simple list(set()) won't fix it.
