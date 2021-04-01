@@ -13,7 +13,8 @@
 		}
 	],
 	"solutions": [
-		"words = name.split(\" \")\ncaps = \" \".join([var.capitalize() for var in words])"
+		"words = name.split(\" \")\ncaps = \" \".join([var.capitalize() for var in words])",
+		"words = name.split()\ncaps = \" \".join([var.capitalize() for var in words])"
 	],
 	"previousEnvs": {
 		"1": {

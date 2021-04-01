@@ -69,6 +69,7 @@
 	],
 	"solutions": [
 		"if c.isalpha():\n\tres += [int(sub)]\n\tsub = ''\nelse:\n\tsub += c",
+		"if c.isalpha():\n\tres += [int(sub)]\n\tsub = \"\"\nelse:\n\tsub += c",
 		"if c.isalpha():\n\tres += [int(sub)]\n\tsub = s[-1:-1]\nelse:\n\tsub += c",
 		"if c.isdigit():\n\tsub += c\nelse:\n\tres += [int(sub)]\n\tsub = ''"
 	]
