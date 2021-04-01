@@ -1,10 +1,27 @@
 package edu.ucsd.snippy.utils
 
-import edu.ucsd.snippy.ast.Types
 import edu.ucsd.snippy.ast.Types.Types
+import edu.ucsd.snippy.ast.{ASTNode, IntLiteral, StringLiteral, Types}
 
 object Utils
 {
+	def synthesizeLiteralOption(vals: List[Any]): Option[ASTNode] =
+		if (vals.length < 1)
+			None
+		else
+			vals.map(Some(_))
+				.reduce[Option[Any]] {
+					case (a, b) if a == b => a
+					case _ => None
+				} match {
+					case Some("") => Some(StringLiteral("", vals.length))
+					case Some(" ") => Some(StringLiteral(" ", vals.length))
+					case Some(-1) => Some(IntLiteral(-1, vals.length))
+					case Some(0) => Some(IntLiteral(0, vals.length))
+					case Some(1) => Some(IntLiteral(1, vals.length))
+					case _ => None
+				}
+
 	def getTypeOfAll(values: List[Any]): Types =
 	{
 		val (empty, nonempty) = values.partition(v => v.isInstanceOf[Iterable[_]] && v.asInstanceOf[Iterable[_]].isEmpty)

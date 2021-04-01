@@ -1,10 +1,10 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, SetVariable, StringVariable, Types, VariableNode}
 import edu.ucsd.snippy.ast.Types.Types
+import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{Enumerator, InputsValuesManager, ProbEnumerator}
 import edu.ucsd.snippy.predicates.MultilineMultivariablePredicate
 import edu.ucsd.snippy.utils.Utils.{falseForIndices, filterByIndices, getBinaryPartitions, trueForIndices}
-import edu.ucsd.snippy.utils.{Assignment, BasicMultivariableAssignment, ConditionalAssignment, MultilineMultivariableAssignment, SingleAssignment, Utils}
+import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab.VocabFactory
 
 import scala.collection.mutable
@@ -124,6 +124,16 @@ object Node {
 		val elseValues = filterByIndices(prevValues, partition._2)
 		if (elseValues.forall(_.isDefined) && elseValues.map(_.get) == rs.elseCase.values) {
 			rs.elseCase.program = Some(VariableNode.nodeFromType(variable.name,variable.typ,envs))
+		}
+
+		// If we have more than one example, with all values constants, we should trivially assign
+		// to a constant
+		if (rs.thenCase.program.isEmpty) {
+			rs.thenCase.program = Utils.synthesizeLiteralOption(rs.thenCase.values)
+		}
+
+		if (rs.elseCase.program.isEmpty) {
+			rs.elseCase.program = Utils.synthesizeLiteralOption(rs.elseCase.values)
 		}
 
 		rs

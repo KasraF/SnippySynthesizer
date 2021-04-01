@@ -1,8 +1,8 @@
 package edu.ucsd.snippy.solution
-import edu.ucsd.snippy.ast.{ASTNode, BoolLiteral, BoolNode, BoolVariable, IntVariable, ListVariable, MapVariable, NegateBool, StringVariable, Types, VariableNode}
+import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.Enumerator
-import edu.ucsd.snippy.utils.{Assignment, ConditionalAssignment, SingleAssignment}
 import edu.ucsd.snippy.utils.Utils.{filterByIndices, getBinaryPartitions}
+import edu.ucsd.snippy.utils.{Assignment, ConditionalAssignment, SingleAssignment, Utils}
 
 class ConditionalSingleEnumSingleVarSolutionEnumerator(
 	val enumerator: Enumerator,
@@ -105,9 +105,10 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 }
 
 class SolutionStore(val thenVals: List[Any], val elseVals: List[Any]) {
-	var cond: Option[BoolNode] = if (elseVals.isEmpty) Some(BoolLiteral(true, thenVals.length)) else None
-	var thenCase: Option[ASTNode] = None
-	var elseCase: Option[ASTNode] = if (elseVals.isEmpty) Some(BoolLiteral(true, thenVals.length)) else None
+
+	var cond: Option[BoolNode] = if (elseVals.isEmpty) Some(BoolLiteral(value = true, thenVals.length)) else None
+	var thenCase: Option[ASTNode] = Utils.synthesizeLiteralOption(thenVals)
+	var elseCase: Option[ASTNode] = if (elseVals.isEmpty) Some(BoolLiteral(value = true, thenVals.length)) else Utils.synthesizeLiteralOption(elseVals)
 
 	@inline def isComplete(): Boolean = cond.isDefined && thenCase.isDefined && elseCase.isDefined
 }
