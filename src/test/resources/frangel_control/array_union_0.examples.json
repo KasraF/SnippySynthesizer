@@ -1,0 +1,50 @@
+{
+	"varNames": [
+		"union"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"elem": "'abc'",
+			"inp1": "['abc', 'x', 'hi','abc']",
+			"inp2": "['hi', 'x', 'def', 'def']",
+			"union": "['abc']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"elem": "'x'",
+			"inp1": "['abc', 'x', 'hi','abc']",
+			"inp2": "['hi', 'x', 'def', 'def']",
+			"union": "['abc', 'x']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"elem": "'hi'",
+			"inp1": "['abc', 'x', 'hi','abc']",
+			"inp2": "['hi', 'x', 'def', 'def']",
+			"union": "['abc', 'x', 'hi']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"elem": "'abc'",
+			"inp1": "['abc', 'x', 'hi','abc']",
+			"inp2": "['hi', 'x', 'def', 'def']",
+			"union": "['abc', 'x', 'hi']",
+			"time": 4
+		}
+	],
+	"solutions": [
+		"if elem not in union:\n\tunion += [elem]"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp1": "['abc', 'x', 'hi','abc']",
+			"inp2": "['hi', 'x', 'def', 'def']",
+			"union": "[]"
+		}
+	}
+}
