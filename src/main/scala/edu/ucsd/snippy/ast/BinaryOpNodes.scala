@@ -543,3 +543,104 @@ case class ListPrepend[T, E <: ASTNode](lhs: E, rhs: ListNode[T]) extends Binary
 	override def updateValues(contexts: Contexts): ListPrepend[T, E] =
 		copy(lhs.updateValues(contexts).asInstanceOf[E], rhs.updateValues(contexts))
 }
+
+case class LessThanEqDoubles(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " <= " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Double, r: Double) => Some(l <= r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		LessThanEqDoubles(l.asInstanceOf[DoubleNode], r.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): LessThanEqDoubles = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
+}
+
+case class GreaterThanDoubles(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " > " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Double, r: Double) => Some(l > r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		GreaterThanDoubles(l.asInstanceOf[DoubleNode], r.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): GreaterThanDoubles = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
+}
+
+case class LessThanEqDoubleInt(lhs: DoubleNode, rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " <= " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Double, r: Int) => Some(l <= r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		LessThanEqDoubleInt(l.asInstanceOf[DoubleNode], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): LessThanEqDoubleInt = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
+}
+
+case class GreaterThanDoubleInt(lhs: DoubleNode, rhs: IntNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " > " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Double, r: Int) => Some(l > r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		GreaterThanDoubleInt(l.asInstanceOf[DoubleNode], r.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): GreaterThanDoubleInt = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
+}
+case class LessThanEqIntDouble(lhs: IntNode, rhs: DoubleNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " <= " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Int, r: Double) => Some(l <= r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		LessThanEqIntDouble(l.asInstanceOf[IntNode], r.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): LessThanEqIntDouble = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
+}
+
+case class GreaterThanIntDouble(lhs: IntNode, rhs: DoubleNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override lazy val code: String = lhs.code + " > " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
+		case (l: Int, r: Double) => Some(l > r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		GreaterThanIntDouble(l.asInstanceOf[IntNode], r.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): GreaterThanIntDouble = copy(
+		lhs.updateValues(contexts),
+		rhs.updateValues(contexts))
+}

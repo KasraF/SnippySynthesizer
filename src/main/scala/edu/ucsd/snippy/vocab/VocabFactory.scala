@@ -64,6 +64,16 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						BoolVariable(name, contexts)
 				}
+				case (name, Types.Double) => new BasicVocabMaker {
+					override val arity: Int = 0
+					override val childTypes: List[Types] = Nil
+					override val returnType: Types = Types.Double
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoubleVariable]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoubleVariable(name, contexts)
+				}
 				case (name, Types.List(childType)) => new BasicVocabMaker {
 					override val arity: Int = 0
 					override val childTypes: List[Types] = Nil
@@ -797,6 +807,82 @@ object VocabFactory
 					override val head: String = ""
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						DoublesMax(children.head.asInstanceOf[ListNode[Double]])
+				}
+				,new BasicVocabMaker {
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Double)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[LessThanEqDoubles]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						LessThanEqDoubles(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[DoubleNode])
+				}
+				,new BasicVocabMaker {
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Double)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[GreaterThanDoubles]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						GreaterThanDoubles(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[DoubleNode])
+				}
+				,new BasicVocabMaker {
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Int)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[LessThanEqDoubleInt]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						LessThanEqDoubleInt(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[IntNode])
+				}
+				,new BasicVocabMaker {
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Int)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[GreaterThanDoubleInt]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						GreaterThanDoubleInt(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[IntNode])
+				}
+				,new BasicVocabMaker {
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Int, Types.Double)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[LessThanEqIntDouble]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						LessThanEqIntDouble(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[DoubleNode])
+				}
+				,new BasicVocabMaker {
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Int, Types.Double)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[GreaterThanIntDouble]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						GreaterThanIntDouble(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[DoubleNode])
+				}
+				,new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.DoubleList)
+					override val returnType: Types = Types.DoubleList
+					override val nodeType: Class[_ <: ASTNode] = classOf[ListPrepend[Double, DoubleNode]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						ListPrepend[Double, DoubleNode](children.head.asInstanceOf[DoubleNode], children.tail.head.asInstanceOf[ListNode[Double]])
+				}
+				,new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.DoubleList, Types.Double)
+					override val returnType: Types = Types.DoubleList
+					override val nodeType: Class[_ <: ASTNode] = classOf[ListAppend[Double, DoubleNode]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						ListAppend[Double, DoubleNode](children.head.asInstanceOf[ListNode[Double]], children.tail.head.asInstanceOf[DoubleNode])
 				}
 			)
 		}
