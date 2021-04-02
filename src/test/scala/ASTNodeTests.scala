@@ -1674,4 +1674,15 @@ class ASTNodeTests extends JUnitSuite
 
 		assertEquals(List(Some(List("S", "L")), Some(List("K", "F", "F"))), lcn.values)
 	}
+
+	@Test def doubleVariableNode(): Unit = {
+		val contexts: List[Map[String, Any]] = List(
+			Map("x" -> 4.7)
+		)
+		val varNode = DoubleVariable("x", contexts)
+		assertTrue(varNode.isInstanceOf[DoubleNode])
+		assertTrue(varNode.isInstanceOf[VariableNode[Double]])
+		assertEquals("x", varNode.code)
+		assertEquals(List(Some(4.7)),varNode.values)
+	}
 }

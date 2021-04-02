@@ -71,6 +71,7 @@ object Types extends Enumeration
 	val StringList: List = Types.List(String)
 	val IntList: List = Types.List(Int)
 	val BoolList: List = Types.List(Bool)
+	val DoubleList: List = Types.List(Double)
 	val StringSet: Set = Types.Set(String)
 	val IntSet: Set = Types.Set(Int)
 
@@ -86,6 +87,7 @@ object Types extends Enumeration
 		case Types.String => StringList
 		case Types.Int => IntList
 		case Types.Bool => BoolList
+		case Types.Double => DoubleList
 		case _ =>
 			eprintln("Could not determine type of " + t)
 			AnyList
@@ -129,9 +131,11 @@ object Types extends Enumeration
 			case _: String => String
 			case _: Int => Int
 			case _: Boolean => Bool
+			case _: Double => Double
 			case x: scala.List[_] if x.nonEmpty => x.head match {
 				case _: String => StringList
 				case _: Int => IntList
+				case _: Double => DoubleList
 				case (a, b) => (a, b) match {
 					case (_: String, _: String) => StringStringMap
 					case (_: String, _: Int) => StringIntMap

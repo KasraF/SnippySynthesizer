@@ -60,7 +60,7 @@ case class DoubleLiteral(value: Double, numContexts: Int) extends LiteralNode[Do
 	override val code: String = value.toString
 	override protected val parenless: Boolean = true
 
-	override def updateValues(contexts: Contexts): DoubleNode = copy(value, numContexts = contexts.contextLen)
+	override def updateValues(contexts: Contexts): DoubleLiteral = copy(value, numContexts = contexts.contextLen)
 }
 
 case class ListLiteral[T](childType: Types, value: List[T], numContexts: Int) extends LiteralNode[List[T]](numContexts) with ListNode[T]

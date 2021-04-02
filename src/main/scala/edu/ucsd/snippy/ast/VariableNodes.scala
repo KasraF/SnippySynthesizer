@@ -24,6 +24,7 @@ object VariableNode {
 		case Types.Bool => (BoolVariable(name, contexts))
 		case Types.String => (StringVariable(name, contexts))
 		case Types.Int => (IntVariable(name, contexts))
+		case Types.Double => DoubleVariable(name, contexts)
 		case Types.IntList => (ListVariable[Int](name, contexts, Types.Int))
 		case Types.StringList => (ListVariable[String](name, contexts, Types.String))
 		case Types.IntIntMap => (MapVariable[Int,Int](name, contexts, Types.Int, Types.Int))
@@ -33,6 +34,7 @@ object VariableNode {
 		case Types.IntSet => SetVariable[Int](name, contexts, Types.Int)
 		case Types.StringSet => SetVariable[String](name,contexts,Types.String)
 		case Types.BoolList => ListVariable[Boolean](name,contexts,Types.Bool)
+		case Types.DoubleList => ListVariable[Double](name,contexts, Types.Double)
 	}
 }
 
@@ -49,6 +51,11 @@ case class IntVariable(name: String, contexts: List[Map[String, Any]]) extends V
 case class BoolVariable(name: String, contexts: List[Map[String, Any]]) extends VariableNode[Boolean](contexts) with BoolNode
 {
 	override def updateValues(contexts: Contexts): BoolVariable = copy(name, contexts = contexts.contexts)
+}
+
+case class DoubleVariable(name: String, contexts: List[Map[String, Any]]) extends  VariableNode[Double](contexts) with DoubleNode
+{
+	override def updateValues(contexts: Contexts): DoubleVariable = copy(name, contexts = contexts.contexts)
 }
 
 case class ListVariable[T](name: String, contexts: List[Map[String, Any]], childType: Types) extends VariableNode[List[T]](contexts) with ListNode[T]
