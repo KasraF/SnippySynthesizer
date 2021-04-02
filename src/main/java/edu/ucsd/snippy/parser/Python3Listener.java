@@ -1,4 +1,4 @@
-// Generated from ../src/main/java/Python3.g4 by ANTLR 4.7.2
+// Generated from Python3.g4 by ANTLR 4.7.2
 package edu.ucsd.snippy.parser;
 import org.antlr.v4.runtime.tree.ParseTreeListener;
 
@@ -697,6 +697,16 @@ public interface Python3Listener extends ParseTreeListener {
 	 * @param ctx the parse tree
 	 */
 	void exitAtom(Python3Parser.AtomContext ctx);
+	/**
+	 * Enter a parse tree produced by {@link Python3Parser#number}.
+	 * @param ctx the parse tree
+	 */
+	void enterNumber(Python3Parser.NumberContext ctx);
+	/**
+	 * Exit a parse tree produced by {@link Python3Parser#number}.
+	 * @param ctx the parse tree
+	 */
+	void exitNumber(Python3Parser.NumberContext ctx);
 	/**
 	 * Enter a parse tree produced by {@link Python3Parser#testlist_comp}.
 	 * @param ctx the parse tree

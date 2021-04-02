@@ -1,4 +1,4 @@
-// Generated from ../src/main/java/Python3.g4 by ANTLR 4.7.2
+// Generated from Python3.g4 by ANTLR 4.7.2
 package edu.ucsd.snippy.parser;
 
 import org.antlr.v4.runtime.ParserRuleContext;
@@ -839,6 +839,18 @@ public class Python3BaseListener implements Python3Listener {
 	 * <p>The default implementation does nothing.</p>
 	 */
 	@Override public void exitAtom(Python3Parser.AtomContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void enterNumber(Python3Parser.NumberContext ctx) { }
+	/**
+	 * {@inheritDoc}
+	 *
+	 * <p>The default implementation does nothing.</p>
+	 */
+	@Override public void exitNumber(Python3Parser.NumberContext ctx) { }
 	/**
 	 * {@inheritDoc}
 	 *
