@@ -80,13 +80,13 @@ object Utils
 	import spire.syntax.all._
 	import spire.std.seq._
 	@inline def programConnects(tup: (Option[Any], Any)): Boolean = {
-		tup match {
-			case (Some(a:Double), b:Double) => a === b
-			case (Some(Nil), Nil) => true
-			case (Some(Nil), _) => false
-			case (Some(a: List[_]), b: List[_]) => a.head match { //type erasure is bad and gross
-				case Double => //a.asInstanceOf[List[Double]] === b.asInstanceOf[List[Double]]
-					a.length == b.length && a.asInstanceOf[List[Double]].zip(b.asInstanceOf[List[Double]]).forall(t => t._1 === t._2)
+		tup._1 match {
+			case None => false
+			case Some(a:Double) => a === tup._2.asInstanceOf[Double]
+			case Some(x: scala.List[_]) if x.nonEmpty => x.head match { //type erasure is bad and gross
+				case _: Double =>
+					//x.length == tup._2.length && x.asInstanceOf[List[Double]].zip(b.asInstanceOf[List[Double]]).forall(t => t._1 === t._2)
+					x.asInstanceOf[List[Double]] === tup._2.asInstanceOf[List[Double]]
 				case _ => tup._1.get == tup._2
 			}
 			case _ => tup._1.isDefined && tup._1.get == tup._2
