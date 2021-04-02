@@ -74,6 +74,7 @@ object Types extends Enumeration
 	val DoubleList: List = Types.List(Double)
 	val StringSet: Set = Types.Set(String)
 	val IntSet: Set = Types.Set(Int)
+	val DoubleSet: Set = Types.Set(Double)
 
 	val StringStringMap: Map = Map(String, String)
 	val StringIntMap: Map = Map(String, Int)
@@ -106,6 +107,7 @@ object Types extends Enumeration
 	@inline def setOf(t: Types.Value): Types.Value = t match {
 		case Types.String => StringSet
 		case Types.Int => IntSet
+		case Types.Double => DoubleSet
 		case _ =>
 			eprintln("Could not determine type of " + t)
 			AnyList
@@ -152,6 +154,7 @@ object Types extends Enumeration
 			case x: scala.collection.Set[_] if x.nonEmpty => x.head match {
 				case _: String => StringSet
 				case _: Int => IntSet
+				case _: Double => DoubleSet
 				case _ =>
 					eprintln("Could not determine type of " + x)
 					Unknown

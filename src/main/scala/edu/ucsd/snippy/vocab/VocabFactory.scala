@@ -884,6 +884,27 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						ListAppend[Double, DoubleNode](children.head.asInstanceOf[ListNode[Double]], children.tail.head.asInstanceOf[DoubleNode])
 				}
+				,new BasicVocabMaker {
+					override val returnType: Types = Types.Double
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoubleListLookup(children.head.asInstanceOf[ListNode[Double]], children.last.asInstanceOf[IntNode])
+
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.DoubleList,Types.Int)
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoubleListLookup]
+					override val head: String = ""
+				}
+				,new BasicVocabMaker {
+					override val returnType: Types = Types.DoubleSet
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						SetAppend[Double, DoubleNode](children.head.asInstanceOf[SetNode[Double]],children.last.asInstanceOf[DoubleNode])
+
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.DoubleSet,Types.Double)
+					override val nodeType: Class[_ <: ASTNode] = classOf[SetAppend[Double, DoubleNode]]
+					override val head: String = ""
+				}
 			)
 		}
 

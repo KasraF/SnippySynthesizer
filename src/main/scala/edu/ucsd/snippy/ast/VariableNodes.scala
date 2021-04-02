@@ -35,6 +35,7 @@ object VariableNode {
 		case Types.StringSet => SetVariable[String](name,contexts,Types.String)
 		case Types.BoolList => ListVariable[Boolean](name,contexts,Types.Bool)
 		case Types.DoubleList => ListVariable[Double](name,contexts, Types.Double)
+		case Types.DoubleSet => SetVariable[Double](name, contexts, Types.Double)
 	}
 }
 

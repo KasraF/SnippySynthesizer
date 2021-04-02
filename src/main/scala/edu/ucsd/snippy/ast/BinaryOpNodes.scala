@@ -473,6 +473,12 @@ case class IntListLookup(lhs: ListNode[Int], rhs: IntNode) extends ListLookup[In
 	override def updateValues(contexts: Contexts): IntListLookup = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
 
+case class DoubleListLookup(lhs: ListNode[Double], rhs: IntNode) extends ListLookup[Double](lhs,rhs) with DoubleNode{
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Double] =
+		DoubleListLookup(l.asInstanceOf[ListNode[Double]], r.asInstanceOf[IntNode])
+	override def updateValues(contexts: Contexts): DoubleNode = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
 case class ListContains[T, E <: ASTNode](lhs: E, rhs: ListNode[T]) extends BinaryOpNode[Boolean] with BoolNode
 {
 	override protected val parenless: Boolean = false
@@ -524,6 +530,24 @@ case class ListAppend[T, E <: ASTNode](lhs: ListNode[T], rhs: E) extends BinaryO
 
 	override def updateValues(contexts: Contexts): ListAppend[T, E] =
 		copy(lhs.updateValues(contexts), rhs.updateValues(contexts).asInstanceOf[E])
+}
+
+case class SetAppend[T, E <: ASTNode](lhs: SetNode[T], rhs: E) extends BinaryOpNode[Set[T]] with SetNode[T]
+{
+	override def doOp(l: Any, r: Any): Option[Set[T]] = (l,r) match {
+		case (s: Set[T], elem: T) => Some(s + elem)
+		case _ => wrongType(l,r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): SetAppend[T,E] =
+		SetAppend(l.asInstanceOf[SetNode[T]], r.asInstanceOf[E])
+
+	override val childType: Types = lhs.childType
+
+	override def updateValues(contexts: Contexts): SetNode[T] =
+		copy(lhs.updateValues(contexts), rhs.updateValues(contexts).asInstanceOf[E])
+
+	override val code: String = s"${lhs.code} || {${rhs.code}}"
 }
 
 case class ListPrepend[T, E <: ASTNode](lhs: E, rhs: ListNode[T]) extends BinaryOpNode[Iterable[T]] with ListNode[T]

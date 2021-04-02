@@ -1710,4 +1710,14 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals(2, node.terms)
 		assertEquals(node.children.size, 1)
 	}
+
+	@Test def getDoubleListElement(): Unit = {
+		val ctx = Map("l" -> List(0.0, 1.2)) :: Nil
+		val l = ListVariable[Double]("l", ctx, Types.Double)
+		val one = IntLiteral(1,ctx.length)
+		val getExpr:ASTNode = DoubleListLookup(l,one)
+		assertEquals(Types.Double, getExpr.nodeType)
+		assertEquals(List(Some(1.2)), getExpr.values)
+		assertEquals("l[1]", getExpr.code)
+	}
 }
