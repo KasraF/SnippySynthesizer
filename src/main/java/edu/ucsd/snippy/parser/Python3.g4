@@ -228,7 +228,12 @@ atom_expr: (AWAIT)? atom trailer*;
 atom: ('(' (yield_expr|testlist_comp)? ')' |
        '[' (testlist_comp)? ']' |
        '{' (dictorsetmaker)? '}' |
-       NAME | NUMBER | STRING+ | '...' | 'None' | 'True' | 'False');
+       NAME | number | STRING+ | '...' | 'None' | 'True' | 'False');
+number
+ : INTEGER
+ | FLOAT_NUMBER
+ | IMAG_NUMBER
+ ;
 testlist_comp: (test|star_expr) ( comp_for | (',' (test|star_expr))* (',')? );
 trailer: '(' (arglist)? ')' | '[' subscriptlist ']' | '.' NAME;
 subscriptlist: subscript (',' subscript)* (',')?;
@@ -276,12 +281,6 @@ yield_arg: 'from' test | testlist;
 STRING
  : STRING_LITERAL
  | BYTES_LITERAL
- ;
-
-NUMBER
- : INTEGER
- | FLOAT_NUMBER
- | IMAG_NUMBER
  ;
 
 INTEGER

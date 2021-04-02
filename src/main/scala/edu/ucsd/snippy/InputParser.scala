@@ -129,7 +129,8 @@ class InputParser extends Python3BaseVisitor[Option[Any]] {
 		if (ctx.MINUS() != null) {
 			// Probably a negative number?
 			this.visitChildren(ctx) match {
-				case Some(a) if a.isInstanceOf[Int] => Some(-a.asInstanceOf[Int])
+				case Some(a: Int) => Some(-a)
+				case Some(a: Double) => Some(-a)
 				case _ => None
 			}
 		} else {
@@ -143,8 +144,10 @@ class InputParser extends Python3BaseVisitor[Option[Any]] {
 		node.getSymbol.getType match {
 			case Python3Lexer.TRUE => Some(true)
 			case Python3Lexer.FALSE => Some(false)
-			case Python3Lexer.NUMBER =>
+			case Python3Lexer.INTEGER =>
 				Some(node.getText.toInt)
+			case Python3Lexer.FLOAT_NUMBER =>
+				Some(node.getText.toDouble)
 			case _ => None
 		}
 	}
