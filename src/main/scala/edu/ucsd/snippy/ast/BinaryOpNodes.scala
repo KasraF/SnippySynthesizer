@@ -668,3 +668,65 @@ case class GreaterThanIntDouble(lhs: IntNode, rhs: DoubleNode) extends BinaryOpN
 		lhs.updateValues(contexts),
 		rhs.updateValues(contexts))
 }
+
+case class DoublesAddition(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNode[Double] with DoubleNode
+{
+	override lazy val code: String = lhs.code + " + " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Double] = (l, r) match {
+		case (l: Double, r: Double) => Some(l.asInstanceOf[Double] + r.asInstanceOf[Double])
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Double] =
+		DoublesAddition(l.asInstanceOf[DoubleNode], r.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): DoublesAddition = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class DoublesMultiply(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNode[Double] with DoubleNode
+{
+	override lazy val code: String = lhs.parensIfNeeded + " * " + rhs.parensIfNeeded
+
+	override def doOp(l: Any, r: Any): Option[Double] = (l, r) match {
+		case (l: Double, r: Double) => Some(l.asInstanceOf[Double] * r.asInstanceOf[Double])
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Double] =
+		DoublesMultiply(l.asInstanceOf[DoubleNode], r.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): DoublesMultiply = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class DoublesSubtraction(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNode[Double] with DoubleNode
+{
+	override lazy val code: String = lhs.code + " - " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Double] = (l, r) match {
+		case (l: Double, r: Double) => Some(l - r)
+		case _ => wrongType(l, r)
+	}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Double] =
+		DoublesSubtraction(l.asInstanceOf[DoubleNode], r.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): DoublesSubtraction = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
+
+case class DoublesDivision(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNode[Double] with DoubleNode
+{
+	override lazy val code: String = lhs.parensIfNeeded + " // " + rhs.parensIfNeeded
+
+	override def doOp(l: Any, r: Any): Option[Double] =
+		(l, r) match {
+			case (_: Double, 0) => None
+			case (l: Double, r: Double) => Some(l/r)
+			case _ => wrongType(l, r)
+		}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Double] =
+		DoublesDivision(lhs.asInstanceOf[DoubleNode], rhs.asInstanceOf[DoubleNode])
+
+	override def updateValues(contexts: Contexts): DoublesDivision = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}

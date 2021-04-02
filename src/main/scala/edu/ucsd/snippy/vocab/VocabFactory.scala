@@ -916,6 +916,50 @@ object VocabFactory
 					override val nodeType: Class[_ <: ASTNode] = classOf[DoublesSum]
 					override val head: String = ""
 				}
+				, new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Double)
+					override val returnType: Types = Types.Double
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoublesAddition]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoublesAddition(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[DoubleNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Double)
+					override val returnType: Types = Types.Double
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoublesMultiply]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoublesMultiply(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[DoubleNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Double)
+					override val returnType: Types = Types.Double
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoublesSubtraction]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoublesSubtraction(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[DoubleNode])
+				},
+				new BasicVocabMaker
+				{
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Double, Types.Double)
+					override val returnType: Types = Types.Double
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoublesDivision]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoublesDivision(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[DoubleNode])
+				}
 			)
 		}
 
