@@ -113,6 +113,13 @@
 			<artifactId>popper.js</artifactId>
 			<version>1.12.9</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.typelevel/spire -->
+		<dependency>
+			<groupId>org.typelevel</groupId>
+			<artifactId>spire_2.13</artifactId>
+			<version>0.17.0</version>
+		</dependency>
+
 
 		<!-- Test -->
 		<dependency>

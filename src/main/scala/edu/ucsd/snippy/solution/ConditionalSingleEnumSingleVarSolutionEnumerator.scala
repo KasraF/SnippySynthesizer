@@ -69,7 +69,7 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 				if (store.thenCase.isEmpty &&
 					filterByIndices(program.values, thenPart)
 						.zip(store.thenVals)
-						.forall(tup => tup._1.isDefined && tup._1.get == tup._2)) {
+						.forall(Utils.programConnects)) {
 					if (program.usesVariables) {
 						store.thenCase = Some(program)
 						updated = true
@@ -81,7 +81,7 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 				if (store.elseCase.isEmpty &&
 					filterByIndices(program.values, elsePart)
 						.zip(store.elseVals)
-						.forall(tup => tup._1.isDefined && tup._1.get == tup._2)) {
+						.forall(Utils.programConnects)) {
 					if (program.usesVariables) {
 						store.elseCase = Some(program)
 						updated = true

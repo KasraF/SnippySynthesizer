@@ -230,7 +230,7 @@ case class Node(
 						for (store <- stores) {
 							if (store.thenCase.program.isEmpty) {
 								val programValues = filterByIndices(program.values, store.thenCase.indices)
-								if (programValues.zip(store.thenCase.values).forall(tup => tup._1.isDefined && tup._1.get == tup._2)) {
+								if (programValues.zip(store.thenCase.values).forall(Utils.programConnects)) {
 									if (program.usesVariables) {
 										store.thenCase.program = Some(program)
 										graphChanged = true
@@ -242,7 +242,7 @@ case class Node(
 
 							if (store.elseCase.program.isEmpty) {
 								val programValues = filterByIndices(program.values, store.elseCase.indices)
-								if (programValues.zip(store.elseCase.values).forall(tup => tup._1.isDefined && tup._1.get == tup._2)) {
+								if (programValues.zip(store.elseCase.values).forall(Utils.programConnects)) {
 									if (program.usesVariables) {
 										store.elseCase.program = Some(program)
 										graphChanged = true

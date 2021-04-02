@@ -73,4 +73,23 @@ object Utils
 		lst.zipWithIndex.filter { case (_, i) => indices.contains(i) }.forall(_._1)
 	@inline def falseForIndices(lst: List[Boolean], indices: Set[Int]): Boolean =
 		lst.zipWithIndex.filter { case (_, i) => indices.contains(i) }.forall(!_._1)
+
+	implicit object FuzzyDoubleEq extends spire.algebra.Eq[Double] {
+		def eqv(a:Double, b:Double) = (a-b).abs < 1e-12
+	}
+	import spire.syntax.all._
+	import spire.std.seq._
+	@inline def programConnects(tup: (Option[Any], Any)): Boolean = {
+		tup match {
+			case (Some(a:Double), b:Double) => a === b
+			case (Some(Nil), Nil) => true
+			case (Some(Nil), _) => false
+			case (Some(a: List[_]), b: List[_]) => a.head match { //type erasure is bad and gross
+				case Double => //a.asInstanceOf[List[Double]] === b.asInstanceOf[List[Double]]
+					a.length == b.length && a.asInstanceOf[List[Double]].zip(b.asInstanceOf[List[Double]]).forall(t => t._1 === t._2)
+				case _ => tup._1.get == tup._2
+			}
+			case _ => tup._1.isDefined && tup._1.get == tup._2
+		}
+	}
 }

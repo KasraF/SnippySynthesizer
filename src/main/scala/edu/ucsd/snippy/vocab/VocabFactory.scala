@@ -960,6 +960,16 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						DoublesDivision(children.head.asInstanceOf[DoubleNode], children(1).asInstanceOf[DoubleNode])
 				}
+				,new BasicVocabMaker {
+					override val arity: Int = 3
+					override val childTypes: List[Types] = List(Types.DoubleList, Types.Int, Types.Int)
+					override val returnType: Types = Types.DoubleList
+					override val nodeType: Class[_ <: ASTNode] = classOf[TernarySubList[Double]]
+					override val head: String = ""
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						TernarySubList[Double](children.head.asInstanceOf[ListNode[Double]], children(1).asInstanceOf[IntNode], children(2).asInstanceOf[IntNode])
+				}
 			)
 		}
 
