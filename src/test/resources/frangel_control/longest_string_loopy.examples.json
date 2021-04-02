@@ -1,0 +1,52 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"inp": "['long', 'short', '', 'longest', 'longer']",
+			"current": "'long'",
+			"out": "'long'",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"inp": "['long', 'short', '', 'longest', 'longer']",
+			"current": "'short'",
+			"out": "'short'",
+			"time": 3
+		},
+		{
+			"#": "2",
+			"inp": "['long', 'short', '', 'longest', 'longer']",
+			"current": "''",
+			"out": "'short'",
+			"time": 6
+		},
+		{
+			"#": "3",
+			"inp": "['long', 'short', '', 'longest', 'longer']",
+			"current": "'longest'",
+			"out": "'longest'",
+			"time": 7
+		},
+		{
+			"#": "4",
+			"inp": "['long', 'short', '', 'longest', 'longer']",
+			"current": "'longer'",
+			"out": "'longest'",
+			"time": 8
+		}
+	],
+	"solutions": [
+		"if len(out) <= len(current):\n\tout = current"
+	],
+	"previousEnvs": {
+	"1": {
+		"#": "",
+		"inp": "['long', 'short', '', 'longest', 'longer']",
+		"out": "''"
+	}
+}
+}

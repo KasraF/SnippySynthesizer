@@ -26,30 +26,6 @@
 			"startsWith": "'start'",
 			"out": "['start', 'startswith']",
 			"time": 3
-		},
-		{
-			"#": "3",
-			"elem": "'Start'",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123', '']",
-			"startsWith": "'start'",
-			"out": "['start', 'startswith']",
-			"time": 4
-		},
-		{
-			"#": "4",
-			"elem": "'start 123'",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123', '']",
-			"startsWith": "'start'",
-			"out": "['start', 'startswith', 'start 123']",
-			"time": 5
-		},
-		{
-			"#": "5",
-			"elem": "''",
-			"inp": "['start', 'startswith', 'xstart', 'Start', 'start 123', '']",
-			"startsWith": "'start'",
-			"out": "['start', 'startswith', 'start 123']",
-			"time": 6
 		}
 	],
 	"previousEnvs": {
@@ -60,6 +36,6 @@
 		}
 	},
 	"solutions": [
-		"if elem.startswith(startsWith):\n\tout += [elem]"
+		"if inp[idx].startswith(startsWith):\n\tout += [inp[idx]]"
 	]
 }

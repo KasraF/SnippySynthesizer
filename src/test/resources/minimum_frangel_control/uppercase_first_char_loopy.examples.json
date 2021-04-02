@@ -1,0 +1,22 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"inp": "'computer science is COOL'",
+			"out": "'Computer science is COOL'",
+			"time": 1
+		}
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "'computer science is COOL'"
+		}
+	},
+	"solutions": [
+		"out = inp.capitalize()[0] + inp[1:len(inp)]"
+	]
+}
