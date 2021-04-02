@@ -788,6 +788,16 @@ object VocabFactory
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						ToList(children.head.asInstanceOf[StringNode])
 				}
+				//Doubles
+				,new BasicVocabMaker {
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.DoubleList)
+					override val returnType: Types = Types.Double
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoublesMax]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoublesMax(children.head.asInstanceOf[ListNode[Double]])
+				}
 			)
 		}
 

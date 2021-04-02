@@ -337,3 +337,18 @@ case class Sum(arg: ListNode[Int]) extends UnaryOpNode[Int] with IntNode
 	override def make(x: ASTNode): Sum = Sum(x.asInstanceOf[ListNode[Int]])
 	override def updateValues(contexts: Contexts): Sum = copy(arg.updateValues(contexts))
 }
+
+case class DoublesMax(arg: ListNode[Double]) extends UnaryOpNode[Double] with DoubleNode
+{
+	override lazy val code: String = "max(" + arg.code + ")"
+
+	override def doOp(x: Any): Option[Double] = x match {
+		case lst: Iterable[Double] => if (lst.isEmpty) None else Some(lst.max)
+		case _ => wrongType(x)
+	}
+
+	override def make(x: ASTNode): UnaryOpNode[Double] =
+		DoublesMax(x.asInstanceOf[ListNode[Double]])
+
+	override def updateValues(contexts: Contexts): DoublesMax = copy(arg.updateValues(contexts))
+}

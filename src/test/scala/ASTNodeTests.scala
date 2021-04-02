@@ -1685,4 +1685,29 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals("x", varNode.code)
 		assertEquals(List(Some(4.7)),varNode.values)
 	}
+
+	@Test def maxDoublesNode(): Unit = {
+		val node: DoublesMax = DoublesMax(new DoubleListNode
+		{
+			override val values: List[Option[Iterable[Double]]] = List(-1123.0 :: 2.0 :: 1.0 :: Nil).map(Some(_))
+			override protected val parenless: Boolean = true
+			override val code: String = "[-1123.0, 2.0, 1.0]"
+			override val height: Int = 1
+			override val terms: Int = 1
+			override val children: Iterable[ASTNode] = Nil
+
+			override def includes(varName: String): Boolean = false
+
+			override lazy val usesVariables: Boolean = false
+
+			override def updateValues(contexts: Contexts): DoubleListNode = ???
+		})
+		assertEquals(1, node.values.length)
+		assertEquals(Some(2.0), node.values.head)
+		assertEquals(Types.Double, node.nodeType)
+		assertEquals("max([-1123.0, 2.0, 1.0])", node.code)
+		assertEquals(2, node.height)
+		assertEquals(2, node.terms)
+		assertEquals(node.children.size, 1)
+	}
 }

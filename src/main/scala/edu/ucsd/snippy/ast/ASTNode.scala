@@ -115,6 +115,12 @@ trait IntListNode extends ListNode[Int]
 	override def updateValues(contexts: Contexts): IntListNode
 }
 
+trait DoubleListNode extends ListNode[Double]
+{
+	override val childType: Types = Types.Double
+	override def updateValues(contexts: Contexts): DoubleListNode
+}
+
 trait BoolListNode extends ListNode[Boolean]
 {
 	override val childType: Types = Types.Bool
