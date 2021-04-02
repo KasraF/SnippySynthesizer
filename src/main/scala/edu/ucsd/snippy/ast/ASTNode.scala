@@ -79,6 +79,13 @@ trait BoolNode extends ASTNode
 	override def updateValues(contexts: Contexts): BoolNode
 }
 
+trait DoubleNode extends ASTNode
+{
+	override val values: List[Option[Double]]
+	override val nodeType: Types = Types.Double
+	override def updateValues(contexts: Contexts): DoubleNode
+}
+
 trait ListNode[T] extends IterableNode
 {
 	val childType: Types

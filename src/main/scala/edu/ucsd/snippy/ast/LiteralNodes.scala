@@ -56,12 +56,20 @@ case class BoolLiteral(value: Boolean, numContexts: Int) extends LiteralNode[Boo
 	override def updateValues(contexts: Contexts): BoolLiteral = copy(value, numContexts = contexts.contextLen)
 }
 
+case class DoubleLiteral(value: Double, numContexts: Int) extends LiteralNode[Double](numContexts) with DoubleNode {
+	override val code: String = value.toString
+	override protected val parenless: Boolean = true
+
+	override def updateValues(contexts: Contexts): DoubleNode = copy(value, numContexts = contexts.contextLen)
+}
+
 case class ListLiteral[T](childType: Types, value: List[T], numContexts: Int) extends LiteralNode[List[T]](numContexts) with ListNode[T]
 {
 	val elems: List[LiteralNode[_]] = value.map {
 		case b: Boolean => BoolLiteral(b, numContexts)
 		case s: String => StringLiteral(s, numContexts)
 		case i: Int => IntLiteral(i, numContexts)
+		case d: Double => DoubleLiteral(d, numContexts)
 	}
 
 	assert(elems.forall(_.nodeType == this.childType))

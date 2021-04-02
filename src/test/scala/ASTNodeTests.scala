@@ -59,6 +59,28 @@ class ASTNodeTests extends JUnitSuite
 		assertTrue(literal.children.isEmpty)
 	}
 
+	@Test def doubleLiteralNode(): Unit = {
+		val literal: DoubleLiteral = DoubleLiteral(84.72, 1)
+		assertTrue(literal.isInstanceOf[DoubleNode])
+		assertEquals(1,literal.values.length)
+		assertEquals(84.72, literal.values.head.get,0.0)
+		assertEquals(Types.Double, literal.nodeType)
+		assertEquals("84.72", literal.code)
+		assertEquals(0, literal.height)
+		assertEquals(1, literal.terms)
+		assertTrue(literal.children.isEmpty)
+	}
+
+	@Test def listOfDoublesLiteralNode(): Unit = {
+		val literal: ListLiteral[Double] = ListLiteral(Types.Double, List(1.0,-1.0,0.0),1)
+		assertEquals(1, literal.values.length)
+		assertEquals(List(1.0,-1.0,0.0), literal.values.head.get)
+		assertEquals("[1.0, -1.0, 0.0]", literal.code)
+		assertEquals(0, literal.height)
+		assertEquals(1, literal.terms)
+		assertTrue(literal.children.isEmpty)
+	}
+
 	@Test def intToStringNode(): Unit =
 	{
 		val node: IntToString = IntToString(IntLiteral(83, 1))
