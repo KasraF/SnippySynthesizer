@@ -93,7 +93,9 @@ case class CondProgStore(thenCase: ProgStore, elseCase: ProgStore) {
 case class Edge(
 	parent: Node,
 	child: Node,
-	variables: Map[Variable, List[CondProgStore]])
+	variables: Map[Variable, List[CondProgStore]]) {
+	override def toString: String = "Edge"
+}
 
 object Node {
 	def createProgStore(
@@ -374,4 +376,5 @@ case class Node(
 		do_print(nodeLabel,edgeLabel)
 		println("}")
 	}
+	override def toString: String = "Node"
 }
