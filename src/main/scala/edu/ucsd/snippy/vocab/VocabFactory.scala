@@ -905,6 +905,17 @@ object VocabFactory
 					override val nodeType: Class[_ <: ASTNode] = classOf[SetAppend[Double, DoubleNode]]
 					override val head: String = ""
 				}
+				, new BasicVocabMaker {
+					override val returnType: Types = Types.Double
+
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						DoublesSum(children.head.asInstanceOf[ListNode[Double]])
+
+					override val arity: Int = 1
+					override val childTypes: List[Types] = List(Types.DoubleList)
+					override val nodeType: Class[_ <: ASTNode] = classOf[DoublesSum]
+					override val head: String = ""
+				}
 			)
 		}
 

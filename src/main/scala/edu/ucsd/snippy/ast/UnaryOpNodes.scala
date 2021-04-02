@@ -352,3 +352,15 @@ case class DoublesMax(arg: ListNode[Double]) extends UnaryOpNode[Double] with Do
 
 	override def updateValues(contexts: Contexts): DoublesMax = copy(arg.updateValues(contexts))
 }
+
+case class DoublesSum(arg: ListNode[Double]) extends UnaryOpNode[Double] with DoubleNode
+{
+	override lazy val code: String = f"sum(${arg.code})"
+	override val parenless = true
+	override def doOp(x: Any): Option[Double] = x match {
+		case lst: List[Double] => Some(lst.sum)
+		case _ => wrongType(x)
+	}
+	override def make(x: ASTNode): DoublesSum = DoublesSum(x.asInstanceOf[ListNode[Double]])
+	override def updateValues(contexts: Contexts): DoublesSum = copy(arg.updateValues(contexts))
+}
