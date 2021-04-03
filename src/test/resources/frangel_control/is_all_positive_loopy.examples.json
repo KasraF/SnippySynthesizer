@@ -61,6 +61,7 @@
 		}
 	},
 	"solutions": [
-		"out and elem > 0"
+		"out = out and (elem > 0)",
+		"if elem <= 0:\n\tout = False"
 	]
 }
