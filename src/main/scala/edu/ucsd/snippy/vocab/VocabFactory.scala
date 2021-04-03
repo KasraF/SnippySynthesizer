@@ -861,6 +861,15 @@ object VocabFactory
 					override val head: String = ""
 					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
 						GreaterThanIntDouble(children.head.asInstanceOf[IntNode], children(1).asInstanceOf[DoubleNode])
+				},
+				new BasicVocabMaker {
+					override val arity: Int = 2
+					override val childTypes: List[Types] = List(Types.Bool, Types.Bool)
+					override val returnType: Types = Types.Bool
+					override val nodeType: Class[_ <: ASTNode] = classOf[LAnd]
+					override val head: String = ""
+					override def apply(children: List[ASTNode], contexts: List[Map[String, Any]]): ASTNode =
+						LAnd(children.head.asInstanceOf[BoolNode], children(1).asInstanceOf[BoolNode])
 				}
 				,new BasicVocabMaker
 				{

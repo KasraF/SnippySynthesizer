@@ -1720,4 +1720,12 @@ class ASTNodeTests extends JUnitSuite
 		assertEquals(List(Some(1.2)), getExpr.values)
 		assertEquals("l[1]", getExpr.code)
 	}
+
+	@Test def lAndTest(): Unit = {
+		var node: LAnd = LAnd(BoolLiteral(false, 1), BoolLiteral(true, 1))
+		assertEquals(1, node.values.length)
+		assertEquals(false, node.values.head.get)
+		assertEquals(Types.Bool, node.nodeType)
+		assertEquals("False and True", node.code)
+	}
 }

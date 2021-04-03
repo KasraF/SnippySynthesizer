@@ -730,3 +730,19 @@ case class DoublesDivision(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNod
 
 	override def updateValues(contexts: Contexts): DoublesDivision = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
+
+case class LAnd(lhs: BoolNode, rhs: BoolNode) extends BinaryOpNode[Boolean] with BoolNode
+{
+	override val code: String = lhs.code + " and " + rhs.code
+
+	override def doOp(l: Any, r: Any): Option[Boolean] =
+		(l, r) match {
+			case (l: Boolean, r: Boolean) => Some(l.asInstanceOf[Boolean] && r.asInstanceOf[Boolean])
+			case _ => wrongType(l, r)
+		}
+
+	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
+		LAnd(lhs.asInstanceOf[BoolNode], rhs.asInstanceOf[BoolNode])
+
+	override def updateValues(contexts: Contexts): LAnd = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
+}
