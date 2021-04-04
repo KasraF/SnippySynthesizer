@@ -1,0 +1,176 @@
+{
+	"varNames": [
+		"intersect"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"elem": "'abc'",
+			"inp1": "['abc','','hi','1','x']",
+			"inp2": "['x!','hi','hi','abc','1','def']",
+			"intersect": "['abc']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"elem": "''",
+			"inp1": "['abc','','hi','1','x']",
+			"inp2": "['x!','hi','hi','abc','1','def']",
+			"intersect": "['abc']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"elem": "'hi'",
+			"inp1": "['abc','','hi','1','x']",
+			"inp2": "['x!','hi','hi','abc','1','def']",
+			"intersect": "['abc','hi']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"elem": "'1'",
+			"inp1": "['abc','','hi','1','x']",
+			"inp2": "['x!','hi','hi','abc','1','def']",
+			"intersect": "['abc','hi','1']",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"elem": "'x'",
+			"inp1": "['abc','','hi','1','x']",
+			"inp2": "['x!','hi','hi','abc','1','def']",
+			"intersect": "['abc','hi','1']",
+			"time": 5
+		},
+		{
+			"#": "0",
+			"elem": "'abc'",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['hi','x']",
+			"intersect": "[]",
+			"time": 7
+		},
+		{
+			"#": "1",
+			"elem": "'x'",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['hi','x']",
+			"intersect": "['x']",
+			"time": 8
+		},
+		{
+			"#": "2",
+			"elem": "'hi'",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['hi','x']",
+			"intersect": "['x','hi']",
+			"time": 9
+		},
+		{
+			"#": "0",
+			"elem": "'hi'",
+			"inp1": "['hi','x']",
+			"inp2": "['abc','x','hi']",
+			"intersect": "['hi']",
+			"time": 11
+		},
+		{
+			"#": "1",
+			"elem": "'x'",
+			"inp1": "['hi','x']",
+			"inp2": "['abc','x','hi']",
+			"intersect": "['hi','x']",
+			"time": 12
+		},
+		{
+			"#": "0",
+			"elem": "' hi'",
+			"inp1": "[' hi','x','hi!']",
+			"inp2": "['hi','x']",
+			"intersect": "[]",
+			"time": 14
+		},
+		{
+			"#": "1",
+			"elem": "'x'",
+			"inp1": "[' hi','x','hi!']",
+			"inp2": "['hi','x']",
+			"intersect": "['x']",
+			"time": 15
+		},
+		{
+			"#": "2",
+			"elem": "'hi!'",
+			"inp1": "[' hi','x','hi!']",
+			"inp2": "['hi','x']",
+			"intersect": "['x']",
+			"time": 16
+		},
+		{
+			"#": "0",
+			"elem": "'abc'",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['oh hi','X','xy']",
+			"intersect": "[]",
+			"time": 18
+		},
+		{
+			"#": "1",
+			"elem": "'x'",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['oh hi','X','xy']",
+			"intersect": "[]",
+			"time": 19
+		},
+		{
+			"#": "2",
+			"elem": "'hi'",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['oh hi','X','xy']",
+			"intersect": "[]",
+			"time": 20
+		}
+
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "0",
+			"time":"0",
+			"inp1": "['abc','','hi','1','x']",
+			"inp2": "['x!','hi','hi','abc','1','def']",
+			"intersect": "[]"
+		},
+		"7": {
+			"#": "0",
+			"time":"6",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['hi','x']",
+			"intersect": "[]"
+		},
+		"11": {
+			"#": "0",
+			"time":"10",
+			"inp1": "['hi','x']",
+			"inp2": "['abc','x','hi']",
+			"intersect": "[]"
+		},
+		"14": {
+			"#": "0",
+			"time":"13",
+			"inp1": "[' hi','x','hi!']",
+			"inp2": "['hi','x']",
+			"intersect": "[]"
+		},
+		"18": {
+			"#": "0",
+			"time":"17",
+			"inp1": "['abc','x','hi']",
+			"inp2": "['oh hi','X','xy']",
+			"intersect": "[]"
+		}
+	},
+	"solutions": [
+		"if elem in inp2:\n\tintersect += [elem]"
+	]
+}
