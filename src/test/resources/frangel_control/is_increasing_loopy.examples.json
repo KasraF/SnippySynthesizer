@@ -52,6 +52,7 @@
 		}
 	},
 	"solutions": [
-		"out = elem2 > elem1"
+		"out = out and (elem1 <= elem2)",
+		"if elem <= 0:\n\tout = elem1 <= elem2"
 	]
 }
