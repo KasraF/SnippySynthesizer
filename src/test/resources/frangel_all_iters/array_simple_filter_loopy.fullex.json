@@ -1,0 +1,153 @@
+{
+	"varNames": [
+		"filtered"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','awesome']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"idx": "2",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','awesome',' ']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"idx": "3",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','awesome',' ',' ']",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"idx": "4",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','awesome',' ',' ','Rude']",
+			"time": 5
+		},
+		{
+			"#": "5",
+			"idx": "5",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','awesome',' ',' ','Rude','badly']",
+			"time": 6
+		},
+		{
+			"#": "6",
+			"idx": "6",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','awesome',' ',' ','Rude','badly',' ']",
+			"time": 7
+		},
+		{
+			"#": "7",
+			"idx": "7",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','awesome',' ',' ','Rude','badly',' ','rude..']",
+			"time": 8
+		},
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['terribl','bad']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "['terribl']",
+			"time": 10
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['terribl','bad']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "['terribl',' ']",
+			"time": 11
+		},
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['bad','BAD']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ']",
+			"time": 13
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['bad','BAD']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[' ','BAD']",
+			"time": 14
+		},
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['not-bad!','rude ']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "['not-bad!']",
+			"time": 16
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['not-bad!','rude ']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "['not-bad!','rude ']",
+			"time": 17
+		}
+
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "0",
+			"time":"0",
+			"inp1": "['bad','awesome','terrible',' ','Rude','badly','rude','rude..']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[]"
+		},
+		"10": {
+			"#": "0",
+			"time":"9",
+			"inp1": "['terribl','bad']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[]"
+		},
+		"13": {
+			"#": "0",
+			"time":"12",
+			"inp1": "['bad','BAD']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[]"
+		},
+		"16": {
+			"#": "0",
+			"time":"15",
+			"inp1": "['not-bad!','rude ']",
+			"inp2": "['rude','bad','terrible']",
+			"filtered": "[]"
+		}
+	},
+	"solutions": [
+		"if inp1[idx] in inp2:\n\tfiltered += [\" \"]\nelse:\n\tfiltered += [inp1[idx]]"
+	]
+}
