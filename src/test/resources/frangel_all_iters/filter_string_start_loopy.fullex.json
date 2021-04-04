@@ -1,0 +1,159 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"elem": "'start'",
+			"inp": "['start','startswith','xstart','Start','start 123','']",
+			"startsWith": "'start'",
+			"out": "['start']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"elem": "'startswith'",
+			"inp": "['start','startswith','xstart','Start','start 123','']",
+			"startsWith": "'start'",
+			"out": "['start','startswith']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"elem": "'xstart'",
+			"inp": "['start','startswith','xstart','Start','start 123','']",
+			"startsWith": "'start'",
+			"out": "['start','startswith']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"elem": "'Start'",
+			"inp": "['start','startswith','xstart','Start','start 123','']",
+			"startsWith": "'start'",
+			"out": "['start','startswith']",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"elem": "'start 123'",
+			"inp": "['start','startswith','xstart','Start','start 123','']",
+			"startsWith": "'start'",
+			"out": "['start','startswith','start 123']",
+			"time": 5
+		},
+		{
+			"#": "5",
+			"elem": "''",
+			"inp": "['start','startswith','xstart','Start','start 123','']",
+			"startsWith": "'start'",
+			"out": "['start','startswith','start 123']",
+			"time": 6
+		},
+		{
+			"#": "0",
+			"elem": "'aaa'",
+			"inp": "['aaa','aaAaaa']",
+			"startsWith": "'aa'",
+			"out": "['aaa']",
+			"time": 8
+		},
+		{
+			"#": "1",
+			"elem": "'aaAaaa'",
+			"inp": "['aaa','aaAaaa']",
+			"startsWith": "'aa'",
+			"out": "['aaa','aaAaaa']",
+			"time": 9
+		},
+		{
+			"#": "0",
+			"elem": "'aaa'",
+			"inp": "['aaa','aAaaaa']",
+			"startsWith": "'aa'",
+			"out": "['aaa']",
+			"time": 11
+		},
+		{
+			"#": "1",
+			"elem": "'aAaaaa'",
+			"inp": "['aaa','aAaaaa']",
+			"startsWith": "'aa'",
+			"out": "['aaa']",
+			"time": 12
+		},
+		{
+			"#": "0",
+			"elem": "'aba'",
+			"inp": "['aba','aaAaaa']",
+			"startsWith": "'aa'",
+			"out": "[]",
+			"time": 14
+		},
+		{
+			"#": "1",
+			"elem": "'aaAaaa'",
+			"inp": "['aba','aaAaaa']",
+			"startsWith": "'aa'",
+			"out": "['aaAaaa']",
+			"time": 15
+		},
+		{
+			"#": "0",
+			"elem": "'aba'",
+			"inp": "['aba','aAaaaa']",
+			"startsWith": "'aa'",
+			"out": "[]",
+			"time": 17
+		},
+		{
+			"#": "1",
+			"elem": "'aAaaaa'",
+			"inp": "['aba','aAaaaa']",
+			"startsWith": "'aa'",
+			"out": "[]",
+			"time": 18
+		}
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "0",
+			"time":"0",
+			"inp": "['start','startswith','xstart','Start','start 123','']",
+			"startsWith": "'start'",
+			"out": "[]"
+		},
+		"8": {
+			"#": "0",
+			"time":"7",
+			"inp": "['aaa','aaAaaa']",
+			"startsWith": "'aa'",
+			"out": "[]"
+		},
+		"11": {
+			"#": "0",
+			"time":"10",
+			"inp": "['aaa','aAaaaa']",
+			"startsWith": "'aa'",
+			"out": "[]"
+		},
+		"14": {
+			"#": "0",
+			"time":"13",
+			"inp": "['aba','aaAaaa']",
+			"startsWith": "'aa'",
+			"out": "[]"
+		},
+		"17": {
+			"#": "0",
+			"time":"16",
+			"inp": "['aba','aAaaaa']",
+			"startsWith": "'aa'",
+			"out": "[]"
+		}
+	},
+	"solutions": [
+		"if elem.startswith(startsWith):\n\tout += [elem]"
+	]
+}
