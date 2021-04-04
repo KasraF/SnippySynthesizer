@@ -8,7 +8,6 @@
 			"#": "0",
 			"inp1": "['abc', 'DEF', '12345']",
 			"delim": "','",
-			"inp2": "'init.'",
 			"join": "'abc, DEF, 12345'",
 			"out": "'init.abc, DEF, 12345'",
 			"time": 1
@@ -19,11 +18,10 @@
 			"#": "",
 			"inp1": "['abc', 'DEF', '12345']",
 			"delim": "','",
-			"inp2": "'init.'",
-			"out": "''"
+			"out": "'init.'"
 		}
 	},
 	"solutions": [
-		"join = (delim + \" \").join(inp1)\nout = inp2 + join"
+		"join = (delim + \" \").join(inp1)\nout += join"
 	]
 }
