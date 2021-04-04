@@ -1,0 +1,112 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['abc','DEF','12345','?!']",
+			"delim": "', '",
+			"out": "'init.abc'",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['abc','DEF','12345','?!']",
+			"delim": "', '",
+			"out": "'init.abc, DEF'",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"idx": "2",
+			"inp1": "['abc','DEF','12345','?!']",
+			"delim": "', '",
+			"out": "'init.abc, DEF, 12345'",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"idx": "3",
+			"inp1": "['abc','DEF','12345','?!']",
+			"delim": "', '",
+			"out": "'init.abc, DEF, 12345, ?!'",
+			"time": 4
+		},
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['abc','DEF']",
+			"delim": "', '",
+			"out": "'abcabc'",
+			"time": 6
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['abc','DEF']",
+			"delim": "', '",
+			"out": "'abcabc, DEF'",
+			"time": 7
+		},
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['abc']",
+			"delim": "' '",
+			"out": "'xyz abc'",
+			"time": 9
+		},
+		{
+			"#": "0",
+			"idx": "0",
+			"inp1": "['','']",
+			"delim": "', '",
+			"out": "''",
+			"time": 11
+		},
+		{
+			"#": "1",
+			"idx": "1",
+			"inp1": "['','']",
+			"delim": "', '",
+			"out": "', '",
+			"time": 12
+		}
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "0",
+			"time":"0",
+			"inp1": "['abc','DEF','12345','?!']",
+			"delim": "', '",
+			"out": "'init.'"
+		},
+		"6": {
+			"#": "0",
+			"time":"5",
+			"inp1": "['abc','DEF']",
+			"delim": "', '",
+			"out": "'abc'"
+		},
+		"9": {
+			"#": "0",
+			"time":"8",
+			"inp1": "['abc']",
+			"delim": "' '",
+			"out": "'xyz '"
+		},
+		"11": {
+			"#": "0",
+			"time":"10",
+			"inp1": "['','']",
+			"delim": "', '",
+			"out": "''"
+		}
+	},
+	"solutions": [
+		"if idx > 0:\n\tout += delim + inp1[idx]\nelse:\n\tout += inp1[idx]"
+	]
+}
