@@ -50,6 +50,15 @@ object PostProcessor
 				case (a: StringLiteral, b: StringLiteral) => StringLiteral(a.value + b.value, a.values.length)
 				case _ => StringConcat(lhs, rhs)
 			}
+		case gt: GreaterThan =>
+			val lhs: IntNode = clean(gt.lhs).asInstanceOf[IntNode]
+			val rhs: IntNode = clean(gt.rhs).asInstanceOf[IntNode]
+			if (lhs == rhs)
+				BoolLiteral(false,gt.lhs.values.length)
+			else (lhs,rhs) match {
+				case (a: IntLiteral, b:IntLiteral) => BoolLiteral(a.value > b.value, a.values.length)
+				case _ => GreaterThan(lhs,rhs)
+			}
 		case gt: GreaterThanDoubles =>
 			val lhs: DoubleNode = clean(gt.lhs).asInstanceOf[DoubleNode]
 			val rhs: DoubleNode = clean(gt.rhs).asInstanceOf[DoubleNode]
