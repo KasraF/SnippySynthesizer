@@ -1,0 +1,171 @@
+{
+	"varNames": [
+		"rs"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'TERRIBLE'",
+			"rs": "['TERRIBLE']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'a'",
+			"rs": "['TERRIBLE']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'color'",
+			"rs": "['TERRIBLE','color']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'Minute'",
+			"rs": "['TERRIBLE','color']",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'Idea'",
+			"rs": "['TERRIBLE','color','Idea']",
+			"time": 5
+		},
+		{
+			"#": "5",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'Animal'",
+			"rs": "['TERRIBLE','color','Idea','Animal']",
+			"time": 6
+		},
+		{
+			"#": "6",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'extra'",
+			"rs": "['TERRIBLE','color','Idea','Animal','extra']",
+			"time": 7
+		},
+		{
+			"#": "7",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'One'",
+			"rs": "['TERRIBLE','color','Idea','Animal','extra']",
+			"time": 8
+		},
+		{
+			"#": "8",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'Family'",
+			"rs": "['TERRIBLE','color','Idea','Animal','extra']",
+			"time": 9
+		},
+		{
+			"#": "9",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'To'",
+			"rs": "['TERRIBLE','color','Idea','Animal','extra']",
+			"time": 10
+		},
+		{
+			"#": "10",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"key": "'Bicycle'",
+			"rs": "['TERRIBLE','color','Idea','Animal','extra']",
+			"time": 11
+		},
+		{
+			"#": "0",
+			"inp": "{'A':'a','B':'B'}",
+			"key": "'A'",
+			"rs": "['A']",
+			"time": 13
+		},
+		{
+			"#": "1",
+			"inp": "{'A':'a','B':'B'}",
+			"key": "'B'",
+			"rs": "['A','B']",
+			"time": 14
+		},
+		{
+			"#": "0",
+			"inp": "{'A':'B','B':'A'}",
+			"key": "'A'",
+			"rs": "[]",
+			"time": 16
+		},
+		{
+			"#": "1",
+			"inp": "{'A':'B','B':'A'}",
+			"key": "'B'",
+			"rs": "[]",
+			"time": 17
+		},
+		{
+			"#": "0",
+			"inp": "{'A':'a','a':'A','B':'B','b':'c'}",
+			"key": "'A'",
+			"rs": "['A']",
+			"time": 19
+		},
+		{
+			"#": "1",
+			"inp": "{'A':'a','a':'A','B':'B','b':'c'}",
+			"key": "'a'",
+			"rs": "['A','a']",
+			"time": 20
+		},
+		{
+			"#": "2",
+			"inp": "{'A':'a','a':'A','B':'B','b':'c'}",
+			"key": "'B'",
+			"rs": "['A','a','B']",
+			"time": 21
+		},
+		{
+			"#": "3",
+			"inp": "{'A':'a','a':'A','B':'B','b':'c'}",
+			"key": "'b'",
+			"rs": "['A','a','B']",
+			"time": 22
+		}
+
+	],
+	"solutions": [
+		"if key.capitalize() == inp[key].capitalize():\n\trs += [key]",
+		"if key.lower() == inp[key].lower():\n\trs += [key]"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "0",
+			"time":"0",
+			"inp": "{'TERRIBLE':'terrible','a':'un','color':'color','Minute':'minuto','Idea':'idea','Animal':'animal','extra':'EXTRA','One':'uno','Family':'familia','To':'a','Bicycle':'bicicleta'}",
+			"rs": "[]"
+		},
+		"13": {
+			"#": "0",
+			"time":"12",
+			"inp": "{'A':'a','B':'B'}",
+			"rs": "[]"
+		},
+		"16": {
+			"#": "0",
+			"time":"15",
+			"inp": "{'A':'B','B':'A'}",
+			"rs": "[]"
+		},
+		"19": {
+			"#": "0",
+			"time":"18",
+			"inp": "{'A':'a','a':'A','B':'B','b':'c'}",
+			"rs": "[]"
+		}
+	}
+}
