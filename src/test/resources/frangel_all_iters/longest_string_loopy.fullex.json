@@ -1,0 +1,215 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"inp": "['long','short','','longest','longer']",
+			"current": "'long'",
+			"out": "'long'",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"inp": "['long','short','','longest','longer']",
+			"current": "'short'",
+			"out": "'short'",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"inp": "['long','short','','longest','longer']",
+			"current": "''",
+			"out": "'short'",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"inp": "['long','short','','longest','longer']",
+			"current": "'longest'",
+			"out": "'longest'",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"inp": "['long','short','','longest','longer']",
+			"current": "'longer'",
+			"out": "'longest'",
+			"time": 5
+		},
+		{
+			"#": "0",
+			"inp": "['long','longest','','short','longer']",
+			"current": "'long'",
+			"out": "'long'",
+			"time": 7
+		},
+		{
+			"#": "1",
+			"inp": "['long','longest','','short','longer']",
+			"current": "'longest'",
+			"out": "'longest'",
+			"time": 8
+		},
+		{
+			"#": "2",
+			"inp": "['long','longest','','short','longer']",
+			"current": "''",
+			"out": "'longest'",
+			"time": 9
+		},
+		{
+			"#": "3",
+			"inp": "['long','longest','','short','longer']",
+			"current": "'short'",
+			"out": "'longest'",
+			"time": 10
+		},
+		{
+			"#": "4",
+			"inp": "['long','longest','','short','longer']",
+			"current": "'longer'",
+			"out": "'longest'",
+			"time": 11
+		},
+		{
+			"#": "0",
+			"inp": "['123456','abcde','wxyz!']",
+			"current": "'123456'",
+			"out": "'123456'",
+			"time": 13
+		},
+		{
+			"#": "1",
+			"inp": "['123456','abcde','wxyz!']",
+			"current": "'abcde'",
+			"out": "'123456'",
+			"time": 14
+		},
+		{
+			"#": "2",
+			"inp": "['123456','abcde','wxyz!']",
+			"current": "'wxyz!'",
+			"out": "'123456'",
+			"time": 15
+		},
+		{
+			"#": "0",
+			"inp": "['12345','abcdef','wxyz!']",
+			"current": "'12345'",
+			"out": "'12345'",
+			"time": 17
+		},
+		{
+			"#": "1",
+			"inp": "['12345','abcdef','wxyz!']",
+			"current": "'abcdef'",
+			"out": "'abcdef'",
+			"time": 18
+		},
+		{
+			"#": "2",
+			"inp": "['12345','abcdef','wxyz!']",
+			"current": "'wxyz!'",
+			"out": "'abcdef'",
+			"time": 19
+		},
+		{
+			"#": "0",
+			"inp": "['12345','abcde','wxyz!?']",
+			"current": "'12345'",
+			"out": "'12345'",
+			"time": 21
+		},
+		{
+			"#": "1",
+			"inp": "['12345','abcde','wxyz!?']",
+			"current": "'abcde'",
+			"out": "'12345'",
+			"time": 22
+		},
+		{
+			"#": "2",
+			"inp": "['12345','abcde','wxyz!?']",
+			"current": "'wxyz!?'",
+			"out": "'wxyz!?'",
+			"time": 23
+		},
+		{
+			"#": "0",
+			"inp": "['ABC','12345']",
+			"current": "'ABC'",
+			"out": "'ABC'",
+			"time": 25
+		},
+		{
+			"#": "1",
+			"inp": "['ABC','12345']",
+			"current": "'12345'",
+			"out": "'12345'",
+			"time": 26
+		},
+		{
+			"#": "0",
+			"inp": "['ABCDE','123']",
+			"current": "'ABCDE'",
+			"out": "'ABCDE'",
+			"time": 28
+		},
+		{
+			"#": "1",
+			"inp": "['ABCDE','123']",
+			"current": "'123'",
+			"out": "'ABCDE'",
+			"time": 29
+		}
+	],
+	"solutions": [
+		"if len(out) <= len(current):\n\tout = current"
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "0",
+			"time": 0,
+			"inp": "['long','short','','longest','longer']",
+			"out": "''"
+		},
+		"7": {
+			"#": "0",
+			"time": 6,
+			"inp": "['long','longest','','short','longer']",
+			"out": "''"
+		},
+		"13": {
+			"#": "0",
+			"time": 12,
+			"inp": "['123456','abcde','wxyz!']",
+			"out": "''"
+		},
+		"17": {
+			"#": "0",
+			"time": 16,
+			"inp": "['12345','abcdef','wxyz!']",
+			"out": "''"
+		},
+		"21": {
+			"#": "0",
+			"time": 20,
+			"inp": "['12345','abcde','wxyz!?']",
+			"out": "''"
+		},
+		"25": {
+			"#": "0",
+			"time": 24,
+			"inp": "['ABC','12345']",
+			"out": "''"
+		},
+		"28": {
+			"#": "0",
+			"time": 27,
+			"inp": "['ABCDE','123']",
+			"out": "''"
+		}
+}
+}
