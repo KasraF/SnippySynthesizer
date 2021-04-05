@@ -1,0 +1,69 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"inp": "'computer science is COOL'",
+			"out": "'Computer science is COOL'",
+			"time": 1
+		},
+		{
+			"#": "0",
+			"inp": "'123abc'",
+			"out": "'123abc'",
+			"time": 3
+		},
+		{
+			"#": "0",
+			"inp": "'aaa'",
+			"out": "'Aaa'",
+			"time": 5
+		},
+		{
+			"#": "0",
+			"inp": "'a'",
+			"out": "'A'",
+			"time": 7
+		},
+		{
+			"#": "0",
+			"inp": "''",
+			"out": "''",
+			"time": 9
+		}
+
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "0",
+			"time": 0,
+			"inp": "'computer science is COOL'"
+		},
+		"3": {
+			"#": "0",
+			"time": 2,
+			"inp": "'123abc'"
+		},
+		"5": {
+			"#": "0",
+			"time": 4,
+			"inp": "'aaa'"
+		},
+		"7": {
+			"#": "0",
+			"time": 6,
+			"inp": "'a'"
+		},
+		"9": {
+			"#": "0",
+			"time": 8,
+			"inp": "''"
+		}
+	},
+	"solutions": [
+		"out = inp.capitalize()[0] + inp[1:len(inp)]",
+		"if len(inp) > 0:\n\tout = inp.capitalize()[0] + inp[1:len(inp)]\nelse:\n\tout = \"\""
+	]
+}
