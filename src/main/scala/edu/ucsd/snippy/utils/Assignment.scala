@@ -20,22 +20,9 @@ case class SingleAssignment(name: String, var program: ASTNode) extends Assignme
 case class BasicMultivariableAssignment(names: List[String], programs: List[ASTNode]) extends Assignment
 {
 	override def code(): String = {
-		// See if we can break it up into multiple lines
-		val singleLine = names.zipWithIndex.exists {
-			case (name, i) => programs.zipWithIndex.exists {
-				case (program, j) => i != j && program.includes(name)
-			}
-		}
-
-		if (singleLine) {
-			val lhs = names.mkString(", ")
-			val rhs = programs.map(pred => PostProcessor.clean(pred).code).mkString(", ")
-			f"$lhs = $rhs"
-		} else {
-			names.zip(programs).map {
-				case (name, program) => f"$name = ${PostProcessor.clean(program).code}"
-			}.mkString("\n")
-		}
+		val lhs = names.mkString(", ")
+		val rhs = programs.map(pred => PostProcessor.clean(pred).code).mkString(", ")
+		f"$lhs = $rhs"
 	}
 }
 
@@ -196,6 +183,10 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 
 	def deadCodeFilter(assign: Assignment): Boolean = assign match {
 		case SingleAssignment(name, v: VariableNode[_]) => name != v.name
+		case BasicMultivariableAssignment(names, programs) => names.zip(programs).exists {
+			case (name: String, v: VariableNode[_]) => name != v.name
+			case _ => true
+		}
 		case _ => true
 	}
 }

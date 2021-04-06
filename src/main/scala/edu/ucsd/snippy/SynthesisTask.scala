@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.predicates._
-import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSingleEnumMultivarSolutionEnumerator, ConditionalSingleEnumSingleVarSolutionEnumerator, SolutionEnumerator}
+import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSingleEnumMultivarSimultaneousSolutionEnumerator, ConditionalSingleEnumMultivarSolutionEnumerator, ConditionalSingleEnumSingleVarSolutionEnumerator, SolutionEnumerator}
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -98,7 +98,7 @@ object SynthesisTask
 
 		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
-				new ConditionalSingleEnumMultivarSolutionEnumerator(pred, parameters, additionalLiterals)
+				new ConditionalSingleEnumMultivarSimultaneousSolutionEnumerator(pred, parameters, additionalLiterals)
 			case pred: SingleVariablePredicate if size =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
