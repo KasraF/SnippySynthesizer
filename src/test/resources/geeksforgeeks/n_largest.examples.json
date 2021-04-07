@@ -1,6 +1,5 @@
 {
 	"varNames": [
-		"sort",
 		"reverse",
 		"n_largest"
 	],
@@ -9,7 +8,6 @@
 			"#": "",
 			"inp": "[4, 5, 1, 2, 9]",
 			"n": "2",
-			"sort": "[1, 2, 4, 5, 9]",
 			"reverse": "[9, 5, 4, 2, 1]",
 			"n_largest": "[9, 5]",
 			"time": 1
@@ -23,6 +21,6 @@
 		}
 	},
 	"solutions": [
-		"reverse = sorted(inp)[::-1]\nn_largest = reverse[0:n]\nsort = sorted(reverse)"
+		"reverse = sorted(inp)[::-1]\nn_largest = reverse[0:n]"
 	]
 }

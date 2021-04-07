@@ -24,5 +24,8 @@
 			"#": "",
 			"inp": "['long', 'short', '', 'longest', 'longer']"
 		}
-	}
+	},
+	"solutions": [
+		"str_len = [len(var) for var in inp]\nlongest = max(str_len)"
+	]
 }
