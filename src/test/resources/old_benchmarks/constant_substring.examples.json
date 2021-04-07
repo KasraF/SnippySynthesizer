@@ -11,7 +11,8 @@
 		}
 	],
 	"solutions": [
-		"rs = s[7:12]"
+		"rs = s[7:12]",
+		"rs = s[7:-1]"
 	],
 	"previousEnvs": {}
 }
