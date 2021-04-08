@@ -9,7 +9,7 @@ import scala.io.Source.fromFile
 import scala.util.Random
 
 object IterSelectionBenchmarks extends App {
-	val timeout = 15 //seconds
+	val timeout = 7 //seconds
 	val dir = new File("src/test/resources/frangel_all_iters/")
 	dir.listFiles()
 		.filter(_.getName.contains(".fullex.json"))

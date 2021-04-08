@@ -16,7 +16,7 @@
 			"#": ""
 		}
 	],
-	"solution": [
+	"solutions": [
 		"nums = [int(var) for var in inp.split(\" \")]\nmax = max(num)\nmin = min(nums)\nrs = str(max) + \",\" + str(min)",
 		"nums = [int(var) for var in inp.split()]\nmax = max(num)\nmin = min(nums)\nrs = str(max) + \",\" + str(min)",
 		"nums = [int(var) for var in inp.split(\" \")]\nmin = min(num)\nmax = max(nums)\nrs = str(max) + \",\" + str(min)",

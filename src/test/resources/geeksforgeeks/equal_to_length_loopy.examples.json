@@ -1,60 +1,53 @@
 {
 	"varNames": [
-		"split",
 		"rs"
 	],
 	"envs": [
 		{
 			"#": "0",
-			"idx": "0",
+			"elem": "'need'",
 			"inp": "'need word greater than length n'",
 			"num": "4",
-			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
 			"rs": "['need']",
 			"time": 1
 		},
 		{
 			"#": "1",
-			"idx": "1",
+			"elem": "'word'",
 			"inp": "'need word greater than length n'",
 			"num": "4",
-			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
 			"rs": "['need', 'word']",
 			"time": 2
 		},
 		{
 			"#": "2",
-			"idx": "2",
+			"elem": "'greater'",
 			"inp": "'need word greater than length n'",
 			"num": "4",
-			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
 			"rs": "['need', 'word']",
 			"time": 3
 		},
 		{
 			"#": "3",
-			"idx": "3",
+			"elem": "'than'",
 			"inp": "'need word greater than length n'",
 			"num": "4",
-			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
 			"rs": "['need', 'word', 'than']",
 			"time": 4
 		},
 		{
 			"#": "4",
-			"idx": "4",
+			"elem": "'length'",
 			"inp": "'need word greater than length n'",
 			"num": "4",
-			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
 			"rs": "['need', 'word', 'than']",
 			"time": 5
 		},
 		{
 			"#": "5",
-			"idx": "5",
+			"elem": "'n'",
 			"inp": "'need word greater than length n'",
 			"num": "4",
-			"split": "['need', 'word', 'greater', 'than', 'length', 'n']",
 			"rs": "['need', 'word', 'than']",
 			"time": 6
 		}
@@ -67,5 +60,9 @@
 			"split": "[]",
 			"rs": "[]"
 		}
-	}
+	},
+	"solutions": [
+		"if num == len(elem):\n\trs += [elem]",
+		"if len(elem) == num:\n\trs += [elem]"
+	]
 }
