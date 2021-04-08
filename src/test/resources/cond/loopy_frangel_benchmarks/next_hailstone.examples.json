@@ -1,10 +1,6 @@
 {
 	"varNames": ["out"],
 	"previousEnvs": {
-		"1": {
-		"#": "",
-		"inp": "123456", "time": 1
-		}
 	},
 	"envs": [
 		{
