@@ -6,7 +6,7 @@
 	],
 	"envs": [
 		{
-			"#": "0",
+			"#": "",
 			"name": "'Augusta Ada King'",
 			"words": "['Augusta', 'Ada', 'King']",
 			"chars": "['A', 'A', 'K']",

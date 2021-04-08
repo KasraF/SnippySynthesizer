@@ -1,0 +1,22 @@
+{
+	"varNames": [
+		"words",
+		"abbr"
+	],
+	"envs": [
+		{
+			"#": "",
+			"$": "",
+			"name": "'Augusta Ada King'",
+			"words": "['Augusta', 'Ada', 'King']",
+			"abbr": "'A.A.K'",
+			"time": 1
+		}
+	],
+	"solutions": [
+		"words = name.split()\nabbr = \".\".join([var[0] for var in words])",
+		"words = name.split(\" \")\nabbr = \".\".join([var[0] for var in words])"
+	],
+	"previousEnvs": {
+	}
+}
