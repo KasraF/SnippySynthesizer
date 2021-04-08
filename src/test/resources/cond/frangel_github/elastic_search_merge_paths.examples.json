@@ -26,9 +26,8 @@
 		}
 	],
 	"previousEnvs": {
-		"1": {
-			"#": "",
-			"out": "''"
-		}
-	}
+	},
+	"solutions" : [
+		"if len(inp1) < 1:\n\tout = inp2\nelse:\n\tout = inp1 + \".\" + inp2"
+	]
 }
