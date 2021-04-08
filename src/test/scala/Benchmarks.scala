@@ -92,14 +92,14 @@ object Benchmarks extends App
 
 	val benchmarks = if (args.nonEmpty) {
 		benchmarksDir.listFiles()
-    		.flatMap(f => if (f.isDirectory) f.listFiles().toList else List(f))
+    		.flatMap(f => if (f.isDirectory) f :: f.listFiles().toList else Nil)
 			.filter(_.isDirectory)
 			.filter(dir => if (dir.getParentFile.getName == "resources") args.contains(dir.getName)
 			else args.contains(dir.getName) || args.contains(dir.getParentFile.getName))
 			.toList
 	} else {
 		benchmarksDir.listFiles()
-			.flatMap(f => if (f.isDirectory) f.listFiles().toList else List(f))
+			.flatMap(f => if (f.isDirectory) f :: f.listFiles().toList else Nil)
 			.filter(_.isDirectory)
 			.sortBy(_.getName)(Ordering.String)
 			.toList
