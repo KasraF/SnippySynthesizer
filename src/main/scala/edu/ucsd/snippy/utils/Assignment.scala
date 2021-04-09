@@ -109,15 +109,16 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 								{
 									preCondition = preCondition :+ thenCode(i)
 									thenCode = thenCode.slice(0, i) ++ thenCode.slice(i + 1, thenCode.length)
-									elseCode = elseCode.slice(0, i) ++ elseCode.slice(i + 1, elseCode.length)
+									elseCode = elseCode.slice(0, j) ++ elseCode.slice(j + 1, elseCode.length)
 								}
 								else if (!(thenVarsAssignedAfter.exists(thenProgram.includes) ||
 										   elseVarsAssignedAfter.exists(elseProgram.includes)) &&
 										 !(this.anyInclude(thenCode.slice(i + 1, thenCode.length), name) ||
-										   this.anyInclude(elseCode.slice(j + 1, elseCode.length), name))) {
+										   this.anyInclude(elseCode.slice(j + 1, elseCode.length), name)))
+								{
 									postCondition = postCondition :+ thenCode(i)
 									thenCode = thenCode.slice(0, i) ++ thenCode.slice(i + 1, thenCode.length)
-									elseCode = elseCode.slice(0, i) ++ elseCode.slice(i + 1, elseCode.length)
+									elseCode = elseCode.slice(0, j) ++ elseCode.slice(j + 1, elseCode.length)
 								} else {
 									i += 1
 								}
