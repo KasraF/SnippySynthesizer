@@ -28,6 +28,7 @@ case class BasicMultivariableAssignment(names: List[String], programs: List[ASTN
 
 case class MultilineMultivariableAssignment(assignments: List[Assignment]) extends Assignment
 {
+	assert(assertion = false, "This branch should never use this!")
 	override def code(): String = assignments.map(_.code).mkString("\n")
 }
 

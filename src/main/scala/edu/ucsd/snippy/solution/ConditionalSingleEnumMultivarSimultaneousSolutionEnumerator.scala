@@ -69,6 +69,11 @@ class ConditionalSingleEnumMultivarSimultaneousSolutionEnumerator(
 				val (condStore, _, index) = paths.minBy(_._2)
 
 					graph.traverse(index) match {
+						case Some((thenAssignment :: Nil, elseAssignment :: Nil)) =>
+							this.solution = Some(ConditionalAssignment(
+								condStore.cond.get,
+								thenAssignment,
+								elseAssignment))
 						case Some((thenAssignments, elseAssignments)) =>
 							this.solution = Some(ConditionalAssignment(
 								condStore.cond.get,
