@@ -1,0 +1,34 @@
+{
+	"varNames": [
+		"set",
+		"out"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp": "[4, 5, 9, 22, 3, 22, 9]",
+			"set": "{4, 5, 9, 22, 3}",
+			"out": "False",
+			"time": 1
+		},
+		{
+			"#": "",
+			"inp": "[23, 12, 8, 89]",
+			"set": "{23, 12, 8, 89}",
+			"out": "True",
+			"time": 2
+		},
+		{
+			"#": "",
+			"inp": "[23, 121, 89, 23, 89]",
+			"set": "{23, 121, 89}",
+			"out": "False",
+			"time": 3
+		}
+	],
+	"previousEnvs": {
+	},
+	"solutions" : [
+		"set = set(inp)\nout = len(inp) == len(set)"
+	]
+}

@@ -1,0 +1,35 @@
+{
+	"varNames": ["out"],
+	"previousEnvs": {
+	},
+	"envs": [
+		{
+			"#": "",
+			"inp": "123456",
+			"out": "61728",
+			"time": 1
+		},
+		{
+			"#": "",
+			"inp": "1234567",
+			"out": "3703702",
+			"time": 3
+		},
+		{
+			"#": "",
+			"inp": "500000004",
+			"out": "250000002",
+			"time": 4
+		},
+		{
+			"#": "",
+			"inp": "500000005",
+			"out": "1500000016",
+			"time": 5
+		}
+	],
+	"solutions": [
+		"if 1 > inp % 2:\n\tout = inp // 2\nelse:\n\tout = inp + inp + inp + 1",
+		"if 0 == inp % 2:\n\tout = inp // 2\nelse:\n\tout = inp + inp + inp + 1"
+	]
+}

@@ -1,0 +1,33 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp1": "'path'",
+			"inp2": "'field'",
+			"out": "'path.field'",
+			"time": 1
+		},
+		{
+			"#": "",
+			"inp1": "'a'",
+			"inp2": "''",
+			"out": "'a.'",
+			"time": 2
+		},
+		{
+			"#": "",
+			"inp1": "''",
+			"inp2": "'field'",
+			"out": "'field'",
+			"time": 3
+		}
+	],
+	"previousEnvs": {
+	},
+	"solutions" : [
+		"if len(inp1) < 1:\n\tout = inp2\nelse:\n\tout = inp1 + \".\" + inp2"
+	]
+}

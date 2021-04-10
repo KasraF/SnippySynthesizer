@@ -17,7 +17,7 @@ object DebugPrints
 
 	def iprintln(msg: String, args: Any*): Unit = if (this.info) this.logger.info(msg, args: _*)
 
-	def eprintln(msg: String): Unit = scala.sys.process.stderr.println(msg)
+	def eprintln(msg: String): Unit = ()//scala.sys.process.stderr.println(msg)
 
 //	def eprintln(msg: String, args: Any*): Unit = this.logger.error(msg, args: _*)
 //

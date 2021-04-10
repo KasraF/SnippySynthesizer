@@ -1,0 +1,23 @@
+{
+	"varNames": [
+		"rs",
+		"s1",
+		"s2"
+	],
+	"envs": [
+		{
+			"idx": "2",
+			"s": "'abcdefg'",
+			"s1": "'ab'",
+			"s2": "'defg'",
+			"rs": "'abdefg'",
+			"time": 1,
+			"#": ""
+		}
+	],
+	"solutions": [
+		"s1 = s[0:idx]\ns2 = s[idx + 1:len(s)]\nrs = s1 + s2",
+		"s2 = s[idx + 1:len(s)]\ns1 = s[0:idx]\nrs = s1 + s2"
+	],
+	"previousEnvs": {}
+}

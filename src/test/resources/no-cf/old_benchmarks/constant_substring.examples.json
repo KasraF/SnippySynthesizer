@@ -1,0 +1,18 @@
+{
+	"varNames": [
+		"rs"
+	],
+	"envs": [
+		{
+			"s": "'Hello, world!'",
+			"rs": "'world'",
+			"time": 1,
+			"#": ""
+		}
+	],
+	"solutions": [
+		"rs = s[7:12]",
+		"rs = s[7:-1]"
+	],
+	"previousEnvs": {}
+}

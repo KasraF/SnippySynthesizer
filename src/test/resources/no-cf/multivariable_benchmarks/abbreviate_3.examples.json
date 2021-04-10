@@ -1,0 +1,26 @@
+{
+	"varNames": [
+		"words",
+		"chars",
+		"abbr"
+	],
+	"envs": [
+		{
+			"#": "",
+			"name": "'Augusta Ada King'",
+			"words": "['Augusta', 'Ada', 'King']",
+			"chars": "['A', 'A', 'K']",
+			"abbr": "'a.a.k'",
+			"time": 1
+		}
+	],
+	"solutions": [
+		"words = name.split(\" \")\nchars = [var[0] for var in words]\nabbr = \".\".join(chars).lower()",
+		"words = name.split()\nchars = [var[0] for var in words]\nabbr = \".\".join(chars).lower()"
+	],
+	"previousEnvs": {
+		"1": {
+			"name": "'Augusta Ada King'"
+		}
+	}
+}

@@ -1,0 +1,34 @@
+{
+	"varNames": [
+		"chars",
+		"duplicates",
+		"rs"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp": "'aabbcde'",
+			"chars": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 1}",
+			"duplicates": "{'a': 2, 'b': 2}",
+			"rs": "2",
+			"time": 1
+		},
+		{
+			"#": "",
+			"inp": "'aabbcdee'",
+			"chars": "{'a': 2, 'b': 2, 'c': 1, 'd': 1, 'e': 2}",
+			"duplicates": "{'a': 2, 'b': 2, 'e':2}",
+			"rs": "3",
+			"time": 1
+		}
+	],
+	"solutions": [
+		"chars = {var: inp.count(var) for var in inp}\nduplicates = {key: chars[key] for key in chars if chars[key] > 1}\nrs = len(duplicates)",
+		"chars = {var: inp.count(var) for var in inp}\nduplicates = {key: chars[key] for key in chars if inp.count(key) > 1}\nrs = len(duplicates)"
+	],
+	"previousEnvs": {
+		"1": {
+			"inp": "'aabbcde'"
+		}
+	}
+}

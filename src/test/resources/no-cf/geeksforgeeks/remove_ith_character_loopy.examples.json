@@ -1,0 +1,19 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp": "'GeeksForGeeks'",
+			"n": "4",
+			"out": "'GeesForGeeks'",
+			"time": 1
+		}
+	],
+	"previousEnvs": {
+	},
+	"solutions": [
+		"out = inp[0:n - 1] + inp[n:len(inp)]"
+	]
+}

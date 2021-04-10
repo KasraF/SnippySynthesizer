@@ -1,8 +1,9 @@
 import edu.ucsd.snippy.{DebugPrints, Snippy}
 import net.liftweb.json
 import net.liftweb.json.JObject
-
 import java.io.File
+import java.nio.file.Path
+
 import scala.io.Source.fromFile
 
 object Benchmarks extends App
@@ -13,6 +14,7 @@ object Benchmarks extends App
 		var failed = 0
 		var timeout = 0
 		var unknown = 0
+		val dirname = if (dir.getParentFile.getName == "resources") dir.getName else dir.getParentFile.getName + "/" + dir.getName
 		dir.listFiles()
 			.filter(_.getName.contains(".examples.json"))
 			.filter(!_.getName.contains(".out"))
@@ -59,7 +61,7 @@ object Benchmarks extends App
 				println(printStr)
 				Runtime.getRuntime.gc()
 			})
-		println(f"${dir.getName}: $total total, $timeout timeouts, $failed failed, $unknown unknown")
+		println(f"$dirname: $total total, $timeout timeouts, $failed failed, $unknown unknown")
 		(total, timeout, failed, unknown)
 	}
 
@@ -90,11 +92,14 @@ object Benchmarks extends App
 
 	val benchmarks = if (args.nonEmpty) {
 		benchmarksDir.listFiles()
+    		.flatMap(f => if (f.isDirectory) f :: f.listFiles().toList else Nil)
 			.filter(_.isDirectory)
-			.filter(dir => args.contains(dir.getName))
+			.filter(dir => if (dir.getParentFile.getName == "resources") args.contains(dir.getName)
+			else args.contains(dir.getName) || args.contains(dir.getParentFile.getName))
 			.toList
 	} else {
 		benchmarksDir.listFiles()
+			.flatMap(f => if (f.isDirectory) f :: f.listFiles().toList else Nil)
 			.filter(_.isDirectory)
 			.sortBy(_.getName)(Ordering.String)
 			.toList

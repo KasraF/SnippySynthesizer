@@ -1,0 +1,68 @@
+{
+	"varNames": [
+		"rs"
+	],
+	"envs": [
+		{
+			"#": "0",
+			"elem": "'need'",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"rs": "['need']",
+			"time": 1
+		},
+		{
+			"#": "1",
+			"elem": "'word'",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"rs": "['need', 'word']",
+			"time": 2
+		},
+		{
+			"#": "2",
+			"elem": "'greater'",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"rs": "['need', 'word']",
+			"time": 3
+		},
+		{
+			"#": "3",
+			"elem": "'than'",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"rs": "['need', 'word', 'than']",
+			"time": 4
+		},
+		{
+			"#": "4",
+			"elem": "'length'",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"rs": "['need', 'word', 'than']",
+			"time": 5
+		},
+		{
+			"#": "5",
+			"elem": "'n'",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"rs": "['need', 'word', 'than']",
+			"time": 6
+		}
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp": "'need word greater than length n'",
+			"num": "4",
+			"split": "[]",
+			"rs": "[]"
+		}
+	},
+	"solutions": [
+		"if num == len(elem):\n\trs += [elem]",
+		"if len(elem) == num:\n\trs += [elem]"
+	]
+}

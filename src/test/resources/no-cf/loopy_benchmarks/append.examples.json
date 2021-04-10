@@ -1,0 +1,20 @@
+{
+	"varNames": [
+		"out"
+	],
+	"envs": [
+		{
+			"#": "",
+			"i": "0",
+			"inp": "[2, 40, 800]",
+			"out": "[4, 80, 1600]",
+			"time": 1
+		}
+	],
+	"solutions": [
+		"out = [var + var for var in inp]"
+	],
+	"previousEnvs": {
+
+	}
+}

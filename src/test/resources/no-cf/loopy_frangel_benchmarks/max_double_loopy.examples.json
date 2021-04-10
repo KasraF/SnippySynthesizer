@@ -1,0 +1,18 @@
+{
+	"varNames": [
+		"maximum"
+	],
+	"envs": [
+		{
+			"#": "",
+			"nums": "[-9.9, 8.8, -3.2, 0.3, 1.0, 99.9, 99.91, 0.0, 9.9]",
+			"maximum": "99.91",
+			"time": 1
+		}
+	],
+	"previousEnvs": {
+	},
+	"solutions": [
+		"maximum = max(nums)"
+	]
+}

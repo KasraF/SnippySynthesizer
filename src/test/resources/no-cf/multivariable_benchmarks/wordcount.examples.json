@@ -1,0 +1,24 @@
+{
+	"varNames": [
+		"lst",
+		"size"
+	],
+	"envs": [
+		{
+			"#": "",
+			"name": "'Augusta Ada King'",
+			"lst": "['Augusta', 'Ada', 'King']",
+			"size": "3",
+			"time": 1
+		}
+	],
+	"solutions": [
+		"lst = name.split(\" \")\nsize = len(lst)",
+		"lst = name.split()\nsize = len(lst)"
+	],
+	"previousEnvs": {
+		"1": {
+			"name": "'Augusta Ada King'"
+		}
+	}
+}

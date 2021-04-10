@@ -1,0 +1,92 @@
+{
+	"varNames": [
+		"rs",
+		"last",
+		"count"
+	],
+	"previousEnvs": {
+		"9": {
+			"time": 8,
+			"#": "0",
+			"$": "11",
+			"s": "'aabccca'",
+			"rs": "''",
+			"last": "''",
+			"count": "0",
+			"c": "'a'",
+			"lineno": 12,
+			"prev_lineno": 11,
+			"next_lineno": 11
+		}
+	},
+	"envs": [
+		{
+			"time": 9,
+			"#": "0",
+			"$": "11",
+			"s": "'aabccca'",
+			"rs": "''",
+			"last": "'a'",
+			"count": "1",
+			"c": "'a'",
+			"lineno": 11,
+			"prev_lineno": 12,
+			"next_lineno": 12
+		},
+		{
+			"time": 11,
+			"#": "1",
+			"$": "11",
+			"s": "'aabccca'",
+			"rs": "''",
+			"last": "'a'",
+			"count": "2",
+			"c": "'a'",
+			"lineno": 11,
+			"prev_lineno": 12,
+			"next_lineno": 12
+		},
+		{
+			"time": 13,
+			"#": "2",
+			"$": "11",
+			"s": "'aabccca'",
+			"rs": "'2a'",
+			"last": "'b'",
+			"count": "1",
+			"c": "'b'",
+			"lineno": 11,
+			"prev_lineno": 12,
+			"next_lineno": 12
+		},
+		{
+			"time": 15,
+			"#": "3",
+			"$": "11",
+			"s": "'aabccca'",
+			"rs": "'2a1b'",
+			"last": "'c'",
+			"count": "1",
+			"c": "'c'",
+			"lineno": 11,
+			"prev_lineno": 12,
+			"next_lineno": 12
+		},
+		{
+			"time": 17,
+			"#": "4",
+			"$": "11",
+			"s": "'aabccca'",
+			"rs": "'2a1b'",
+			"last": "'c'",
+			"count": "2",
+			"c": "'c'",
+			"lineno": 11,
+			"prev_lineno": 12,
+			"next_lineno": 12
+		}
+	],
+	"solutions": [
+		"if c.startswith(last):\n\tcount += 1\nelse:\n\trs += str(count) + last\n\tcount = 1\nlast = c"
+	]
+}

@@ -1,0 +1,27 @@
+{
+	"varNames": [
+		"join",
+		"out"
+	],
+	"envs": [
+		{
+			"#": "",
+			"inp1": "['abc', 'DEF', '12345']",
+			"delim": "', '",
+			"join": "'abc, DEF, 12345'",
+			"out": "'init.abc, DEF, 12345'",
+			"time": 1
+		}
+	],
+	"previousEnvs": {
+		"1": {
+			"#": "",
+			"inp1": "['abc', 'DEF', '12345']",
+			"delim": "', '",
+			"out": "'init.'"
+		}
+	},
+	"solutions": [
+		"join = delim.join(inp1)\nout += join"
+	]
+}
