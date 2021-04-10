@@ -26,6 +26,7 @@
 		}
 	},
 	"solutions": [
+		"str_len, longest = [len(var) for var in inp], max([len(var) for var in inp])",
 		"str_len = [len(var) for var in inp]\nlongest = max(str_len)"
 	]
 }

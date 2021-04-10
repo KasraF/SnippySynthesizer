@@ -17,6 +17,7 @@
 		}
 	],
 	"solutions": [
+		"y, x = x + 2, x + x",
 		"x += x\ny = x + y",
 		"x += z\ny = x + z",
 		"x += x\ny += x",

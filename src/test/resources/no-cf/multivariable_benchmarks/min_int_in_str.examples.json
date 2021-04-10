@@ -13,6 +13,7 @@
 		}
 	],
 	"solutions": [
+		"min, nums = min([int(var) for var in inp.split()]), [int(var) for var in inp.split()]",
 		"nums = [int(var) for var in inp.split(\" \")]\nmin = min(nums)",
 		"nums = [int(var) for var in inp.split()]\nmin = min(nums)"
 	],

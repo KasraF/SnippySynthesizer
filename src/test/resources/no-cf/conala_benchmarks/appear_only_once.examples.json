@@ -29,6 +29,7 @@
 	"previousEnvs": {
 	},
 	"solutions" : [
+		"out, set = len(inp) == len(set(inp)), set(inp)",
 		"set = set(inp)\nout = len(inp) == len(set)"
 	]
 }

@@ -16,6 +16,7 @@
 		}
 	],
 	"solutions": [
+		"s2, s1, rs = s[idx + 1:len(s)], s[0:idx], s[0:idx] + s[idx + 1:len(s)]",
 		"s1 = s[0:idx]\ns2 = s[idx + 1:len(s)]\nrs = s1 + s2",
 		"s2 = s[idx + 1:len(s)]\ns1 = s[0:idx]\nrs = s1 + s2"
 	],

@@ -24,6 +24,7 @@
 		}
 	},
 	"solutions": [
+		"out, join = inp2 + (delim + \" \").join(inp1), (delim + \" \").join(inp1)",
 		"join = (delim + \" \").join(inp1)\nout = inp2 + join"
 	]
 }

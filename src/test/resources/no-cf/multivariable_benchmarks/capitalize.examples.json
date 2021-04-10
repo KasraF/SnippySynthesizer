@@ -13,6 +13,7 @@
 		}
 	],
 	"solutions": [
+		"caps, words = \" \".join([var.capitalize() for var in name.split()]), name.split()",
 		"words = name.split(\" \")\ncaps = \" \".join([var.capitalize() for var in words])",
 		"words = name.split()\ncaps = \" \".join([var.capitalize() for var in words])"
 	],

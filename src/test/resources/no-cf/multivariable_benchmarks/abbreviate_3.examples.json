@@ -15,6 +15,7 @@
 		}
 	],
 	"solutions": [
+		"abbr, chars, words = \".\".join([var[0] for var in name.split()]).lower(), [var[0] for var in name.split()], name.split()",
 		"words = name.split(\" \")\nchars = [var[0] for var in words]\nabbr = \".\".join(chars).lower()",
 		"words = name.split()\nchars = [var[0] for var in words]\nabbr = \".\".join(chars).lower()"
 	],

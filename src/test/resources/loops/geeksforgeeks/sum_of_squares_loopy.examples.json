@@ -48,6 +48,7 @@
 		}
 	},
 	"solutions": [
-		"squares += [idx * idx]\nsum = sum(squares)"
+		"squares += [idx * idx]\nsum = sum(squares)",
+		"sum, squares = sum + idx * idx, squares + [idx * idx]"
 	]
 }

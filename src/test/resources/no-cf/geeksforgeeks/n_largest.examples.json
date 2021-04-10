@@ -21,6 +21,7 @@
 		}
 	},
 	"solutions": [
+		"n_largest, reverse = sorted(inp)[::-1][0:n], sorted(inp)[::-1]",
 		"reverse = sorted(inp)[::-1]\nn_largest = reverse[0:n]"
 	]
 }

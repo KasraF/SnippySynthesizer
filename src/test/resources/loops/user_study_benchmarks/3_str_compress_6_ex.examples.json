@@ -100,6 +100,7 @@
 		}
 	],
 	"solutions": [
+		"if last == c:\n\tlast, count, rs = last, count + 1, rs\nelse:\n\tlast, count, rs = c, 1, rs + str(count) + last",
 		"if last == c:\n\tcount += 1\nelse:\n\trs += str(count) + last\n\tlast = c\n\tcount = 1",
 		"if last == c:\n\tcount += 1\nelse:\n\trs += str(count) + last\n\tlast = c\n\tcount = len(last)"
 	]

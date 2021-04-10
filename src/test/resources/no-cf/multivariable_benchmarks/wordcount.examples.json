@@ -13,6 +13,7 @@
 		}
 	],
 	"solutions": [
+		"size, lst = len(name.split()), name.split()",
 		"lst = name.split(\" \")\nsize = len(lst)",
 		"lst = name.split()\nsize = len(lst)"
 	],

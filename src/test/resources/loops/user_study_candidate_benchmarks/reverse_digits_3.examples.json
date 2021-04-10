@@ -101,6 +101,7 @@
 		}
 	],
 	"solutions": [
+		"num, rev, a = num // ten, rev * ten + num % ten, num % ten",
 		"a = num % ten\nrev = rev * ten + a\nnum = num // ten",
 		"a = num % ten\nrev = a + rev * ten\nnum = num // ten"
 	]

@@ -62,6 +62,7 @@
 		}
 	},
 	"solutions": [
+		"if 0 <= elem:\n\tonly_neg, only_pos = only_neg, only_pos + [elem]\nelse:\n\tonly_neg, only_pos = only_neg + [elem], only_pos",
 		"if 0 <= elem:\n\tonly_pos += [elem]\nelse:\n\tonly_neg += [elem]"
 	]
 }

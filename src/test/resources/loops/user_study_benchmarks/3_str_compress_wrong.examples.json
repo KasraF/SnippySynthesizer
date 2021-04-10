@@ -87,6 +87,7 @@
 		}
 	],
 	"solutions": [
+		"if c.startswith(last):\n\tcount, last, rs = count + 1, c, rs\nelse:\n\tcount, last, rs = 1, c, rs + str(count) + last",
 		"if c.startswith(last):\n\tcount += 1\nelse:\n\trs += str(count) + last\n\tcount = 1\nlast = c"
 	]
 }

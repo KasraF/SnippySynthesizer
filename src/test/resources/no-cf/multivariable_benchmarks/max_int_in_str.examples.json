@@ -13,6 +13,7 @@
 		}
 	],
 	"solutions": [
+		"max, nums = max([int(var) for var in inp.split()]), [int(var) for var in inp.split()]",
 		"nums = [int(var) for var in inp.split(\" \")]\nmax = max(nums)",
 		"nums = [int(var) for var in inp.split()]\nmax = max(nums)"
 	],

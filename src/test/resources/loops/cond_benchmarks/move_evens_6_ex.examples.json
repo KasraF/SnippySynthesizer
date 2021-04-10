@@ -78,6 +78,7 @@
 		}
 	],
 	"solutions": [
+		"if 1 > i % 2:\n\tsplit, rs = split, rs + [i]\nelse:\n\tsplit, rs = split + 1, rs[:split] + [i] + rs[split:]",
 		"if 1 > i % 2:\n\trs += [i]\nelse:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1",
 		"if i % 2 == 1:\n\trs = rs[:split] + [i] + rs[split:]\n\tsplit += 1\nelse:\n\trs += [i]"
 	],

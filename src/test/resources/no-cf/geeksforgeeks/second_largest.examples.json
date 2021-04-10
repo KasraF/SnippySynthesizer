@@ -26,6 +26,7 @@
 		}
 	},
 	"solutions": [
+		"second_largest, sorted = max(sorted(inp)[0:-1]), sorted(inp)",
 		"sorted = sorted(inp)\nsecond_largest = max(sorted[0:-1])"
 	]
 }

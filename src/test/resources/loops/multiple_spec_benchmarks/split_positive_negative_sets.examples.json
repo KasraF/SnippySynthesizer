@@ -62,6 +62,7 @@
 		}
 	},
 	"solutions": [
+		"if 0 <= inp[idx]:\n\tonly_neg, only_pos = only_neg, only_pos || {inp[idx]}\nelse:\n\tonly_neg, only_pos = only_neg || {inp[idx]}, only_pos",
 		"if 0 <= inp[idx]:\n\tonly_pos = only_pos || {inp[idx]}\nelse:\n\tonly_neg = only_neg || {inp[idx]}"
 	]
 }

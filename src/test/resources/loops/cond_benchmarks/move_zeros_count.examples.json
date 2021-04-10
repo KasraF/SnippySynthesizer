@@ -46,7 +46,8 @@
 		}
 	],
 	"solutions": [
-		"if i > 0:\n\trs += [i]\nelse:\n\tcount += 1"
+		"if i > 0:\n\trs += [i]\nelse:\n\tcount += 1",
+		"if i > 0:\n\tcount, rs = count, rs + [i]\nelse:\n\tcount, rs = count + 1, rs"
 	],
 	"previousEnvs": {
 		"8": {

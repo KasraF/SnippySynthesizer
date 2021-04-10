@@ -23,6 +23,7 @@
 		}
 	],
 	"solutions": [
+		"rs, duplicates, chars = len({var: inp.count(var) for var in inp if inp.count(var) > 1}), {key: chars[key] for key in inp if inp.count(var) > 1}, {key: chars[key] for key in inp}",
 		"chars = {var: inp.count(var) for var in inp}\nduplicates = {key: chars[key] for key in chars if chars[key] > 1}\nrs = len(duplicates)",
 		"chars = {var: inp.count(var) for var in inp}\nduplicates = {key: chars[key] for key in chars if inp.count(key) > 1}\nrs = len(duplicates)"
 	],
