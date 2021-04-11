@@ -42,14 +42,42 @@ object NoCFBenchmarks extends App{
 			}
 	val timeout = 7
 
+	//warmup
+	for (file <- oneVar)
+		(doSimpleEnum(file) + "," + regularSolve(file))
+	for (file <- multiVar)
+		(doMultivarEnum(file) + "," + regularSolve(file))
+
 	println(s"Single variable (${oneVar.length})")
 	println("--------------------")
-	for (file <- oneVar) doSimpleEnum(file)
+	println("name,se_correct,se_time,se_count,loopy_correct,loopy_time,loopy_count")
+	for (file <- oneVar)
+		println(doSimpleEnum(file) + "," + regularSolve(file))
 	println(s"Multivar (${multiVar.length})")
 	println("-------------")
-	for (file <- multiVar) doMultivarEnum(file)
+	println("name,se_correct,se_time,se_count,loopy_correct,loopy_time,loopy_count")
+	for (file <- multiVar)
+		println(doMultivarEnum(file) + "," + regularSolve(file))
 
-	def doSimpleEnum(file: File) : Unit = {
+	def regularSolve(file: File): String = {
+		val taskStr = fromFile(file).mkString
+		val task = json.parse(taskStr).asInstanceOf[JObject].values
+		Snippy.synthesize(taskStr, timeout) match {
+			case (None, time: Int, count: Int) =>
+				f"t,${time / 1000.0}%.3f,$count%d"
+			case (Some(program: String), time: Int, count: Int) =>
+				val correct = task.get("solutions") match {
+					case Some(solutions) if solutions.asInstanceOf[List[String]].contains(program) => '+'
+					case Some(_) =>
+						'-'
+					case None =>
+						'?'
+				}
+				f"$correct,${time / 1000.0}%.3f,$count%d"
+		}
+	}
+
+	def doSimpleEnum(file: File) : String = {
 		val taskStr = fromFile(file).mkString
 		val input = JsonParser.parse(taskStr).asInstanceOf[JObject].values
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
@@ -113,7 +141,7 @@ object NoCFBenchmarks extends App{
 		val name = file.getParentFile.getName + "/" + file.getName
 		Snippy.synthesize(sTask,timeout) match {
 			case (None, time: Int, count: Int) =>
-				println(f"$name%22s,t,${time / 1000.0}%.3f,$count%d")
+				return (f"$name%22s,t,${time / 1000.0}%.3f,$count%d")
 			case (Some(program: String), time: Int, count: Int) =>
 				val correct = input.get("solutions") match {
 					case Some(solutions) if solutions.asInstanceOf[List[String]].contains(program) => '+'
@@ -122,10 +150,10 @@ object NoCFBenchmarks extends App{
 					case None =>
 						'?'
 				}
-				println(f"$name%22s,$correct,${time / 1000.0}%.3f,$count%d")
+				return (f"$name%22s,$correct,${time / 1000.0}%.3f,$count%d")
 		}
 	}
-	def doMultivarEnum(file: File): Unit = {
+	def doMultivarEnum(file: File): String = {
 		val taskStr = fromFile(file).mkString
 		val name = file.getParentFile.getName + "/" + file.getName
 		val input = JsonParser.parse(taskStr).asInstanceOf[JObject].values
@@ -181,7 +209,7 @@ object NoCFBenchmarks extends App{
 
 
 		if (isTimeout)
-			println(f"$name%22s,t,${time / 1000.0}%.3f,$count%d")
+			return (f"$name%22s,t,${time / 1000.0}%.3f,$count%d")
 		else {
 			val program = rs.map(_._1.get).mkString("\n")
 			val correct = input.get("solutions") match {
@@ -191,7 +219,7 @@ object NoCFBenchmarks extends App{
 				case None =>
 					'?'
 			}
-			println(f"$name%22s,$correct,${time / 1000.0}%.3f,$count%d")
+			return (f"$name%22s,$correct,${time / 1000.0}%.3f,$count%d")
 		}
 	}
 }
