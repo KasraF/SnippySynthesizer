@@ -21,7 +21,7 @@
 	"envs": [
 		{
 			"time": 5,
-			"#": "",
+			"#": "0",
 			"$": "",
 			"arr": "[11, 223, 11, 33, 36, 23, 23]",
 			"k": "4",
@@ -35,35 +35,35 @@
 		},
 		{
 			"time": 7,
-			"#": "",
+			"#": "1",
 			"$": "",
 			"arr": "[11, 223, 11, 33, 36, 23, 23]",
 			"k": "4",
 			"i": "1",
 			"win": "[223, 11, 33, 36]",
 			"d": "{11, 33, 36, 223}",
-			"dist_counts": "4",
+			"dist_counts": "7",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 3
 		},
 		{
-			"time": 7,
-			"#": "",
+			"time": 9,
+			"#": "2",
 			"$": "",
 			"arr": "[11, 223, 11, 33, 36, 23, 23]",
 			"k": "4",
 			"i": "2",
 			"win": "[11, 33, 36, 23]",
 			"d": "{11, 23, 33, 36}",
-			"dist_counts": "4",
+			"dist_counts": "11",
 			"lineno": 2,
 			"prev_lineno": 3,
 			"next_lineno": 3
 		}
 	],
 	"solutions": [
-		"win = arr[i:i + k]\nd = set(win)\ndist_counts = len(d)",
-		"win = arr[i:k + i]\nd = set(win)\ndist_counts = len(d)"
+		"win = arr[i:i + k]\nd = set(win)\ndist_counts += len(d)",
+		"win = arr[i:k + i]\nd = set(win)\ndist_counts += len(d)"
 	]
 }
