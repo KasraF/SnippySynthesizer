@@ -71,7 +71,22 @@
 			"lineno": 11,
 			"prev_lineno": 12,
 			"next_lineno": 12
+		},
+		{
+			"time": 17,
+			"#": "4",
+			"$": "11",
+			"s": "'aabccca'",
+			"rs": "'2a1b'",
+			"last": "'c'",
+			"count": "2",
+			"c": "'c'",
+			"lineno": 11,
+			"prev_lineno": 12,
+			"next_lineno": 12
 		}
 	],
-	"id": -1
+	"solutions": [
+		"if c.startswith(last):\n\tcount += 1\nelse:\n\trs += str(count) + last\n\tcount = 1\nlast = c"
+	]
 }
