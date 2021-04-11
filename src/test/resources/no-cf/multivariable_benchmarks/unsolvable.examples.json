@@ -11,7 +11,8 @@
 		}
 	],
 	"solutions": [
-		"abbr = \".\".join([var[0] for var in name.split(\" \")]).lower()"
+		"abbr = \".\".join([var[0] for var in name.split(\" \")]).lower()",
+		"abbr = \".\".join([var[0] for var in name.split()]).lower()"
 	],
 	"previousEnvs": {}
 }
