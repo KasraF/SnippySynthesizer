@@ -63,6 +63,7 @@
 		}
 	],
 	"solutions": [
-		"win = arr[i:i + k]\nd = set(win)\ndist_counts = len(d)"
+		"win = arr[i:i + k]\nd = set(win)\ndist_counts = len(d)",
+		"win = arr[i:k + i]\nd = set(win)\ndist_counts = len(d)"
 	]
 }
