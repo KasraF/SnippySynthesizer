@@ -52,9 +52,7 @@ class ProbEnumerator(
 	ProbUpdate.priors = ProbUpdate.createPrior(vocab)
 	resetEnumeration()
 
-	mainBank
-		.map(n => (n._1, n._2.filter(c => !c.includes("key") && !c.includes("var"))))
-		.values
+	mainBank.values
 		.flatten
 		.toList
 		.map(p => if (p.values.length != this.contexts.length) {

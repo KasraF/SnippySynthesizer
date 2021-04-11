@@ -48,10 +48,24 @@ trait ListCompNode[T] extends ListNode[T]
 
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || map.includes(varName)
-	override def updateValues(contexts: Contexts): ListCompNode[T] = ???
 }
 
-class StringToStringListCompNode(val list: ListNode[String], val map: StringNode, val varName: String) extends ListCompNode[String]
-class StringToIntListCompNode(val list: ListNode[String], val map: IntNode, val varName: String) extends ListCompNode[Int]
-class IntToStringListCompNode(val list: ListNode[Int], val map: StringNode, val varName: String) extends ListCompNode[String]
-class IntToIntListCompNode(val list: ListNode[Int], val map: IntNode, val varName: String) extends ListCompNode[Int]
+case class StringToStringListCompNode(val list: ListNode[String], val map: StringNode, val varName: String) extends ListCompNode[String] {
+	override def updateValues(contexts: Contexts): StringToStringListCompNode
+	= copy(list.updateValues(contexts), map.updateValues(contexts), varName)
+}
+
+case class StringToIntListCompNode(val list: ListNode[String], val map: IntNode, val varName: String) extends ListCompNode[Int] {
+	override def updateValues(contexts: Contexts): StringToIntListCompNode
+	= copy(list.updateValues(contexts), map.updateValues(contexts), varName)
+}
+
+case class IntToStringListCompNode(val list: ListNode[Int], val map: StringNode, val varName: String) extends ListCompNode[String] {
+	override def updateValues(contexts: Contexts): IntToStringListCompNode
+	= copy(list.updateValues(contexts), map.updateValues(contexts), varName)
+}
+
+case class IntToIntListCompNode(val list: ListNode[Int], val map: IntNode, val varName: String) extends ListCompNode[Int] {
+	override def updateValues(contexts: Contexts): IntToIntListCompNode
+	= copy(list.updateValues(contexts), map.updateValues(contexts), varName)
+}

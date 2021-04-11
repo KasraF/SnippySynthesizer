@@ -225,7 +225,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 
 			val value = this.enumerator.next()
 
-			if (value.cost < this.costLevel - this.currList.cost)
+			if (value.cost <= this.costLevel - this.currList.cost)
 				updateVarBank((this.nodeType, this.currList), value) // TODO: update varBank with only variable programs
 			//TODO: optimize - right now you need to keep enumerating programs to check whether it's above the required level.
 			// What if there are many empty levels?
@@ -270,7 +270,6 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 					val bankCost = this.costLevel - this.currList.cost
 					val mainBank = this.mainBank
 						.take(bankCost - 1)
-						.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(contexts)))
 
 					val varBank = if (this.varBank.contains((this.nodeType, this.currList))) {
 						this.varBank((this.nodeType, this.currList))
@@ -497,7 +496,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 
 			val filter = this.enumerator.next()
 
-			if (filter.cost < this.costLevel - this.currMap.cost)
+			if (filter.cost <= this.costLevel - this.currMap.cost)
 				updateVarBank((this.nodeType, this.currMap), filter) // TODO: update varBank with only variable programs
 
 			if (filter.cost > this.costLevel - this.currMap.cost) {
@@ -535,11 +534,14 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 				this.enumerator = if (!size) {
 					new BasicEnumerator(this.filterVocab, oeValuesManager, newContexts)
 				} else {
+					val contexts = new Contexts(newContexts)
 					val bankCost = this.costLevel - this.currMap.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
 
 					val varBank = if (this.varBank.contains((this.nodeType, this.currMap))) {
 						this.varBank((this.nodeType, this.currMap)).take(bankCost)
+							.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(contexts)))
+
 					} else {
 						null
 					}
