@@ -192,7 +192,7 @@ object SynthesisTask
 		(contexts, new MultilineMultivariablePredicate(nodes.head))
 	}
 
-	private def cleanupInputs(input: Map[String, Any]): Map[String, Any] =
+	def cleanupInputs(input: Map[String, Any]): Map[String, Any] =
 	{
 		val parser = new InputParser
 		input
@@ -227,7 +227,7 @@ object SynthesisTask
 		}
 	}
 
-	private def getStringLiterals(
+	def getStringLiterals(
 		startingContexts: List[Map[String, Any]],
 		outputNames: List[String]): Set[String] =
 	{
