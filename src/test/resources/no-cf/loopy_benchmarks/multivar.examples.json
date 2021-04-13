@@ -20,7 +20,8 @@
 		"x += x\ny = x + y",
 		"x += z\ny = x + z",
 		"x += x\ny += x",
-		"x += z\ny += x"
+		"x += z\ny += x",
+		"y, x = x + 2, x + x"
 	],
 	"previousEnvs": {
 		"10": {

@@ -110,6 +110,8 @@
 		}
 	},
 	"solutions": [
-		"if elem not in unique:\n\tunique += [elem]\n\tcount = len(unique)"
+		"if elem not in unique:\n\tunique += [elem]\n\tcount = len(unique)",
+		"if elem not in unique:\n\tunique += [elem]\n\tcount += 1",
+		"if elem not in unique:\n\tcount += 1\n\tunique += [elem]"
 	]
 }
