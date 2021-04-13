@@ -61,7 +61,7 @@ object BenchmarksCSV extends App
 
 	val timeout: Int = args.lastOption.map(_.toIntOption) match {
 		case Some(Some(t)) => t
-		case _ => 5 * 60
+		case _ => 7
 	}
 
 	println("suite,group,name,variables,time,count,correct")
