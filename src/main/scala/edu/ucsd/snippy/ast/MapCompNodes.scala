@@ -60,7 +60,6 @@ trait MapCompNode[K, V] extends MapNode[K, V]
 	override def includes(varName: String): Boolean =
 		varName.equals(this.varName) || list.includes(varName) || key.includes(varName) || value.includes(varName)
 	override lazy val usesVariables: Boolean = list.usesVariables || key.usesVariables || value.usesVariables
-	override def updateValues(contexts: Contexts) = ???
 }
 
 trait FilteredMapNode[K, V] extends MapNode[K, V]
@@ -125,42 +124,66 @@ trait FilteredMapNode[K, V] extends MapNode[K, V]
 				case _ => None
 			})
 	}
-
-	override def updateValues(contexts: Contexts) = ???
 }
 
-class StringStringMapCompNode(val list: StringNode, val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String, String]
+case class StringStringMapCompNode(val list: StringNode, val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String, String] {
+	override def updateValues(contexts: Contexts): StringStringMapCompNode
+	= copy(list.updateValues(contexts), key.updateValues(contexts), value.updateValues(contexts), varName)
+}
 
-class StringIntMapCompNode(val list: StringNode, val key: StringNode, val value: IntNode, val varName: String) extends MapCompNode[String, Int]
+case class StringIntMapCompNode(val list: StringNode, val key: StringNode, val value: IntNode, val varName: String) extends MapCompNode[String, Int] {
+	override def updateValues(contexts: Contexts): StringIntMapCompNode
+	= copy(list.updateValues(contexts), key.updateValues(contexts), value.updateValues(contexts), varName)
+}
 
-class StringListStringMapCompNode(val list: ListNode[String], val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String, String]
+case class StringListStringMapCompNode(val list: ListNode[String], val key: StringNode, val value: StringNode, val varName: String) extends MapCompNode[String, String] {
+	override def updateValues(contexts: Contexts): StringListStringMapCompNode
+	= copy(list.updateValues(contexts), key.updateValues(contexts), value.updateValues(contexts), varName)
+}
 
-class StringListIntMapCompNode(val list: ListNode[String], val key: StringNode, val value: IntNode, val varName: String) extends MapCompNode[String, Int]
+case class StringListIntMapCompNode(val list: ListNode[String], val key: StringNode, val value: IntNode, val varName: String) extends MapCompNode[String, Int] {
+	override def updateValues(contexts: Contexts): StringListIntMapCompNode
+	= copy(list.updateValues(contexts), key.updateValues(contexts), value.updateValues(contexts), varName)
+}
 
-class IntStringMapCompNode(val list: ListNode[Int], val key: IntNode, val value: StringNode, val varName: String) extends MapCompNode[Int, String]
+case class IntStringMapCompNode(val list: ListNode[Int], val key: IntNode, val value: StringNode, val varName: String) extends MapCompNode[Int, String] {
+	override def updateValues(contexts: Contexts): IntStringMapCompNode
+	= copy(list.updateValues(contexts), key.updateValues(contexts), value.updateValues(contexts), varName)
+}
 
-class IntIntMapCompNode(val list: ListNode[Int], val key: IntNode, val value: IntNode, val varName: String) extends MapCompNode[Int, Int]
+case class IntIntMapCompNode(val list: ListNode[Int], val key: IntNode, val value: IntNode, val varName: String) extends MapCompNode[Int, Int] {
+	override def updateValues(contexts: Contexts): IntIntMapCompNode
+	= copy(list.updateValues(contexts), key.updateValues(contexts), value.updateValues(contexts), varName)
+}
 
-class StringStringFilteredMapNode(val map: MapNode[String, String], val filter: BoolNode, val keyName: String) extends FilteredMapNode[String, String]
+case class StringStringFilteredMapNode(val map: MapNode[String, String], val filter: BoolNode, val keyName: String) extends FilteredMapNode[String, String]
 {
 	override def make(map: MapNode[String, String], filter: BoolNode, keyName: String): FilteredMapNode[String, String] =
 		new StringStringFilteredMapNode(map, filter, keyName)
+	override def updateValues(contexts: Contexts): StringStringFilteredMapNode
+	= copy(map.updateValues(contexts), filter.updateValues(contexts), keyName)
 }
 
-class StringIntFilteredMapNode(val map: MapNode[String, Int], val filter: BoolNode, val keyName: String) extends FilteredMapNode[String, Int]
+case class StringIntFilteredMapNode(val map: MapNode[String, Int], val filter: BoolNode, val keyName: String) extends FilteredMapNode[String, Int]
 {
 	override def make(map: MapNode[String, Int], filter: BoolNode, keyName: String): FilteredMapNode[String, Int] =
 		new StringIntFilteredMapNode(map, filter, keyName)
+	override def updateValues(contexts: Contexts): StringIntFilteredMapNode
+	= copy(map.updateValues(contexts), filter.updateValues(contexts), keyName)
 }
 
-class IntStringFilteredMapNode(val map: MapNode[Int, String], val filter: BoolNode, val keyName: String) extends FilteredMapNode[Int, String]
+case class IntStringFilteredMapNode(val map: MapNode[Int, String], val filter: BoolNode, val keyName: String) extends FilteredMapNode[Int, String]
 {
 	override def make(map: MapNode[Int, String], filter: BoolNode, keyName: String): FilteredMapNode[Int, String] =
 		new IntStringFilteredMapNode(map, filter, keyName)
+	override def updateValues(contexts: Contexts): IntStringFilteredMapNode
+	= copy(map.updateValues(contexts), filter.updateValues(contexts), keyName)
 }
 
-class IntIntFilteredMapNode(val map: MapNode[Int, Int], val filter: BoolNode, val keyName: String) extends FilteredMapNode[Int, Int]
+case class IntIntFilteredMapNode(val map: MapNode[Int, Int], val filter: BoolNode, val keyName: String) extends FilteredMapNode[Int, Int]
 {
 	override def make(map: MapNode[Int, Int], filter: BoolNode, keyName: String): FilteredMapNode[Int, Int] =
 		new IntIntFilteredMapNode(map, filter, keyName)
+	override def updateValues(contexts: Contexts): IntIntFilteredMapNode
+	= copy(map.updateValues(contexts), filter.updateValues(contexts), keyName)
 }

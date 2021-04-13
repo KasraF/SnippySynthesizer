@@ -183,7 +183,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 
 			val next = this.enumerator.next()
 
-			if (next.cost < this.costLevel - this.currList.cost) {
+			if (next.cost <= this.costLevel - this.currList.cost) {
 				updateMiniBank((this.nodeType, this.currList), next) // TODO: update miniBank with only variable program
 			}
 
@@ -232,7 +232,6 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 				} else {
 					val bankCost = this.costLevel - this.currList.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
-						.mapValuesInPlace((_, nodes) => nodes.map(_.updateValues(newContexts)))
 
 					val miniBank = if (this.miniBank.contains((this.nodeType, this.currList))) {
 						this.miniBank((this.nodeType, this.currList)).take(bankCost)

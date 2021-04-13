@@ -23,7 +23,8 @@
 		}
 	],
 	"solutions": [
-		"rot = s[1:] + s[:1]\nrev = rot[::-1]\nrs = rot in rev"
+		"rot = s[1:] + s[:1]\nrev = rot[::-1]\nrs = rot in rev",
+		"rot = s[1:] + s[:1]\nrev = rot[::-1]\nrs = rot == rev"
 	],
 	"previousEnvs": {}
 }
