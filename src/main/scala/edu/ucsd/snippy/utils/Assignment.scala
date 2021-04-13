@@ -20,9 +20,22 @@ case class SingleAssignment(name: String, var program: ASTNode) extends Assignme
 case class BasicMultivariableAssignment(names: List[String], programs: List[ASTNode]) extends Assignment
 {
 	override def code(): String = {
-		val lhs = names.mkString(", ")
-		val rhs = programs.map(pred => PostProcessor.clean(pred).code).mkString(", ")
-		f"$lhs = $rhs"
+		// See if we can break it up into multiple lines
+		val singleLine = names.zipWithIndex.exists {
+			case (name, i) => programs.zipWithIndex.exists {
+				case (program, j) => i != j && program.includes(name)
+			}
+		}
+
+		if (singleLine) {
+			val lhs = names.mkString(", ")
+			val rhs = programs.map(pred => PostProcessor.clean(pred).code).mkString(", ")
+			f"$lhs = $rhs"
+		} else {
+			names.zip(programs).map {
+				case (name, program) => f"$name = ${PostProcessor.clean(program).code}"
+			}.mkString("\n")
+		}
 	}
 }
 
@@ -179,7 +192,10 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 		}
 
 	def flatten(a: Assignment): List[Assignment] = a match {
-		case a: MultilineMultivariableAssignment => a.assignments
+		case a: MultilineMultivariableAssignment => a.assignments.flatMap(flatten)
+		case a: BasicMultivariableAssignment if a.code().contains('\n') =>
+			// If the code contains a newline, then the variables can be assigned in separate lines
+			a.names.zip(a.programs).map(tup => SingleAssignment(tup._1, tup._2))
 		case a => a :: Nil
 	}
 
