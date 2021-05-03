@@ -148,7 +148,7 @@ class NestedChildrenIteratorsTests extends JUnitSuite
 		assertFalse(chit.hasNext)
 	}
 
-	@Test def costRollingFourChildren: Unit =
+	@Test def costRollingFourChildren(): Unit =
 	{
 		val nodes = List(
 			new IntNode

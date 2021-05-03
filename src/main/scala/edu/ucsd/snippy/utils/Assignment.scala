@@ -7,7 +7,7 @@ sealed abstract class Assignment {
 }
 
 case class SingleAssignment(name: String, var program: ASTNode) extends Assignment {
-	override def code(): String = {
+	def code(): String = {
 		var rs = f"$name = ${PostProcessor.clean(program).code}"
 		val selfAssign = s"$name = $name + "
 		if (rs.startsWith(selfAssign)) {
@@ -41,7 +41,7 @@ case class BasicMultivariableAssignment(names: List[String], programs: List[ASTN
 
 case class MultilineMultivariableAssignment(assignments: List[Assignment]) extends Assignment
 {
-	override def code(): String = assignments.map(_.code).mkString("\n")
+	override def code(): String = assignments.map(_.code()).mkString("\n")
 }
 
 case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, var elseCase: Assignment) extends Assignment
@@ -75,12 +75,12 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 			var thenCode: List[Assignment] = this.flatten(thenCase) //can this change too somehow? Does it need to go in the loop?
 			var elseCode: List[Assignment] = this.flatten(elseCase)
 			var postCondition: List[Assignment] = List()
-			while (preStrs != preCondition.map(_.code) || thenStrs != thenCode.map(_.code) || elseStrs != elseCode.map(_.code) || postStrs != postCondition.map(_.code)) {
+			while (preStrs != preCondition.map(_.code()) || thenStrs != thenCode.map(_.code()) || elseStrs != elseCode.map(_.code()) || postStrs != postCondition.map(_.code())) {
 				//changed, update the prev state:
-				preStrs = preCondition.map(_.code)
-				thenStrs = thenCode.map(_.code)
-				elseStrs = elseCode.map(_.code)
-				postStrs = postCondition.map(_.code)
+				preStrs = preCondition.map(_.code())
+				thenStrs = thenCode.map(_.code())
+				elseStrs = elseCode.map(_.code())
+				postStrs = postCondition.map(_.code())
 			// Now take out common prefixes,...
 			while (thenCode.nonEmpty && elseCode.nonEmpty && thenCode.head.code() == elseCode.head.code()) {
 				preCondition = preCondition :+ thenCode.head
@@ -94,7 +94,7 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 				// TODO This can/should? be part of the loop above. But this whole code is hacky
 				//  spaghetti, so ¯\_('')_/¯
 				thenCode(i) match {
-					case SingleAssignment(name, thenProgram) => {
+					case SingleAssignment(name, thenProgram) =>
 						elseCode.zipWithIndex.find(a => a._1.isInstanceOf[SingleAssignment] && a._1.asInstanceOf[SingleAssignment].name == name) match {
 							case Some((SingleAssignment(_, elseProgram), j)) if elseProgram.code == thenProgram.code =>
 								val thenVarsAssignedBefore = this.varsAssigned(thenCode.slice(0, i))
@@ -124,7 +124,6 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 								}
 							case _ => i += 1
 						}
-					}
 					case _ => i += 1
 				}
 			}
@@ -146,7 +145,7 @@ case class ConditionalAssignment(var cond: BoolNode, var thenCase: Assignment, v
 			val preCondString = preCondition.map(_.code()).mkString("\n")
 			val postCondString = postCondition.map(_.code()).mkString("\n")
 
-			val condString = (thenCode, elseCode) match {
+			val condString: String = (thenCode, elseCode) match {
 				case (Nil, Nil) => ""
 				case (thenCode, Nil) =>
 					f"if ${PostProcessor.clean(cond).code}:\n" +

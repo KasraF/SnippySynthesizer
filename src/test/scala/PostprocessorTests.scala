@@ -166,13 +166,13 @@ class PostprocessorTests extends JUnitSuite
 		//			rs = [v] + rs
 		val ctx = Map("d" -> 0, "rs" -> Nil, "carry" -> 0, "digits" -> List(0,3)) ::
 			Map("d" -> 0, "rs" -> Nil, "carry" -> 0, "digits" -> List(-1,3)) :: Nil
-		val d = VariableNode.nodeFromType("d",Types.Int,ctx).asInstanceOf[IntNode]
-		val carry = VariableNode.nodeFromType("carry",Types.Int,ctx).asInstanceOf[IntNode]
-		val rs = VariableNode.nodeFromType("rs", Types.IntList, ctx).asInstanceOf[ListVariable[Int]]
-		val v = VariableNode.nodeFromType("v",Types.Int,ctx).asInstanceOf[IntNode]
+		val d = VariableNode.nodeFromType("d",Types.Int,ctx).get.asInstanceOf[IntNode]
+		val carry = VariableNode.nodeFromType("carry",Types.Int,ctx).get.asInstanceOf[IntNode]
+		val rs = VariableNode.nodeFromType("rs", Types.IntList, ctx).get.asInstanceOf[ListVariable[Int]]
+		val v = VariableNode.nodeFromType("v",Types.Int,ctx).get.asInstanceOf[IntNode]
 		val conditionalAssignment = ConditionalAssignment(
 			NegateBool(GreaterThan(d,
-			IntListLookup(VariableNode.nodeFromType("digits",Types.IntList,ctx).asInstanceOf[ListVariable[Int]],
+			IntListLookup(VariableNode.nodeFromType("digits",Types.IntList,ctx).get.asInstanceOf[ListVariable[Int]],
 				carry))),
 			MultilineMultivariableAssignment(
 				SingleAssignment("v", IntAddition(carry,d))

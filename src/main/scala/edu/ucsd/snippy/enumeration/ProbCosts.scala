@@ -21,7 +21,6 @@ object ProbCosts
 	}
 
 	def getIndices(childrenArity: Int): Array[ArrayBuffer[Int]] = {
-		Array.range(1, childrenArity + 1).map(c => ArrayBuffer.range(0, childrenArity).combinations(c)).flatten
+		Array.range(1, childrenArity + 1).flatMap(c => ArrayBuffer.range(0, childrenArity).combinations(c))
 	}
-
 }

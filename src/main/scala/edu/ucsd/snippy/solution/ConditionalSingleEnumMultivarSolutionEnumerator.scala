@@ -50,7 +50,7 @@ class ConditionalSingleEnumMultivarSolutionEnumerator(
 
 	def step(): Unit = {
 		if (this.graph.step()) {
-			this.graph.computeShortestPaths
+			this.graph.computeShortestPaths()
 			if (this.solution.isEmpty) {
 				val paths = for ((condStore, index) <- this.conditionals.zipWithIndex; if condStore.cond.isDefined) yield {
 					val weight = if (graph.distancesToEnd(index).thenPath._1 == Int.MaxValue || graph.distancesToEnd(index).elsePath._1 == Int.MaxValue) Int.MaxValue
@@ -120,12 +120,12 @@ object Node {
 		val thenValues = filterByIndices(prevValues, partition._1)
 		if (thenValues.forall(_.isDefined) &&
 			thenValues.map(_.get) == rs.thenCase.values) {
-			rs.thenCase.program = Some(VariableNode.nodeFromType(variable.name,variable.typ,envs))
+			rs.thenCase.program = VariableNode.nodeFromType(variable.name,variable.typ,envs)
 		}
 
 		val elseValues = filterByIndices(prevValues, partition._2)
 		if (elseValues.forall(_.isDefined) && elseValues.map(_.get) == rs.elseCase.values) {
-			rs.elseCase.program = Some(VariableNode.nodeFromType(variable.name,variable.typ,envs))
+			rs.elseCase.program = VariableNode.nodeFromType(variable.name,variable.typ,envs)
 		}
 
 		// If we have more than one example, with all values constants, we should trivially assign
@@ -141,24 +141,16 @@ object Node {
 		rs
 	}
 
-	def convert(
+	def convert (
 		parent: edu.ucsd.snippy.predicates.Node,
 		partitionIndices: List[(Set[Int], Set[Int])],
 		variables: List[(String, Types)],
 		literals: Iterable[String],
-		size: Boolean = true): Node = do_convert(parent,partitionIndices,variables,literals,size,mutable.Map.empty)
-
-	private def do_convert (
-		parent: edu.ucsd.snippy.predicates.Node,
-		partitionIndices: List[(Set[Int], Set[Int])],
-		variables: List[(String, Types)],
-		literals: Iterable[String],
-		size: Boolean,
-		seen: mutable.Map[edu.ucsd.snippy.predicates.Node,Node]): Node = {
+		seen: mutable.Map[edu.ucsd.snippy.predicates.Node,Node] = mutable.Map.empty): Node = {
 		if (seen.contains(parent)) return seen(parent)
 
 		val enumerator = new ProbEnumerator(
-			VocabFactory(variables, literals, size),
+			VocabFactory(variables, literals),
 			new InputsValuesManager,
 			parent.state,
 			false,
@@ -169,7 +161,7 @@ object Node {
 		val n: Node = Node(enumerator, parent.state, Nil, partitionIndices)
 		val edges = parent.edges
 			.map{e =>
-				e -> do_convert(e.child, partitionIndices, variables, literals, size, seen)
+				e -> convert(e.child, partitionIndices, variables, literals, seen)
 			}
 			.map {
 				case (edu.ucsd.snippy.predicates.SingleEdge(_, variable, outputType, _, _), child) =>
@@ -187,7 +179,7 @@ object Node {
 			}
 
 		n.edges = edges
-		if (n.edges.isEmpty) for (i <- 0 until n.distancesToEnd.length) n.distancesToEnd.update(i,DistancePaths((0,None),(0,None)))
+		if (n.edges.isEmpty) for (i <- n.distancesToEnd.indices) n.distancesToEnd.update(i,DistancePaths((0,None),(0,None)))
 		seen += parent -> n
 		n
 	}
@@ -278,24 +270,24 @@ case class Node(
 		if (seen) return
 		for (edge <- this.edges) {
 			edge.child.do_computeShortest()
-			for (i <- 0 until distancesToEnd.length) {
+			for (i <- distancesToEnd.indices) {
 				//then case
-				if (edge.variables.map(_._2(i)).forall(store => !store.thenCase.program.isEmpty) && edge.child.distancesToEnd(i).thenPath._1 < Int.MaxValue) {
-					val distanceOnThenEdge = edge.child.distancesToEnd(i).thenPath._1 + edge.variables.map { case (v, stores) =>
+				if (edge.variables.map(_._2(i)).forall(store => store.thenCase.program.isDefined) && edge.child.distancesToEnd(i).thenPath._1 < Int.MaxValue) {
+					val distanceOnThenEdge = edge.child.distancesToEnd(i).thenPath._1 + edge.variables.map { case (_, stores) =>
 						stores(i).thenCase.program.get.terms
 					}.sum
-					if (distanceOnThenEdge < distancesToEnd(i).thenPath._1 || (distanceOnThenEdge == distancesToEnd(i).thenPath._1 && distancesToEnd(i).thenPath._2.map(e => edge.variables.size < e.variables.size).getOrElse(false))) {
+					if (distanceOnThenEdge < distancesToEnd(i).thenPath._1 || (distanceOnThenEdge == distancesToEnd(i).thenPath._1 && distancesToEnd(i).thenPath._2.exists(e => edge.variables.size < e.variables.size))) {
 						distancesToEnd.update(i,distancesToEnd(i).copy(thenPath = (distanceOnThenEdge,Some(edge))))
 					}
 				}
 				//else case
-				if (edge.variables.map(_._2(i)).forall(store => !store.elseCase.program.isEmpty) && edge.child.distancesToEnd(i).elsePath._1 < Int.MaxValue) {
-					val distanceOnElseEdge = edge.child.distancesToEnd(i).elsePath._1 + edge.variables.map{ case (v,stores) =>
+				if (edge.variables.map(_._2(i)).forall(store => store.elseCase.program.isDefined) && edge.child.distancesToEnd(i).elsePath._1 < Int.MaxValue) {
+					val distanceOnElseEdge = edge.child.distancesToEnd(i).elsePath._1 + edge.variables.map{ case (_,stores) =>
 						stores(i).elseCase.program.get.terms
 					}.sum
 
 
-					if (distanceOnElseEdge < distancesToEnd(i).elsePath._1 || (distanceOnElseEdge == distancesToEnd(i).elsePath._1 && distancesToEnd(i).elsePath._2.map(e => edge.variables.size < e.variables.size).getOrElse(false))) {
+					if (distanceOnElseEdge < distancesToEnd(i).elsePath._1 || (distanceOnElseEdge == distancesToEnd(i).elsePath._1 && distancesToEnd(i).elsePath._2.exists(e => edge.variables.size < e.variables.size))) {
 						distancesToEnd.update(i,distancesToEnd(i).copy(elsePath = (distanceOnElseEdge,Some(edge))))
 					}
 				}
@@ -308,8 +300,8 @@ case class Node(
 		if (this.distancesToEnd(partitionIndex).thenPath._2.isEmpty || this.distancesToEnd(partitionIndex).elsePath._2.isEmpty)
 			None
 		else {
-			val thenAssigns = traverse(partitionIndex,true)
-			val elseAssigns = traverse(partitionIndex,false)
+			val thenAssigns = traverse(partitionIndex,thenBranch = true)
+			val elseAssigns = traverse(partitionIndex,thenBranch = false)
 			for (t <- thenAssigns; e <- elseAssigns) yield (t,e)
 		}
 	}
@@ -370,11 +362,12 @@ case class Node(
 		seen = true
 	}
 
-	def printGraph(nodeLabel: Node => String, edgeLabel: Edge => String) = {
+	def printGraph(nodeLabel: Node => String, edgeLabel: Edge => String): Unit = {
 		reset_seen()
 		println("digraph G {")
 		do_print(nodeLabel,edgeLabel)
 		println("}")
 	}
+
 	override def toString: String = "Node"
 }

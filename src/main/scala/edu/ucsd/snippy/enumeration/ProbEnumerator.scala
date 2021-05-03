@@ -41,8 +41,8 @@ class ProbEnumerator(
 
 	var costLevel: Int = initCost
 	var currIterator: Iterator[VocabMaker] = _
-	var currLevelPrograms: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
-	var varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, ArrayBuffer[ASTNode]]] = mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]]()
+	val currLevelPrograms: mutable.ArrayBuffer[ASTNode] = mutable.ArrayBuffer()
+	val varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, ArrayBuffer[ASTNode]]] = mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]]()
 	val totalLeaves: List[VocabMaker] = vocab.leaves().toList.distinct ++ vocab.nonLeaves().toList.distinct
 
 	// Causes "Too many open files" error :/

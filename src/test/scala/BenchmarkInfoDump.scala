@@ -31,19 +31,18 @@ object BenchmarkInfoDump extends App {
 			  files += 1
 			  val taskStr = fromFile(file).mkString
 			  val task = json.parse(taskStr).asInstanceOf[JObject].values
-			  val loopEx = task("previousEnvs").asInstanceOf[Map[String,Any]].filter { pe =>
+			  val loopEx = task("previousEnvs").asInstanceOf[Map[String, Any]].count { pe =>
 				  val peIter = task("envs").asInstanceOf[List[Map[String, Any]]].find(e => e("time") == pe._1.toInt)
 				  peIter match {
 					  case None => false
 					  case Some(value) => value("#") != ""
 				  }
-			  }.size
+			  }
 			  examples += (
-				task("envs").asInstanceOf[List[Map[String,Any]]].filter(e => e("#") == "").length +
-				loopEx
-				  )
+				task("envs").asInstanceOf[List[Map[String, Any]]].count(e => e("#") == "") +
+				loopEx)
 			  loopExamples += loopEx
-			  iterations += task("envs").asInstanceOf[List[Map[String,Any]]].filter(e => e("#") != "").length
+			  iterations += task("envs").asInstanceOf[List[Map[String, Any]]].count(e => e("#") != "")
 			  vars += task("varNames").asInstanceOf[List[Any]].length
 		  }
 		val dirName = if (dir.getParentFile.getName == "resources") dir.getName else dir.getParentFile.getName

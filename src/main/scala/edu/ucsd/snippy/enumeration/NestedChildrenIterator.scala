@@ -4,7 +4,7 @@ import edu.ucsd.snippy.ast.ASTNode
 import edu.ucsd.snippy.ast.Types.Types
 
 import scala.collection.mutable
-import scala.collection.mutable.{ArrayBuffer}
+import scala.collection.mutable.ArrayBuffer
 
 class NestedChildrenIterator(
 	val childTypes: List[Types],
@@ -18,12 +18,12 @@ class NestedChildrenIterator(
 	val arity: Int = childTypes.length
 	val costs: Array[Array[Int]] = ProbCosts.getCosts(childrenCost, childrenCosts, childTypes.size)
 	var indices: Array[ArrayBuffer[Int]] = ProbCosts.getIndices(arity)
-	var childrenLists = List[List[ASTNode]]()
+	var childrenLists: List[List[ASTNode]] = List[List[ASTNode]]()
 	var combinationCounter = 0
 	var candidates: Array[Iterator[ASTNode]] = Array[Iterator[ASTNode]]()
 	var allExceptLast: Array[ASTNode] = Array.empty
 	var newCost: Array[Int] = Array[Int]()
-	mainBank = mainBank.map(n => (n._1, n._2.filter(c => (!c.includes("key") && !c.includes("var")))))
+	mainBank = mainBank.map(n => (n._1, n._2.filter(c => !c.includes("key") && !c.includes("var"))))
 	//TODO: alternate to filtering the mainBank
 
 	def resetIndices(arity: Int): Unit =
@@ -34,8 +34,8 @@ class NestedChildrenIterator(
 
 	def newChildrenIterator(cost: Array[Int]): Unit = {
 		val varBankIndex = indicesIterator.next()
-		val mainBankIndex = ArrayBuffer.range(0, arity) --= (varBankIndex)
-		var elements: mutable.Map[Int, List[ASTNode]] = mutable.Map[Int, List[ASTNode]]()
+		val mainBankIndex = ArrayBuffer.range(0, arity) --= varBankIndex
+		val elements: mutable.Map[Int, List[ASTNode]] = mutable.Map[Int, List[ASTNode]]()
 
 		varBankIndex.foreach(c => elements += (c -> miniBank.getOrElse(cost(c), Nil)
 			.filter(d => childTypes(c).equals(d.nodeType)).toList))
@@ -64,7 +64,7 @@ class NestedChildrenIterator(
 
 	var next_child: Option[List[ASTNode]] = None
 	val costsIterator: Iterator[Array[Int]] = costs.iterator
-	var indicesIterator = Iterator[ArrayBuffer[Int]]()
+	var indicesIterator: Iterator[ArrayBuffer[Int]] = Iterator()
 
 	def getNextChild(): Option[List[ASTNode]] =
 	{

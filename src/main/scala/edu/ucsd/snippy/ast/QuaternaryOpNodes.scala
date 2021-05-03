@@ -24,8 +24,8 @@ trait QuaternaryOpNode[T] extends ASTNode
 	override val children: Iterable[ASTNode] = Iterable(arg0, arg1, arg2, arg3)
 
 	assert(arg0.values.length == arg1.values.length &&
-		       arg1.values.length == arg2.values.length &&
-		       arg2.values.length == arg3.values.length)
+		arg1.values.length == arg2.values.length &&
+		arg2.values.length == arg3.values.length)
 
 	def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[T]
 
@@ -33,15 +33,15 @@ trait QuaternaryOpNode[T] extends ASTNode
 
 	def includes(varName: String): Boolean =
 		arg0.includes(varName) ||
-			arg1.includes(varName) ||
-			arg2.includes(varName) ||
-			arg3.includes(varName)
+		arg1.includes(varName) ||
+		arg2.includes(varName) ||
+		arg3.includes(varName)
 
 	override lazy val usesVariables: Boolean =
-		arg0.usesVariables || arg1.usesVariables ||
-			arg2.usesVariables || arg3.usesVariables
-
-	override def updateValues(contexts: Contexts) = ???
+		arg0.usesVariables ||
+		arg1.usesVariables ||
+		arg2.usesVariables ||
+		arg3.usesVariables
 }
 
 // TODO Test is extensively before adding it
@@ -54,8 +54,8 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 	override def doOp(a0: Any, a1: Any, a2: Any, a3: Any): Option[String] = (a0, a1, a2, a3) match {
 		case (_, _, _, 0) => None
 		case (s: String, start_orig: Int, end_orig: Int, step: Int) =>
-			val start = (if (start_orig >= 0) start_orig else (s.length + start_orig)).max(0).min(s.length)
-			val end = (if (end_orig >= 0) end_orig else (s.length + end_orig)).max(0).min(s.length)
+			val start = (if (start_orig >= 0) start_orig else s.length + start_orig).max(0).min(s.length)
+			val end = (if (end_orig >= 0) end_orig else s.length + end_orig).max(0).min(s.length)
 
 			var rs = ""
 			var idx = start
@@ -84,4 +84,11 @@ class QuaternarySubstring(val arg0: StringNode, val arg1: IntNode, val arg2: Int
 			a1.asInstanceOf[IntNode],
 			a2.asInstanceOf[IntNode],
 			a3.asInstanceOf[IntNode])
+
+	override def updateValues(contexts: Contexts): QuaternarySubstring =
+		new QuaternarySubstring(
+			this.arg0.updateValues(contexts),
+			this.arg1.updateValues(contexts),
+			this.arg2.updateValues(contexts),
+			this.arg3.updateValues(contexts))
 }

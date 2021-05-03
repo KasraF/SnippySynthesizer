@@ -10,13 +10,12 @@ import scala.collection.mutable
 
 class InterleavedSolutionEnumerator(
 	val predicate: MultilineMultivariablePredicate,
-	size: Boolean,
 	variables: List[(String, Types.Types)],
 	literals: Iterable[String]) extends SolutionEnumerator
 {
 	val enumerators: List[(Node, Enumerator)] = predicate.graphStart.allNodes.map(node => {
 		val enumerator = new ProbEnumerator(
-			VocabFactory(variables, literals, size),
+			VocabFactory(variables, literals),
 			new InputsValuesManager,
 			node.state,
 			false,

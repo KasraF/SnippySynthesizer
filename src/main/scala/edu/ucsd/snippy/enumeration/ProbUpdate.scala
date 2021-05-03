@@ -91,7 +91,7 @@ object ProbUpdate
 
 	def resetPrior(): mutable.Map[(Class[_], Option[Any]), Int] =
 	{
-		priors.foreach(c => (c._1 -> roundValue(-log2(probMap((c._1))))))
+		priors.foreach(c => c._1 -> roundValue(-log2(probMap((c._1)))))
 		priors
 	}
 

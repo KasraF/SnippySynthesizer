@@ -20,22 +20,23 @@ abstract class VariableNode[T](contexts: List[Map[String, Any]]) extends ASTNode
 }
 
 object VariableNode {
-	def nodeFromType(name: String, retType: Types.Types, contexts: List[Map[String, Any]]): ASTNode = retType match {
-		case Types.Bool => (BoolVariable(name, contexts))
-		case Types.String => (StringVariable(name, contexts))
-		case Types.Int => (IntVariable(name, contexts))
-		case Types.Double => DoubleVariable(name, contexts)
-		case Types.IntList => (ListVariable[Int](name, contexts, Types.Int))
-		case Types.StringList => (ListVariable[String](name, contexts, Types.String))
-		case Types.IntIntMap => (MapVariable[Int,Int](name, contexts, Types.Int, Types.Int))
-		case Types.IntStringMap => (MapVariable[Int,String](name, contexts, Types.Int, Types.String))
-		case Types.StringIntMap => (MapVariable[String,Int](name, contexts, Types.String, Types.Int))
-		case Types.StringStringMap => (MapVariable[String,String](name, contexts, Types.String, Types.String))
-		case Types.IntSet => SetVariable[Int](name, contexts, Types.Int)
-		case Types.StringSet => SetVariable[String](name,contexts,Types.String)
-		case Types.BoolList => ListVariable[Boolean](name,contexts,Types.Bool)
-		case Types.DoubleList => ListVariable[Double](name,contexts, Types.Double)
-		case Types.DoubleSet => SetVariable[Double](name, contexts, Types.Double)
+	def nodeFromType(name: String, retType: Types.Types, contexts: List[Map[String, Any]]): Option[ASTNode] = retType match {
+		case Types.Bool => Some(BoolVariable(name, contexts))
+		case Types.String => Some(StringVariable(name, contexts))
+		case Types.Int => Some(IntVariable(name, contexts))
+		case Types.Double => Some(DoubleVariable(name, contexts))
+		case Types.IntList => Some(ListVariable[Int](name, contexts, Types.Int))
+		case Types.StringList => Some(ListVariable[String](name, contexts, Types.String))
+		case Types.IntIntMap => Some(MapVariable[Int,Int](name, contexts, Types.Int, Types.Int))
+		case Types.IntStringMap => Some(MapVariable[Int,String](name, contexts, Types.Int, Types.String))
+		case Types.StringIntMap => Some(MapVariable[String,Int](name, contexts, Types.String, Types.Int))
+		case Types.StringStringMap => Some(MapVariable[String,String](name, contexts, Types.String, Types.String))
+		case Types.IntSet => Some(SetVariable[Int](name, contexts, Types.Int))
+		case Types.StringSet => Some(SetVariable[String](name,contexts,Types.String))
+		case Types.BoolList => Some(ListVariable[Boolean](name,contexts,Types.Bool))
+		case Types.DoubleList => Some(ListVariable[Double](name,contexts, Types.Double))
+		case Types.DoubleSet => Some(SetVariable[Double](name, contexts, Types.Double))
+		case _ => None
 	}
 }
 

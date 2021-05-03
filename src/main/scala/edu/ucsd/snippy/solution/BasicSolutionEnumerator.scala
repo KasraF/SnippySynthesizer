@@ -4,6 +4,7 @@ import edu.ucsd.snippy.enumeration.Enumerator
 import edu.ucsd.snippy.predicates.Predicate
 import edu.ucsd.snippy.utils.Assignment
 
+@deprecated
 class BasicSolutionEnumerator(val predicate: Predicate, val enumerator: Enumerator) extends SolutionEnumerator
 {
 	var solution: Option[Assignment] = None

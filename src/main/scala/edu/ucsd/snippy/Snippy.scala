@@ -54,7 +54,7 @@ object Snippy extends App
 			for (solution <- task.enumerator) {
 				solution match {
 					case Some(assignment) =>
-						rs = (Some(assignment.code), timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
+						rs = (Some(assignment.code()), timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
 						break
 					case _ => ()
 				}

@@ -10,13 +10,8 @@ class SingleVariablePredicate(
 	val varName: String,
 	val retType: Types,
 	val values: List[Any]) extends Predicate {
-	var blah = false
 
 	override def evaluate(program: ASTNode): Option[SingleAssignment] = {
-		val code = program.code
-
-		if (blah) println(code)
-
 		if (program.nodeType != this.retType || program.values.contains(None)) {
 			None
 		} else {

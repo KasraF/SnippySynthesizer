@@ -1,10 +1,20 @@
 package edu.ucsd.snippy.utils
 
+import edu.ucsd.snippy.SynthesisTask
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast.{ASTNode, IntLiteral, ListLiteral, StringLiteral, Types}
 
 object Utils
 {
+	@inline
+	def createUniqueName(name: String, context: List[SynthesisTask.Context]): String =
+	{
+		val existingNames = context.flatMap(_.keys).toSet
+		var uniqueName = name
+		while (existingNames.contains(uniqueName)) uniqueName = '_' + uniqueName
+		uniqueName
+	}
+
 	def synthesizeLiteralOption(typ: Types, vals: List[Any]): Option[ASTNode] =
 		if (vals.length < 1)
 			None
@@ -75,7 +85,7 @@ object Utils
 		lst.zipWithIndex.filter { case (_, i) => indices.contains(i) }.forall(!_._1)
 
 	implicit object FuzzyDoubleEq extends spire.algebra.Eq[Double] {
-		def eqv(a:Double, b:Double) = (a-b).abs < 1e-12
+		def eqv(a:Double, b:Double): Boolean = (a-b).abs < 1e-12
 	}
 	import spire.syntax.all._
 	import spire.std.seq._

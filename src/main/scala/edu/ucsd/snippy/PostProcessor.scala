@@ -98,13 +98,13 @@ object PostProcessor
 				case Types.String =>
 					map.value.nodeType match {
 						case Types.String =>
-							new StringStringMapCompNode(
+							StringStringMapCompNode(
 								list.asInstanceOf[StringNode],
 								key.asInstanceOf[StringNode],
 								value.asInstanceOf[StringNode],
 								map.varName)
 						case Types.Int =>
-							new StringIntMapCompNode(
+							StringIntMapCompNode(
 								list.asInstanceOf[StringNode],
 								key.asInstanceOf[StringNode],
 								value.asInstanceOf[IntNode],
@@ -113,13 +113,13 @@ object PostProcessor
 				case Types.StringList =>
 					map.value.nodeType match {
 						case Types.String =>
-							new StringListStringMapCompNode(
+							StringListStringMapCompNode(
 								list.asInstanceOf[StringListNode],
 								key.asInstanceOf[StringNode],
 								value.asInstanceOf[StringNode],
 								map.varName)
 						case Types.Int =>
-							new StringListIntMapCompNode(
+							StringListIntMapCompNode(
 								list.asInstanceOf[StringListNode],
 								key.asInstanceOf[StringNode],
 								value.asInstanceOf[IntNode],
@@ -128,13 +128,13 @@ object PostProcessor
 				case Types.IntList =>
 					map.value.nodeType match {
 						case Types.String =>
-							new IntStringMapCompNode(
+							IntStringMapCompNode(
 								list.asInstanceOf[IntListNode],
 								key.asInstanceOf[IntNode],
 								value.asInstanceOf[StringNode],
 								map.varName)
 						case Types.Int =>
-							new IntIntMapCompNode(
+							IntIntMapCompNode(
 								list.asInstanceOf[IntListNode],
 								key.asInstanceOf[IntNode],
 								value.asInstanceOf[IntNode],

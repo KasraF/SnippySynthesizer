@@ -66,8 +66,8 @@ case class TernarySubstring(arg0: StringNode, arg1: IntNode, arg2: IntNode) exte
 	override def doOp(a0: Any, a1: Any, a2: Any): Option[String] = (a0, a1, a2) match {
 		case (s: String, start_orig: Int, end_orig: Int) =>
 			// The max() and min() remove unnecessary looping
-			val start = (if (start_orig >= 0) start_orig else (s.length + start_orig)).max(0).min(s.length)
-			val end = (if (end_orig >= 0) end_orig else (s.length + end_orig)).max(0).min(s.length)
+			val start = (if (start_orig >= 0) start_orig else s.length + start_orig).max(0).min(s.length)
+			val end = (if (end_orig >= 0) end_orig else s.length + end_orig).max(0).min(s.length)
 			var rs = ""
 
 			if (start < end) {
@@ -121,8 +121,8 @@ case class TernarySubList[T](arg0: ListNode[T], arg1: IntNode, arg2: IntNode) ex
 	override def doOp(a0: Any, a1: Any, a2: Any): Option[Iterable[T]] = (a0, a1, a2) match {
 		case (s: List[T], start_orig: Int, end_orig: Int) =>
 			// The max() and min() remove unnecessary looping
-			val start = (if (start_orig >= 0) start_orig else (s.length + start_orig)).max(0).min(s.length)
-			val end = (if (end_orig >= 0) end_orig else (s.length + end_orig)).max(0).min(s.length)
+			val start = (if (start_orig >= 0) start_orig else s.length + start_orig).max(0).min(s.length)
+			val end = (if (end_orig >= 0) end_orig else s.length + end_orig).max(0).min(s.length)
 			var rs = List[T]()
 
 			if (start < end) {

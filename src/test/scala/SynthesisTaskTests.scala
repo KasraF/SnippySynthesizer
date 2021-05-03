@@ -8,7 +8,7 @@ import org.scalatestplus.junit.JUnitSuite
 
 class SynthesisTaskTests extends JUnitSuite
 {
-	@Test def inferEmptyListTypeFromOtherExamples: Unit =
+	@Test def inferEmptyListTypeFromOtherExamples(): Unit =
 	{
 		val task1 = SynthesisTask.fromString(
 			"""{
@@ -53,7 +53,7 @@ class SynthesisTaskTests extends JUnitSuite
 			task2.predicate.asInstanceOf[SingleVariablePredicate].retType)
 	}
 
-	@Test def listMapMismatchShouldFail: Unit =
+	@Test def listMapMismatchShouldFail(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -81,7 +81,7 @@ class SynthesisTaskTests extends JUnitSuite
 			task.predicate.asInstanceOf[SingleVariablePredicate].retType)
 	}
 
-	@Test def inferEmptyMapTypeFromOtherExamples: Unit =
+	@Test def inferEmptyMapTypeFromOtherExamples(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -110,7 +110,7 @@ class SynthesisTaskTests extends JUnitSuite
 		assertEquals(Types.Int, returnType.asInstanceOf[Types.Map].valType)
 	}
 
-	@Test def onlyEmptyList: Unit =
+	@Test def onlyEmptyList(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -129,7 +129,7 @@ class SynthesisTaskTests extends JUnitSuite
 			task.predicate.asInstanceOf[SingleVariablePredicate].retType)
 	}
 
-	@Test def onlyEmptyMap: Unit =
+	@Test def onlyEmptyMap(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -150,7 +150,7 @@ class SynthesisTaskTests extends JUnitSuite
 		assertEquals(Types.Int, returnType.asInstanceOf[Types.Map].valType)
 	}
 
-	@Test def emptyMapInInputVal: Unit =
+	@Test def emptyMapInInputVal(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -177,7 +177,7 @@ class SynthesisTaskTests extends JUnitSuite
 		assertEquals(Types.Int, varType.valType)
 	}
 
-	@Test def emptyListInInputVal: Unit =
+	@Test def emptyListInInputVal(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -201,7 +201,7 @@ class SynthesisTaskTests extends JUnitSuite
 		assertEquals(Types.IntList, task.parameters.find(kv => kv._1 == "counts").get._2)
 	}
 
-	@Test def onlyEmptyListInInputVal: Unit =
+	@Test def onlyEmptyListInInputVal(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -226,7 +226,7 @@ class SynthesisTaskTests extends JUnitSuite
 		assertEquals(Types.StringList, task.parameters.find(kv => kv._1 == "counts").get._2)
 	}
 
-	@Test def stringLiteralsTest: Unit =
+	@Test def stringLiteralsTest(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{
@@ -260,7 +260,7 @@ class SynthesisTaskTests extends JUnitSuite
 					.values == List(Some("y"))))
 	}
 
-	@Test def multivariableStringLiteralsTest: Unit =
+	@Test def multivariableStringLiteralsTest(): Unit =
 	{
 		val task = SynthesisTask.fromString(
 			"""{

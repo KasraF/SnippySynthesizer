@@ -38,7 +38,7 @@ object SynthesisTask
 	val reserved_names: Set[String] =
 		Set("time", "#", "$", "lineno", "prev_lineno", "next_lineno", "__run_py__")
 
-	def fromString(jsonString: String, size: Boolean = true): SynthesisTask = {
+	def fromString(jsonString: String): SynthesisTask = {
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
@@ -94,12 +94,12 @@ object SynthesisTask
 			.map(varName => varName -> Utils.getTypeOfAll(contexts.map(ex => ex.get(varName)).filter(_.isDefined).map(_.get)))
 			.filter(!_._2.equals(Types.Unknown))
 			.toList
-		val vocab: VocabFactory = VocabFactory(parameters, additionalLiterals, size)
+		val vocab: VocabFactory = VocabFactory(parameters, additionalLiterals)
 
 		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
 				new ConditionalSingleEnumMultivarSolutionEnumerator(pred, parameters, additionalLiterals)
-			case pred: SingleVariablePredicate if size =>
+			case pred: SingleVariablePredicate =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val enumerator = new enumeration.ProbEnumerator(vocab, oeManager, contexts, false, 0, bank, mini, 100)

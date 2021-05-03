@@ -1,18 +1,15 @@
 package edu.ucsd.snippy.vocab
 
-import edu.ucsd.snippy.DebugPrints
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration._
+import edu.ucsd.snippy.utils.Utils
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Boolean) extends VocabMaker with Iterator[ASTNode]
+abstract class MapCompVocabMaker(iterableType: Types, valueType: Types) extends VocabMaker with Iterator[ASTNode]
 {
-	// Causes "Too many open files" error :/
-	// var size_log = new FileOutputStream("output.txt", true)
-
 	override val arity: Int = 3
 	def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = null
 
@@ -32,19 +29,20 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 	var nextProg: Option[ASTNode] = None
 
 	assert(iterableType.equals(Types.String) ||
-		       iterableType.equals(Types.IntList) ||
-		       iterableType.equals(Types.StringList),
-	       s"List comprehension iterable type not supported: $iterableType")
+		iterableType.equals(Types.IntList) ||
+		iterableType.equals(Types.StringList),
+		s"List comprehension iterable type not supported: $iterableType")
 
 	assert(valueType.equals(Types.Int) || valueType.equals(Types.String),
-	       s"List comprehension output type not supported: $valueType")
+		s"List comprehension output type not supported: $valueType")
 
 	def makeNode(lst: ASTNode, key: ASTNode, value: ASTNode) : ASTNode
 
-	override def init(progs: List[ASTNode],
-	                  contexts : List[Map[String, Any]],
-	                  vocabFactory: VocabFactory,
-	                  height: Int) : Iterator[ASTNode] =
+	override def init(
+		progs: List[ASTNode],
+		contexts : List[Map[String, Any]],
+		vocabFactory: VocabFactory,
+		height: Int) : Iterator[ASTNode] =
 	{
 		this.listIter = progs.filter(n => n.nodeType.equals(this.iterableType)).iterator
 		this.childHeight = height - 1
@@ -52,8 +50,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 		this.contexts = contexts
 
 		// Make sure the name is unique
-		// TODO We need a nicer way to generate this
-		while (contexts.head.contains(this.varName)) this.varName = "_" + this.varName
+		this.varName = Utils.createUniqueName(this.varName, contexts)
 
 		// Filter the vocabs for the map function
 		// TODO There has to be a more efficient way
@@ -96,13 +93,14 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 		this
 	}
 
-	override def probe_init(vocabFactory: VocabFactory,
-	                        costLevel: Int,
-	                        contexts: List[Map[String,Any]],
-	                        bank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
-	                        nested: Boolean,
-	                        varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]],
-	                        mini: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) : Iterator[ASTNode] = {
+	override def probe_init(
+		vocabFactory: VocabFactory,
+		costLevel: Int,
+		contexts: List[Map[String,Any]],
+		bank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
+		nested: Boolean,
+		varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]],
+		mini: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) : Iterator[ASTNode] = {
 
 		this.mainBank = bank.map(n => (n._1, n._2.filter(c => !c.includes(this.varName))))
 		this.listIter = this.mainBank.dropRight(1).values.flatten.toList.filter(n => n.nodeType.equals(this.iterableType)).iterator
@@ -165,15 +163,13 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 
 	override def hasNext: Boolean =
 	{
-		if (this.nextProg.isEmpty && !size) nextProgram()
-		else if (this.nextProg.isEmpty && size) nextProgramSize()
+		if (this.nextProg.isEmpty) nextProgram()
 		this.nextProg.isDefined
 	}
 
 	override def next: ASTNode =
 	{
-		if (this.nextProg.isEmpty && !size) nextProgram()
-		else if (this.nextProg.isEmpty && size) nextProgramSize()
+		if (this.nextProg.isEmpty) nextProgram()
 		val rs = this.nextProg.get
 		this.nextProg = None
 		rs
@@ -188,39 +184,10 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 			this.varBank(key)(value.cost) += value
 	}
 
-	private def nextProgram() : Unit =
-	{
+	private def nextProgram() : Unit = {
 		if (this.enumerator == null) return
 
 		while (this.nextProg.isEmpty) {
-			if (!this.enumerator.hasNext) {
-				return
-			}
-
-			val value = this.enumerator.next()
-			if (value.height > this.childHeight) {
-				// We are out of map functions to synthesize for this list.
-
-				if (!this.nextList()) {
-					// We are also out of lists!
-					return
-				}
-			} else if (value.nodeType.eq(this.valueType) && value.includes(this.varName)) {
-				// next is a valid program
-				val node = this.makeNode(
-					this.currList,
-					StringVariable(varName, this.enumerator.contexts),
-					value)
-				this.nextProg = Some(node)
-			}
-		}
-	}
-
-	private def nextProgramSize() : Unit = {
-		if (this.enumerator == null) return
-
-		while (this.nextProg.isEmpty) {
-
 			while (!this.enumerator.hasNext) { if (!this.nextList()) return }
 
 			val value = this.enumerator.next()
@@ -263,9 +230,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 						case None => Nil
 					})
 				val oeValuesManager = new InputsValuesManager()
-				this.enumerator = if (!size) {
-					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts)
-				} else {
+				this.enumerator = {
 					val contexts = new Contexts(newContexts)
 					val bankCost = this.costLevel - this.currList.cost
 					val mainBank = this.mainBank
@@ -302,7 +267,7 @@ abstract class MapCompVocabMaker(iterableType: Types, valueType: Types, size: Bo
 	}
 }
 
-abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boolean) extends VocabMaker with Iterator[ASTNode]
+abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types) extends VocabMaker with Iterator[ASTNode]
 {
 	override val arity: Int = 2
 	def apply(children: List[ASTNode], contexts: List[Map[String,Any]]): ASTNode = null
@@ -320,31 +285,26 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 	var mainBank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]] = _
 	var nextProg: Option[ASTNode] = None
 
-	// Causes "Too many open files" error :/
-	// var size_log = new FileOutputStream("output.txt", true)
-
-
 	assert(keyType.equals(Types.Int) || keyType.equals(Types.String),
-	       s"List comprehension input type not supported: $keyType")
+		s"List comprehension input type not supported: $keyType")
 
 	assert(valueType.equals(Types.Int) || valueType.equals(Types.String),
-	       s"List comprehension output type not supported: $valueType")
+		s"List comprehension output type not supported: $valueType")
 
 	def makeNode(map: ASTNode, filter: BoolNode) : ASTNode
 
-	override def init(progs: List[ASTNode],
-	                  contexts : List[Map[String, Any]],
-	                  vocabFactory: VocabFactory,
-	                  height: Int) : Iterator[ASTNode] =
+	override def init(
+		progs: List[ASTNode],
+		contexts : List[Map[String, Any]],
+		vocabFactory: VocabFactory,
+		height: Int) : Iterator[ASTNode] =
 	{
 		this.mapIter = progs.filter(n => n.isInstanceOf[VariableNode[_]] && n.nodeType.equals(Types.mapOf(keyType, valueType))).iterator
 		this.childHeight = height - 1
 		this.keyName = "key"
 		this.contexts = contexts
 
-		// Make sure the name is unique
-		// TODO We need a nicer way to generate this
-		while (contexts.head.contains(this.keyName)) this.keyName = "_" + this.keyName
+		this.keyName = Utils.createUniqueName(this.keyName, contexts)
 
 		// Filter the vocabs for the map function
 		// TODO There has to be a more efficient way
@@ -381,11 +341,14 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 		this
 	}
 
-	override def probe_init(vocabFactory: VocabFactory, costLevel: Int, contexts: List[Map[String,Any]],
-	                        bank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
-	                        nested: Boolean,
-	                        varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]],
-	                        mini: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) : Iterator[ASTNode] = {
+	override def probe_init(
+		vocabFactory: VocabFactory,
+		costLevel: Int,
+		contexts: List[Map[String,Any]],
+		bank: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]],
+		nested: Boolean,
+		varBank: mutable.Map[(Class[_], ASTNode), mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]],
+		mini: mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]) : Iterator[ASTNode] = {
 
 
 		this.mainBank = bank.map(n => (n._1, n._2.filter(c => !c.includes(this.keyName))))
@@ -398,7 +361,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 		this.varBank = varBank
 
 		// TODO We need a nicer way to generate this
-		while (contexts.head.contains(this.keyName)) this.keyName = "_" + this.keyName
+		this.keyName = Utils.createUniqueName(this.keyName, contexts)
 
 		// Filter the vocabs for the map function
 		// TODO There has to be a more efficient way
@@ -437,15 +400,13 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 
 	override def hasNext: Boolean =
 	{
-		if (this.nextProg.isEmpty && !size) nextProgram()
-		else if (this.nextProg.isEmpty && size) nextProgramSize()
+		if (this.nextProg.isEmpty) nextProgram()
 		this.nextProg.isDefined
 	}
 
 	override def next: ASTNode =
 	{
-		if (this.nextProg.isEmpty && !size) nextProgram()
-		else if (this.nextProg.isEmpty && size) nextProgramSize()
+		if (this.nextProg.isEmpty) nextProgram()
 		val rs = this.nextProg.get
 		this.nextProg = None
 		rs
@@ -465,32 +426,6 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 		if (this.enumerator == null) return
 
 		while (this.nextProg.isEmpty) {
-			if (!this.enumerator.hasNext) {
-				return
-			}
-
-			val filter = this.enumerator.next()
-			if (filter.height > this.childHeight + 1) {
-				// We are out of map functions to synthesize for this list.
-
-				if (!this.nextMap()) {
-					// We are also out of lists!
-					return
-				}
-			} else if (filter.isInstanceOf[BoolNode] && filter.includes(this.keyName)) {
-				// next is a valid program
-				val node = this.makeNode(this.currMap, filter.asInstanceOf[BoolNode])
-
-				this.nextProg = Some(node)
-			}
-		}
-	}
-
-	private def nextProgramSize() : Unit =
-	{
-		if (this.enumerator == null) return
-
-		while (this.nextProg.isEmpty) {
 
 			while (!this.enumerator.hasNext) { if (!this.nextMap()) return }
 
@@ -505,11 +440,12 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 					// We are also out of lists!
 					return
 				}
-			} else if (filter.isInstanceOf[BoolNode] && filter.includes(this.keyName)) {
-				// next is a valid program
-				val node = this.makeNode(this.currMap, filter.asInstanceOf[BoolNode])
-				this.nextProg = Some(node)
-
+			} else filter match {
+				case node1: BoolNode if filter.includes(this.keyName) =>
+					// next is a valid program
+					val node = this.makeNode(this.currMap, node1)
+					this.nextProg = Some(node)
+				case _ => ()
 			}
 		}
 	}
@@ -531,9 +467,7 @@ abstract class FilteredMapVocabMaker(keyType: Types, valueType: Types, size: Boo
 								case None => Nil
 							})
 				val oeValuesManager = new InputsValuesManager()
-				this.enumerator = if (!size) {
-					new BasicEnumerator(this.filterVocab, oeValuesManager, newContexts)
-				} else {
+				this.enumerator = {
 					val contexts = new Contexts(newContexts)
 					val bankCost = this.costLevel - this.currMap.cost
 					val mainBank = this.mainBank.take(bankCost - 1)

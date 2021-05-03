@@ -79,7 +79,7 @@ case class StringToInt(arg: StringNode) extends UnaryOpNode[Int] with IntNode
 
 	override def doOp(x: Any): Option[Int] = x match {
 		case str: String =>
-			if (!str.isEmpty && (str(0) == '-' && str.substring(1).forall(_.isDigit)) || str.forall(_.isDigit)) {
+			if (str.nonEmpty && (str(0) == '-' && str.substring(1).forall(_.isDigit)) || str.forall(_.isDigit)) {
 				str.toIntOption
 			} else {
 				None
@@ -295,7 +295,7 @@ case class MapKeys(arg: MapNode[String, String]) extends UnaryOpNode[Iterable[St
 	override lazy val code: String = arg.code + ".keys()"
 
 	override def doOp(arg: Any): Option[Iterable[String]] = arg match {
-		case (map: Map[String, String]) => Some(map.keys.toList)
+		case map: Map[String, String] => Some(map.keys.toList)
 		case _ => wrongType(arg)
 	}
 

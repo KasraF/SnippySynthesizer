@@ -49,11 +49,10 @@ class ChildrenIteratorsTests extends JUnitSuite
 		assertFalse(chit.hasNext)
 	}
 
-	@Test def costRollingFourChildren: Unit =
+	@Test def costRollingFourChildren(): Unit =
 	{
 		val nodes = List(
-			new IntNode
-			{
+			new IntNode {
 				override val values: List[Option[Int]] = List(Some(0))
 				override val code: String = "0"
 				override val height: Int = 0
@@ -68,8 +67,8 @@ class ChildrenIteratorsTests extends JUnitSuite
 				override def updateValues(contexts: Contexts): IntNode = null
 
 				override def cost: Int = 1
-			}, new IntNode
-			{
+			},
+			new IntNode {
 				override val values: List[Option[Int]] = List(Some(1))
 				override val code: String = "1"
 				override val height: Int = 0
@@ -85,8 +84,8 @@ class ChildrenIteratorsTests extends JUnitSuite
 
 				override def cost: Int = 1
 
-			}, new IntNode
-			{
+			},
+			new IntNode {
 				override val values: List[Option[Int]] = List(Some(2))
 				override val code: String = "x"
 				override val height: Int = 0

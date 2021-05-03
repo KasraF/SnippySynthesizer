@@ -153,7 +153,7 @@ case class IntAddition(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] wit
 	override lazy val code: String = lhs.code + " + " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
-		case (l: Int, r: Int) => Some(l.asInstanceOf[Int] + r.asInstanceOf[Int])
+		case (l: Int, r: Int) => Some(l + r)
 		case _ => wrongType(l, r)
 	}
 
@@ -168,7 +168,7 @@ case class IntMultiply(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] wit
 	override lazy val code: String = lhs.parensIfNeeded + " * " + rhs.parensIfNeeded
 
 	override def doOp(l: Any, r: Any): Option[Int] = (l, r) match {
-		case (l: Int, r: Int) => Some(l.asInstanceOf[Int] * r.asInstanceOf[Int])
+		case (l: Int, r: Int) => Some(l * r)
 		case _ => wrongType(l, r)
 	}
 
@@ -183,7 +183,7 @@ case class StringMultiply(lhs: StringNode, rhs: IntNode) extends BinaryOpNode[St
 	override lazy val code: String = lhs.code + " * " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
-		case (l: String, r: Int) => Some(l.asInstanceOf[String] * r.asInstanceOf[Int])
+		case (l: String, r: Int) => Some(l * r)
 		case _ => wrongType(l, r)
 	}
 
@@ -220,7 +220,7 @@ case class IntDivision(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] wit
 		}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		IntDivision(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
+		IntDivision(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
 	override def updateValues(contexts: Contexts): IntDivision = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
@@ -237,7 +237,7 @@ case class Modulo(lhs: IntNode, rhs: IntNode) extends BinaryOpNode[Int] with Int
 		}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Int] =
-		Modulo(lhs.asInstanceOf[IntNode], rhs.asInstanceOf[IntNode])
+		Modulo(l.asInstanceOf[IntNode], r.asInstanceOf[IntNode])
 
 	override def updateValues(contexts: Contexts): Modulo = copy(
 		lhs.updateValues(contexts),
@@ -368,7 +368,7 @@ case class StartsWith(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Boo
 	override lazy val code: String = lhs.code + ".startswith(" + rhs.code + ")"
 
 	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
-		case (l: String, r: String) => Some(l.asInstanceOf[String].startsWith(r.asInstanceOf[String]))
+		case (l: String, r: String) => Some(l.startsWith(r))
 		case _ => wrongType(l, r)
 	}
 
@@ -384,7 +384,7 @@ case class EndsWith(lhs: StringNode, rhs: StringNode) extends BinaryOpNode[Boole
 	override lazy val code: String = lhs.code + ".endswith(" + rhs.code + ")"
 
 	override def doOp(l: Any, r: Any): Option[Boolean] = (l, r) match {
-		case (l: String, r: String) => Some(l.asInstanceOf[String].endsWith(r.asInstanceOf[String]))
+		case (l: String, r: String) => Some(l.endsWith(r))
 		case _ => wrongType(l, r)
 	}
 
@@ -402,7 +402,7 @@ case class StringStep(lhs: StringNode, rhs: IntNode) extends BinaryOpNode[String
 	override def doOp(l: Any, r: Any): Option[String] = (l, r) match {
 		case (_, _: 0) => None
 		case (str: String, step: Int) =>
-			var rs: StringBuilder = new StringBuilder(Math.abs(str.length / step) + 1)
+			val rs: StringBuilder = new StringBuilder(Math.abs(str.length / step) + 1)
 			var idx = if (step > 0) 0 else str.length - 1
 			while (idx >= 0 && idx < str.length) {
 				rs += str(idx)
@@ -674,7 +674,7 @@ case class DoublesAddition(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNod
 	override lazy val code: String = lhs.code + " + " + rhs.code
 
 	override def doOp(l: Any, r: Any): Option[Double] = (l, r) match {
-		case (l: Double, r: Double) => Some(l.asInstanceOf[Double] + r.asInstanceOf[Double])
+		case (l: Double, r: Double) => Some(l + r)
 		case _ => wrongType(l, r)
 	}
 
@@ -689,7 +689,7 @@ case class DoublesMultiply(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNod
 	override lazy val code: String = lhs.parensIfNeeded + " * " + rhs.parensIfNeeded
 
 	override def doOp(l: Any, r: Any): Option[Double] = (l, r) match {
-		case (l: Double, r: Double) => Some(l.asInstanceOf[Double] * r.asInstanceOf[Double])
+		case (l: Double, r: Double) => Some(l * r)
 		case _ => wrongType(l, r)
 	}
 
@@ -716,7 +716,7 @@ case class DoublesSubtraction(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOp
 
 case class DoublesDivision(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNode[Double] with DoubleNode
 {
-	override lazy val code: String = lhs.parensIfNeeded + " // " + rhs.parensIfNeeded
+	override lazy val code: String = lhs.parensIfNeeded + " / " + rhs.parensIfNeeded
 
 	override def doOp(l: Any, r: Any): Option[Double] =
 		(l, r) match {
@@ -726,7 +726,7 @@ case class DoublesDivision(lhs: DoubleNode, rhs: DoubleNode) extends BinaryOpNod
 		}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Double] =
-		DoublesDivision(lhs.asInstanceOf[DoubleNode], rhs.asInstanceOf[DoubleNode])
+		DoublesDivision(l.asInstanceOf[DoubleNode], r.asInstanceOf[DoubleNode])
 
 	override def updateValues(contexts: Contexts): DoublesDivision = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }
@@ -737,12 +737,12 @@ case class LAnd(lhs: BoolNode, rhs: BoolNode) extends BinaryOpNode[Boolean] with
 
 	override def doOp(l: Any, r: Any): Option[Boolean] =
 		(l, r) match {
-			case (l: Boolean, r: Boolean) => Some(l.asInstanceOf[Boolean] && r.asInstanceOf[Boolean])
+			case (l: Boolean, r: Boolean) => Some(l && r)
 			case _ => wrongType(l, r)
 		}
 
 	override def make(l: ASTNode, r: ASTNode): BinaryOpNode[Boolean] =
-		LAnd(lhs.asInstanceOf[BoolNode], rhs.asInstanceOf[BoolNode])
+		LAnd(l.asInstanceOf[BoolNode], r.asInstanceOf[BoolNode])
 
 	override def updateValues(contexts: Contexts): LAnd = copy(lhs.updateValues(contexts), rhs.updateValues(contexts))
 }

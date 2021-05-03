@@ -1,8 +1,6 @@
 package edu.ucsd.snippy.enumeration
 
 import edu.ucsd.snippy.ast.ASTNode
-import edu.ucsd.snippy.predicates.Predicate
-import edu.ucsd.snippy.utils.Assignment
 import edu.ucsd.snippy.vocab.{VocabFactory, VocabMaker}
 
 import scala.collection.mutable
@@ -15,9 +13,9 @@ class BasicEnumerator(
 	override def toString(): String = "enumeration.Enumerator"
 
 	var nextProgram: Option[ASTNode] = None
-	var currIter: Iterator[VocabMaker] = vocab.leaves
-	var prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
-	var currLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
+	var currIter: Iterator[VocabMaker] = vocab.leaves()
+	val prevLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
+	val currLevelProgs: mutable.ListBuffer[ASTNode] = mutable.ListBuffer()
 	var height = 0
 	var rootMaker: Iterator[ASTNode] =
 		currIter.next().init(currLevelProgs.toList, contexts, vocab, height)
@@ -70,7 +68,6 @@ class BasicEnumerator(
 	 */
 	def changeLevel(): Boolean =
 	{
-		// dprintln(currLevelProgs.length)
 		if (currLevelProgs.isEmpty) return false
 
 		currIter = vocab.nonLeaves()

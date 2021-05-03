@@ -20,10 +20,10 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 				retType)
 			val thenSource = filterByIndices(contexts,part._1)
 			if (thenSource.forall(_.contains(varName)) && thenSource.map(_(varName)).zip(store.thenVals).forall(t => t._1 == t._2))
-				store.thenCase = Some(VariableNode.nodeFromType(varName,retType, contexts))
+				store.thenCase = VariableNode.nodeFromType(varName,retType, contexts)
 			val elseSource = filterByIndices(contexts,part._2)
 			if (elseSource.forall(_.contains(varName)) && elseSource.map(_(varName)).zip(store.elseVals).forall(t => t._1 == t._2))
-				store.elseCase = Some(VariableNode.nodeFromType(varName,retType, contexts))
+				store.elseCase = VariableNode.nodeFromType(varName,retType, contexts)
 			part -> store
 		}
 	var solution: Option[Assignment] = None
@@ -90,10 +90,10 @@ class ConditionalSingleEnumSingleVarSolutionEnumerator(
 					}
 				}
 			}
-			(store, if (updated && store.isComplete())  if (store.cond.get.isInstanceOf[BoolLiteral]) 0 else
+			(store, if (updated && store.isComplete)  if (store.cond.get.isInstanceOf[BoolLiteral]) 0 else
 				store.thenCase.get.terms + store.elseCase.get.terms + store.cond.get.terms else Int.MaxValue)
 		}
-		for ((store, weight) <- paths.sortBy(_._2); if store.isComplete()) {
+		for ((store, _) <- paths.sortBy(_._2); if store.isComplete) {
 				this.solution = Some(ConditionalAssignment(
 					store.cond.get,
 					SingleAssignment(varName, store.thenCase.get),
@@ -112,5 +112,5 @@ class SolutionStore(val thenVals: List[Any], val elseVals: List[Any], typ: Types
 	var thenCase: Option[ASTNode] = Utils.synthesizeLiteralOption(typ, thenVals)
 	var elseCase: Option[ASTNode] = if (elseVals.isEmpty) Some(BoolLiteral(value = true, thenVals.length)) else Utils.synthesizeLiteralOption(typ, elseVals)
 
-	@inline def isComplete(): Boolean = cond.isDefined && thenCase.isDefined && elseCase.isDefined
+	@inline def isComplete: Boolean = cond.isDefined && thenCase.isDefined && elseCase.isDefined
 }

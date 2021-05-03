@@ -3,11 +3,12 @@ package edu.ucsd.snippy.vocab
 import edu.ucsd.snippy.ast.Types.Types
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration._
+import edu.ucsd.snippy.utils.Utils
 
 import scala.collection.mutable
 import scala.collection.mutable.ArrayBuffer
 
-abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, size: Boolean) extends VocabMaker with Iterator[ASTNode]
+abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types) extends VocabMaker with Iterator[ASTNode]
 {
 	// Causes "Too many open files" error :/
 	// var size_log = new FileOutputStream("output.txt", true)
@@ -44,8 +45,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 		this.contexts = contexts
 
 		// Make sure the name is unique
-		// TODO We need a nicer way to generate this
-		while (contexts.head.contains(this.varName)) this.varName = "_" + this.varName
+		this.varName = Utils.createUniqueName(this.varName, contexts)
 
 		// Filter the vocabs for the map function
 		// TODO There has to be a more efficient way
@@ -137,43 +137,19 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 	}
 
 	override def hasNext: Boolean = {
-		if (this.nextProg.isEmpty && !size) nextProgram()
-		else if (this.nextProg.isEmpty && size) nextProgramSize()
+		if (this.nextProg.isEmpty) nextProgram()
 		this.nextProg.isDefined
 	}
 
 	override def next: ASTNode =
 	{
-		if (this.nextProg.isEmpty && !size) nextProgram()
-		else if (this.nextProg.isEmpty && size) nextProgramSize()
+		if (this.nextProg.isEmpty) nextProgram()
 		val rs = this.nextProg.get
 		this.nextProg = None
 		rs
 	}
 
 	private def nextProgram() : Unit =
-	{
-		if (this.enumerator == null) return
-
-		while (this.nextProg.isEmpty) {
-			if (!this.enumerator.hasNext) return
-
-			val next = this.enumerator.next()
-			if (next.height > this.childHeight) {
-				// We are out of map functions to synthesize for this list.
-				if (!this.nextList()) {
-					// We are also out of lists!
-					return
-				}
-			} else if (next.nodeType.eq(this.outputListType) && next.includes(this.varName)) {
-				// next is a valid program
-				val node = this.makeNode(this.currList, next)
-				this.nextProg = Some(node)
-			}
-		}
-	}
-
-	private def nextProgramSize() : Unit =
 	{
 		if (this.enumerator == null) return
 
@@ -227,9 +203,7 @@ abstract class ListCompVocabMaker(inputListType: Types, outputListType: Types, s
 						}
 				))
 				val oeValuesManager = new InputsValuesManager
-				this.enumerator = if (!size) {
-					new BasicEnumerator(this.mapVocab, oeValuesManager, newContexts.contexts)
-				} else {
+				this.enumerator = {
 					val bankCost = this.costLevel - this.currList.cost
 					val mainBank = this.mainBank.take(bankCost - 1)
 

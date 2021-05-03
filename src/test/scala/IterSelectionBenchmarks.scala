@@ -1,8 +1,7 @@
 import java.io.File
-
 import edu.ucsd.snippy.Snippy
 import net.liftweb.json
-import net.liftweb.json.JObject
+import net.liftweb.json.{DefaultFormats, JObject}
 import net.liftweb.json.JsonAST.JValue
 
 import scala.io.Source.fromFile
@@ -17,7 +16,7 @@ object IterSelectionBenchmarks extends App {
     	.foreach{ file =>
 			val name: String = file.getName.substring(0, file.getName.indexOf('.'))
 			val task = json.parse(fromFile(file).mkString).asInstanceOf[JObject].values
-			val examples = collectExamples(task).filter(!_._2.isEmpty).sortBy(_._1._1.toInt)
+			val examples = collectExamples(task).filter(_._2.nonEmpty).sortBy(_._1._1.toInt)
 			for(numExamples <- 1 to 4; numIters <- 1 to 5) {
 				var participatingExamples = examples.take(numExamples)
 
@@ -26,12 +25,12 @@ object IterSelectionBenchmarks extends App {
 				 ("envs" -> participatingExamples.flatMap(_._2.take(numIters))))
 
 
-				implicit val formats = net.liftweb.json.DefaultFormats
+				implicit val formats: DefaultFormats.type = net.liftweb.json.DefaultFormats
 				val newTaskStr = json.prettyRender(json.Extraction.decompose(taskCopy))
 				Snippy.synthesize(newTaskStr, timeout) match {
-					case (None, time: Int, count: Int) =>
+					case (None, _: Int, _: Int) =>
 						println(s"$name,$numExamples,$numIters,Timeout")
-					case (Some(program: String), time: Int, count: Int) =>
+					case (Some(program: String), _: Int, _: Int) =>
 						val correct = task.get("solutions") match {
 							case Some(solutions) if solutions.asInstanceOf[List[String]].contains(program) => '+'
 							case Some(_) =>
