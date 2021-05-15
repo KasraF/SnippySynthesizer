@@ -6,15 +6,12 @@
 import ast
 import base64
 import bdb
-import ctypes
 import io
 import json
 import re
 import sys
 import types
-
-import numpy as np
-from PIL import Image
+import frame_locals_to_fast
 
 # Code manipulation
 
@@ -70,22 +67,8 @@ def load_code_lines(file_name):
 # Image Processing
 
 
-def is_ndarray_img(v):
-	return isinstance(v, np.ndarray) and v.dtype.name == 'uint8' and len(v.shape) == 3 and v.shape[2] == 3
-
-
 def is_list_img(v):
 	return isinstance(v, list) and len(v) > 0 and isinstance(v[0], list) and len(v[0]) > 0 and (isinstance(v[0][0], list) or isinstance(v[0][0], tuple)) and len(v[0][0]) == 3
-
-
-def if_img_convert_to_html(v):
-	if is_list_img(v):
-		return list_to_html(v, format='png')
-	elif is_ndarray_img(v):
-		return ndarray_to_html(v, format='png')
-	else:
-		return None
-
 
 # Convert PIL.Image to html
 def pil_to_html(img, **kwargs):
@@ -95,34 +78,6 @@ def pil_to_html(img, **kwargs):
 	encoded_str = str(encoded)[2:-1]
 	img_format = kwargs["format"]
 	return f"<img src='data:image/{img_format};base64,{encoded_str}'>"
-
-
-# Convert ndarray to PIL.Image
-def ndarray_to_pil(arr, min_width = None, max_width = None):
-	img = Image.fromarray(arr)
-	h = img.height
-	w = img.width
-	new_width = None
-	if w > max_width:
-		new_width = max_width
-	if w < min_width:
-		new_width = min_width
-	if new_width != None:
-		img = img.resize((new_width, int(h*(new_width / w))), resample = Image.BOX)
-	return img
-
-
-# Convert list of lists to ndarray
-def list_to_ndarray(arr):
-	return np.asarray(arr, dtype=np.uint8)
-
-
-def ndarray_to_html(arr, **kwargs):
-	return pil_to_html(ndarray_to_pil(arr, 60, 150), **kwargs)
-
-
-def list_to_html(arr, **kwargs):
-	return ndarray_to_html(list_to_ndarray(arr), **kwargs)
 
 
 def add_html_escape(html):
@@ -191,7 +146,8 @@ class Logger(bdb.Bdb):
 					new_value = eval(env[varname])
 					print("\t'%s': '%s' -> '%s'" % (varname, repr(frame.f_locals[varname]), repr(new_value)))
 					frame.f_locals.update({ varname: new_value })
-					ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
+					frame_locals_to_fast(frame)
+					# ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
 
 	def user_line(self, frame):
 		# print("user_line ============================================")
@@ -296,11 +252,7 @@ class Logger(bdb.Bdb):
 			return None
 		if isinstance(v, types.ModuleType):
 			return None
-		html = if_img_convert_to_html(v)
-		if html == None:
-			return repr(v)
-		else:
-			return add_html_escape(html)
+		return repr(v)
 
 	def record_env(self, frame, lineno):
 		if self.time >= 100:
