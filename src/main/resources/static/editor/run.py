@@ -11,6 +11,7 @@ import json
 import re
 import sys
 import types
+import traceback
 import frame_locals_to_fast
 
 # Code manipulation
@@ -133,37 +134,18 @@ class Logger(bdb.Bdb):
 
 	def update_values(self, frame, lineno: int):
 		line_time = "(%s,%d)" % (lineno, self.time)
-		print("Looking for values at '%s' for line '%s'" % (line_time, frame.f_lineno))
 		if line_time in self.values:
 			# Replace the current values with the given ones first
 			env = self.values[line_time]
-
-			print("Updating values at '%s'" % line_time)
-
 			for varname in frame.f_locals:
 				# if varname in self.preexisting_locals: continue
 				if varname in env:
 					new_value = eval(env[varname])
-					print("\t'%s': '%s' -> '%s'" % (varname, repr(frame.f_locals[varname]), repr(new_value)))
 					frame.f_locals.update({ varname: new_value })
 					frame_locals_to_fast(frame)
 					# ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
 
 	def user_line(self, frame):
-		# print("user_line ============================================")
-		# print(frame.f_code.co_name)
-		# print(frame.f_code.co_names)
-		# print(frame.f_code.co_filename)
-		# print(frame.f_code.co_firstlineno)
-		# print(dir(frame.f_code))
-		# print("lineno")
-		# print(frame.f_lineno)
-		# print(frame.__dir__())
-		# print("globals")
-		# print(frame.f_globals)
-		# print("locals")
-		# print(frame.f_locals)
-
 		if frame.f_code.co_name == "<module>" and self.preexisting_locals == None:
 			self.preexisting_locals = set(frame.f_locals.keys())
 
@@ -282,16 +264,6 @@ class Logger(bdb.Bdb):
 		self.exception = e[1]
 
 	def user_return(self, frame, rv):
-		# print("user_return ============================================")
-		# print(frame.f_code.co_name)
-		# print("lineno")
-		# print(frame.f_lineno)
-		# print(frame.__dir__())
-		# print("globals")
-		# print(frame.f_globals)
-		# print("locals")
-		# print(frame.f_locals)
-
 		if frame.f_code.co_name == "<listcomp>" or frame.f_code.co_name == "<dictcomp>" or frame.f_code.co_filename != "<string>":
 			return
 
@@ -332,12 +304,10 @@ class WriteCollector(ast.NodeVisitor):
 			self.data_at(lineno-1).append(id)
 
 	def visit_Name(self, node):
-		#print("Name " + node.id + " @ line " + str(node.lineno) + " col " + str(node.col_offset))
 		if isinstance(node.ctx, ast.Store):
 			self.record_write(node.lineno, node.id)
 
 	def visit_Subscript(self, node):
-		#print("Subscript " + str(node.ctx) + " " + str(node.value) + " " + str(node.col_offset))
 		if isinstance(node.ctx, ast.Store):
 			id = self.find_id(node)
 			if id == None:
@@ -373,6 +343,9 @@ def compute_writes(lines):
 					raise
 	except Exception as e:
 		exception = e
+
+		# Print the exception without crashing the program
+		traceback.print_exc()
 
 	writes = {}
 	if exception == None:
@@ -456,9 +429,6 @@ def main(file, values_file):
 
 	with open(file + ".out", "w") as out:
 		out.write(json.dumps((return_code, writes, run_time_data)))
-
-	if exception != None:
-		raise exception
 
 if __name__ == '__main__':
 	if len(sys.argv) > 2:

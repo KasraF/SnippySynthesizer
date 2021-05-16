@@ -40,6 +40,7 @@ $(function() {
 			language: 'python',
 			theme: 'vs-dark',
 			automaticLayout: true,
+			quickSuggestions: false,
 			fontSize: 15,
 			minimap: {
 				enabled: false

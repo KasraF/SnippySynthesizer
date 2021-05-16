@@ -91,13 +91,12 @@ self.onmessage = function (msg) {
 			let content = msg.data.program;
 			let values = msg.data.values;
 
-			console.log('calling run.py with content:');
-			console.log(content);
-			console.log('and values:');
-			console.log(values);
-
-			while (content.includes('"""')) {
-				content = content.replace('"""', '\\"\\"\\"');
+			// Sanitize input
+			if (content.includes('"""')) {
+				content = content.split('"""').join('\\"\\"\\"');
+			}
+			if (content.includes('\\n')) {
+				content = content.split('\\n').join('\\\\n');
 			}
 
 			const clearEnv =
