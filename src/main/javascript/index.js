@@ -25,16 +25,16 @@ $(function() {
 		{
 			value: "\"\"\"\n" +
 				"Abbreviate\n" +
-				"    Return the abbreviation of\n" +
-				"    the given name:\n" +
-				"    >>> task('Alan Turing') == 'A.T'\n" +
+				"\tReturn the abbreviation of\n" +
+				"\tthe given name:\n" +
+				"\t>>> task('Alan Turing') == 'A.T'\n" +
 				"\"\"\"\n" +
 				"def task(name):\n" +
-				"    # 1. Split the name into words\n" +
-				"    # 2. Get the first letter of each\n" +
-				"    # 3. Put dots between them\n" +
-				"    abbr = ''\n" +
-				"    return abbr\n" +
+				"\t# 1. Split the name into words\n" +
+				"\t# 2. Get the first letter of each\n" +
+				"\t# 3. Put dots between them\n" +
+				"\tabbr = ''\n" +
+				"\treturn abbr\n" +
 				"\n" +
 				"task('Augusta Ada King')\n",
 			language: 'python',
