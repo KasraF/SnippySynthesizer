@@ -12,7 +12,9 @@ class SingleVariablePredicate(
 	val retType: Types,
 	val values: List[Any]) extends Predicate {
 
-	// CODE BELOW MODIFIED FROM POPPY
+	// === BEGIN Partial String/List Spec ===
+
+	/*
 
 	// map all strings "xyz" to "xyz.*"
 	def valuesToSpec(s: Any): Any = s match {
@@ -74,24 +76,26 @@ class SingleVariablePredicate(
 			}
 		}
 	}
+	*/
+	// === END OF Partial String/List Spec ===
 
 	// ORIGINAL LOOPY CODE
-//	override def evaluate(program: ASTNode): Option[SingleAssignment] = {
-//		if (program.nodeType != this.retType || program.values.contains(None)) {
-//			None
-//		} else {
-//			if (values.zip(program.values).forall(pair => pair._1 == pair._2.get)) {
-//				if (program.usesVariables) {
-//					Some(SingleAssignment(this.varName, program))
-//				}
-//				else {
-//					this.oeManager.remove(program)
-//					None
-//				}
-//			} else {
-//				None
-//			}
-//		}
-//	}
+	override def evaluate(program: ASTNode): Option[SingleAssignment] = {
+		if (program.nodeType != this.retType || program.values.contains(None)) {
+			None
+		} else {
+			if (values.zip(program.values).forall(pair => pair._1 == pair._2.get)) {
+				if (program.usesVariables) {
+					Some(SingleAssignment(this.varName, program))
+				}
+				else {
+					this.oeManager.remove(program)
+					None
+				}
+			} else {
+				None
+			}
+		}
+	}
 }
 
