@@ -12,6 +12,8 @@ import net.liftweb.json.JsonParser
 import scala.collection.mutable
 
 class SynthesisTask(
+	val id: Int,
+
 	// Problem definition
 	val parameters: List[(String, ast.Types.Value)],
 	val outputVariables: List[String],
@@ -43,6 +45,10 @@ object SynthesisTask
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
 		val previousEnvMap: Map[Int, Map[String, Any]] = input("previousEnvs").asInstanceOf[Map[String, Map[String, Any]]].map(tup => tup._1.toInt -> tup._2)
+		val id: Int = input.get("id")
+			.filter(_.isInstanceOf[Number])
+			.map(_.asInstanceOf[Number].intValue())
+			.getOrElse(0)
 
 		// First, build a tuple of (prevEnv, env) for all the envs
 		val allEnvs: List[(Option[Map[String, Any]], Map[String, Any])] = envs.map(env =>
@@ -110,6 +116,7 @@ object SynthesisTask
 		}
 
 		new SynthesisTask(
+			id,
 			parameters,
 			outputVarNames,
 			vocab,

@@ -73,6 +73,7 @@ object Snippy extends App
 		val stdout = scala.sys.process.stdout
 		val stdin = scala.sys.process.stdin
 		var code: Option[String] = None
+		var id: Int = 0
 
 		try {
 			// TODO What is this?
@@ -80,6 +81,7 @@ object Snippy extends App
 
 			val taskStr = StdIn.readLine()
 			val task = SynthesisTask.fromString(taskStr)
+			id = task.id
 
 			if (task.contexts.exists(_.nonEmpty)) {
 				val deadline = timeout.seconds.fromNow
@@ -103,7 +105,7 @@ object Snippy extends App
 			case e: Throwable => stderr.println(e.toString)
 		}
 
-		val solution = new SynthResult(0, code.isDefined, code)
+		val solution = new SynthResult(id, code.isDefined, code)
 		stdout.println(json.Serialization.write(solution)(json.DefaultFormats))
 		stdout.flush()
 		System.gc()
