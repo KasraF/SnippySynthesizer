@@ -451,8 +451,9 @@ abstract sealed class ListLookup[T](lhs: ListNode[T], rhs: IntNode) extends Bina
 	override val code: String = s"${lhs.parensIfNeeded}[${rhs.code}]"
 
 	override def doOp(l: Any, r: Any): Option[T] = (l, r) match {
-		case (lst: List[T], idx: Int) =>
-			if (idx >= 0 && idx < lst.length) Some(lst(idx)) else None
+		case (lst: List[T], idx: Int) if idx >= 0 && idx < lst.length => Some(lst(idx))
+		case (lst: List[T], idx: Int) if idx < 0 && idx >= -lst.length => Some(lst(lst.length + idx))
+		case (_: List[T], _: Int) => None
 		case _ => wrongType(l, r)
 	}
 }

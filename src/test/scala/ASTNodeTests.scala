@@ -240,9 +240,12 @@ class ASTNodeTests extends JUnitSuite
 
 			override def updateValues(contexts: Contexts): IntListNode = ???
 		}, IntLiteral(0, 1))
-		val code2 = StringListLookup(new StringListNode
+
+		assertEquals(-1123, code1.values.head.get)
+
+		val strList = new StringListNode
 		{
-			override val values: List[Option[Iterable[String]]] = List("abc" :: "def" :: Nil).map(Some(_))
+			override val values: List[Option[Iterable[String]]] = List("abc" :: "def" :: "ghi" :: Nil).map(Some(_))
 			override protected val parenless: Boolean = true
 			override val code: String = "['abc', 'def']"
 			override val height: Int = 1
@@ -254,9 +257,24 @@ class ASTNodeTests extends JUnitSuite
 			override lazy val usesVariables: Boolean = false
 
 			override def updateValues(contexts: Contexts): StringListNode = ???
-		}, IntLiteral(1, 1))
-		assertEquals(-1123, code1.values.head.get)
-		assertEquals("def", code2.values.head.get)
+		}
+
+		val code2 = StringListLookup(strList, IntLiteral(0, 1))
+		assertEquals(Some("abc"), code2.values.head)
+		val code3 = StringListLookup(strList, IntLiteral(1, 1))
+		assertEquals(Some("def"), code3.values.head)
+		val code4 = StringListLookup(strList, IntLiteral(2, 1))
+		assertEquals(Some("ghi"), code4.values.head)
+		val code5 = StringListLookup(strList, IntLiteral(3, 1))
+		assertEquals(None, code5.values.head)
+		val code6 = StringListLookup(strList, IntLiteral(-1, 1))
+		assertEquals(Some("ghi"), code6.values.head)
+		val code7 = StringListLookup(strList, IntLiteral(-2, 1))
+		assertEquals(Some("def"), code7.values.head)
+		val code8 = StringListLookup(strList, IntLiteral(-3, 1))
+		assertEquals(Some("abc"), code8.values.head)
+		val code9 = StringListLookup(strList, IntLiteral(-4, 1))
+		assertEquals(None, code9.values.head)
 	}
 
 	@Test def containsTest(): Unit = {
