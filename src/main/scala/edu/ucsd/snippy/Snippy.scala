@@ -2,8 +2,7 @@ package edu.ucsd.snippy
 
 import edu.ucsd.snippy.ast.ASTNode
 import net.liftweb.json
-import net.liftweb.json.Formats
-import net.liftweb.json.JObject
+import net.liftweb.json.{Formats, JObject, JsonParser}
 
 import java.io.File
 import scala.concurrent.duration._
@@ -18,7 +17,7 @@ import java.io.FileWriter
 case class SynthResult(
 	id: Int,
 	success: Boolean,
-	program: Option[String],
+	result: Option[String],
 	time: Int,
 	programsSeen: Int)
 
@@ -74,14 +73,14 @@ object Snippy extends App
 	def synthesizeIO(timeout: Int = 7): Unit = {
 		val stdout = scala.sys.process.stdout
 		val stdin = scala.sys.process.stdin
-		var code: Option[String] = None
+		var result: Option[String] = None
 		var id: Int = -1
+		var success: Boolean = false
+		val taskStr = StdIn.readLine()
 
 		try {
 			// TODO What is this?
 			implicit val formats: Formats = json.DefaultFormats
-
-			val taskStr = StdIn.readLine()
 			val task = SynthesisTask.fromString(taskStr)
 			id = task.id
 
@@ -92,7 +91,8 @@ object Snippy extends App
 					for (solution <- task.enumerator) {
 						solution match {
 							case Some(assignment) =>
-								code = Some(assignment.code())
+								result = Some(assignment.code())
+								success = true
 								break
 							case _ => ()
 						}
@@ -104,11 +104,22 @@ object Snippy extends App
 				}
 			}
 		} catch {
-			case e: Throwable => stderr.println(e.toString)
+			case e: Throwable =>
+				stderr.println(e.toString)
+				result = Some(e.getMessage)
+				if (id == -1) {
+					// Try to recover the id
+					try {
+						id = JsonParser.parse(taskStr).asInstanceOf[JObject].values.get("id")
+							.filter(_.isInstanceOf[Number])
+							.map(_.asInstanceOf[Number].intValue())
+							.getOrElse(-1)
+					}
+				}
 		}
 
 		// TODO Check time and programs seen
-		val solution = SynthResult(id, code.isDefined, code, 0, 0)
+		val solution = SynthResult(id, success, result, 0, 0)
 		stdout.println(json.Serialization.write(solution)(json.DefaultFormats))
 		stdout.flush()
 		System.gc()
