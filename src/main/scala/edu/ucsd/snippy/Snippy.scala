@@ -15,10 +15,12 @@ import scala.util.control.Breaks._
 import java.io.BufferedWriter
 import java.io.FileWriter
 
-class SynthResult(
-	val id: Int,
-	val success: Boolean,
-	val program: Option[String])
+case class SynthResult(
+	id: Int,
+	success: Boolean,
+	program: Option[String],
+	time: Int,
+	programsSeen: Int)
 
 object Snippy extends App
 {
@@ -27,7 +29,7 @@ object Snippy extends App
 		override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
 	}
 
-	def synthesize(file: JFile, timeout: Int = 7) : (Option[String], Int, Int) =
+	def synthesize(file: JFile, timeout: Int = 7) : SynthResult =
 	{
 		val buff = fromFile(file)
 		val rs = synthesize(buff.mkString, timeout)
@@ -35,32 +37,32 @@ object Snippy extends App
 		rs
 	}
 
-	def synthesize(taskStr: String, timeout: Int): (Option[String], Int, Int) =
+	def synthesize(taskStr: String, timeout: Int): SynthResult =
 	{
 		synthesize(SynthesisTask.fromString(taskStr), timeout)
 	}
 
-	def synthesize(task: SynthesisTask, timeout: Int) : (Option[String], Int, Int) =
+	def synthesize(task: SynthesisTask, timeout: Int) : SynthResult =
 	{
 		// If the environment is empty, we might go into an infinite loop :/
 		if (!task.contexts.exists(_.nonEmpty)) {
-			return (Some("None"), 0, 0)
+			return SynthResult(task.id, success = true, Some("None"), 0, 0)
 		}
 
-		var rs: (Option[String], Int, Int) = (None, -1, 0)
+		var rs: SynthResult = SynthResult(task.id, success = false, None, -1, 0)
 		val deadline = timeout.seconds.fromNow
 
 		breakable {
 			for (solution <- task.enumerator) {
 				solution match {
 					case Some(assignment) =>
-						rs = (Some(assignment.code()), timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
+						rs = SynthResult(task.id, success = true, Some(assignment.code()), timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
 						break
 					case _ => ()
 				}
 
 				if (!deadline.hasTimeLeft) {
-					rs = (None, timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
+					rs = SynthResult(task.id, success = false, None, timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
 					break
 				}
 			}
@@ -73,7 +75,7 @@ object Snippy extends App
 		val stdout = scala.sys.process.stdout
 		val stdin = scala.sys.process.stdin
 		var code: Option[String] = None
-		var id: Int = 0
+		var id: Int = -1
 
 		try {
 			// TODO What is this?
@@ -105,7 +107,8 @@ object Snippy extends App
 			case e: Throwable => stderr.println(e.toString)
 		}
 
-		val solution = new SynthResult(id, code.isDefined, code)
+		// TODO Check time and programs seen
+		val solution = SynthResult(id, code.isDefined, code, 0, 0)
 		stdout.println(json.Serialization.write(solution)(json.DefaultFormats))
 		stdout.flush()
 		System.gc()
@@ -135,8 +138,8 @@ object Snippy extends App
 		}
 
 		val (program, time, count) = synthesize(file, timeout) match {
-			case (None, time, count) => ("None", time, count)
-			case (Some(program), time, count) => (program, time, count)
+			case SynthResult(_, _, None, time, count) => ("None", time, count)
+			case SynthResult(_, _, Some(program), time, count) => (program, time, count)
 		}
 
 		val writer = new BufferedWriter(new FileWriter(args.head + ".out"))

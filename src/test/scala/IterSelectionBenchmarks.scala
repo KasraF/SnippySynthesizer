@@ -1,5 +1,5 @@
 import java.io.File
-import edu.ucsd.snippy.Snippy
+import edu.ucsd.snippy.{Snippy, SynthResult}
 import net.liftweb.json
 import net.liftweb.json.{DefaultFormats, JObject}
 import net.liftweb.json.JsonAST.JValue
@@ -28,9 +28,9 @@ object IterSelectionBenchmarks extends App {
 				implicit val formats: DefaultFormats.type = net.liftweb.json.DefaultFormats
 				val newTaskStr = json.prettyRender(json.Extraction.decompose(taskCopy))
 				Snippy.synthesize(newTaskStr, timeout) match {
-					case (None, _: Int, _: Int) =>
+					case SynthResult(_, _, None, _: Int, _: Int) =>
 						println(s"$name,$numExamples,$numIters,Timeout")
-					case (Some(program: String), _: Int, _: Int) =>
+					case SynthResult(_, _, Some(program: String), _: Int, _: Int) =>
 						val correct = task.get("solutions") match {
 							case Some(solutions) if solutions.asInstanceOf[List[String]].contains(program) => '+'
 							case Some(_) =>

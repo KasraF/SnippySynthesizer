@@ -43,10 +43,10 @@ class PredicateTests extends JUnitSuite
 
 		val solution = Snippy.synthesize(task, 7)
 
-		assert(solution._1.isDefined)
+		assert(solution.program.isDefined)
 
 		// This is optional, as long as we get a correct solution
-		assertEquals("x = 1", solution._1.get)
+		assertEquals("x = 1", solution.program.get)
 	}
 
 	@Test
@@ -135,7 +135,7 @@ class PredicateTests extends JUnitSuite
 
 		val solution = Snippy.synthesize(task, 7)
 
-		assert(solution._1.isDefined)
+		assert(solution.program.isDefined)
 
 		// This is optional, as long as we get a correct solution
 		// assertEquals("y = x + 3\nx = y - 1", solution._1.get)
@@ -176,10 +176,10 @@ class PredicateTests extends JUnitSuite
 
 		val solution = Snippy.synthesize(task, 7)
 
-		assert(solution._1.isDefined)
+		assert(solution.program.isDefined)
 
 		// This is optional, as long as we get a correct solution
-		assertEquals("x += x\ny = x + y", solution._1.get)
+		assertEquals("x += x\ny = x + y", solution.program.get)
 	}
 
 	@Test
@@ -329,7 +329,7 @@ class PredicateTests extends JUnitSuite
 
 		val solution = Snippy.synthesize(task, 7)
 
-		assert(solution._1.isDefined)
+		assert(solution.program.isDefined)
 
 		// This is optional, as long as we get a correct solution
 		// assertEquals("x = x + x\nz = x + x\ny = x + y", solution._1.get)
