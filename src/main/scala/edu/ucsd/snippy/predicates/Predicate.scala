@@ -7,11 +7,14 @@ import edu.ucsd.snippy.utils.{Assignment, Utils}
 object Predicate {
 	def getPredicate(
 		varName: String,
-		envs: List[Map[String, Any]],
+		values: List[Option[Any]],
 		oeManager: OEValuesManager): SingleVariablePredicate =
 	{
-		val values = envs.flatMap(map => map.filter(_._1 == varName).values)
-		new SingleVariablePredicate(oeManager, varName, Utils.getTypeOfAll(values), values)
+		new SingleVariablePredicate(
+			oeManager,
+			varName,
+			Utils.getTypeOfAll(values.filter(_.isDefined).map(_.get)),
+			values)
 	}
 }
 

@@ -44,6 +44,7 @@ object SynthesisTask
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
+		val optEnvs: List[Map[String, Any]] = input.get("optEnvs").asInstanceOf[Option[List[Map[String, Any]]]].getOrElse(Nil)
 		val previousEnvMap: Map[Int, Map[String, Any]] = input("previousEnvs").asInstanceOf[Map[String, Map[String, Any]]].map(tup => tup._1.toInt -> tup._2)
 		val id: Int = input.get("id")
 			.filter(_.isInstanceOf[Number])
@@ -82,13 +83,20 @@ object SynthesisTask
 				env.filter(entry => !outputVarNames.contains(entry._1)) ++
 					outputVarNames.filter(prevEnv.contains).collect(varName => varName -> prevEnv(varName)).toMap
 			case (None, env) => env.filter(entry => !outputVarNames.contains(entry._1))
-		}
+		} ++ optEnvs
 
 		val oeManager = new InputsValuesManager
 		val additionalLiterals = getStringLiterals(justEnvs, outputVarNames)
+		val variableValues: Map[String, List[Option[Any]]] =
+			outputVarNames.map(varName =>
+				varName -> (
+					justEnvs.map(env => Some(env(varName))) ++
+					optEnvs.map(_ => None)
+			))
+			.toMap
 
 		val predicate: Predicate = outputVarNames match {
-			case single :: Nil => Predicate.getPredicate(single, justEnvs, oeManager)
+			case single :: Nil => Predicate.getPredicate(single, variableValues(single), oeManager)
 			case multiple =>
 				val (newContexts, pred) = this.mulitvariablePredicate(multiple, contexts, justEnvs)
 				contexts = newContexts
@@ -105,13 +113,15 @@ object SynthesisTask
 		val enumerator: SolutionEnumerator = predicate match {
 			case pred: MultilineMultivariablePredicate =>
 				new ConditionalSingleEnumMultivarSolutionEnumerator(pred, parameters, additionalLiterals)
-			case pred: SingleVariablePredicate =>
+//			case pred: SingleVariablePredicate =>
+//				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+//				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
+//				val enumerator = new enumeration.ProbEnumerator(vocab, oeManager, contexts, false, 0, bank, mini, 100)
+//				new ConditionalSingleEnumSingleVarSolutionEnumerator(enumerator, pred.varName, pred.retType, pred.values, contexts)
+			case _ =>
 				val bank = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val mini = mutable.Map[Int, mutable.ArrayBuffer[ASTNode]]()
 				val enumerator = new enumeration.ProbEnumerator(vocab, oeManager, contexts, false, 0, bank, mini, 100)
-				new ConditionalSingleEnumSingleVarSolutionEnumerator(enumerator, pred.varName, pred.retType, pred.values, contexts)
-			case _ =>
-				val enumerator = new BasicEnumerator(vocab, oeManager, contexts)
 				new BasicSolutionEnumerator(predicate, enumerator)
 		}
 

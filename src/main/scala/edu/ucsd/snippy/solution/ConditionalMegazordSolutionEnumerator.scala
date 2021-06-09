@@ -32,7 +32,7 @@ class ConditionalMegazordSolutionEnumerator(
 								new InputsValuesManager,
 								varName,
 								typ,
-								filterByIndices(outputValues, thenIndices))
+								filterByIndices(outputValues, thenIndices).map(Some(_)))
 							val enum = new ProbEnumerator(
 								VocabFactory.apply(variables, additionalLiterals),
 								predicate.oeManager,
@@ -49,7 +49,7 @@ class ConditionalMegazordSolutionEnumerator(
 								new InputsValuesManager,
 								varName,
 								typ,
-								filterByIndices(outputValues, thenIndices))
+								filterByIndices(outputValues, thenIndices).map(Some(_)))
 							val thenEnum = new ProbEnumerator(
 								VocabFactory.apply(variables, additionalLiterals),
 								thenPredicate.oeManager,
@@ -65,7 +65,7 @@ class ConditionalMegazordSolutionEnumerator(
 								new InputsValuesManager,
 								varName,
 								typ,
-								filterByIndices(outputValues, elseIndices))
+								filterByIndices(outputValues, elseIndices).map(Some(_)))
 							val elseEnum = new ProbEnumerator(
 								VocabFactory.apply(variables, additionalLiterals),
 								elsePredicate.oeManager,
@@ -87,14 +87,14 @@ class ConditionalMegazordSolutionEnumerator(
 							(thenIndices, elseIndices) -> UnaryPartition(enum)
 						} else {
 							// Then case
-							val thenInputContexts = filterByIndices(inputContexts, thenIndices)
-							val thenOutputEnvs = filterByIndices(outputEnvs, thenIndices)
+							val thenInputContexts: List[Context] = filterByIndices(inputContexts, thenIndices)
+							val thenOutputEnvs: List[Context] = filterByIndices(outputEnvs, thenIndices)
 							val (_, thenPred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), thenInputContexts, thenOutputEnvs)
 							val thenEnum = new InterleavedSolutionEnumerator(thenPred, variables, additionalLiterals)
 
 							// Else case
-							val elseInputContexts = filterByIndices(inputContexts, elseIndices)
-							val elseOutputEnvs = filterByIndices(outputEnvs, elseIndices)
+							val elseInputContexts: List[Context] = filterByIndices(inputContexts, elseIndices)
+							val elseOutputEnvs: List[Context] = filterByIndices(outputEnvs, elseIndices)
 							val (_, elsePred) = SynthesisTask.mulitvariablePredicate(multiple.map(_._1), elseInputContexts, elseOutputEnvs)
 							val elseEnum = new InterleavedSolutionEnumerator(elsePred, variables, additionalLiterals)
 
