@@ -44,7 +44,10 @@ object SynthesisTask
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
-		val optEnvs: List[Map[String, Any]] = input.get("optEnvs").asInstanceOf[Option[List[Map[String, Any]]]].getOrElse(Nil)
+		val optEnvs: List[Map[String, Any]] = input.get("optEnvs")
+			.asInstanceOf[Option[List[Map[String, Any]]]]
+			.getOrElse(Nil)
+			.map(this.cleanupInputs)
 		val previousEnvMap: Map[Int, Map[String, Any]] = input("previousEnvs").asInstanceOf[Map[String, Map[String, Any]]].map(tup => tup._1.toInt -> tup._2)
 		val id: Int = input.get("id")
 			.filter(_.isInstanceOf[Number])
