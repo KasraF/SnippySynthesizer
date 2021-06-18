@@ -60,7 +60,7 @@ object Snippy extends App
 					case _ => ()
 				}
 
-				if (!deadline.hasTimeLeft) {
+				if (!deadline.hasTimeLeft || Thread.interrupted()) {
 					rs = SynthResult(task.id, success = false, None, timeout * 1000 - deadline.timeLeft.toMillis.toInt, task.enumerator.programsSeen)
 					break
 				}
