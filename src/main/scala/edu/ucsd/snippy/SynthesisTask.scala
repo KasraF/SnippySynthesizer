@@ -3,7 +3,7 @@ package edu.ucsd.snippy
 import edu.ucsd.snippy.ast._
 import edu.ucsd.snippy.enumeration.{BasicEnumerator, InputsValuesManager, OEValuesManager}
 import edu.ucsd.snippy.predicates._
-import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSingleEnumMultivarSolutionEnumerator, ConditionalSingleEnumSingleVarSolutionEnumerator, SolutionEnumerator}
+import edu.ucsd.snippy.solution.{BasicSolutionEnumerator, ConditionalSingleEnumMultivarSimultaneousSolutionEnumerator, ConditionalSingleEnumMultivarSolutionEnumerator, ConditionalSingleEnumSingleVarSolutionEnumerator, SolutionEnumerator}
 import edu.ucsd.snippy.utils._
 import edu.ucsd.snippy.vocab._
 import net.liftweb.json.JsonAST.JObject
@@ -12,7 +12,7 @@ import net.liftweb.json.JsonParser
 import scala.collection.mutable
 
 class SynthesisTask(
-	// Problem definition
+	// Problem definition8
 	val parameters: List[(String, ast.Types.Value)],
 	val outputVariables: List[String],
 	val vocab     : VocabFactory,
@@ -38,7 +38,7 @@ object SynthesisTask
 	val reserved_names: Set[String] =
 		Set("time", "#", "$", "lineno", "prev_lineno", "next_lineno", "__run_py__")
 
-	def fromString(jsonString: String, size: Boolean = true): SynthesisTask = {
+	def fromString(jsonString: String, size: Boolean = true, simAssign: Boolean = false): SynthesisTask = {
 		val input = JsonParser.parse(jsonString).asInstanceOf[JObject].values
 		val outputVarNames: List[String] = input("varNames").asInstanceOf[List[String]]
 		val envs: List[Map[String, Any]] = input("envs").asInstanceOf[List[Map[String, Any]]]
@@ -97,6 +97,8 @@ object SynthesisTask
 		val vocab: VocabFactory = VocabFactory(parameters, additionalLiterals, size)
 
 		val enumerator: SolutionEnumerator = predicate match {
+			case pred: MultilineMultivariablePredicate if simAssign =>
+				new ConditionalSingleEnumMultivarSimultaneousSolutionEnumerator(pred, parameters, additionalLiterals)
 			case pred: MultilineMultivariablePredicate =>
 				new ConditionalSingleEnumMultivarSolutionEnumerator(pred, parameters, additionalLiterals)
 			case pred: SingleVariablePredicate if size =>

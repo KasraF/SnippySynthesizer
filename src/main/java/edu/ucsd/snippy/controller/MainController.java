@@ -32,7 +32,7 @@ public class MainController
 
 		try {
 			this.logger.debug(problem);
-			rs = Snippy.synthesize(problem, SYNTH_DURATION)
+			rs = Snippy.synthesize(problem, SYNTH_DURATION, false)
 					._1()
 					.getOrElse(() -> "# Synthesis Failed");
 			this.logger.debug(rs);

@@ -27,7 +27,7 @@ object Snippy extends App
 		override def compare(that: RankedProgram): Int = this.rank.compare(that.rank)
 	}
 
-	def synthesize(file: JFile, timeout: Int = 7) : (Option[String], Int, Int) =
+	def synthesize(file: JFile, timeout: Int) : (Option[String], Int, Int) =
 	{
 		val buff = fromFile(file)
 		val rs = synthesize(buff.mkString, timeout)
@@ -35,9 +35,9 @@ object Snippy extends App
 		rs
 	}
 
-	def synthesize(taskStr: String, timeout: Int): (Option[String], Int, Int) =
+	def synthesize(taskStr: String, timeout: Int = 7, simAssign: Boolean = false): (Option[String], Int, Int) =
 	{
-		synthesize(SynthesisTask.fromString(taskStr), timeout)
+		synthesize(SynthesisTask.fromString(taskStr, simAssign), timeout)
 	}
 
 	def synthesize(task: SynthesisTask, timeout: Int) : (Option[String], Int, Int) =
