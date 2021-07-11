@@ -9,7 +9,11 @@ import scala.io.Source.fromFile
 import scala.util.Random
 
 object IterSelectionBenchmarks extends App {
-	def runBenchmarks(dir: File, timeout: Int, print: Boolean = true)
+	def runBenchmarks(dir: File,
+					  timeout: Int,
+					  print: Boolean = true,
+					  maxExamples: Int = 4,
+					  maxIters: Int = 5)
 	{
 		dir.listFiles()
 			.filter(_.getName.contains(".fullex.json"))
@@ -18,7 +22,7 @@ object IterSelectionBenchmarks extends App {
 				val name: String = file.getName.substring(0, file.getName.indexOf('.'))
 				val task = json.parse(fromFile(file).mkString).asInstanceOf[JObject].values
 				val examples = collectExamples(task).filter(_._2.nonEmpty).sortBy(_._1._1.toInt)
-				for (numExamples <- 1 to 4; numIters <- 1 to 5) {
+				for (numExamples <- 1 to maxExamples; numIters <- 1 to maxIters) {
 					val participatingExamples = examples.take(numExamples)
 
 					val taskCopy = task.filter(kv => kv._1 != "envs" && kv._1 != "previousEnvs") ++
@@ -56,14 +60,19 @@ object IterSelectionBenchmarks extends App {
 		}
 	}
 
-	val timeout = 7 //seconds
+	val (maxExamples, maxIters, timeout) = args.map(_.toIntOption).toList match {
+		case Some(maxExample) :: Some(maxIters) :: Some(timeout) :: Nil => (maxExample, maxIters, timeout)
+		case Some(timeout) :: Nil => (4, 5, timeout)
+		case _ => (4, 5, 7)
+	}
+
 	val dir = new File("src/test/resources/frangel_all_iters/")
 
 	println("name,examples,iters,correct")
 
 	// First, warm up!
-	runBenchmarks(dir, timeout, print = false)
+	runBenchmarks(dir, timeout, print = false, maxExamples, maxIters)
 
 	// Then actually run. :)
-	runBenchmarks(dir, timeout)
+	runBenchmarks(dir, timeout, print = true, maxExamples, maxIters)
 }

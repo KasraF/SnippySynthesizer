@@ -46,7 +46,11 @@ object NoCFBenchmarks extends App
 					}
 				}
 		}
-	val timeout = 7
+
+	val timeout: Int = args.lastOption.map(_.toIntOption) match {
+		case Some(Some(t)) => t
+		case _ => 7
+	}
 
 	//warmup
 	for (file <- oneVar)
