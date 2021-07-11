@@ -1,3 +1,4 @@
+package edu.ucsd.snippy
 import java.io.File
 import edu.ucsd.snippy.Snippy
 import net.liftweb.json
