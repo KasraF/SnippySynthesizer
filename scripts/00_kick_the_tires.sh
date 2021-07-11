@@ -31,6 +31,17 @@ function loopy_test {
     fi;
 }
 
+CURR_DIR=$PWD;
+
+if [[ -d synthesizer ]]; then
+    cd synthesizer;
+fi;
+
+if [[ ! -f pom.xml ]]; then
+    echo "Please navigate to the synthesizer directory before running this script.";
+    exit 1;
+fi;
+
 # First, recompile
 START_TIME=$SECONDS
 echo -ne "Compiling:\t";
@@ -44,3 +55,5 @@ else
     echo "Compiling the synthesizer failed:";
     echo "$BUILD_RESULTS";
 fi;
+
+cd $PWD;
