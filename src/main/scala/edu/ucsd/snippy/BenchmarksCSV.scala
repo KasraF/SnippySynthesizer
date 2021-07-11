@@ -59,18 +59,22 @@ object BenchmarksCSV extends App
 	DebugPrints.debug = false
 	DebugPrints.info = false
 
+	var filterArgs = args
 	val timeout: Int = args.lastOption.map(_.toIntOption) match {
-		case Some(Some(t)) => t
+		case Some(Some(t)) => {
+			filterArgs = args.dropRight(1)
+			t
+		}
 		case _ => 5 * 60
 	}
 
 	println("suite,group,name,variables,time,count,correct")
-	val benchmarks = if (args.nonEmpty) {
+	val benchmarks = if (filterArgs.nonEmpty) {
 		benchmarksDir.listFiles()
 			.flatMap(f => if (f.isDirectory) f :: f.listFiles().toList else Nil)
 			.filter(_.isDirectory)
-			.filter(dir => if (dir.getParentFile.getName == "resources") args.contains(dir.getName)
-					       else args.contains(dir.getName) || args.contains(dir.getParentFile.getName))
+			.filter(dir => if (dir.getParentFile.getName == "resources") filterArgs.contains(dir.getName)
+					       else filterArgs.contains(dir.getName) || filterArgs.contains(dir.getParentFile.getName))
 			.toList
 	} else {
 		benchmarksDir.listFiles()
