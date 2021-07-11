@@ -21,7 +21,11 @@ import scala.util.control.Breaks.{break, breakable}
 //noinspection DuplicatedCode,SourceNotClosed,SourceNotClosed
 object NoCFBenchmarks extends App
 {
-	val benchmarksDir = new File("src/test/resources/no-cf")
+	val benchmarksDir = args.headOption match {
+		case Some(s) => if (s.startsWith("-d=")) new File(s.drop("-d=".length))
+						else new File("src/test/resources/no-cf")
+		case _ => new File("src/test/resources/no-cf")
+	}
 	assert(benchmarksDir.isDirectory)
 
 	val oneVar = mutable.ArrayBuffer[File]()
