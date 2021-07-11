@@ -21,6 +21,6 @@ else
     fi;
 fi;
 
-SNIPPY_UTILS=~/vscode/src/snippy.py RUNPY=~/vscode/src/run.py IMGSUM=~/vscode/src/img-summary.py PYTHON3=$(which python3) JAVA=$(which java) SYNTH='~/synthesizer/target/snippy-server-0.1-SNAPSHOT-jar-with-dependencies.jar' ./scripts/code.sh;
+SNIPPY_UTILS=~/vscode/src/snippy.py RUNPY=~/vscode/src/run.py IMGSUM=~/vscode/src/img-summary.py PYTHON3=$(which python3) JAVA=$(which java) SYNTH='../synthesizer/target/snippy-server-0.1-SNAPSHOT-jar-with-dependencies.jar' ./scripts/code.sh;
 
 cd $CURR_DIR;
