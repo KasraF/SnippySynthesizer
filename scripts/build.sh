@@ -6,8 +6,8 @@ CURR_DIR=$PWD;
 cd ~/vscode;
 START_TIME=$SECONDS
 echo -ne "Building VSCode:\t";
-if BUILD_RESULTS=$(yarn); then
-    if BUILD_RESULTS=$(yarn compile); then
+if BUILD_RESULTS=$(yarn 2>&1); then
+    if BUILD_RESULTS=$(yarn compile 2>&1); then
         echo "OK ("$(($SECONDS - $START_TIME))"s)";
         START_TIME=$SECONDS;
         cd ~/synthesizer;
