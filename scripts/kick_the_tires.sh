@@ -44,6 +44,7 @@ fi;
 
 # First, recompile
 START_TIME=$SECONDS
+export MAVEN_OPTS="-Xmx8G";
 echo -ne "Compiling:\t";
 if BUILD_RESULTS=$(mvn clean compile -DskipTests); then
     echo "OK ("$(($SECONDS - $START_TIME))"s)";
