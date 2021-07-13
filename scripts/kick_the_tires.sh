@@ -38,7 +38,7 @@ if [[ -d synthesizer ]]; then
 fi;
 
 if [[ ! -f pom.xml ]]; then
-    echo "Please navigate to the synthesizer directory before running this script.";
+    echo "Please navigate to home (~) or the synthesizer directory (~/synthesizer) before running this script.";
     exit 1;
 fi;
 
@@ -56,4 +56,4 @@ else
     echo "$BUILD_RESULTS";
 fi;
 
-cd $PWD;
+cd $CURR_DIR;
