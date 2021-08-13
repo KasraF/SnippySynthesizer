@@ -29,11 +29,12 @@ if [[ ! -f pom.xml ]]; then
 fi;
 
 echo -n "Compiling... ";
-if BUILD_RESULTS=$(mvn clean compile -DskipTests); then
+if BUILD_RESULTS=$(mvn clean package -Pbenchmark -DskipTests); then
     echo "OK";
 	for benchset in ${BENCHMARKS[*]}; do
 		echo "Running Benchmark set: " $benchset;
-		MAVEN_OPTS="-Xmx8G" mvn exec:java -Dexec.mainClass="edu.ucsd.snippy.BenchmarksCSV" -Dexec.args="$benchset";
+		java -Xmx8G -jar target/snippy-server-0.1-SNAPSHOT-jar-with-dependencies.jar -- $benchset;
+		echo;
 	done;
 else
     echo "Compiling the synthesizer failed:";

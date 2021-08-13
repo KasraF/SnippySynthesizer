@@ -4,11 +4,15 @@ import net.liftweb.json
 import net.liftweb.json.JObject
 
 import java.io.File
+import java.time.{Duration, LocalDateTime}
+import java.util.concurrent._
 import scala.io.Source.fromFile
 
 object BenchmarksCSV extends App
 {
-	def runBenchmark(dir: File, benchTimeout: Int = 7, print: Boolean = true): Unit = {
+	val executorService: ExecutorService = Executors.newCachedThreadPool()
+
+	def runBenchmark(dir: File, benchTimeout: Int = 7, pnt: Boolean = true): Unit = {
 		val suite = if (dir.getParentFile.getName == "resources") "" else dir.getParentFile.getName
 		val group = dir.getName
 		dir.listFiles()
@@ -29,7 +33,22 @@ object BenchmarksCSV extends App
 					val task = json.parse(taskStr).asInstanceOf[JObject].values
 					variables = task("varNames").asInstanceOf[List[String]].length
 
-					Snippy.synthesize(taskStr, benchTimeout) match {
+					if (pnt) print(s"$suite,$group,$name,$variables,")
+
+					val start = LocalDateTime.now()
+					val callable: Callable[(Option[String], Int, Int)] = () => Snippy.synthesize(taskStr, benchTimeout)
+					val promise = this.executorService.submit(callable)
+					val rs = try {
+						promise.get(benchTimeout + 10, TimeUnit.SECONDS)
+					} catch {
+						case _: TimeoutException => (None, Duration.between(start, LocalDateTime.now()).toMillis.toInt, -1)
+						case _: InterruptedException => (None, Duration.between(start, LocalDateTime.now()).toMillis.toInt, -1)
+						case e: ExecutionException => throw e.getCause
+					} finally {
+						promise.cancel(true)
+					}
+
+					rs match {
 						case (Some(program: String), tim: Int, coun: Int) =>
 							time = tim
 							count = coun
@@ -48,7 +67,7 @@ object BenchmarksCSV extends App
 					case _: Throwable => correct = "Error" //sys.process.stderr.println(e)
 				}
 
-				if (print) println(s"$suite,$group,$name,$variables,$time,$count,$correct")
+				if (pnt) println(s"$time,$count,$correct")
 				Runtime.getRuntime.gc()
 			})
 	}
@@ -87,7 +106,7 @@ object BenchmarksCSV extends App
 	println(benchmarks)
 
 	// First, warm up
-	benchmarks.foreach(this.runBenchmark(_, 30, print = false))
+	benchmarks.foreach(this.runBenchmark(_, 30, pnt = false))
 
 	// Then actually run
 	benchmarks.foreach(this.runBenchmark(_, timeout))
