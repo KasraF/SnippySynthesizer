@@ -103,8 +103,6 @@ object BenchmarksCSV extends App
 			.toList
 	}
 
-	println(benchmarks)
-
 	// First, warm up
 	benchmarks.foreach(this.runBenchmark(_, 30, pnt = false))
 
