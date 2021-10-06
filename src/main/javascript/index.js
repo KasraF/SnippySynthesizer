@@ -23,24 +23,41 @@ $(function() {
 	window.editor = monaco.editor.create(
 		document.getElementById('editor'), 
 		{
-			value: "\"\"\"\n" +
-				"Abbreviate\n" +
-				"    Return the abbreviation of\n" +
-				"    the given name:\n" +
-				"    >>> task('Alan Turing') == 'A.T'\n" +
-				"\"\"\"\n" +
-				"def task(name):\n" +
-				"    # 1. Split the name into words\n" +
-				"    # 2. Get the first letter of each\n" +
-				"    # 3. Put dots between them\n" +
-				"    abbr = ''\n" +
-				"    return abbr\n" +
-				"\n" +
-				"task('Augusta Ada King')\n",
+			value: `"""
+String Compression:
+	Implement a method for basic string
+	compression, using the count of
+	repeated characters. You can assume
+	that the string is non-empty, and
+	only contains alphabetic characters.
+	>>> task('aabccca')
+	'2a1b3c1a'
+"""
+def task(s):
+	rs = ''
+
+	return rs
+
+task('aabccca')
+
+"""
++----------------+
+|  Cheat Sheet:  |
++----------------+
+variable = ??
+Tab				-> Go to next variable/row
+Shift + Tab		-> Go to previous variable/row
+Shift + Enter	-> Add example, go to next item
+Enter			-> Submit examples to LooPy
+Esc				-> Exit LooPy
+"""`,
 			language: 'python',
 			theme: 'vs-dark',
 			automaticLayout: true,
 			fontSize: 15,
+            quickSuggestions: false,
+            cursorBlinking: 'solid',
+            matchBrackets: false,
 			minimap: {
 				enabled: false
 			}

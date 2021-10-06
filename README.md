@@ -1,3 +1,3 @@
-# SnipPy Synthesizer
+# LooPy Server
 
-This is the synthesizer backend for [SnipPy](https://weirdmachine.me/papers/2020_snippy.pdf). Please see [the meta-repository](https://github.com/KasraF/SnipPy) for how to build and run SnipPy. 
+This is the backend server _and_ synthesizer for [LooPy](https://loopy.goto.ucsd.edu). Please see [the meta-repository](https://github.com/KasraF/LooPy) for how to build and run LooPy. 

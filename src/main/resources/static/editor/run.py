@@ -1,20 +1,13 @@
-# ---------------------------------------------------------------------------------------------
-#  Copyright (c) Microsoft Corporation. All rights reserved.
-#  Licensed under the MIT License. See License.txt in the project root for license information.
-# ---------------------------------------------------------------------------------------------
-
 import ast
 import base64
 import bdb
-import ctypes
 import io
 import json
 import re
 import sys
 import types
-
-import numpy as np
-from PIL import Image
+import traceback
+import frame_locals_to_fast
 
 # Code manipulation
 
@@ -60,34 +53,15 @@ def replace_empty_lines_with_noop(lines):
 			ws_len = len(line) - len(line.lstrip())
 			ws_computed = line[0:ws_len]
 
-def load_code_lines(file_name):
-	with open(file_name) as f:
-		lines = f.readlines()
+def load_code_lines(filecontent):
+	lines = [line + '\n' for line in filecontent.split('\n')]
 	strip_comments(lines)
 	replace_empty_lines_with_noop(lines)
 	return lines
 
-# Image Processing
-
-
-def is_ndarray_img(v):
-	return isinstance(v, np.ndarray) and v.dtype.name == 'uint8' and len(v.shape) == 3 and v.shape[2] == 3
-
-
 def is_list_img(v):
 	return isinstance(v, list) and len(v) > 0 and isinstance(v[0], list) and len(v[0]) > 0 and (isinstance(v[0][0], list) or isinstance(v[0][0], tuple)) and len(v[0][0]) == 3
 
-
-def if_img_convert_to_html(v):
-	if is_list_img(v):
-		return list_to_html(v, format='png')
-	elif is_ndarray_img(v):
-		return ndarray_to_html(v, format='png')
-	else:
-		return None
-
-
-# Convert PIL.Image to html
 def pil_to_html(img, **kwargs):
 	file_buffer = io.BytesIO()
 	img.save(file_buffer, **kwargs)
@@ -96,44 +70,14 @@ def pil_to_html(img, **kwargs):
 	img_format = kwargs["format"]
 	return f"<img src='data:image/{img_format};base64,{encoded_str}'>"
 
-
-# Convert ndarray to PIL.Image
-def ndarray_to_pil(arr, min_width = None, max_width = None):
-	img = Image.fromarray(arr)
-	h = img.height
-	w = img.width
-	new_width = None
-	if w > max_width:
-		new_width = max_width
-	if w < min_width:
-		new_width = min_width
-	if new_width != None:
-		img = img.resize((new_width, int(h*(new_width / w))), resample = Image.BOX)
-	return img
-
-
-# Convert list of lists to ndarray
-def list_to_ndarray(arr):
-	return np.asarray(arr, dtype=np.uint8)
-
-
-def ndarray_to_html(arr, **kwargs):
-	return pil_to_html(ndarray_to_pil(arr, 60, 150), **kwargs)
-
-
-def list_to_html(arr, **kwargs):
-	return ndarray_to_html(list_to_ndarray(arr), **kwargs)
-
-
 def add_html_escape(html):
 	return f"```html\n{html}\n```"
-
 
 def add_red_format(html):
 	return f"<div style='color:red;'>{html}</div>"
 
 def is_loop_str(str):
-	return re.search("(for|while).*:", str.strip()) != None
+	return re.search("(for|while).*:\w*\n", str) != None
 
 def is_break_str(str):
 	return re.search("break", str.strip()) != None
@@ -158,10 +102,10 @@ class LoopInfo:
 		self.iter = 0
 
 class Logger(bdb.Bdb):
-	def __init__(self, lines, values: {(int, int): {str: any}} = []):
+	def __init__(self, lines, values = []):
 		bdb.Bdb.__init__(self)
 		self.lines = lines
-		self.time: number = 0
+		self.time = 0
 		self.prev_env = None
 		self.data = {}
 		self.active_loops = []
@@ -176,38 +120,7 @@ class Logger(bdb.Bdb):
 			self.data[l] = []
 		return self.data[l]
 
-	def update_values(self, frame, lineno: int):
-		line_time = "(%s,%d)" % (lineno, self.time)
-		print("Looking for values at '%s' for line '%s'" % (line_time, frame.f_lineno))
-		if line_time in self.values:
-			# Replace the current values with the given ones first
-			env = self.values[line_time]
-
-			print("Updating values at '%s'" % line_time)
-
-			for varname in frame.f_locals:
-				# if varname in self.preexisting_locals: continue
-				if varname in env:
-					new_value = eval(env[varname])
-					print("\t'%s': '%s' -> '%s'" % (varname, repr(frame.f_locals[varname]), repr(new_value)))
-					frame.f_locals.update({ varname: new_value })
-					ctypes.pythonapi.PyFrame_LocalsToFast(ctypes.py_object(frame), ctypes.c_int(0))
-
 	def user_line(self, frame):
-		# print("user_line ============================================")
-		# print(frame.f_code.co_name)
-		# print(frame.f_code.co_names)
-		# print(frame.f_code.co_filename)
-		# print(frame.f_code.co_firstlineno)
-		# print(dir(frame.f_code))
-		# print("lineno")
-		# print(frame.f_lineno)
-		# print(frame.__dir__())
-		# print("globals")
-		# print(frame.f_globals)
-		# print("locals")
-		# print(frame.f_locals)
-
 		if frame.f_code.co_name == "<module>" and self.preexisting_locals == None:
 			self.preexisting_locals = set(frame.f_locals.keys())
 
@@ -218,7 +131,6 @@ class Logger(bdb.Bdb):
 
 		adjusted_lineno = frame.f_lineno-1
 
-		self.update_values(frame, str(adjusted_lineno))
 		self.record_loop_end(frame, adjusted_lineno)
 		self.record_env(frame, adjusted_lineno)
 		self.record_loop_begin(frame, adjusted_lineno)
@@ -248,7 +160,6 @@ class Logger(bdb.Bdb):
 
 	def record_loop_begin(self, frame, lineno):
 		# for l in self.active_loops:
-		#	 print("Active loop at line " + str(l.lineno) + ", iter " + str(l.iter))
 		curr_stmt = self.lines[lineno]
 		if is_loop_str(curr_stmt):
 			if len(self.active_loops) > 0 and self.active_loops[-1].lineno == lineno:
@@ -296,13 +207,20 @@ class Logger(bdb.Bdb):
 			return None
 		if isinstance(v, types.ModuleType):
 			return None
-		html = if_img_convert_to_html(v)
-		if html == None:
-			return repr(v)
-		else:
-			return add_html_escape(html)
+		return repr(v)
 
 	def record_env(self, frame, lineno):
+		line_time = "(%s,%d)" % (lineno, self.time)
+		if line_time in self.values:
+			# Replace the current values with the given ones first
+			env = self.values[line_time]
+			for varname in frame.f_locals:
+				if varname in env:
+					new_value = eval(env[varname])
+					frame.f_locals.update({ varname: new_value })
+					frame_locals_to_fast(frame)
+					sys.stderr.write(f'Updated {varname} at {line_time} to {frame}\n')
+
 		if self.time >= 100:
 			self.set_quit()
 			return
@@ -330,22 +248,11 @@ class Logger(bdb.Bdb):
 		self.exception = e[1]
 
 	def user_return(self, frame, rv):
-		# print("user_return ============================================")
-		# print(frame.f_code.co_name)
-		# print("lineno")
-		# print(frame.f_lineno)
-		# print(frame.__dir__())
-		# print("globals")
-		# print(frame.f_globals)
-		# print("locals")
-		# print(frame.f_locals)
-
 		if frame.f_code.co_name == "<listcomp>" or frame.f_code.co_name == "<dictcomp>" or frame.f_code.co_filename != "<string>":
 			return
 
 		adjusted_lineno = frame.f_lineno-1
 
-		self.update_values(frame, "R" + str(adjusted_lineno))
 		self.record_env(frame, "R" + str(adjusted_lineno))
 		if self.exception == None:
 			r = self.compute_repr(rv)
@@ -380,16 +287,14 @@ class WriteCollector(ast.NodeVisitor):
 			self.data_at(lineno-1).append(id)
 
 	def visit_Name(self, node):
-		#print("Name " + node.id + " @ line " + str(node.lineno) + " col " + str(node.col_offset))
 		if isinstance(node.ctx, ast.Store):
 			self.record_write(node.lineno, node.id)
 
 	def visit_Subscript(self, node):
-		#print("Subscript " + str(node.ctx) + " " + str(node.value) + " " + str(node.col_offset))
 		if isinstance(node.ctx, ast.Store):
 			id = self.find_id(node)
 			if id == None:
-				print("Warning: did not find id in subscript")
+				sys.stderr.write("Warning: did not find id in subscript\n")
 			else:
 				self.record_write(node.lineno, id)
 
@@ -420,11 +325,11 @@ def compute_writes(lines):
 				if not did_lines_change:
 					raise
 	except Exception as e:
+		traceback.print_exc()
 		exception = e
 
 	writes = {}
 	if exception == None:
-		#print(ast.dump(root))
 		write_collector = WriteCollector()
 		write_collector.visit(root)
 		writes = write_collector.data
@@ -436,12 +341,11 @@ def compute_runtime_data(lines, values):
 		return ({}, exception)
 	code = "".join(lines)
 	l = Logger(lines, values)
-
 	try:
 		l.run(code)
 	except Exception as e:
+		traceback.print_exc()
 		exception = e
-
 	l.data = adjust_to_next_time_step(l.data, l.lines)
 	remove_frame_data(l.data)
 	return (l.data, exception)
@@ -464,7 +368,7 @@ def adjust_to_next_time_step(data, lines):
 				next_time = env["time"]+1
 				while next_time in envs_by_time:
 					next_env = envs_by_time[next_time]
-					if ("frame" in env and "frame" in next_env and env["frame"] is next_env["frame"]):
+					if "frame" in env and "frame" in next_env and env["frame"] is next_env["frame"]:
 						curr_stmt = lines[env["lineno"]]
 						next_stmt = lines[remove_R(next_env["lineno"])]
 						if "Exception Thrown" in next_env or not is_loop_str(curr_stmt) or indent(next_stmt) > indent(curr_stmt):
@@ -483,12 +387,11 @@ def remove_frame_data(data):
 			if "frame" in env:
 				del env["frame"]
 
-def main(file, values_file):
-	lines = load_code_lines(file)
-	values = []
+def runpy(content, values):
+	lines = load_code_lines(content)
 
-	if values_file:
-		values = json.load(open(values_file))
+	if not values:
+		values = []
 
 	return_code = 0
 	run_time_data = {}
@@ -502,14 +405,18 @@ def main(file, values_file):
 		if (exception != None):
 			return_code = 2
 
-	with open(file + ".out", "w") as out:
-		out.write(json.dumps((return_code, writes, run_time_data)))
-
-	if exception != None:
-		raise exception
+	print(json.dumps((return_code, writes, run_time_data)))
 
 if __name__ == '__main__':
 	if len(sys.argv) > 2:
-		main(sys.argv[1], sys.argv[2])
+		content = []
+		with open(sys.argv[1]) as f:
+			content = f.readlines()
+		values = json.load(open(values_file))
+
+		runpy(content, values)
 	else:
-		main(sys.argv[1], None)
+		content = []
+		with open(sys.argv[1]) as f:
+			content = f.readlines()
+		runpy(content, None)

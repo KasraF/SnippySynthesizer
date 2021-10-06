@@ -8,6 +8,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
+import scala.Option;
+import edu.ucsd.snippy.utils.WebSynthResult;
 
 @Controller
 public class MainController
@@ -26,20 +28,21 @@ public class MainController
 
 	@PostMapping("/synthesize")
 	@ResponseBody
-	String synthesize(@RequestBody String problem)
+	WebSynthResult synthesize(@RequestBody String problem)
 	{
-		String rs;
+		final WebSynthResult rs = new WebSynthResult();
 
 		try {
 			this.logger.debug(problem);
-			rs = Snippy.synthesize(problem, SYNTH_DURATION, false)
-					._1()
-					.getOrElse(() -> "# Synthesis Failed");
-			this.logger.debug(rs);
+			Option<String> solution = Snippy.synthesize(problem, SYNTH_DURATION, false)._1();
+
+			if (solution.isDefined()) {
+				rs.program = solution.get();
+				rs.success = true;
+			}
 		} catch (Exception e) {
 			// Catch all to make sure the front-end is updated.
 			LoggerFactory.getLogger(this.getClass()).error("Synthesis failed.", e);
-			rs = "# Synthesis Failed";
 		}
 
 		return rs;

@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8"/>
-    <title>SnipPy</title>
+    <title>LooPy: Interactive Program Synthesis with Control Structures</title>
     <link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
     <link rel="stylesheet" type="text/css" th:href="@{/style/app.css}"/>
     <link rel="shortcut icon" th:href="@{/favicon.png}" type="image/png"/>
@@ -11,33 +11,33 @@
 <div class="container">
     <div class="card mt-5 offset-lg-1 col-lg-10 offset-xl-2 col-xl-8">
         <div class="card-body">
-            <h1 class="card-title">SnipPy</h1>
-            <h3 class="card-subtitle mb-4 text-muted">Small-Step Live Programming by Example</h3>
+            <h1 class="card-title">LooPy</h1>
+            <h3 class="card-subtitle mb-4 text-muted">Interactive Program Synthesis with Control Structures</h3>
             <p class="card-text">
-                <strong>SnipPy</strong> is an implementation of <em>Small-Step Live Programming By Example</em>,
-                combining Live Programming (using Projection Boxes) with Programming by Example (using Bottom-up
-                Enumerative Synthesis).
+                <strong>LooPy</strong> is an interactive Program Synthesizer, using block-level specifications
+                to generate blocks of Python code.
             </p>
             <p class="card-text">
-                If you want to learn more, you can read about SnipPy in
-                <a href="https://dl.acm.org/doi/10.1145/3379337.3415869" target="_blank">our paper</a>, and
+                If you want to learn more, you can read about LooPy in
+                <a href="https://dl.acm.org/doi/10.1145/3485530" target="_blank">our paper</a>, and
                 watch the talk at
-                <a href="https://www.youtube.com/watch?v=6xmCPznThN8" target="_blank">UIST 2020</a>.
-                If you're curious about Projection Boxes specifically,
-                you can read about them <a href="https://cseweb.ucsd.edu/~lerner/pb/" target="_blank">here</a>.
+                <!-- TODO -->
+                <a href="#" target="_blank">OOPSLA 2021</a>.
+                If you're curious about the previous project SnipPy,
+                you can read about it <a href="https://snippy.goto.ucsd.edu" target="_blank">here</a>.
             </p>
             <p class="card-text">
                 The project source code is publicly available
-	            <a href="https://github.com/kasraF/Snippy" target="_blank">on GitHub</a> and you can
-                try it out in right now in any browser (except Safari) <a th:href="@{/editor}">here</a>.
-	            Finally if you have any questions or would like to contribute, you can
-	            <a href="mailto:kferdows@eng.ucsd.edu">email me</a> or make a pull-request.
+                <a href="https://github.com/KasraF/LooPy" target="_blank">on GitHub</a> and you can
+                try it out in right now in any browser <a th:href="@{/editor}">here</a>.
+                Finally if you have any questions or would like to contribute, you can
+                <a href="mailto:kferdows@eng.ucsd.edu">email me</a> or make a pull-request.
             </p>
-            <a th:href="@{/editor}" class="card-link">[Try SnipPy!]</a>
-            <a href="https://dl.acm.org/doi/10.1145/3379337.3415869" class="card-link">[Paper]</a>
-	        <a href="https://www.youtube.com/watch?v=6xmCPznThN8" class="card-link">[Video]</a>
-            <a href="https://github.com/KasraF/SnipPy" class="card-link">[Source Code]</a>
-            <a href="https://cseweb.ucsd.edu/~lerner/pb/" class="card-link">[Projection Boxes]</a>
+            <a th:href="@{/editor}" class="card-link">[Try LooPy!]</a>
+            <a href="https://dl.acm.org/doi/10.1145/3485530" class="card-link">[Paper]</a>
+            <a href="#" class="card-link">[Video]</a>
+            <a href="https://github.com/KasraF/LooPy" class="card-link">[Source Code]</a>
+            <a href="https://snippy.ucsd.edu" class="card-link">[SnipPy]</a>
         </div>
     </div>
 </div>

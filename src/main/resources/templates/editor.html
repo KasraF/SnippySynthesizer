@@ -2,7 +2,7 @@
 <html lang="en" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
 <head>
 	<meta charset="utf-8"/>
-	<title>SnipPy</title>
+	<title>LooPy: Interactive Program Synthesis with Control Structures</title>
 	<link rel="stylesheet" type="text/css" th:href="@{/webjars/bootstrap/css/bootstrap.min.css}"/>
 	<link rel="stylesheet" type="text/css" th:href="@{/style/app.css}"/>
 	<link rel="shortcut icon" th:href="@{/favicon.png}" type="image/png"/>
@@ -19,16 +19,12 @@
 			Please wait...
 			<br>
 			(This may take a while)
-			<span id="safari-warning" class="d-none">
-				<br>
-				(<strong>Note</strong>: This does not work on Safari)
-			</span>
 		</div>
 	</div>
 	<div class="row vh-100">
 		<div class="col p-0">
 			<div id="editor" class="w-100 h-100"></div>
-			<input type="hidden" id="csrf-parameter" name="" value=""/>
+			<input type="hidden" id="csrf-parameter" name="_csrf" value="TOKEN"/>
 		</div>
 	</div>
 </div>
@@ -36,13 +32,4 @@
 <script type="text/javascript" src="/webjars/jquery/jquery.min.js"></script>
 <script type="text/javascript" src="/webjars/bootstrap/js/bootstrap.min.js"></script>
 <script th:src="@{app.bundle.js}"></script>
-<script>
-	const userAgent = navigator.userAgent;
-
-	if (userAgent.includes('Safari/') &&
-		!userAgent.includes('Chrome/') &&
-		!userAgent.includes('Chromium/')) {
-		$('#safari-warning').removeClass('d-none');
-	}
-</script>
 </html>
