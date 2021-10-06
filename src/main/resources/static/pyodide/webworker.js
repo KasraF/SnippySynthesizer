@@ -3,29 +3,29 @@
  */
 
 const RequestType = {
-	RUNPY: 1,
-	IMGSUM: 2,
-	SNIPPY: 3,
+    RUNPY: 1,
+    IMGSUM: 2,
+    SNIPPY: 3,
 }
 
 const ResponseType = {
-	// Responses related to the running program
-	STDOUT: 1,
-	STDERR: 2,
-	RESULT: 3,
-	EXCEPTION: 4,
+    // Responses related to the running program
+    STDOUT: 1,
+    STDERR: 2,
+    RESULT: 3,
+    EXCEPTION: 4,
 
-	// Responses related to the web worker itself
-	ERROR: 5,
-	LOADED: 6
+    // Responses related to the web worker itself
+    ERROR: 5,
+    LOADED: 6
 }
 
 class RTVRunPy {
-	constructor(id, type, msg) {
-		this.id = id;
-		this.type = type;
-		this.msg = msg;
-	}
+    constructor(id, type, msg) {
+        this.id = id;
+        this.type = type;
+        this.msg = msg;
+    }
 }
 
 // HACK to get frame update working without ctypes
@@ -38,13 +38,13 @@ function frameLocalsToFast(frame){
 
 async function clearEnvs(pyodide) {
     const clearEnv =
-		"for _k_ in list(sys.modules['__main__'].__dict__.keys()):\n" +
-		"\tif _k_ == '__start_env__': continue\n" +
-		"\tif _k_ not in __start_env__:\n" +
-		"\t\tdel sys.modules['__main__'].__dict__[_k_]\n" +
-		"\telse:\n" +
-		"\t\tsys.modules['__main__'].__dict__[_k_] = __start_env__[_k_]\n" +
-		"import sys\n";
+        "for _k_ in list(sys.modules['__main__'].__dict__.keys()):\n" +
+        "\tif _k_ == '__start_env__': continue\n" +
+        "\tif _k_ not in __start_env__:\n" +
+        "\t\tdel sys.modules['__main__'].__dict__[_k_]\n" +
+        "\telse:\n" +
+        "\t\tsys.modules['__main__'].__dict__[_k_] = __start_env__[_k_]\n" +
+        "import sys\n";
     return pyodide.runPythonAsync(clearEnv);
 }
 
@@ -60,11 +60,8 @@ function randomName() {
 async function handleRunpy(pyodide, msg)
 {
     // TODO Move this to vscode
-	if (!msg.data.values) {
-        console.log('values was ', msg.data.values, '. Setting it to "{}" instead.');
+    if (!msg.data.values) {
         msg.data.values = '{}';
-    } else {
-        console.log('using values ', msg.data.values);
     }
 
     const id = msg.data.id;
@@ -79,30 +76,28 @@ async function handleRunpy(pyodide, msg)
         'pyodide.eval_code(run.read() + "\\nrunpy(content, json.loads(values))\\n", {"content": content, "values": values})\n' +
         '(sys.stdout.getvalue(), sys.stderr.getvalue())\n';
 
-	try {
-		await clearEnvs(pyodide);
-		const [out, err] = await pyodide.runPythonAsync(runPy);
+    try {
+        await clearEnvs(pyodide);
+        const [out, err] = await pyodide.runPythonAsync(runPy);
 
-        console.log('runpy', '[out]', out, '[err]', err);
-
-		self.postMessage(new RTVRunPy(id, ResponseType.STDOUT, out));
+        self.postMessage(new RTVRunPy(id, ResponseType.STDOUT, out));
         self.postMessage(new RTVRunPy(id, ResponseType.STDERR, err));
-		self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out));
+        self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out));
 
         pyodide.unregisterJsModule(namespace);
-	}
-	catch(err) {
+    }
+    catch(err) {
         console.log('runpy failed!');
         console.error(err);
 
-		// Send the exception first
-		self.postMessage(new RTVRunPy(id, ResponseType.EXCEPTION, err.toString()));
-		self.postMessage(new RTVRunPy(id, ResponseType.RESULT, ''));
-	}
+        // Send the exception first
+        self.postMessage(new RTVRunPy(id, ResponseType.EXCEPTION, err.toString()));
+        self.postMessage(new RTVRunPy(id, ResponseType.RESULT, ''));
+    }
 }
 
 async function handleSnippy(pyodide, msg) {
-	const id = msg.data.id;
+    const id = msg.data.id;
     const namespace = randomName();
     pyodide.registerJsModule(namespace, msg.data);
 
@@ -118,78 +113,76 @@ async function handleSnippy(pyodide, msg) {
         await clearEnvs(pyodide);
         const [out, err] = await pyodide.runPythonAsync(snippy);
 
-        console.log('snippy', '[out]', out, '[err]', err);
-
         self.postMessage(new RTVRunPy(id, ResponseType.STDOUT, out));
         self.postMessage(new RTVRunPy(id, ResponseType.STDERR, err))
-		self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out));
+        self.postMessage(new RTVRunPy(id, ResponseType.RESULT, out));
 
         pyodide.unregisterJsModule(namespace);
-	} catch (err) {
+    } catch (err) {
         console.log('snippy failed!');
         console.error(err);
 
-		// Send the exception first
-		self.postMessage(new RTVRunPy(id, ResponseType.EXCEPTION, err.toString()));
-		self.postMessage(new RTVRunPy(id, ResponseType.RESULT, ''));
-	}
+        // Send the exception first
+        self.postMessage(new RTVRunPy(id, ResponseType.EXCEPTION, err.toString()));
+        self.postMessage(new RTVRunPy(id, ResponseType.RESULT, ''));
+    }
 }
 
 function registerHandlers(pyodide) {
-	self.onmessage = function(msg) {
-		const id = msg.data.id;
+    self.onmessage = function(msg) {
+        const id = msg.data.id;
 
-		switch (msg.data.type) {
-			case RequestType.RUNPY:
-				handleRunpy(pyodide, msg);
-				break;
-			case RequestType.IMGSUM:
-				self.postMessage(new RTVRunPy(id, ResponseType.RESULT, ''));
-				break;
-			case RequestType.SNIPPY:
+        switch (msg.data.type) {
+            case RequestType.RUNPY:
+                handleRunpy(pyodide, msg);
+                break;
+            case RequestType.IMGSUM:
+                self.postMessage(new RTVRunPy(id, ResponseType.RESULT, ''));
+                break;
+            case RequestType.SNIPPY:
                 handleSnippy(pyodide, msg);
-				break;
-			default:
-				self.postMessage(new RTVRunPy(id, ResponseType.ERROR, 'Unrecognized request: ' + msg));
-		}
-	}
+                break;
+            default:
+                self.postMessage(new RTVRunPy(id, ResponseType.ERROR, 'Unrecognized request: ' + msg));
+        }
+    }
 
 }
 
 async function loadPythonFile(pyodide, filename, url) {
-	return pyodide.runPythonAsync(
-		`pythonFile = open("${filename}", "w")\n` +
-		`pythonFile.write(pyodide.open_url("${url}").getvalue())\n` +
-		'pythonFile.close()');
+    return pyodide.runPythonAsync(
+        `pythonFile = open("${filename}", "w")\n` +
+        `pythonFile.write(pyodide.open_url("${url}").getvalue())\n` +
+        'pythonFile.close()');
 }
 
 let pyodide;
 
 async function main() {
-	importScripts('https://cdn.jsdelivr.net/pyodide/v0.18.1/full/pyodide.js');
-	pyodide = await loadPyodide({ indexURL: "https://cdn.jsdelivr.net/pyodide/v0.18.1/full/" });
+    importScripts('pyodide.js');
+    pyodide = await loadPyodide({ indexURL: "/pyodide/" });
 
-	// First, load the modules we need
-	await Promise.all([pyodide.loadPackage('numpy'), pyodide.loadPackage('Pillow')]);
+    // First, load the modules we need
+    // await Promise.all([pyodide.loadPackage('numpy'), pyodide.loadPackage('Pillow')]);
 
-	// Then, import the modules
-	await pyodide.runPythonAsync('import pyodide\nimport os\nimport sys\nimport io\n');
+    // Then, import the modules
+    await pyodide.runPythonAsync('import pyodide\nimport os\nimport sys\nimport io\n');
 
     // Then add our hack
-	pyodide.registerJsModule('frame_locals_to_fast', frameLocalsToFast);
+    pyodide.registerJsModule('frame_locals_to_fast', frameLocalsToFast);
 
-	// Then load our custom files
-	await Promise.all([loadPythonFile(pyodide, 'run.py', '/editor/run.py'),
-	                   loadPythonFile(pyodide, 'img-summary.py', '/editor/img-summary.py'),
-	                   loadPythonFile(pyodide, 'snippy.py', '/editor/snippy.py')]);
+    // Then load our custom files
+    await Promise.all([loadPythonFile(pyodide, 'run.py', '/editor/run.py'),
+                       loadPythonFile(pyodide, 'img-summary.py', '/editor/img-summary.py'),
+                       loadPythonFile(pyodide, 'snippy.py', '/editor/snippy.py')]);
 
-	// Then, store the current environment so we can reset it as needed.
-	await pyodide.runPythonAsync("__start_env__ = sys.modules['__main__'].__dict__.copy()");
+    // Then, store the current environment so we can reset it as needed.
+    await pyodide.runPythonAsync("__start_env__ = sys.modules['__main__'].__dict__.copy()");
 
-	// Then, register the handlers
-	registerHandlers(pyodide);
+    // Then, register the handlers
+    registerHandlers(pyodide);
 
-	// Finally, let the parent know we are ready.
-	self.postMessage(new RTVRunPy(-1, ResponseType.LOADED, ''));
+    // Finally, let the parent know we are ready.
+    self.postMessage(new RTVRunPy(-1, ResponseType.LOADED, ''));
 }
 main();

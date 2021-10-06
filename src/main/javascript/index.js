@@ -62,4 +62,9 @@ Esc				-> Exit LooPy
 				enabled: false
 			}
 		});
+
+    // Customize the editor for the web version
+	editor.getContribution('editor.contrib.rtv')._config.updateValue('rtv.box.showBoxAtLoopStatements', false);
+    editor.getContribution('editor.contrib.rtv')._config.updateValue('rtv.box.showBoxAtEmptyLines', false);
+    editor.getContribution('editor.contrib.rtv')._config.updateValue('rtv.box.showBoxWhenNotExecuted', false);
 });
